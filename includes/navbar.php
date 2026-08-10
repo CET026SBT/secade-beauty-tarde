@@ -22,7 +22,7 @@ $currentPage = isset($currentPage) ? $currentPage : basename($_SERVER['PHP_SELF'
                 <a href="404.php" class="nav-item nav-link <?php echo ($currentPage == '404.php' || $currentPage == '404') ? 'active' : ''; ?>">404 Page</a>
                 <a href="contact.php" class="nav-item nav-link <?php echo ($currentPage == 'contact.php' || $currentPage == 'contact') ? 'active' : ''; ?>">Contactos</a>
             </div>
-            <a class="btn btn-sm btn-primary" href="admin/index.html"><i class="fa fa-user-cog me-2"></i>Admin</a>
+            <a class="btn btn-sm btn-primary no-bg" href="admin/index.html"><i class="fa fa-user-cog me-2"></i>Admin</a>
         </div>
     </nav>
 </div>
