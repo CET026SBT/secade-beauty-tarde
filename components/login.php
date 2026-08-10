@@ -4,7 +4,7 @@
             <img src="img/bg-login.png" alt="Imagem Login" class="img-login">
         </div>
 
-        <div class="col-lg-6 h-100 d-flex align-items-center justify-content-center position-relative py-5 bg-light">
+        <div class="col-lg-6 h-100 d-flex align-items-center justify-content-center position-relative py-5 overflow-hidden bg-light">
             <img src="img/sb-logo-primary.svg" alt="Secade Beauty" class="img-logo">
             <div class="col-md-6 col-lg-auto p-4 bg-white shadow-sm border-0 rounded position-relative" style="z-index: 1">
                 <div class="text-center mb-4">
