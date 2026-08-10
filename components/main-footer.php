@@ -7,7 +7,7 @@
                         <img class="h1 me-1" src="img/sb-logo-primary.svg">
                         <img class="h3" src="img/sb-title-primary.svg" alt="Site name">
                     </a>
-                    <p>Somos uma equipa com enorme experiência no universo dos cabeleireiros e estética, dedicados a oferecer a melhor serviço e satisfação.</p>
+                    <p>Somos uma equipa com enorme experiência no universo dos cabeleireiros e estética, dedicados a oferecer o melhor serviço e satisfação.</p>
                     <p class="mb-2"><i class="fa fa-map-marker-alt me-2"></i><?php echo htmlspecialchars(SITE_ADDRESS); ?></p>
                     <p class="mb-2"><i class="fa fa-phone-alt me-2"></i><?php echo htmlspecialchars(SITE_PHONE); ?></p>
                     <p><i class="fa fa-envelope me-2"></i><?php echo htmlspecialchars(SITE_EMAIL); ?></p>
