@@ -24,6 +24,10 @@ img.h1 {
     height: 1em;
 }
 
+.form-check > .form-check-input[type="checkbox"] {
+    border-radius: 0;
+}
+
 textarea.form-control {
     height: 150px;
 }
@@ -511,4 +515,25 @@ textarea.form-control {
 /* Newsletter Form */
 #newsletterForm .email {
     height: 60px;
+}
+
+/* Login */
+.img-login {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);    
+    min-height: 100%;
+    min-width: 100%;
+    z-index: -1;
+}
+
+.img-logo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: .05;
+    min-height: 100%;
+    min-width: 100%;
 }

@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS `base_partida` (
 -- A despejar dados para tabela secade_beauty.base_partida: ~1 rows (aproximadamente)
 DELETE FROM `base_partida`;
 INSERT INTO `base_partida` (`id`, `nome`, `morada`) VALUES
-	(1, 'Évora', 'Rua do centro de Formaca');
+	(1, 'Évora', 'Rua do Centro de Formação');
 
 -- A despejar estrutura para tabela secade_beauty.categoria_profissional
 DROP TABLE IF EXISTS `categoria_profissional`;
@@ -109,14 +109,14 @@ CREATE TABLE IF NOT EXISTS `cidade` (
 DELETE FROM `cidade`;
 INSERT INTO `cidade` (`id`, `nome`) VALUES
 	(1, 'Arraiolos'),
-	(7, 'Estremoz'),
-	(2, 'Montemor- Novo'),
-	(9, 'Mourão'),
-	(5, 'Redeondo'),
-	(4, 'Reguengos  de Monsaraz'),
-	(6, 'Vendas Novas'),
+	(2, 'Montemor-o-Novo'),
 	(3, 'Viana do Alentejo'),
-	(8, 'Vila Viçosa');
+	(4, 'Reguengos de Monsaraz'),
+  (5, 'Redondo'),
+	(6, 'Vendas Novas'),
+	(7, 'Estremoz'),
+	(8, 'Vila Viçosa'),
+  (9, 'Mourão');
 
 -- A despejar estrutura para tabela secade_beauty.cliente
 DROP TABLE IF EXISTS `cliente`;
