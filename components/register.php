@@ -19,66 +19,111 @@ register_script('components/register');
                 </div>
 
                 <form id="registerForm" class="flex-fill">
-                    <div id="step-1" class="form-step">
-                        <div class="mb-4">
-                            <h4 class="section-title mb-3 animated">
-                                <i class="bi bi-person-badge text-gold me-2"></i>Quem é você?
-                            </h4>
+                    <div class="form-steps-container">
 
-                            <div class="form-floating mb-3 animated" style="animation-delay: 0.05s;">    
-                                <input id="nome" type="text" class="form-control py-2" placeholder="Nome Completo" autocomplete="off" required>
-                                <label for="nome">Nome Completo</label>
+                        <div id="step-1" class="form-step active">
+                            <div class="row g-3 mb-4">
+                                <h4 class="section-title col-12">
+                                    <i class="bi bi-person-badge text-gold me-2"></i>Quem é você?
+                                </h4>
+
+                                <div class="col-12">
+                                    <div class="form-floating">    
+                                        <input id="nome" type="text" class="form-control" placeholder="Nome Completo" autocomplete="off" required>
+                                        <label for="nome">Nome Completo</label>
+                                    </div>
+                                    <div class="invalid-feedback">Insira o seu nome completo.</div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-floating">    
+                                        <input id="email" type="email" class="form-control" placeholder="E-mail" autocomplete="off" required>
+                                        <label for="email">E-mail</label>
+                                    </div>
+                                    <div class="invalid-feedback">A morada é obrigatória.</div>
+                                </div>
+                                
+                                <div class="col-12">
+                                    <div class="form-floating">  
+                                        <input id="password" type="password" class="form-control" placeholder="Palavra-passe" autocomplete="off" required>
+                                        <label for="password">Palavra-passe</label>   
+                                    </div>
+                                    <div class="invalid-feedback">A palavra-passe é obrigatória.</div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-floating">  
+                                        <input id="confirmPassword" type="password" class="form-control" placeholder="Confirmar Palavra-passe" autocomplete="off" required>
+                                        <label for="confirmPassword">Confirmar Palavra-passe</label>    
+                                    </div>
+                                    <div class="invalid-feedback">As palavras-passe têm de coincidir.</div>
+                                </div>
                             </div>
 
-                            <div class="form-floating mb-3 animated" style="animation-delay: 0.1s;">    
-                                <input id="email" type="email" class="form-control py-2" placeholder="E-mail" autocomplete="off" required>
-                                <label for="email">E-mail</label>
-                            </div>
-                            
-                            <div class="form-floating mb-3 animated" style="animation-delay: 0.15s;">  
-                                <input id="password" type="password" class="form-control py-2" placeholder="Palavra-passe" autocomplete="off" required>
-                                <label for="password">Palavra-passe</label>    
-                            </div>
-
-                            <div class="form-floating mb-3 animated" style="animation-delay: 0.2s;">  
-                                <input id="confirmPassword" type="password" class="form-control py-2" placeholder="Confirmar Palavra-passe" autocomplete="off" required>
-                                <label for="confirmPassword">Confirmar Palavra-passe</label>    
-                            </div>
+                            <button type="button" class="btn btn-primary w-100 py-2 m-0 fw-bold text-uppercase mt-auto" onclick="formSteps.navigateTo(1)">Seguinte</button>
                         </div>
 
-                        <button type="button" class="btn btn-primary w-100 py-2 m-0 fw-bold text-uppercase animated" onclick="goToStep(2)">Seguinte</button>
-                    </div>
+                        <div id="step-2" class="form-step">
+                            <div class="row g-3 mb-4">
+                                <h4 class="section-title col-12">
+                                    <i class="bi bi-geo-alt text-gold me-2"></i>Onde vamos encontrá-lo?
+                                </h4>
 
-                    <div id="step-2" class="form-step d-none">
-                        <div class="mb-4">
-                            <h4 class="section-title mb-3 animated">
-                                <i class="bi bi-geo-alt text-gold me-2"></i>Onde vamos encontrá-lo?
-                            </h4>
+                                <div class="col-12">
+                                    <div class="form-floating">  
+                                        <input id="telemovel" type="tel" class="form-control" placeholder="Telemóvel" autocomplete="off" required>
+                                        <label for="telemovel">Telemóvel</label>    
+                                    </div>
+                                    <div class="invalid-feedback">Insira um número de telemóvel válido.</div>
+                                </div>
 
-                            <div class="form-floating mb-3 animated" style="animation-delay: 0.05s;">  
-                                <input id="telemovel" type="tel" class="form-control py-2" placeholder="Telemóvel" autocomplete="off" required>
-                                <label for="telemovel">Telemóvel</label>    
+                                <!-- Campo de Morada (com slot de feedback logo abaixo) -->
+                                <div class="col-12">  
+                                    <div class="form-floating">
+                                        <input id="morada" type="text" class="form-control" placeholder="Morada" autocomplete="off" required>
+                                        <label for="morada">Morada</label>    
+                                    </div>
+                                    <div class="invalid-feedback">A morada é obrigatória.</div>
+                                    <!-- Slot de feedback com altura mínima fixa para evitar saltos no wrap -->
+                                    <div class="address-feedback-slot mt-1" style="min-height: 42px;">
+                                        <div id="moradaFeedback" class="alert alert-info py-2 px-3 small mb-0" role="alert">
+                                            <i class="bi bi-info-circle me-1"></i> <span id="moradaFeedbackText">Serviço disponível apenas para as cidades com loja e carrinha.</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-6"> 
+                                    <div class="form-floating">  
+                                        <input id="numPorta" type="text" class="form-control" placeholder="Código Postal" autocomplete="off" required>
+                                        <label for="numPorta">Nº da Porta</label>    
+                                    </div>
+                                    <div class="invalid-feedback">Obrigatório.</div>
+                                </div>
+
+                                <div class="col-6">
+                                    <div class="form-floating">  
+                                        <input id="andarBloco" type="text" class="form-control" placeholder="Localidade" autocomplete="off">
+                                        <label for="andarBloco">Andar / Bloco</label>    
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="" id="termosCondicoes" required>
+                                        <label class="form-check-label small text-muted" for="termosCondicoes">
+                                            Li e aceito os <a href="#" target="_blank" class="text-gold text-decoration-underline">Termos e Condições</a> e a Política de Privacidade.
+                                        </label>
+                                        <div class="invalid-feedback">
+                                            Deve aceitar os termos e condições para continuar.
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div class="form-floating mb-3 animated" style="animation-delay: 0.1s;">  
-                                <input id="morada" type="text" class="form-control py-2" placeholder="Morada" autocomplete="off" required>
-                                <label for="morada">Morada</label>    
+                            <div class="d-flex gap-4 mt-auto">
+                                <button type="button" class="btn btn-primary no-bg w-50 py-2 m-0 fw-bold text-uppercase" onclick="formSteps.navigateTo(0)">Voltar</button>
+                                <button type="button" class="btn btn-primary w-50 py-2 m-0 fw-bold text-uppercase">Registar</button>
                             </div>
-
-                            <div class="form-floating mb-3 animated" style="animation-delay: 0.15s;">  
-                                <input id="codigoPostal" type="text" class="form-control py-2" placeholder="Código Postal" autocomplete="off" required>
-                                <label for="codigoPostal">Código Postal</label>    
-                            </div>
-
-                            <div class="form-floating mb-3 animated" style="animation-delay: 0.2s;">  
-                                <input id="localidade" type="text" class="form-control py-2" placeholder="Localidade" autocomplete="off" required>
-                                <label for="localidade">Localidade</label>    
-                            </div>
-                        </div>
-
-                        <div class="d-flex gap-4">
-                            <button type="button" class="btn btn-primary no-bg w-50 py-2 m-0 fw-bold text-uppercase animated" onclick="goToStep(1)">Voltar</button>
-                            <button type="button" class="btn btn-primary w-50 py-2 m-0 fw-bold text-uppercase animated">Registar</button>
                         </div>
                     </div>
                 </form>

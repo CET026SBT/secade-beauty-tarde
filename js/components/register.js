@@ -1,26 +1,98 @@
-let currentStep = 1;
+const formSteps = {
+    currentStep: 0,
+    validateStep: [
+        function() {
+            const vNome = validators.nome();
+            const vEmail = validators.email();
+            const vPass = validators.password();
+            const vConfirm = validators.confirmPassword();
 
-function goToStep(toStep, fromStep=currentStep) {
-    if (toStep === fromStep) return;
-    currentStep = toStep;
+            return vNome && vEmail && vPass && vConfirm;
+        },
+        function() {
+            const vTelemovel = validators.telemovel();
+            const vMorada = validators.morada();
+            const vPorta = validators.numPorta();
+            const vTermos = validators.termosCondicoes();
 
-    const $fromStep = $(`#step-${fromStep}`);
-    const $fromStepFields = $fromStep.find('.animated:not(button)');
-    const $fromStepButtons = $fromStep.find('button');
-    const $toStep = $(`#step-${toStep}`);
-    const $toStepFields = $toStep.find('.animated:not(button)');
-    const $toStepButtons = $toStep.find('button');
-    const flow = (toStep < fromStep ? 'Right Left' : 'Left Right').split(' ');
+            return vTelemovel && vMorada && vPorta && vTermos;
+        }
+    ],
+    navigateTo(step) {
+        if (step > this.currentStep && !this.validateStep[this.currentStep]()) {
+            return;
+        }
 
-    $fromStepFields.addClass(`fadeOut${flow[0]}`);
-    $fromStepButtons.addClass('fadeOut');
+        this.currentStep = step;
+        $('.form-step').removeClass('active');
+        $(`#step-${step + 1}`).addClass('active');
+    }
+};
 
-    setTimeout(() => {
-        $fromStep.addClass('d-none');
-        $fromStepFields.removeClass(`fadeOut${flow[0]}`, `fadeInRight${flow[0]}`);
-        $fromStepButtons.removeClass('fadeOut');
-        $toStep.removeClass('d-none');
-        $toStepFields.addClass(`fadeIn${flow[1]}`);
-        $toStepButtons.addClass('fadeIn');
-    }, 400);
-}
+const validators = {
+    nome() {
+        const $el = $('#nome');
+        const isValid = $el.val().trim() !== '';
+        $el.toggleClass('is-invalid', !isValid);
+        return isValid;
+    },
+    email() {
+        const $el = $('#email');
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const isValid = emailRegex.test($el.val().trim());
+        $el.toggleClass('is-invalid', !isValid);
+        return isValid;
+    },
+    password() {
+        const $el = $('#password');
+        const isValid = $el.val().length >= 6;
+        $el.toggleClass('is-invalid', !isValid);
+        
+        if ($('#confirmPassword').val() !== '') {
+            this.confirmPassword();
+        }
+        return isValid;
+    },
+    confirmPassword() {
+        const $pass = $('#password');
+        const $el = $('#confirmPassword');
+        const isValid = $el.val() !== '' && $el.val() === $pass.val();
+        $el.toggleClass('is-invalid', !isValid);
+        return isValid;
+    },
+    telemovel() {
+        const $el = $('#telemovel');
+        const isValid = $el.val().trim() !== '';
+        $el.toggleClass('is-invalid', !isValid);
+        return isValid;
+    },
+    morada() {
+        const $el = $('#morada');
+        const isValid = $el.val().trim() !== '';
+        $el.toggleClass('is-invalid', !isValid);
+        return isValid;
+    },
+    numPorta() {
+        const $el = $('#numPorta');
+        const isValid = $el.val().trim() !== '';
+        $el.toggleClass('is-invalid', !isValid);
+        return isValid;
+    },
+    termosCondicoes() {
+        const $el = $('#termosCondicoes');
+        const isValid = $el.is(':checked');
+        $el.toggleClass('is-invalid', !isValid);
+        return isValid;
+    }
+};
+
+$(document).ready(function () {
+    $('#nome').on('input', () => validators.nome());
+    $('#email').on('input', () => validators.email());
+    $('#password').on('input', () => validators.password());
+    $('#confirmPassword').on('input', () => validators.confirmPassword());
+    $('#telemovel').on('input', () => validators.telemovel());
+    $('#morada').on('input', () => validators.morada());
+    $('#numPorta').on('input', () => validators.numPorta());
+    $('#termosCondicoes').on('change', () => validators.termosCondicoes());
+});

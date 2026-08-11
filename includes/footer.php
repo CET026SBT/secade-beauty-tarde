@@ -9,7 +9,7 @@ if (!isset($showMainFooter) || $showMainFooter === true) {
     <div class="container-fluid bg-dark text-white border-top border-secondary py-4 wow fadeIn" data-wow-delay="0.1s">
         <div class="container">
             <div class="row">
-                <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                <div class="col-md-12 text-center text-md-start mb-3 mb-md-0">
                     &copy; <a class="border-bottom" href="#"><?php echo htmlspecialchars(SITE_NAME); ?></a>, Todos os Direitos Reservados.
                 </div>
             </div>

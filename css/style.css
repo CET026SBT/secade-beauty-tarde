@@ -515,6 +515,31 @@ textarea.form-control {
     height: 60px;
 }
 
+
+/* Forms with Steps */
+.form-steps-container {
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 0.4s ease-in-out;
+}
+
+.form-step {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    grid-row: 1;
+    grid-column: 1;
+    display: flex;
+    flex-flow: column;
+    justify-content: space-between;
+}
+
+.form-step.active {
+    visibility: visible;
+    opacity: 1;
+}
+
+
 /* Login & Register */
 .auth-left-img {
     position: absolute;
