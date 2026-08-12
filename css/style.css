@@ -15,6 +15,7 @@ body {
     min-height: 100vh;
 }
 
+/* > SVG Height to Font-Size */
 img.h6,
 img.h5,
 img.h4,
@@ -24,14 +25,45 @@ img.h1 {
     height: 1em;
 }
 
+/* > Squared Checboxes */
 .form-check > .form-check-input[type="checkbox"] {
     border-radius: 0;
 }
 
+/* > Default Textarea Height */
 textarea.form-control {
     height: 150px;
 }
 
+/* > Form Field Error, position adjustment */
+.invalid-feedback {
+    margin-top: -1.5em;
+    transform: translateY(1.5em);
+}
+
+/* > Form Field Feedback Slot */
+.feedback-slot {
+    min-height: 2.6em;
+}
+
+/* > Form Field Feedback Slot, position adjustment */
+.feedback-slot.mt-1 {
+    transform: translateY(calc(1.5em - .25rem));
+}
+.feedback-slot.mt-2 {
+    transform: translateY(calc(1.5em - .5rem));
+}
+.feedback-slot.mt-3 {
+    transform: translateY(calc(1.5em - 1rem));
+}
+.feedback-slot.mt-4 {
+    transform: translateY(calc(1.5em - 1.5rem));
+}
+.feedback-slot.mt-5 {
+    transform: translateY(calc(1.5em - 3rem));
+}
+
+    
 /* Spinner */
 #spinner {
     opacity: 0;
@@ -51,6 +83,7 @@ textarea.form-control {
     height: 3rem;
 }
 
+
 /* Back to Top */
 .back-to-top {
     position: fixed !important;
@@ -60,6 +93,7 @@ textarea.form-control {
     z-index: 99;
     transition: .5s, opacity 0ms !important;
 }
+
 
 /* Fonts */
 .font-work-sans {
