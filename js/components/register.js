@@ -47,6 +47,7 @@ const register = {
             savedAddresses: register.savedAddresses,
             onSelect(selectedData) {
                 register.form.fields.morada = this.formatAddressInputText(selectedData);
+                register.form.fields.moradaRaw = selectedData.morada;
                 register.form.fields.numPorta = selectedData.numPorta;
                 register.form.fields.andarBloco = selectedData.andarBloco;
                 register.form.fields.codigoPostal = selectedData.codigoPostal;
