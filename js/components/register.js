@@ -1,98 +1,60 @@
-const formSteps = {
-    currentStep: 0,
-    validateStep: [
-        function() {
-            const vNome = validators.nome();
-            const vEmail = validators.email();
-            const vPass = validators.password();
-            const vConfirm = validators.confirmPassword();
-
-            return vNome && vEmail && vPass && vConfirm;
+const register = {
+    supportedCities: ['Évora'],
+    savedAddresses: [],
+    form: new Form('#registerForm', {
+        validators: {
+            nome(val) {
+                return val === '' && 'O nome completo é obrigatório.';
+            },
+            email(val) {
+                if (val === '') return 'O e-mail é obrigatório.';
+                if (!this.isEmail(val)) return 'Insira um endereço de e-mail válido.';
+            },
+            password(val, { fields }) {
+                if (val === '') return 'A palavra-passe é obrigatória.';
+                if (val.length < 6) return 'A palavra-passe deve ter pelo menos 6 caracteres.';
+                if (fields.confirmPassword) this.confirmPassword();
+            },
+            confirmPassword(val, { fields }) {
+                if (val === '') return 'Confirme a sua palavra-passe.';
+                if (val !== fields.password) return 'As palavras-passe têm de coincidir.';
+            },
+            telemovel(val) {
+                if (val === '') return 'O número de telemóvel é obrigatório.';
+                if (!this.isPhonePT(val)) return 'Insira um número de telemóvel válido com 9 dígitos.';
+            },
+            morada(val, { fields, data }) {
+                if (val === '') return "A morada é obrigatória.";
+                if (!data?.fromAutocomplete) return "Por favor, selecione uma morada válida a partir das sugestões da lista.";
+                if (!register.supportedCities.includes(fields.cidade)) {
+                    return "Lamentamos, mas de momento apenas aceitamos moradas nas cidades suportadas.";
+                }
+            },
+            numPorta(val) {
+                return val === '' && 'Obrigatório.';
+            },
+            termosCondicoes(val) {
+                return !val && 'Deve aceitar os termos e condições para continuar.';
+            }
         },
-        function() {
-            const vTelemovel = validators.telemovel();
-            const vMorada = validators.morada();
-            const vPorta = validators.numPorta();
-            const vTermos = validators.termosCondicoes();
+        submit() {
 
-            return vTelemovel && vMorada && vPorta && vTermos;
         }
-    ],
-    navigateTo(step) {
-        if (step > this.currentStep && !this.validateStep[this.currentStep]()) {
-            return;
-        }
-
-        this.currentStep = step;
-        $('.form-step').removeClass('active');
-        $(`#step-${step + 1}`).addClass('active');
+    }),
+    init() {
+        new AddressAutocomplete({
+            formSelector: register.form.selector,
+            savedAddresses: register.savedAddresses,
+            onSelect(selectedData) {
+                register.form.fields.morada = this.formatAddressInputText(selectedData);
+                register.form.fields.numPorta = selectedData.numPorta;
+                register.form.fields.andarBloco = selectedData.andarBloco;
+                register.form.fields.codigoPostal = selectedData.codigoPostal;
+                register.form.fields.cidade = selectedData.cidade;
+                register.form.fields.distrito = selectedData.distrito;
+            }
+        });
     }
 };
 
-const validators = {
-    nome() {
-        const $el = $('#nome');
-        const isValid = $el.val().trim() !== '';
-        $el.toggleClass('is-invalid', !isValid);
-        return isValid;
-    },
-    email() {
-        const $el = $('#email');
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const isValid = emailRegex.test($el.val().trim());
-        $el.toggleClass('is-invalid', !isValid);
-        return isValid;
-    },
-    password() {
-        const $el = $('#password');
-        const isValid = $el.val().length >= 6;
-        $el.toggleClass('is-invalid', !isValid);
-        
-        if ($('#confirmPassword').val() !== '') {
-            this.confirmPassword();
-        }
-        return isValid;
-    },
-    confirmPassword() {
-        const $pass = $('#password');
-        const $el = $('#confirmPassword');
-        const isValid = $el.val() !== '' && $el.val() === $pass.val();
-        $el.toggleClass('is-invalid', !isValid);
-        return isValid;
-    },
-    telemovel() {
-        const $el = $('#telemovel');
-        const isValid = $el.val().trim() !== '';
-        $el.toggleClass('is-invalid', !isValid);
-        return isValid;
-    },
-    morada() {
-        const $el = $('#morada');
-        const isValid = $el.val().trim() !== '';
-        $el.toggleClass('is-invalid', !isValid);
-        return isValid;
-    },
-    numPorta() {
-        const $el = $('#numPorta');
-        const isValid = $el.val().trim() !== '';
-        $el.toggleClass('is-invalid', !isValid);
-        return isValid;
-    },
-    termosCondicoes() {
-        const $el = $('#termosCondicoes');
-        const isValid = $el.is(':checked');
-        $el.toggleClass('is-invalid', !isValid);
-        return isValid;
-    }
-};
-
-$(document).ready(function () {
-    $('#nome').on('input', () => validators.nome());
-    $('#email').on('input', () => validators.email());
-    $('#password').on('input', () => validators.password());
-    $('#confirmPassword').on('input', () => validators.confirmPassword());
-    $('#telemovel').on('input', () => validators.telemovel());
-    $('#morada').on('input', () => validators.morada());
-    $('#numPorta').on('input', () => validators.numPorta());
-    $('#termosCondicoes').on('change', () => validators.termosCondicoes());
-});
+$(register.init);

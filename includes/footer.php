@@ -28,7 +28,8 @@ if (!isset($showMainFooter) || $showMainFooter === true) {
     <script src="lib/counterup/counterup.min.js"></script>
     <script src="lib/owlcarousel/owl.carousel.min.js"></script>
 
-    <!-- Main Javascript -->
+    <!-- Essencial Utils & Main Javascript -->
+    <script src="js/utils/domUtils.js"></script>
     <script src="js/main.js"></script>
 
     <!-- Page & Components Javascript -->

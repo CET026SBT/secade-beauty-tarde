@@ -35,35 +35,16 @@ textarea.form-control {
     height: 150px;
 }
 
-/* > Form Field Error, position adjustment */
-.invalid-feedback {
-    margin-top: -1.5em;
-    transform: translateY(1.5em);
+/* > Form Field Invalid Margin Adjustment */
+form.was-validated .row > *:has(:invalid),
+form .row > *:has(:user-invalid),
+form .row > *:has(.is-invalid),
+form .row > *:has([aria-invalid="true"]) {
+    /*margin-bottom: calc(-1.5rem * 0.875);*/
+    margin-bottom: -1.55rem;
 }
 
-/* > Form Field Feedback Slot */
-.feedback-slot {
-    min-height: 2.6em;
-}
 
-/* > Form Field Feedback Slot, position adjustment */
-.feedback-slot.mt-1 {
-    transform: translateY(calc(1.5em - .25rem));
-}
-.feedback-slot.mt-2 {
-    transform: translateY(calc(1.5em - .5rem));
-}
-.feedback-slot.mt-3 {
-    transform: translateY(calc(1.5em - 1rem));
-}
-.feedback-slot.mt-4 {
-    transform: translateY(calc(1.5em - 1.5rem));
-}
-.feedback-slot.mt-5 {
-    transform: translateY(calc(1.5em - 3rem));
-}
-
-    
 /* Spinner */
 #spinner {
     opacity: 0;
@@ -571,6 +552,30 @@ textarea.form-control {
 .form-step.active {
     visibility: visible;
     opacity: 1;
+}
+
+
+/* Autocomplete Dropdown */
+.autocomplete-dropdown {
+    position: absolute;
+    position-anchor: var(--current-anchor);
+    
+    top: anchor(bottom);
+    left: anchor(left);
+    width: anchor-size(width);
+    
+    position-try-options: flip-block;
+    
+    z-index: 9999;
+    max-height: 250px;
+    overflow-y: auto;
+    display: none;
+}
+
+.autocomplete-dropdown .dropdown-item {
+    white-space: normal !important;
+    line-height: 1.4;
+    cursor: pointer;
 }
 
 
