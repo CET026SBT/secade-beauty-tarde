@@ -20,307 +20,144 @@ DROP DATABASE IF EXISTS `secade_beauty`;
 CREATE DATABASE IF NOT EXISTS `secade_beauty` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `secade_beauty`;
 
--- A despejar estrutura para tabela secade_beauty.agendamento
+
+-- ========================================================
+-- 1. DROP TABLES (Da mais dependente para a independente)
+-- ========================================================
+DROP TABLE IF EXISTS `feedback_cliente`;
+DROP TABLE IF EXISTS `fecho_caixa_diario`;
+DROP TABLE IF EXISTS `gorjeta`;
+DROP TABLE IF EXISTS `transacao_financeira`;
+DROP TABLE IF EXISTS `rota_funcionario`;
+DROP TABLE IF EXISTS `execucao_agendamento`;
+DROP TABLE IF EXISTS `agendamento_servico`;
 DROP TABLE IF EXISTS `agendamento`;
-CREATE TABLE IF NOT EXISTS `agendamento` (
+DROP TABLE IF EXISTS `servico_local`;
+DROP TABLE IF EXISTS `servico_foto`;
+DROP TABLE IF EXISTS `rota_ambulante`;
+DROP TABLE IF EXISTS `cliente_morada`;
+DROP TABLE IF EXISTS `funcionario_categoria`;
+DROP TABLE IF EXISTS `matriz_deslocacao`;
+DROP TABLE IF EXISTS `servico`;
+DROP TABLE IF EXISTS `funcionario`;
+DROP TABLE IF EXISTS `cliente`;
+DROP TABLE IF EXISTS `categoria_profissional`;
+DROP TABLE IF EXISTS `cidade`;
+DROP TABLE IF EXISTS `base_partida`;
+DROP TABLE IF EXISTS `utilizador`;
+
+
+-- ========================================================
+-- 2. CREATE TABLES & INSERTS (Da independente para a mais dependente)
+-- ========================================================
+
+-- --------------------------------------------------------
+-- Tabela: utilizador (Independente)
+-- --------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `utilizador` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `cliente_id` int NOT NULL,
-  `cliente_morada_id` int DEFAULT NULL,
-  `local_prestacao` enum('loja_fisica','carrinha_ambulante') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `data_hora_pretendida` datetime NOT NULL,
-  `estado_reserva` enum('pendente_aprovacao_viabilidade','confirmado','cancelado') COLLATE utf8mb4_unicode_ci DEFAULT 'pendente_aprovacao_viabilidade',
-  `modo_urgencia` tinyint(1) DEFAULT '0',
-  `valor_total` decimal(10,2) NOT NULL,
-  `sinal_pago` tinyint(1) DEFAULT '0',
-  `valor_sinal` decimal(10,2) DEFAULT '0.00',
+  `nome` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password_hash` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `telemovel` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nif` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tipo_perfil` enum('cliente','funcionario','gestor') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `criado_em` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `fk_agendamento_cliente` (`cliente_id`),
-  KEY `fk_agendamento_morada` (`cliente_morada_id`),
-  CONSTRAINT `fk_agendamento_cliente` FOREIGN KEY (`cliente_id`) REFERENCES `cliente` (`id`) ON DELETE RESTRICT,
-  CONSTRAINT `fk_agendamento_morada` FOREIGN KEY (`cliente_morada_id`) REFERENCES `cliente_morada` (`id`) ON DELETE SET NULL
+  UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- A despejar dados para tabela secade_beauty.agendamento: ~0 rows (aproximadamente)
-DELETE FROM `agendamento`;
+DELETE FROM `utilizador`;
 
--- A despejar estrutura para tabela secade_beauty.agendamento_servico
-DROP TABLE IF EXISTS `agendamento_servico`;
-CREATE TABLE IF NOT EXISTS `agendamento_servico` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `agendamento_id` int NOT NULL,
-  `servico_id` int NOT NULL,
-  `funcionario_id` int DEFAULT NULL,
-  `preco_praticado` decimal(10,2) NOT NULL,
-  `duracao_minutos` int NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_agend_serv_agendamento` (`agendamento_id`),
-  KEY `fk_agend_serv_servico` (`servico_id`),
-  KEY `fk_agend_serv_funcionario` (`funcionario_id`),
-  CONSTRAINT `fk_agend_serv_agendamento` FOREIGN KEY (`agendamento_id`) REFERENCES `agendamento` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_agend_serv_funcionario` FOREIGN KEY (`funcionario_id`) REFERENCES `funcionario` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `fk_agend_serv_servico` FOREIGN KEY (`servico_id`) REFERENCES `servico` (`id`) ON DELETE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- A despejar dados para tabela secade_beauty.agendamento_servico: ~0 rows (aproximadamente)
-DELETE FROM `agendamento_servico`;
-
--- A despejar estrutura para tabela secade_beauty.base_partida
-DROP TABLE IF EXISTS `base_partida`;
-CREATE TABLE IF NOT EXISTS `base_partida` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `nome` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `morada` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- A despejar dados para tabela secade_beauty.base_partida: ~1 rows (aproximadamente)
-DELETE FROM `base_partida`;
-INSERT INTO `base_partida` (`id`, `nome`, `morada`) VALUES
-	(1, 'Évora', 'Rua do Centro de Formação');
-
--- A despejar estrutura para tabela secade_beauty.categoria_profissional
-DROP TABLE IF EXISTS `categoria_profissional`;
-CREATE TABLE IF NOT EXISTS `categoria_profissional` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `nome` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `descricao` text COLLATE utf8mb4_unicode_ci,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `nome` (`nome`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- A despejar dados para tabela secade_beauty.categoria_profissional: ~3 rows (aproximadamente)
-DELETE FROM `categoria_profissional`;
-INSERT INTO `categoria_profissional` (`id`, `nome`, `descricao`) VALUES
-	(1, 'Cabelereiro', 'Tranças e Penteados'),
-	(2, 'Barbearia', 'Cortes'),
-	(3, 'Estética', 'Maquiagem, Manicure e limpeza facial');
-
--- A despejar estrutura para tabela secade_beauty.cidade
-DROP TABLE IF EXISTS `cidade`;
+-- --------------------------------------------------------
+-- Tabela: cidade (Independente)
+-- --------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `cidade` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `nome` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nome` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `nome` (`nome`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- A despejar dados para tabela secade_beauty.cidade: ~9 rows (aproximadamente)
 DELETE FROM `cidade`;
 INSERT INTO `cidade` (`id`, `nome`) VALUES
 	(1, 'Arraiolos'),
 	(2, 'Montemor-o-Novo'),
 	(3, 'Viana do Alentejo'),
 	(4, 'Reguengos de Monsaraz'),
-  (5, 'Redondo'),
+	(5, 'Redondo'),
 	(6, 'Vendas Novas'),
 	(7, 'Estremoz'),
 	(8, 'Vila Viçosa'),
-  (9, 'Mourão');
+	(9, 'Mourão'),
+	(10, 'Évora');
 
--- A despejar estrutura para tabela secade_beauty.cliente
-DROP TABLE IF EXISTS `cliente`;
+-- --------------------------------------------------------
+-- Tabela: base_partida (Independente)
+-- --------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `base_partida` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nome` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `morada` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DELETE FROM `base_partida`;
+INSERT INTO `base_partida` (`id`, `nome`, `morada`) VALUES
+	(1, 'Évora', 'Rua do Centro de Formação');
+
+-- --------------------------------------------------------
+-- Tabela: categoria_profissional (Independente)
+-- --------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `categoria_profissional` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nome` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `descricao` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `nome` (`nome`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DELETE FROM `categoria_profissional`;
+INSERT INTO `categoria_profissional` (`id`, `nome`, `descricao`) VALUES
+	(1, 'Cabelereiro', 'Tranças e Penteados'),
+	(2, 'Barbearia', 'Cortes'),
+	(3, 'Estética', 'Maquiagem, Manicure e limpeza facial');
+
+-- --------------------------------------------------------
+-- Tabela: cliente (Depende de: utilizador)
+-- --------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `cliente` (
   `id` int NOT NULL,
-  `morada` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `morada` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `telemovel_validado_otp` tinyint(1) DEFAULT '0',
   `data_registo` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_cliente_utilizador` FOREIGN KEY (`id`) REFERENCES `utilizador` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- A despejar dados para tabela secade_beauty.cliente: ~0 rows (aproximadamente)
 DELETE FROM `cliente`;
 
--- A despejar estrutura para tabela secade_beauty.cliente_morada
-DROP TABLE IF EXISTS `cliente_morada`;
-CREATE TABLE IF NOT EXISTS `cliente_morada` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `cliente_id` int NOT NULL,
-  `cidade_id` int NOT NULL,
-  `designacao` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT 'Casa',
-  `morada_completa` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `codigo_postal` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_cliente_morada_cliente` (`cliente_id`),
-  KEY `fk_cliente_morada_cidade` (`cidade_id`),
-  CONSTRAINT `fk_cliente_morada_cidade` FOREIGN KEY (`cidade_id`) REFERENCES `cidade` (`id`) ON DELETE RESTRICT,
-  CONSTRAINT `fk_cliente_morada_cliente` FOREIGN KEY (`cliente_id`) REFERENCES `cliente` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- A despejar dados para tabela secade_beauty.cliente_morada: ~0 rows (aproximadamente)
-DELETE FROM `cliente_morada`;
-
--- A despejar estrutura para tabela secade_beauty.execucao_agendamento
-DROP TABLE IF EXISTS `execucao_agendamento`;
-CREATE TABLE IF NOT EXISTS `execucao_agendamento` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `agendamento_id` int NOT NULL,
-  `rota_id` int DEFAULT NULL,
-  `data_hora_inicio_real` datetime DEFAULT NULL,
-  `data_hora_fim_real` datetime DEFAULT NULL,
-  `estado_execucao` enum('em_curso','concluido','no_show_cliente','cancelado_terreno') COLLATE utf8mb4_unicode_ci DEFAULT 'em_curso',
-  `observacoes_tecnico` text COLLATE utf8mb4_unicode_ci,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `agendamento_id` (`agendamento_id`),
-  KEY `fk_exec_rota` (`rota_id`),
-  CONSTRAINT `fk_exec_agendamento` FOREIGN KEY (`agendamento_id`) REFERENCES `agendamento` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_exec_rota` FOREIGN KEY (`rota_id`) REFERENCES `rota_ambulante` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- A despejar dados para tabela secade_beauty.execucao_agendamento: ~0 rows (aproximadamente)
-DELETE FROM `execucao_agendamento`;
-
--- A despejar estrutura para tabela secade_beauty.fecho_caixa_diario
-DROP TABLE IF EXISTS `fecho_caixa_diario`;
-CREATE TABLE IF NOT EXISTS `fecho_caixa_diario` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `data` date NOT NULL,
-  `funcionario_id` int NOT NULL,
-  `total_esperado_faturas` decimal(10,2) DEFAULT '0.00',
-  `total_recolhido_campo` decimal(10,2) DEFAULT '0.00',
-  `diferenca` decimal(10,2) DEFAULT '0.00',
-  `observacoes` text COLLATE utf8mb4_unicode_ci,
-  PRIMARY KEY (`id`),
-  KEY `fk_fecho_funcionario` (`funcionario_id`),
-  CONSTRAINT `fk_fecho_funcionario` FOREIGN KEY (`funcionario_id`) REFERENCES `funcionario` (`id`) ON DELETE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- A despejar dados para tabela secade_beauty.fecho_caixa_diario: ~0 rows (aproximadamente)
-DELETE FROM `fecho_caixa_diario`;
-
--- A despejar estrutura para tabela secade_beauty.feedback_cliente
-DROP TABLE IF EXISTS `feedback_cliente`;
-CREATE TABLE IF NOT EXISTS `feedback_cliente` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `execucao_agendamento_id` int NOT NULL,
-  `classificacao_estrelas` int DEFAULT NULL,
-  `comentario` text COLLATE utf8mb4_unicode_ci,
-  `data_feedback` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `execucao_agendamento_id` (`execucao_agendamento_id`),
-  CONSTRAINT `fk_feedback_execucao` FOREIGN KEY (`execucao_agendamento_id`) REFERENCES `execucao_agendamento` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `feedback_cliente_chk_1` CHECK ((`classificacao_estrelas` between 1 and 5))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- A despejar dados para tabela secade_beauty.feedback_cliente: ~0 rows (aproximadamente)
-DELETE FROM `feedback_cliente`;
-
--- A despejar estrutura para tabela secade_beauty.funcionario
-DROP TABLE IF EXISTS `funcionario`;
+-- --------------------------------------------------------
+-- Tabela: funcionario (Depende de: utilizador)
+-- --------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `funcionario` (
   `id` int NOT NULL,
-  `tipo_contrato` enum('efetivo_contratado','recibo_verde') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tipo_contrato` enum('efetivo_contratado','recibo_verde') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `salario_base` decimal(10,2) NOT NULL,
   `ativo` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_funcionario_utilizador` FOREIGN KEY (`id`) REFERENCES `utilizador` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- A despejar dados para tabela secade_beauty.funcionario: ~0 rows (aproximadamente)
 DELETE FROM `funcionario`;
 
--- A despejar estrutura para tabela secade_beauty.funcionario_categoria
-DROP TABLE IF EXISTS `funcionario_categoria`;
-CREATE TABLE IF NOT EXISTS `funcionario_categoria` (
-  `funcionario_id` int NOT NULL,
-  `categoria_id` int NOT NULL,
-  PRIMARY KEY (`funcionario_id`,`categoria_id`),
-  KEY `fk_func_cat_categoria` (`categoria_id`),
-  CONSTRAINT `fk_func_cat_categoria` FOREIGN KEY (`categoria_id`) REFERENCES `categoria_profissional` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_func_cat_funcionario` FOREIGN KEY (`funcionario_id`) REFERENCES `funcionario` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- A despejar dados para tabela secade_beauty.funcionario_categoria: ~0 rows (aproximadamente)
-DELETE FROM `funcionario_categoria`;
-
--- A despejar estrutura para tabela secade_beauty.gorjeta
-DROP TABLE IF EXISTS `gorjeta`;
-CREATE TABLE IF NOT EXISTS `gorjeta` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `agendamento_id` int NOT NULL,
-  `funcionario_id` int NOT NULL,
-  `valor` decimal(10,2) NOT NULL,
-  `data_registo` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `fk_gorjeta_agendamento` (`agendamento_id`),
-  KEY `fk_gorjeta_funcionario` (`funcionario_id`),
-  CONSTRAINT `fk_gorjeta_agendamento` FOREIGN KEY (`agendamento_id`) REFERENCES `agendamento` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_gorjeta_funcionario` FOREIGN KEY (`funcionario_id`) REFERENCES `funcionario` (`id`) ON DELETE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- A despejar dados para tabela secade_beauty.gorjeta: ~0 rows (aproximadamente)
-DELETE FROM `gorjeta`;
-
--- A despejar estrutura para tabela secade_beauty.matriz_deslocacao
-DROP TABLE IF EXISTS `matriz_deslocacao`;
-CREATE TABLE IF NOT EXISTS `matriz_deslocacao` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `base_partida_id` int NOT NULL,
-  `cidade_id` int NOT NULL,
-  `distancia_km` decimal(8,2) NOT NULL DEFAULT '0.00',
-  `tempo_estimado_minutos` int NOT NULL DEFAULT '0',
-  `custo_estimado_combustivel` decimal(10,2) NOT NULL DEFAULT '0.00',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_base_cidade` (`base_partida_id`,`cidade_id`),
-  KEY `fk_matriz_cidade` (`cidade_id`),
-  CONSTRAINT `fk_matriz_base` FOREIGN KEY (`base_partida_id`) REFERENCES `base_partida` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_matriz_cidade` FOREIGN KEY (`cidade_id`) REFERENCES `cidade` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- A despejar dados para tabela secade_beauty.matriz_deslocacao: ~9 rows (aproximadamente)
-DELETE FROM `matriz_deslocacao`;
-INSERT INTO `matriz_deslocacao` (`id`, `base_partida_id`, `cidade_id`, `distancia_km`, `tempo_estimado_minutos`, `custo_estimado_combustivel`) VALUES
-	(1, 1, 1, 45.00, 40, 6.75),
-	(2, 1, 2, 60.00, 50, 8.94),
-	(3, 1, 3, 60.00, 55, 8.94),
-	(4, 1, 4, 80.00, 70, 11.95),
-	(5, 1, 5, 75.00, 65, 11.22),
-	(6, 1, 6, 110.00, 80, 16.42),
-	(7, 1, 7, 95.00, 70, 14.23),
-	(8, 1, 8, 115.00, 85, 17.24),
-	(9, 1, 9, 110.00, 90, 16.42);
-
--- A despejar estrutura para tabela secade_beauty.rota_ambulante
-DROP TABLE IF EXISTS `rota_ambulante`;
-CREATE TABLE IF NOT EXISTS `rota_ambulante` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `data_rota` date NOT NULL,
-  `base_partida_id` int NOT NULL,
-  `cidade_id` int NOT NULL,
-  `estado_rota` enum('planeada','aprovada_viabilidade','cancelada_por_rentabilidade','em_execucao','concluida') COLLATE utf8mb4_unicode_ci DEFAULT 'planeada',
-  `custo_estimado_combustivel` decimal(10,2) DEFAULT '0.00',
-  `valor_rentabilidade_calculado` decimal(10,2) DEFAULT '0.00',
-  PRIMARY KEY (`id`),
-  KEY `fk_rota_base` (`base_partida_id`),
-  KEY `fk_rota_cidade` (`cidade_id`),
-  CONSTRAINT `fk_rota_base` FOREIGN KEY (`base_partida_id`) REFERENCES `base_partida` (`id`) ON DELETE RESTRICT,
-  CONSTRAINT `fk_rota_cidade` FOREIGN KEY (`cidade_id`) REFERENCES `cidade` (`id`) ON DELETE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- A despejar dados para tabela secade_beauty.rota_ambulante: ~0 rows (aproximadamente)
-DELETE FROM `rota_ambulante`;
-
--- A despejar estrutura para tabela secade_beauty.rota_funcionario
-DROP TABLE IF EXISTS `rota_funcionario`;
-CREATE TABLE IF NOT EXISTS `rota_funcionario` (
-  `rota_id` int NOT NULL,
-  `funcionario_id` int NOT NULL,
-  PRIMARY KEY (`rota_id`,`funcionario_id`),
-  KEY `fk_rota_func_funcionario` (`funcionario_id`),
-  CONSTRAINT `fk_rota_func_funcionario` FOREIGN KEY (`funcionario_id`) REFERENCES `funcionario` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_rota_func_rota` FOREIGN KEY (`rota_id`) REFERENCES `rota_ambulante` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- A despejar dados para tabela secade_beauty.rota_funcionario: ~0 rows (aproximadamente)
-DELETE FROM `rota_funcionario`;
-
--- A despejar estrutura para tabela secade_beauty.servico
-DROP TABLE IF EXISTS `servico`;
+-- --------------------------------------------------------
+-- Tabela: servico (Depende de: categoria_profissional)
+-- --------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `servico` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `nome` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `descricao` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nome` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `descricao` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `categoria_id` int NOT NULL,
   `duracao_estimada_minutos` int NOT NULL,
   `preco_base` decimal(10,2) NOT NULL,
@@ -330,7 +167,6 @@ CREATE TABLE IF NOT EXISTS `servico` (
   CONSTRAINT `fk_servico_categoria` FOREIGN KEY (`categoria_id`) REFERENCES `categoria_profissional` (`id`) ON DELETE RESTRICT
 ) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- A despejar dados para tabela secade_beauty.servico: ~35 rows (aproximadamente)
 DELETE FROM `servico`;
 INSERT INTO `servico` (`id`, `nome`, `descricao`, `categoria_id`, `duracao_estimada_minutos`, `preco_base`, `requer_espaco_fisico`) VALUES
 	(1, 'Box Braids', 'Serviço de tranças Box Braids.', 1, 240, 32.52, 0),
@@ -369,12 +205,98 @@ INSERT INTO `servico` (`id`, `nome`, `descricao`, `categoria_id`, `duracao_estim
 	(34, 'Limpeza Facial', 'Limpeza facial.', 3, 60, 24.39, 1),
 	(35, 'Design de Sobrancelha com Linha', 'Design de sobrancelhas com linha.', 3, 30, 8.13, 0);
 
--- A despejar estrutura para tabela secade_beauty.servico_foto
-DROP TABLE IF EXISTS `servico_foto`;
+-- --------------------------------------------------------
+-- Tabela: matriz_deslocacao (Depende de: base_partida, cidade)
+-- --------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `matriz_deslocacao` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `base_partida_id` int NOT NULL,
+  `cidade_id` int NOT NULL,
+  `distancia_km` decimal(8,2) NOT NULL DEFAULT '0.00',
+  `tempo_estimado_minutos` int NOT NULL DEFAULT '0',
+  `custo_estimado_combustivel` decimal(10,2) NOT NULL DEFAULT '0.00',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_base_cidade` (`base_partida_id`,`cidade_id`),
+  KEY `fk_matriz_cidade` (`cidade_id`),
+  CONSTRAINT `fk_matriz_base` FOREIGN KEY (`base_partida_id`) REFERENCES `base_partida` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_matriz_cidade` FOREIGN KEY (`cidade_id`) REFERENCES `cidade` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DELETE FROM `matriz_deslocacao`;
+INSERT INTO `matriz_deslocacao` (`id`, `base_partida_id`, `cidade_id`, `distancia_km`, `tempo_estimado_minutos`, `custo_estimado_combustivel`) VALUES
+	(1, 1, 1, 45.00, 40, 6.75),
+	(2, 1, 2, 60.00, 50, 8.94),
+	(3, 1, 3, 60.00, 55, 8.94),
+	(4, 1, 4, 80.00, 70, 11.95),
+	(5, 1, 5, 75.00, 65, 11.22),
+	(6, 1, 6, 110.00, 80, 16.42),
+	(7, 1, 7, 95.00, 70, 14.23),
+	(8, 1, 8, 115.00, 85, 17.24),
+	(9, 1, 9, 110.00, 90, 16.42);
+
+-- --------------------------------------------------------
+-- Tabela: cliente_morada (Depende de: cliente, cidade)
+-- --------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `cliente_morada` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `cliente_id` int NOT NULL,
+  `cidade_id` int NOT NULL,
+  `designacao` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'Casa',
+  `rua` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `numero_porta` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `andar_bloco` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `codigo_postal` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `distrito` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_cliente_morada_cliente` (`cliente_id`),
+  KEY `fk_cliente_morada_cidade` (`cidade_id`),
+  CONSTRAINT `fk_cliente_morada_cidade` FOREIGN KEY (`cidade_id`) REFERENCES `cidade` (`id`) ON DELETE RESTRICT,
+  CONSTRAINT `fk_cliente_morada_cliente` FOREIGN KEY (`cliente_id`) REFERENCES `cliente` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DELETE FROM `cliente_morada`;
+
+-- --------------------------------------------------------
+-- Tabela: funcionario_categoria (Depende de: funcionario, categoria_profissional)
+-- --------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `funcionario_categoria` (
+  `funcionario_id` int NOT NULL,
+  `categoria_id` int NOT NULL,
+  PRIMARY KEY (`funcionario_id`,`categoria_id`),
+  KEY `fk_func_cat_categoria` (`categoria_id`),
+  CONSTRAINT `fk_func_cat_categoria` FOREIGN KEY (`categoria_id`) REFERENCES `categoria_profissional` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_func_cat_funcionario` FOREIGN KEY (`funcionario_id`) REFERENCES `funcionario` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DELETE FROM `funcionario_categoria`;
+
+-- --------------------------------------------------------
+-- Tabela: rota_ambulante (Depende de: base_partida, cidade)
+-- --------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `rota_ambulante` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `data_rota` date NOT NULL,
+  `base_partida_id` int NOT NULL,
+  `cidade_id` int NOT NULL,
+  `estado_rota` enum('planeada','aprovada_viabilidade','cancelada_por_rentabilidade','em_execucao','concluida') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'planeada',
+  `custo_estimado_combustivel` decimal(10,2) DEFAULT '0.00',
+  `valor_rentabilidade_calculado` decimal(10,2) DEFAULT '0.00',
+  PRIMARY KEY (`id`),
+  KEY `fk_rota_base` (`base_partida_id`),
+  KEY `fk_rota_cidade` (`cidade_id`),
+  CONSTRAINT `fk_rota_base` FOREIGN KEY (`base_partida_id`) REFERENCES `base_partida` (`id`) ON DELETE RESTRICT,
+  CONSTRAINT `fk_rota_cidade` FOREIGN KEY (`cidade_id`) REFERENCES `cidade` (`id`) ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DELETE FROM `rota_ambulante`;
+
+-- --------------------------------------------------------
+-- Tabela: servico_foto (Depende de: servico)
+-- --------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `servico_foto` (
   `id` int NOT NULL AUTO_INCREMENT,
   `servico_id` int NOT NULL,
-  `url_foto` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `url_foto` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `destaque` tinyint(1) DEFAULT '0',
   `ordem_exibicao` int DEFAULT '0',
   PRIMARY KEY (`id`),
@@ -382,15 +304,15 @@ CREATE TABLE IF NOT EXISTS `servico_foto` (
   CONSTRAINT `fk_servico_foto_servico` FOREIGN KEY (`servico_id`) REFERENCES `servico` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- A despejar dados para tabela secade_beauty.servico_foto: ~0 rows (aproximadamente)
 DELETE FROM `servico_foto`;
 
--- A despejar estrutura para tabela secade_beauty.servico_local
-DROP TABLE IF EXISTS `servico_local`;
+-- --------------------------------------------------------
+-- Tabela: servico_local (Depende de: servico)
+-- --------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `servico_local` (
   `id` int NOT NULL AUTO_INCREMENT,
   `servico_id` int NOT NULL,
-  `tipo_local` enum('loja_fisica','carrinha_ambulante') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tipo_local` enum('loja_fisica','carrinha_ambulante') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `disponivel` tinyint(1) DEFAULT '1',
   `preco_especifico` decimal(10,2) DEFAULT NULL,
   `ajuste_logistico` decimal(10,2) DEFAULT '0.00',
@@ -399,20 +321,99 @@ CREATE TABLE IF NOT EXISTS `servico_local` (
   CONSTRAINT `fk_servico_local_servico` FOREIGN KEY (`servico_id`) REFERENCES `servico` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- A despejar dados para tabela secade_beauty.servico_local: ~0 rows (aproximadamente)
 DELETE FROM `servico_local`;
 
--- A despejar estrutura para tabela secade_beauty.transacao_financeira
-DROP TABLE IF EXISTS `transacao_financeira`;
+-- --------------------------------------------------------
+-- Tabela: agendamento (Depende de: cliente, cliente_morada)
+-- --------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `agendamento` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `cliente_id` int NOT NULL,
+  `cliente_morada_id` int DEFAULT NULL,
+  `local_prestacao` enum('loja_fisica','carrinha_ambulante') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `data_hora_pretendida` datetime NOT NULL,
+  `estado_reserva` enum('pendente_aprovacao_viabilidade','confirmado','cancelado') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'pendente_aprovacao_viabilidade',
+  `modo_urgencia` tinyint(1) DEFAULT '0',
+  `valor_total` decimal(10,2) NOT NULL,
+  `sinal_pago` tinyint(1) DEFAULT '0',
+  `valor_sinal` decimal(10,2) DEFAULT '0.00',
+  `criado_em` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `fk_agendamento_cliente` (`cliente_id`),
+  KEY `fk_agendamento_morada` (`cliente_morada_id`),
+  CONSTRAINT `fk_agendamento_cliente` FOREIGN KEY (`cliente_id`) REFERENCES `cliente` (`id`) ON DELETE RESTRICT,
+  CONSTRAINT `fk_agendamento_morada` FOREIGN KEY (`cliente_morada_id`) REFERENCES `cliente_morada` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DELETE FROM `agendamento`;
+
+-- --------------------------------------------------------
+-- Tabela: agendamento_servico (Depende de: agendamento, servico, funcionario)
+-- --------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `agendamento_servico` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `agendamento_id` int NOT NULL,
+  `servico_id` int NOT NULL,
+  `funcionario_id` int DEFAULT NULL,
+  `preco_praticado` decimal(10,2) NOT NULL,
+  `duracao_minutos` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_agend_serv_agendamento` (`agendamento_id`),
+  KEY `fk_agend_serv_servico` (`servico_id`),
+  KEY `fk_agend_serv_funcionario` (`funcionario_id`),
+  CONSTRAINT `fk_agend_serv_agendamento` FOREIGN KEY (`agendamento_id`) REFERENCES `agendamento` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_agend_serv_funcionario` FOREIGN KEY (`funcionario_id`) REFERENCES `funcionario` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_agend_serv_servico` FOREIGN KEY (`servico_id`) REFERENCES `servico` (`id`) ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DELETE FROM `agendamento_servico`;
+
+-- --------------------------------------------------------
+-- Tabela: execucao_agendamento (Depende de: agendamento, rota_ambulante)
+-- --------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `execucao_agendamento` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `agendamento_id` int NOT NULL,
+  `rota_id` int DEFAULT NULL,
+  `data_hora_inicio_real` datetime DEFAULT NULL,
+  `data_hora_fim_real` datetime DEFAULT NULL,
+  `estado_execucao` enum('em_curso','concluido','no_show_cliente','cancelado_terreno') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'em_curso',
+  `observacoes_tecnico` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `agendamento_id` (`agendamento_id`),
+  KEY `fk_exec_rota` (`rota_id`),
+  CONSTRAINT `fk_exec_agendamento` FOREIGN KEY (`agendamento_id`) REFERENCES `agendamento` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_exec_rota` FOREIGN KEY (`rota_id`) REFERENCES `rota_ambulante` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DELETE FROM `execucao_agendamento`;
+
+-- --------------------------------------------------------
+-- Tabela: rota_funcionario (Depende de: rota_ambulante, funcionario)
+-- --------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `rota_funcionario` (
+  `rota_id` int NOT NULL,
+  `funcionario_id` int NOT NULL,
+  PRIMARY KEY (`rota_id`,`funcionario_id`),
+  KEY `fk_rota_func_funcionario` (`funcionario_id`),
+  CONSTRAINT `fk_rota_func_funcionario` FOREIGN KEY (`funcionario_id`) REFERENCES `funcionario` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_rota_func_rota` FOREIGN KEY (`rota_id`) REFERENCES `rota_ambulante` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DELETE FROM `rota_funcionario`;
+
+-- --------------------------------------------------------
+-- Tabela: transacao_financeira (Depende de: agendamento, funcionario)
+-- --------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `transacao_financeira` (
   `id` int NOT NULL AUTO_INCREMENT,
   `agendamento_id` int NOT NULL,
   `funcionario_id` int NOT NULL,
-  `metodo_pagamento` enum('numerario_dinheiro','mb_way','multibanco_pos') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `tipo_transacao` enum('sinal_inicial','restante_90_porcento','pagamento_integral') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `metodo_pagamento` enum('numerario_dinheiro','mb_way','multibanco_pos') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tipo_transacao` enum('sinal_inicial','restante_90_porcento','pagamento_integral') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `valor` decimal(10,2) NOT NULL,
   `estado_offline` tinyint(1) DEFAULT '0',
-  `recibo_manual_numero` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `recibo_manual_numero` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `data_transacao` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `fk_transacao_agendamento` (`agendamento_id`),
@@ -421,26 +422,61 @@ CREATE TABLE IF NOT EXISTS `transacao_financeira` (
   CONSTRAINT `fk_transacao_funcionario` FOREIGN KEY (`funcionario_id`) REFERENCES `funcionario` (`id`) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- A despejar dados para tabela secade_beauty.transacao_financeira: ~0 rows (aproximadamente)
 DELETE FROM `transacao_financeira`;
 
--- A despejar estrutura para tabela secade_beauty.utilizador
-DROP TABLE IF EXISTS `utilizador`;
-CREATE TABLE IF NOT EXISTS `utilizador` (
+-- --------------------------------------------------------
+-- Tabela: gorjeta (Depende de: agendamento, funcionario)
+-- --------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `gorjeta` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `nome` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `password_hash` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `telefone` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `nif` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `tipo_perfil` enum('cliente','funcionario','gestor') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `criado_em` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `agendamento_id` int NOT NULL,
+  `funcionario_id` int NOT NULL,
+  `valor` decimal(10,2) NOT NULL,
+  `data_registo` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `email` (`email`)
+  KEY `fk_gorjeta_agendamento` (`agendamento_id`),
+  KEY `fk_gorjeta_funcionario` (`funcionario_id`),
+  CONSTRAINT `fk_gorjeta_agendamento` FOREIGN KEY (`agendamento_id`) REFERENCES `agendamento` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_gorjeta_funcionario` FOREIGN KEY (`funcionario_id`) REFERENCES `funcionario` (`id`) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- A despejar dados para tabela secade_beauty.utilizador: ~0 rows (aproximadamente)
-DELETE FROM `utilizador`;
+DELETE FROM `gorjeta`;
+
+-- --------------------------------------------------------
+-- Tabela: feedback_cliente (Depende de: execucao_agendamento)
+-- --------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `feedback_cliente` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `execucao_agendamento_id` int NOT NULL,
+  `classificacao_estrelas` int DEFAULT NULL,
+  `comentario` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `data_feedback` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `execucao_agendamento_id` (`execucao_agendamento_id`),
+  CONSTRAINT `fk_feedback_execucao` FOREIGN KEY (`execucao_agendamento_id`) REFERENCES `execucao_agendamento` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `feedback_cliente_chk_1` CHECK ((`classificacao_estrelas` between 1 and 5))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DELETE FROM `feedback_cliente`;
+
+-- --------------------------------------------------------
+-- Tabela: fecho_caixa_diario (Depende de: funcionario)
+-- --------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `fecho_caixa_diario` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `data` date NOT NULL,
+  `funcionario_id` int NOT NULL,
+  `total_esperado_faturas` decimal(10,2) DEFAULT '0.00',
+  `total_recolhido_campo` decimal(10,2) DEFAULT '0.00',
+  `diferenca` decimal(10,2) DEFAULT '0.00',
+  `observacoes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  PRIMARY KEY (`id`),
+  KEY `fk_fecho_funcionario` (`funcionario_id`),
+  CONSTRAINT `fk_fecho_funcionario` FOREIGN KEY (`funcionario_id`) REFERENCES `funcionario` (`id`) ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DELETE FROM `fecho_caixa_diario`;
+
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
