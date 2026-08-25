@@ -15,6 +15,7 @@ body {
     min-height: 100vh;
 }
 
+/* > SVG Height to Font-Size */
 img.h6,
 img.h5,
 img.h4,
@@ -24,13 +25,25 @@ img.h1 {
     height: 1em;
 }
 
+/* > Squared Checboxes */
 .form-check > .form-check-input[type="checkbox"] {
     border-radius: 0;
 }
 
+/* > Default Textarea Height */
 textarea.form-control {
     height: 150px;
 }
+
+/* > Form Field Invalid Margin Adjustment */
+form.was-validated .row > *:has(:invalid),
+form .row > *:has(:user-invalid),
+form .row > *:has(.is-invalid),
+form .row > *:has([aria-invalid="true"]) {
+    /*margin-bottom: calc(-1.5rem * 0.875);*/
+    margin-bottom: -1.55rem;
+}
+
 
 /* Spinner */
 #spinner {
@@ -51,6 +64,7 @@ textarea.form-control {
     height: 3rem;
 }
 
+
 /* Back to Top */
 .back-to-top {
     position: fixed !important;
@@ -60,6 +74,7 @@ textarea.form-control {
     z-index: 99;
     transition: .5s, opacity 0ms !important;
 }
+
 
 /* Fonts */
 .font-work-sans {
@@ -514,6 +529,55 @@ textarea.form-control {
 #newsletterForm .email {
     height: 60px;
 }
+
+
+/* Forms with Steps */
+.form-steps-container {
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 0.4s ease-in-out;
+}
+
+.form-step {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    grid-row: 1;
+    grid-column: 1;
+    display: flex;
+    flex-flow: column;
+    justify-content: space-between;
+}
+
+.form-step.active {
+    visibility: visible;
+    opacity: 1;
+}
+
+
+/* Autocomplete Dropdown */
+.autocomplete-dropdown {
+    position: absolute;
+    position-anchor: var(--current-anchor);
+    
+    top: anchor(bottom);
+    left: anchor(left);
+    width: anchor-size(width);
+    
+    position-try-options: flip-block;
+    
+    z-index: 9999;
+    max-height: 250px;
+    overflow-y: auto;
+    display: none;
+}
+
+.autocomplete-dropdown .dropdown-item {
+    white-space: normal !important;
+    line-height: 1.4;
+    cursor: pointer;
+}
+
 
 /* Login & Register */
 .auth-left-img {

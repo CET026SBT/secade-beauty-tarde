@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../includes/config.php';
+register_script('components/hero');
 ?>
 
 <div class="container-fluid p-0 hero-header bg-light mb-5">
