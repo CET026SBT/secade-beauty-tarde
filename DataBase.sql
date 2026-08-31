@@ -75,24 +75,25 @@ DELETE FROM `utilizador`;
 CREATE TABLE IF NOT EXISTS `cidade` (
   `id` int NOT NULL AUTO_INCREMENT,
   `nome` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `distrito` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `nome` (`nome`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 DELETE FROM `cidade`;
-INSERT INTO `cidade` (`id`, `nome`) VALUES
-	(1, 'Arraiolos'),
-	(2, 'Montemor-o-Novo'),
-	(3, 'Viana do Alentejo'),
-	(4, 'Reguengos de Monsaraz'),
-	(5, 'Redondo'),
-	(6, 'Vendas Novas'),
-	(7, 'Estremoz'),
-	(8, 'Vila Viçosa'),
-	(9, 'Mourão'),
-	(10, 'Évora');
+INSERT INTO `cidade` (`id`, `nome`, `distrito`) VALUES
+	(1, 'Arraiolos', 'Évora'),
+	(2, 'Montemor-o-Novo', 'Évora'),
+	(3, 'Viana do Alentejo', 'Évora'),
+	(4, 'Reguengos de Monsaraz', 'Évora'),
+	(5, 'Redondo', 'Évora'),
+	(6, 'Vendas Novas', 'Évora'),
+	(7, 'Estremoz', 'Évora'),
+	(8, 'Vila Viçosa', 'Évora'),
+	(9, 'Mourão', 'Évora'),
+	(10, 'Évora', 'Évora');
 
--- --------------------------------------------------------
+-- --------------------------------------------------------secade_beautycidadecliente_morada
 -- Tabela: base_partida (Independente)
 -- --------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `base_partida` (
@@ -144,6 +145,7 @@ CREATE TABLE IF NOT EXISTS `funcionario` (
   `id` int NOT NULL,
   `tipo_contrato` enum('efetivo_contratado','recibo_verde') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `salario_base` decimal(10,2) NOT NULL,
+  `cc` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `ativo` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_funcionario_utilizador` FOREIGN KEY (`id`) REFERENCES `utilizador` (`id`) ON DELETE CASCADE
@@ -246,7 +248,6 @@ CREATE TABLE IF NOT EXISTS `cliente_morada` (
   `numero_porta` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `andar_bloco` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `codigo_postal` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `distrito` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_cliente_morada_cliente` (`cliente_id`),
   KEY `fk_cliente_morada_cidade` (`cidade_id`),

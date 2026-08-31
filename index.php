@@ -1,14 +1,45 @@
 <?php
-$pageTitle = "Página Inicial";
-$currentPage = "index.php";
 
-include_once __DIR__ . '/includes/header.php';
-include_once __DIR__ . '/includes/spinner.php';
-include_once __DIR__ . '/includes/navbar.php';
+require_once __DIR__ . '/app/config/config.php';
 
-include_once __DIR__ . '/components/hero.php';
-include_once __DIR__ . '/components/about.php';
-include_once __DIR__ . '/components/services.php';
-include_once __DIR__ . '/components/testimonial.php';
+$requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$baseUrlParsed = parse_url(BASE_URL, PHP_URL_PATH);
+$basePath = $baseUrlParsed ? rtrim($baseUrlParsed, '/') : '';
 
-include_once __DIR__ . '/includes/footer.php';
+$path = str_replace($basePath, '', $requestUri);
+$path = trim($path, '/');
+
+if ($path === 'api' || isset($_GET['action'])) {
+    require_once APP_PATH . '/config/api.php';
+    exit;
+}
+
+$routes = [
+    // Páginas Públicas / Institucionais
+    ''                 => ROOT_PATH . '/modules/main/index.php',
+    'home'             => ROOT_PATH . '/modules/main/index.php',
+    'sobre'            => ROOT_PATH . '/modules/main/about.php',
+    'contacto'         => ROOT_PATH . '/modules/main/contact.php',
+    'servicos'         => ROOT_PATH . '/modules/main/service.php',
+
+    // Autenticação e Gestão de Conta
+    'login'            => ROOT_PATH . '/modules/main/login.php',
+    'registo'          => ROOT_PATH . '/modules/main/register.php',
+    'recuperar-passe'  => ROOT_PATH . '/modules/main/recover_password.php',
+
+    // Erro 404
+    '404'              => ROOT_PATH . '/modules/main/404.php'
+];
+
+if (array_key_exists($path, $routes)) {
+    require_once $routes[$path];
+} else {
+    http_response_code(404);
+    $file404 = ROOT_PATH . '/modules/main/404.php';
+    if (file_exists($file404)) {
+        require_once $file404;
+    } else {
+        echo "<h1>404 - Página não encontrada</h1>";
+    }
+    exit;
+}
