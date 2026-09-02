@@ -2,9 +2,13 @@ const customerValidators = {
     morada(val, { fields, data }) {
         if (val === '') return "A morada é obrigatória.";
         if (!data?.fromAutocomplete) return "Por favor, selecione uma morada válida a partir das sugestões da lista.";
-        if (!registerCustomer.supportedCities.includes(fields.cidade)) {
-            return "Lamentamos, mas de momento apenas aceitamos moradas nas cidades suportadas.";
+        if (!customerRegister.supportedCities.includes(fields.cidade)) {
+            return `Lamentamos, mas de momento apenas aceitamos moradas nas cidades suportadas. (${customerRegister.supportedCities.join(', ')})`;
         }
+    },
+    codigoPostal(val) {
+        if (val === '') return 'O Código Postal é obrigatório';
+        if (!this.isZipCode(val)) return 'Código postal inválido (formato 0000-000).';
     },
     numPorta(val) {
         return val === '' && 'Obrigatório.';

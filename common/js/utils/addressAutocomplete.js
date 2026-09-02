@@ -73,7 +73,8 @@ class AddressAutocomplete {
             
             this.$dropdown.hide().empty();
 
-            this.#$allFields.data(selectedData);
+            const data = { fromAutocomplete: true };
+            this.#$allFields.data(data);
             
             if (typeof this.onSelect === 'function') {
                 this.onSelect(selectedData);

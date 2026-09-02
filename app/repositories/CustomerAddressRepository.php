@@ -9,7 +9,7 @@ class CustomerAddressRepository extends BaseRepository {
             INSERT INTO cliente_morada (cliente_id, cidade_id, designacao, rua, numero_porta, andar_bloco, codigo_postal) 
             VALUES (:cliente_id, :cidade_id, :designacao, :rua, :numero_porta, :andar_bloco, :codigo_postal)
         ");
-        
+
         $stmt->execute([
             'cliente_id'    => $clienteId,
             'cidade_id'     => $cidadeId,

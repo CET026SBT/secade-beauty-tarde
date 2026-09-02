@@ -1,6 +1,6 @@
 <?php
 register_script('utils/addressAutocomplete', 'common');
-register_script('components/registerCustomer', 'common');
+register_script('components/customerRegister', 'common');
 ?>
 
 <div class="container-fluid px-0 d-flex flex-fill h-100">
@@ -32,7 +32,6 @@ register_script('components/registerCustomer', 'common');
                                         <label>Nome Completo*</label>
                                         <div class="invalid-feedback mt-0 mb-1"></div>
                                     </div>
-
                                 </div>
 
                                 <div class="col-12">

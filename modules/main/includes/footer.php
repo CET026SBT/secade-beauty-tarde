@@ -34,6 +34,12 @@ if (!isset($showMainFooter) || $showMainFooter === true) {
     <script src="<?= BASE_URL ?>/common/js/utils/domUtils.js"></script>
     <script src="<?= BASE_URL ?>/common/js/utils/formUtils.js"></script>
 
+    <!-- Form Validators -->
+    <script src="<?= BASE_URL ?>/common/js/validators/user.validator.js"></script> 
+    <script src="<?= BASE_URL ?>/common/js/validators/customer.validator.js"></script>
+    <script src="<?= BASE_URL ?>/common/js/validators/employee.validator.js"></script>
+    <script src="<?= BASE_URL ?>/common/js/validators/manager.validator.js"></script>
+
     <!-- Main Javascript -->
     <script src="<?= BASE_URL ?>/modules/main/js/main.js"></script>
 

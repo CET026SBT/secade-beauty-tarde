@@ -114,6 +114,7 @@ const [FormValidators, Form] = (() => {
         $form;
         validators;
         fields;
+        #fieldsRaw;
         #submit;
         
         constructor(selector, { validators, submit }) {
@@ -131,6 +132,7 @@ const [FormValidators, Form] = (() => {
                 set: (target, prop, value) => {
                     const $field = this.$form.find(`[name="${prop}"]`);
                     if ($field.length > 0) $field.val(value).trigger('change');
+                    else this.#fieldsRaw[prop] = value;
                     return true;
                 }
             });
@@ -158,7 +160,7 @@ const [FormValidators, Form] = (() => {
         }
 
         validate() {
-            const $group = this.#getActiveStep().add(this.$form).eq(0);
+            const $group = this.#getActiveStep().eq(0) || this.$form;
             let isValid = true;
 
             for (const field of Object.keys(this.validators)) {
@@ -191,9 +193,9 @@ const [FormValidators, Form] = (() => {
         }
 
         submit() {
-            const $steps = this.$form('.form-step');
+            const $steps = this.$form.find('.form-step');
             
-            if (this.#getActiveStepIndex() !== $steps.length - 1 || !this.validateStep()) {
+            if (this.#getActiveStepIndex() !== $steps.length - 1 || !this.validate()) {
                 return false;
             }
 

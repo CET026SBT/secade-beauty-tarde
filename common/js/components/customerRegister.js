@@ -7,7 +7,14 @@ const customerRegister = {
             ...customerValidators
         },
         submit(payload) {
-            API.auth.registerCustomer(payload);
+            API.auth.register(payload)
+                .done(response => {
+                    location.href = `${BASE_URL}/login`;
+                })
+                .fail(response => {
+                    debugger;
+                    console.log(response);
+                });
         }
     }),
     init() {
@@ -16,13 +23,13 @@ const customerRegister = {
             formSelector: form.selector,
             savedAddresses: customerAddresses,
             onSelect(selectedData) {
-                form.fields.morada = this.formatAddressInputText(selectedData);
-                form.fields.moradaRaw = selectedData.morada;
                 form.fields.numPorta = selectedData.numPorta;
                 form.fields.andarBloco = selectedData.andarBloco;
                 form.fields.codigoPostal = selectedData.codigoPostal;
                 form.fields.cidade = selectedData.cidade;
                 form.fields.distrito = selectedData.distrito;
+                form.fields.moradaRaw = selectedData.morada;
+                form.fields.morada = this.formatAddressInputText(selectedData);
             }
         });
     }

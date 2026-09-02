@@ -2,16 +2,19 @@
 
 require_once __DIR__ . '/BaseController.php';
 require_once APP_PATH . '/services/AuthService.php';
+require_once APP_PATH . '/services/CustomerService.php';
 
 class AuthController extends BaseController {
     private $authService;
+    private $customerService;
 
     public function __construct() {
         $this->authService = new AuthService();
+        $this->customerService = new CustomerService();
     }
 
     public function register() {
-        return $this->authService->register($this->getRequestData());
+        return $this->customerService->registerCustomer($this->getRequestData());
     }
 
     public function login() {

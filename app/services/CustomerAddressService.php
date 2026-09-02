@@ -25,7 +25,7 @@ class CustomerAddressService extends BaseService {
 
     public function addAddress(int $userId, array $data): array {
         $this->validateInput($data);
-        $this->addressRepository->create($userId, $data);
+        $this->addressRepository->create($userId, 10, $data);
 
         return [ 'message' => 'Morada adicionada ao cliente com sucesso!' ];
     }

@@ -7,7 +7,7 @@ class ApiClient {
         this.#cache = new Map();
     }
 
-    async get(endpoint, ttlSeconds=60) {
+    get(endpoint, ttlSeconds=60) {
         const now = Date.now();
 
         if (this.#cache.has(endpoint)) {
@@ -35,7 +35,7 @@ class ApiClient {
             });
     }
 
-    async post(endpoint, data) {
+    post(endpoint, data) {
         return $.ajax({
                 url: `${this.baseUrl}${endpoint}`,
                 type: 'POST',

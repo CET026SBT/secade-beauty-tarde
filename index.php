@@ -20,7 +20,7 @@ $routes = [
     'home'             => ROOT_PATH . '/modules/main/index.php',
     'sobre'            => ROOT_PATH . '/modules/main/about.php',
     'contacto'         => ROOT_PATH . '/modules/main/contact.php',
-    'servicos'         => ROOT_PATH . '/modules/main/service.php',
+    'servicos'         => ROOT_PATH . '/modules/main/services.php',
 
     // Autenticação e Gestão de Conta
     'login'            => ROOT_PATH . '/modules/main/login.php',
