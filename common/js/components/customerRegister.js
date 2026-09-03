@@ -9,7 +9,7 @@ const customerRegister = {
         submit(payload) {
             API.auth.register(payload)
                 .done(response => {
-                    location.href = `${BASE_URL}/login`;
+                    location.href = `${BASE_URL ?? ''}/login`;
                 })
                 .fail(response => {
                     debugger;

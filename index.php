@@ -16,19 +16,16 @@ if ($path === 'api' || isset($_GET['action'])) {
 
 $routes = [
     // Páginas Públicas / Institucionais
-    ''                 => ROOT_PATH . '/modules/main/index.php',
-    'home'             => ROOT_PATH . '/modules/main/index.php',
+    ''                 => ROOT_PATH . '/modules/main/home.php',
+    'home'             => ROOT_PATH . '/modules/main/home.php',
     'sobre'            => ROOT_PATH . '/modules/main/about.php',
     'contacto'         => ROOT_PATH . '/modules/main/contact.php',
-    'servicos'         => ROOT_PATH . '/modules/main/services.php',
+    'servicos'         => ROOT_PATH . '/modules/main/service_categories.php',
 
     // Autenticação e Gestão de Conta
     'login'            => ROOT_PATH . '/modules/main/login.php',
     'registo'          => ROOT_PATH . '/modules/main/register.php',
-    'recuperar-passe'  => ROOT_PATH . '/modules/main/recover_password.php',
-
-    // Erro 404
-    '404'              => ROOT_PATH . '/modules/main/404.php'
+    'recuperar-passe'  => ROOT_PATH . '/modules/main/recover_password.php'
 ];
 
 if (array_key_exists($path, $routes)) {

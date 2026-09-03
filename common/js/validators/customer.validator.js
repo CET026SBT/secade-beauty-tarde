@@ -14,7 +14,7 @@ const customerValidators = {
         return val === '' && 'Obrigatório.';
     },
     termosCondicoes(val) {
-        return !val && 'Deve aceitar os termos e condições para continuar.';
+        return !val && 'Deve aceitar os termos e condições para continuar.'; 
     },
     cc(val) {
         if (val === '') return "O Cartão de Cidadão é obrigatório.";

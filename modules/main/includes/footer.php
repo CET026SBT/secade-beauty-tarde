@@ -18,37 +18,31 @@ if (!isset($showMainFooter) || $showMainFooter === true) {
     <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
 
     <!-- JavaScript Libraries -->
-    <script src="<?= BASE_URL ?>/common/lib/jquery/jquery.3.6.1.min.js"></script>
-    <script src="<?= BASE_URL ?>/common/lib/bootstrap/bootstrap.5.0.0.min.js"></script>
-    <script src="<?= BASE_URL ?>/common/lib/wow/wow.min.js"></script>
-    <script src="<?= BASE_URL ?>/common/lib/easing/easing.min.js"></script>
-    <script src="<?= BASE_URL ?>/common/lib/waypoints/waypoints.min.js"></script>
-    <script src="<?= BASE_URL ?>/common/lib/counterup/counterup.min.js"></script>
-    <script src="<?= BASE_URL ?>/common/lib/owlcarousel/owl.carousel.min.js"></script>
+    <script type="text/javascript" src="<?= BASE_URL ?>/common/lib/jquery/jquery.3.6.1.min.js"></script>
+    <script type="text/javascript" src="<?= BASE_URL ?>/common/lib/bootstrap/bootstrap.5.0.0.min.js"></script>
+    <script type="text/javascript" src="<?= BASE_URL ?>/common/lib/wow/wow.min.js"></script>
+    <script type="text/javascript" src="<?= BASE_URL ?>/common/lib/easing/easing.min.js"></script>
+    <script type="text/javascript" src="<?= BASE_URL ?>/common/lib/waypoints/waypoints.min.js"></script>
+    <script type="text/javascript" src="<?= BASE_URL ?>/common/lib/counterup/counterup.min.js"></script>
+    <script type="text/javascript" src="<?= BASE_URL ?>/common/lib/owlcarousel/owl.carousel.min.js"></script>
 
     <!-- APIs -->
-    <script src="<?= BASE_URL ?>/common/js/api/apiClient.js"></script>
-    <script src="<?= BASE_URL ?>/common/js/api/api.js"></script>
+    <script type="text/javascript" src="<?= BASE_URL ?>/common/js/api/apiClient.js"></script>
+    <script type="text/javascript" src="<?= BASE_URL ?>/common/js/api/api.js"></script>
 
     <!-- Essencial Utils -->
-    <script src="<?= BASE_URL ?>/common/js/utils/domUtils.js"></script>
-    <script src="<?= BASE_URL ?>/common/js/utils/formUtils.js"></script>
-
-    <!-- Form Validators -->
-    <script src="<?= BASE_URL ?>/common/js/validators/user.validator.js"></script> 
-    <script src="<?= BASE_URL ?>/common/js/validators/customer.validator.js"></script>
-    <script src="<?= BASE_URL ?>/common/js/validators/employee.validator.js"></script>
-    <script src="<?= BASE_URL ?>/common/js/validators/manager.validator.js"></script>
+    <script type="text/javascript" src="<?= BASE_URL ?>/common/js/utils/dom.utils.js"></script>
+    <script type="text/javascript" src="<?= BASE_URL ?>/common/js/utils/form.utils.js"></script>
 
     <!-- Main Javascript -->
-    <script src="<?= BASE_URL ?>/modules/main/js/main.js"></script>
+    <script type="text/javascript" src="<?= BASE_URL ?>/modules/main/js/main.js"></script>
 
     <!-- Page & Components Javascript -->
     <?php
     global $requiredScripts;
     if (!empty($requiredScripts)) {
         foreach ($requiredScripts as $scriptPath) {
-            echo '<script src="' . BASE_URL . '/' . $scriptPath . '"></script>' . PHP_EOL;
+            echo '<script type="text/javascript" src="' . BASE_URL . '/' . $scriptPath . '"></script>' . PHP_EOL;
         }
     }
     ?>

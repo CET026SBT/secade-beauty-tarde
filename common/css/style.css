@@ -36,10 +36,10 @@ textarea.form-control {
 }
 
 /* > Form Field Invalid Margin Adjustment */
-form.was-validated .row > *:has(:invalid),
-form .row > *:has(:user-invalid),
-form .row > *:has(.is-invalid),
-form .row > *:has([aria-invalid="true"]) {
+/*form.was-validated .row > *:has(:invalid),
+form .row > *:has(:user-invalid),*/
+form .row > *:has(.is-invalid)/*,
+form .row > *:has([aria-invalid="true"])*/ {
     /*margin-bottom: calc(-1.5rem * 0.875);*/
     margin-bottom: -1.55rem;
 }
@@ -279,7 +279,7 @@ form .row > *:has([aria-invalid="true"]) {
 
 /* Hero Header */
 .hero-header {
-    background: url(../common/img/hero-bg.jpg) top left no-repeat;
+    background: url(../img/hero-bg.jpg) top left no-repeat;
     background-size: cover;
 }
 
@@ -319,7 +319,7 @@ form .row > *:has([aria-invalid="true"]) {
 }
 
 .page-header {
-    background: url(../common/img/page-header.jpg) center center no-repeat;
+    background: url(../img/page-header.jpg) center center no-repeat;
     background-size: contain;
 }
 

@@ -21,14 +21,14 @@ register_script('components/login', 'main');
                     <div class="row g-4 mb-4">
                         <div class="col-12">
                             <div class="form-floating">
-                                <input name="email" type="email" class="form-control py-2" placeholder="E-mail" required>
+                                <input name="email" type="email" class="form-control" placeholder="E-mail" required>
                                 <label>E-mail</label>
                             </div>
                         </div>
 
                         <div class="col-12">
                             <div class="form-floating">
-                                <input name="password" type="password" class="form-control py-2" placeholder="Palavra-passe" required>
+                                <input name="password" type="password" class="form-control" placeholder="Palavra-passe" required>
                                 <label>Palavra-passe</label>
                             </div>
                         </div>

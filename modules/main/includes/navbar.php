@@ -15,10 +15,10 @@ $isAuthPage = in_array($currentPage, ['login.php', 'login', 'register.php', 'reg
         </button>
         <div class="collapse navbar-collapse p-3" id="navbarCollapse">
             <div class="navbar-nav me-auto">
-                <a href="<?= BASE_URL ?>/" class="nav-item nav-link <?php echo ($currentPage == 'index.php' || $currentPage == 'home' || $currentPage == '') ? 'active' : ''; ?>">Home</a>
+                <a href="<?= BASE_URL ?>/" class="nav-item nav-link <?php echo ($currentPage == 'home.php' || $currentPage == 'home' || $currentPage == '') ? 'active' : ''; ?>">Home</a>
                 <?php if (!$isAuthPage): ?>
                     <a href="<?= BASE_URL ?>/sobre" class="nav-item nav-link <?php echo ($currentPage == 'about.php' || $currentPage == 'about' || $currentPage == 'sobre') ? 'active' : ''; ?>">Acerca</a>
-                    <a href="<?= BASE_URL ?>/servicos" class="nav-item nav-link <?php echo ($currentPage == 'services.php' || $currentPage == 'service' || $currentPage == 'servicos') ? 'active' : ''; ?>">Servicos</a>
+                    <a href="<?= BASE_URL ?>/servicos" class="nav-item nav-link <?php echo ($currentPage == 'service_categories.php' || $currentPage == 'service' || $currentPage == 'servicos') ? 'active' : ''; ?>">Servicos</a>
                     <a href="<?= BASE_URL ?>/contacto" class="nav-item nav-link <?php echo ($currentPage == 'contact.php' || $currentPage == 'contact' || $currentPage == 'contacto') ? 'active' : ''; ?>">Contactos</a>
                 <?php endif; ?>
             </div>
