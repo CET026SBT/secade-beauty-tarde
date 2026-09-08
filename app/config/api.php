@@ -3,9 +3,9 @@
 $action = $_GET['action'] ?? '';
 
 $routes = [
-    'auth-register' => ['controller' => 'AuthController', 'method' => 'register', 'http' => 'POST'],
-    'auth-login'    => ['controller' => 'AuthController', 'method' => 'login', 'http' => 'POST'],
-    'auth-logout'   => ['controller' => 'AuthController', 'method' => 'logout', 'http' => 'POST'],
+    'auth-login'     => ['controller' => 'AuthController', 'method' => 'login', 'http' => 'POST'],
+    'auth-logout'    => ['controller' => 'AuthController', 'method' => 'logout', 'http' => 'POST'],
+    'auth-register'  => ['controller' => 'AuthController', 'method' => 'register', 'http' => 'POST'],
 ];
 
 try {

@@ -113,11 +113,14 @@ const [FormValidators, Form] = (() => {
         selector;
         $form;
         validators;
+        conditions;
         fields;
         #fieldsRaw;
+        #fieldDependencies = new Map();
         #submit;
+        #currentRunningFn = null;
         
-        constructor(selector, { validators, submit }) {
+        constructor(selector, { validators, conditions={}, submit }) {
             this.selector = selector;
             this.$form = $(selector);
             this.#submit = submit;
@@ -151,6 +154,91 @@ const [FormValidators, Form] = (() => {
             });
         }
 
+        constructor(selector, { validators, conditions = {}, submit }) {
+            this.selector = selector;
+            this.$form = $(selector);
+            this.#submit = submit;
+            this.conditions = conditions;
+
+            this.#fieldsRaw = {};
+            this.fields = new Proxy(this.#fieldsRaw, {
+                get: (target, prop) => {
+                    if (this.#currentRunningFn && typeof prop === 'string') {
+                        if (!this.fieldDependencies.has(prop)) {
+                            this.fieldDependencies.set(prop, new Set());
+                        }
+                        this.fieldDependencies.get(prop).add(this.#currentRunningFn);
+                    }
+                    const field = this.$form.find(`[name="${prop}"]`);
+                    if (field.length > 0) return normalize(field);
+                    return target[prop];
+                },
+                set: (target, prop, value) => {
+                    const $field = this.$form.find(`[name="${prop}"]`);
+                    if ($field.length > 0) $field.val(value).trigger('change');
+                    else target[prop] = value;
+                    return true;
+                }
+            });
+
+            this.#registerDependencies({ ...validators, ...conditions });
+            this.#evaluateAllConditions();
+            this.#setupEvents();
+
+            this.validators = new FormValidators(validators, this.fields, selector);
+        }
+
+        #evaluateRule(ruleName) {
+            const fn = this.conditions[ruleName];
+            if (typeof fn !== 'function') return;
+
+            const result = fn.call(this);
+
+            for (const directive of Object.keys(directiveHandlers)) {
+                directiveHandlers[directive](this.$form, ruleName, result);
+            }
+        }
+
+        #evaluateAllConditions() {
+            for (const conditionName of Object.keys(this.conditions)) {
+                this.#evaluateRule(conditionName);
+            }
+        }
+
+        #registerDependencies(mapping) {
+            for (const [name, fn] of Object.entries(mapping)) {
+                this.#currentRunningFn = { name, fn };
+                try {
+                    fn.call(this);
+                } catch (e) {
+                    // Ignora erros no arranque
+                } finally {
+                    this.#currentRunningFn = null;
+                }
+            }
+        }
+
+        #setupEvents() {
+            for (const [fieldName, dependentFns] of this.fieldDependencies.entries()) {
+                const $el = this.$form.find(`[name="${fieldName}"]`);
+                if ($el.length === 0) continue;
+
+                const event = $el.attr('sb-validate-on') || 'input change';
+
+                this.$form.on(event, `[name="${fieldName}"]`, (e) => {
+                    this.fields[fieldName]; // Garante leitura/normalização
+
+                    for (const rule of dependentFns) {
+                        if (this.conditions[rule.name]) {
+                            this.#evaluateRule(rule.name);
+                        } else {
+                            rule.fn.call(this);
+                        }
+                    }
+                });
+            }
+        }
+
         #getActiveStep() {
             return this.$form.find('.form-step.active');
         }
@@ -160,7 +248,8 @@ const [FormValidators, Form] = (() => {
         }
 
         validate() {
-            const $group = this.#getActiveStep().eq(0) || this.$form;
+            const $activeStep = this.#getActiveStep();
+            const $group = $activeStep.length > 0 ? $activeStep : this.$form;
             let isValid = true;
 
             for (const field of Object.keys(this.validators)) {

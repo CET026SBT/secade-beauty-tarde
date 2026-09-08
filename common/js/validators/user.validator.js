@@ -9,7 +9,7 @@ const userValidators = {
     password(val, { fields }) {
         if (val === '') return 'A palavra-passe é obrigatória.';
         if (!this.isPassword(val)) return 'A password deve ter pelo menos 8 caracteres, conter pelo menos 1 letra, 1 número e 1 símbolo válido.';
-        if (fields.confirmPassword) this.confirmPassword();
+        if (fields.confirmPassword) this.confirmPassword(); // sbTODO: Remover esta linha depois de implementar a reatividade no formUtils.js
     },
     confirmPassword(val, { fields }) {
         if (val === '') return 'Confirme a sua palavra-passe.';

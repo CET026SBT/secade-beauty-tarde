@@ -2,7 +2,8 @@ const customerValidators = {
     morada(val, { fields, data }) {
         if (val === '') return "A morada é obrigatória.";
         if (!data?.fromAutocomplete) return "Por favor, selecione uma morada válida a partir das sugestões da lista.";
-        if (!customerRegister.supportedCities.includes(fields.cidade)) {
+        // sbTODO: Não podemos aceder a customerRegister diretamente, pois este validator pode ser usado noutros ficheiros
+        if (!customerRegister.supportedCities.includes(fields.cidade)) { 
             return `Lamentamos, mas de momento apenas aceitamos moradas nas cidades suportadas. (${customerRegister.supportedCities.join(', ')})`;
         }
     },

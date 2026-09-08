@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/app/config/config.php';
+require_once APP_PATH . '/utils/Session.php';
 
 $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $baseUrlParsed = parse_url(BASE_URL, PHP_URL_PATH);

@@ -14,7 +14,7 @@ class AuthController extends BaseController {
     }
 
     public function register() {
-        return $this->customerService->registerCustomer($this->getRequestData());
+        return $this->authService->register($this->getRequestData());
     }
 
     public function login() {
