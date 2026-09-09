@@ -1,12 +1,12 @@
 <?php
 
-require_once __DIR__ . '/BaseRepository.php';
+require_once __DIR__ . "/BaseRepository.php";
 
 class UserRepository extends BaseRepository {
     
     public function findByEmail(string $email): ?array {
         $stmt = $this->db->prepare("SELECT * FROM utilizador WHERE email = :email LIMIT 1");
-        $stmt->execute(['email' => $email]);
+        $stmt->execute(["email" => $email]);
         
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return $result !== false ? $result : null;
@@ -19,11 +19,11 @@ class UserRepository extends BaseRepository {
         ");
         
         $stmt->execute([
-            'nome' => $data['nome'],
-            'email' => $data['email'],
-            'password_hash' => $passwordHash,
-            'telemovel' => $data['telemovel'],
-            'tipo_perfil' => $data['tipoPerfil'] ?? 'cliente'
+            "nome" => $data["nome"],
+            "email" => $data["email"],
+            "password_hash" => $passwordHash,
+            "telemovel" => $data["telemovel"],
+            "tipo_perfil" => $data["tipoPerfil"] ?? "cliente"
         ]);
 
         return $this->db->lastInsertId();

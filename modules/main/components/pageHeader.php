@@ -1,6 +1,6 @@
 <?php
-$pageHeaderTitle = isset($pageHeaderTitle) ? $pageHeaderTitle : 'Page Title';
-//$pageHeaderBreadcrumb = isset($pageHeaderBreadcrumb) ? $pageHeaderBreadcrumb : 'Page';
+$pageHeaderTitle = isset($pageHeaderTitle) ? $pageHeaderTitle : "Page Title";
+//$pageHeaderBreadcrumb = isset($pageHeaderBreadcrumb) ? $pageHeaderBreadcrumb : "Page";
 ?>
 
 <div class="container-fluid bg-light page-header py-5 mb-5">

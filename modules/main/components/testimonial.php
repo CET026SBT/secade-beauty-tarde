@@ -1,30 +1,30 @@
 <?php
-register_script('components/testimonial', 'main');
+register_script("components/testimonial", "main");
 
 $testimonials = [
     [
-        'name' => 'Carla Castanho',
-        'profession' => 'Professora',
-        'quote' => 'Excelente serviço e atendimento muito simpático. Recomendo vivamente!',
-        'image' => BASE_URL . '/common/img/testimonial-1.jpg'
+        "name" => "Carla Castanho",
+        "profession" => "Professora",
+        "quote" => "Excelente serviço e atendimento muito simpático. Recomendo vivamente!",
+        "image" => BASE_URL . "/modules/common/img/testimonial-1.jpg"
     ],
     [
-        'name' => 'Ana Bento',
-        'profession' => 'Vendedora',
-        'quote' => 'Ambiente espetacular e profissionais de enorme qualidade. Saio sempre renovada!',
-        'image' => BASE_URL . '/common/img/testimonial-2.jpg'
+        "name" => "Ana Bento",
+        "profession" => "Vendedora",
+        "quote" => "Ambiente espetacular e profissionais de enorme qualidade. Saio sempre renovada!",
+        "image" => BASE_URL . "/modules/common/img/testimonial-2.jpg"
     ],
     [
-        'name' => 'Joana Piçarra',
-        'profession' => 'Assistente call center',
-        'quote' => 'Atendimento fantástico e resultados sempre acima das expetativas.',
-        'image' => BASE_URL . '/common/img/testimonial-3.jpg'
+        "name" => "Joana Piçarra",
+        "profession" => "Assistente call center",
+        "quote" => "Atendimento fantástico e resultados sempre acima das expetativas.",
+        "image" => BASE_URL . "/modules/common/img/testimonial-3.jpg"
     ],
     [
-        'name' => 'Amélia Torres',
-        'profession' => 'Médica',
-        'quote' => 'Profissionalismo e dedicação de excelência em cada detalhe.',
-        'image' => BASE_URL . '/common/img/testimonial-4.jpg'
+        "name" => "Amélia Torres",
+        "profession" => "Médica",
+        "quote" => "Profissionalismo e dedicação de excelência em cada detalhe.",
+        "image" => BASE_URL . "/modules/common/img/testimonial-4.jpg"
     ]
 ];
 ?>
@@ -39,10 +39,10 @@ $testimonials = [
             <?php foreach ($testimonials as $testimonial): ?>
                 <div class="text-center bg-light p-4">
                     <i class="fa fa-quote-left fa-3x mb-3 text-primary"></i>
-                    <p><?php echo htmlspecialchars($testimonial['quote']); ?></p>
-                    <img class="img-fluid mx-auto border p-1 mb-3" src="<?php echo htmlspecialchars($testimonial['image']); ?>" alt="<?php echo htmlspecialchars($testimonial['name']); ?>">
-                    <h4 class="mb-1"><?php echo htmlspecialchars($testimonial['name']); ?></h4>
-                    <span><?php echo htmlspecialchars($testimonial['profession']); ?></span>
+                    <p><?php echo htmlspecialchars($testimonial["quote"]); ?></p>
+                    <img class="img-fluid mx-auto border p-1 mb-3" src="<?php echo htmlspecialchars($testimonial["image"]); ?>" alt="<?php echo htmlspecialchars($testimonial["name"]); ?>">
+                    <h4 class="mb-1"><?php echo htmlspecialchars($testimonial["name"]); ?></h4>
+                    <span><?php echo htmlspecialchars($testimonial["profession"]); ?></span>
                 </div>
             <?php endforeach; ?>
         </div>

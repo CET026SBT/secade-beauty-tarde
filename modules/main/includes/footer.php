@@ -1,6 +1,6 @@
 <?php
 if (!isset($showMainFooter) || $showMainFooter === true) {
-    include ROOT_PATH . '/modules/main/components/main_footer.php';
+    include ROOT_PATH . "/modules/main/components/mainFooter.php";
 }
 ?>
     <!-- Copyright -->
@@ -18,21 +18,21 @@ if (!isset($showMainFooter) || $showMainFooter === true) {
     <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
 
     <!-- JavaScript Libraries -->
-    <script type="text/javascript" src="<?= BASE_URL ?>/common/lib/jquery/jquery.3.6.1.min.js"></script>
-    <script type="text/javascript" src="<?= BASE_URL ?>/common/lib/bootstrap/bootstrap.5.0.0.min.js"></script>
-    <script type="text/javascript" src="<?= BASE_URL ?>/common/lib/wow/wow.min.js"></script>
-    <script type="text/javascript" src="<?= BASE_URL ?>/common/lib/easing/easing.min.js"></script>
-    <script type="text/javascript" src="<?= BASE_URL ?>/common/lib/waypoints/waypoints.min.js"></script>
-    <script type="text/javascript" src="<?= BASE_URL ?>/common/lib/counterup/counterup.min.js"></script>
-    <script type="text/javascript" src="<?= BASE_URL ?>/common/lib/owlcarousel/owl.carousel.min.js"></script>
+    <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/lib/jquery/jquery.3.6.1.min.js"></script>
+    <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/lib/bootstrap/bootstrap.5.0.0.min.js"></script>
+    <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/lib/wow/wow.min.js"></script>
+    <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/lib/easing/easing.min.js"></script>
+    <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/lib/waypoints/waypoints.min.js"></script>
+    <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/lib/counterup/counterup.min.js"></script>
+    <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/lib/owlcarousel/owl.carousel.min.js"></script>
 
     <!-- APIs -->
-    <script type="text/javascript" src="<?= BASE_URL ?>/common/js/api/apiClient.js"></script>
-    <script type="text/javascript" src="<?= BASE_URL ?>/common/js/api/api.js"></script>
+    <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/js/api/apiClient.js"></script>
+    <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/js/api/api.js"></script>
 
     <!-- Essencial Utils -->
-    <script type="text/javascript" src="<?= BASE_URL ?>/common/js/utils/dom.utils.js"></script>
-    <script type="text/javascript" src="<?= BASE_URL ?>/common/js/utils/form.utils.js"></script>
+    <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/js/utils/dom.utils.js"></script>
+    <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/js/utils/form.utils.js"></script>
 
     <!-- Main Javascript -->
     <script type="text/javascript" src="<?= BASE_URL ?>/modules/main/js/main.js"></script>

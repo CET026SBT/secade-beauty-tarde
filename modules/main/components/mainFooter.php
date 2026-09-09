@@ -4,8 +4,8 @@
             <div class="row g-5">
                 <div class="col-lg-6 pe-lg-5">
                     <a href="<?= BASE_URL ?>/" class="navbar-brand mb-4">
-                        <img class="h1 me-1" src="<?= BASE_URL ?>/common/img/sb-logo-primary.svg">
-                        <img class="h3" src="<?= BASE_URL ?>/common/img/sb-title-primary.svg" alt="Site name">
+                        <img class="h1 me-1" src="<?= BASE_URL ?>/modules/common/img/sb-logo-primary.svg">
+                        <img class="h3" src="<?= BASE_URL ?>/modules/common/img/sb-title-primary.svg" alt="Site name">
                     </a>
                     <p>Somos uma equipa com enorme experiência no universo dos cabeleireiros e estética, dedicados a oferecer o melhor serviço e satisfação.</p>
                     <p class="mb-2"><i class="fa fa-map-marker-alt me-2"></i><?php echo htmlspecialchars(SITE_ADDRESS); ?></p>

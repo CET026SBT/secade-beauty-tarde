@@ -1,5 +1,5 @@
 <?php
-register_script('components/contact', 'main');
+register_script("components/contact", "main");
 ?>
 
 <div class="container-fluid py-5">

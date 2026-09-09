@@ -12,7 +12,7 @@ try {
 }
 
 /*function wFicheiroError($texto){
-    $file = ROOT_PATH . '/error.txt';
+    $file = ROOT_PATH . "/error.txt";
     $linha = date("Y-m-d H:i:s") . " - " . $texto;
     $current = file_exists($file) ? file_get_contents($file) : "";
     $current .= $linha . "\n";

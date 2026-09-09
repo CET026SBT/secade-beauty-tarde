@@ -1,5 +1,5 @@
 <?php
-$pageTitle = isset($pageTitle) ? $pageTitle . ' - ' . SITE_NAME : SITE_NAME . ' - Salão de Beleza';
+$pageTitle = isset($pageTitle) ? $pageTitle . " - " . SITE_NAME : SITE_NAME . " - Salão de Beleza";
 ?>
 <!DOCTYPE html>
 <html lang="pt-PT">
@@ -12,24 +12,24 @@ $pageTitle = isset($pageTitle) ? $pageTitle . ' - ' . SITE_NAME : SITE_NAME . ' 
     <meta content="" name="description">
 
     <!-- Favicon -->
-    <link href="<?= BASE_URL ?>/common/img/favicon.ico" rel="icon">
+    <link href="<?= BASE_URL ?>/modules/common/img/favicon.ico" rel="icon">
 
     <!-- Google Web Fonts -->
-    <link href="<?= BASE_URL ?>/common/lib/fonts/google-fonts/fonts.css" rel="stylesheet">
+    <link href="<?= BASE_URL ?>/modules/common/lib/fonts/google-fonts/fonts.css" rel="stylesheet">
 
     <!-- Icon Font Stylesheet -->
-    <link href="<?= BASE_URL ?>/common/lib/fonts/font-awesome/css/all.min.css" rel="stylesheet">
-    <link href="<?= BASE_URL ?>/common/lib/fonts/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="<?= BASE_URL ?>/modules/common/lib/fonts/font-awesome/css/all.min.css" rel="stylesheet">
+    <link href="<?= BASE_URL ?>/modules/common/lib/fonts/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
 
     <!-- Libraries Stylesheet -->
-    <link href="<?= BASE_URL ?>/common/lib/animate/animate.min.css" rel="stylesheet">
-    <link href="<?= BASE_URL ?>/common/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="<?= BASE_URL ?>/modules/common/lib/animate/animate.min.css" rel="stylesheet">
+    <link href="<?= BASE_URL ?>/modules/common/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
 
     <!-- Customized Bootstrap Stylesheet -->
-    <link href="<?= BASE_URL ?>/common/lib/bootstrap/bootstrap.5.0.0.min.css" rel="stylesheet">
+    <link href="<?= BASE_URL ?>/modules/common/lib/bootstrap/bootstrap.5.0.0.min.css" rel="stylesheet">
 
-    <!-- Template Stylesheet -->
-    <link href="<?= BASE_URL ?>/common/css/style.css" rel="stylesheet">
+    <!-- Main Stylesheet -->
+    <link href="<?= BASE_URL ?>/modules/main/css/style.css" rel="stylesheet">
 
     <script>
         window.BASE_URL = "<?= BASE_URL ?>";

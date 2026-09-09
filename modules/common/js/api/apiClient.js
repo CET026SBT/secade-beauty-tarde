@@ -36,26 +36,28 @@ class ApiClient {
     }
 
     post(endpoint, data) {
-        return $.ajax({
-                url: `${this.baseUrl}${endpoint}`,
-                type: 'POST',
-                data,
-                processData: false,
-                contentType: false,
-                dataType: 'json'
-            })
-            .done(res => {
-                if (res.success) {
-                    const actionMatch = endpoint.match(/[?&]action=([a-z-]+)-[a-z]+(&|$)/);
-                    
-                    if (actionMatch) {
-                        const domain = actionMatch[1];
-                        this.clearCacheByDomain(domain);
-                    }
-                }
-            });
-    }
+        const isFormData = data instanceof FormData;
 
+        return $.ajax({
+            url: `${this.baseUrl}${endpoint}`,
+            type: 'POST',
+            data: isFormData ? data : JSON.stringify(data),
+            processData: !isFormData,
+            contentType: isFormData ? false : 'application/json; charset=utf-8',
+            dataType: 'json'
+        })
+        .done(res => {
+            if (res.success) {
+                const actionMatch = endpoint.match(/[?&]action=([a-z-]+)-[a-z]+(&|$)/);
+                
+                if (actionMatch) {
+                    const domain = actionMatch[1];
+                    this.clearCacheByDomain(domain);
+                }
+            }
+        });
+    }
+    
     clearCacheByDomain(domain) {
         const domainRegex = new RegExp(`[?&]action=${domain}-`);
 

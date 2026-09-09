@@ -1,7 +1,7 @@
 <?php
 
-require_once APP_PATH . '/config/connection.php';
-require_once APP_PATH . '/utils/Validator.php';
+require_once APP_PATH . "/config/connection.php";
+require_once APP_PATH . "/utils/Validator.php";
 
 abstract class BaseService {
     protected $db;

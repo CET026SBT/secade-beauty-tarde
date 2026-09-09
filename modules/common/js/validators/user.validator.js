@@ -6,10 +6,9 @@ const userValidators = {
         if (val === '') return 'O e-mail é obrigatório.';
         if (!this.isEmail(val)) return 'Insira um endereço de e-mail válido.';
     },
-    password(val, { fields }) {
+    password(val) {
         if (val === '') return 'A palavra-passe é obrigatória.';
         if (!this.isPassword(val)) return 'A password deve ter pelo menos 8 caracteres, conter pelo menos 1 letra, 1 número e 1 símbolo válido.';
-        //if (fields.confirmPassword) this.confirmPassword(); // sbTODO: Remover esta linha depois de implementar a reatividade no formUtils.js
     },
     confirmPassword(val, { fields }) {
         if (val === '') return 'Confirme a sua palavra-passe.';
@@ -18,7 +17,7 @@ const userValidators = {
     },
     telemovel(val) {
         if (val === '') return 'O número de telemóvel é obrigatório.';
-        if (!this.isPhonePT(val)) return 'Insira um número de telemóvel válido com 9 dígitos.';
+        if (!this.isPhone(val)) return 'Insira um número de telemóvel válido com 9 dígitos.';
     },
     nif(val) {
         if (val === '') return "O NIF é obrigatório.";

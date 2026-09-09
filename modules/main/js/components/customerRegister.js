@@ -1,24 +1,29 @@
-const customerRegister = {
-    supportedCities: ['Évora'],
-    customerAddresses: [],
-    form: new Form('#customerRegisterForm', {
+const customerRegister = (() => {
+    const supportedCities = ['Évora'];
+    const customerAddresses = [];
+
+    const form = new Form('#customerRegisterForm', {
         validators: {
             ...userValidators,
-            ...customerValidators
+            ...customerValidators(supportedCities)
         },
-        submit(payload) {
-            API.auth.register(payload)
+        submit(formData) {
+            API.auth.register(formData)
                 .done(response => {
                     location.href = `${BASE_URL ?? ''}/login`;
                 })
-                .fail(response => {
-                    debugger;
-                    console.log(response);
+                .fail(xhr => {
+                    const response = xhr.responseJSON;
+                    if (response && response.errors) {
+                        form.setErrors(response.errors, {
+                            cidade: 'morada'
+                        });
+                    }
                 });
         }
-    }),
-    init() {
-        const { form, customerAddresses } = customerRegister;
+    });
+
+    $(() => {
         new AddressAutocomplete({
             formSelector: form.selector,
             savedAddresses: customerAddresses,
@@ -32,7 +37,8 @@ const customerRegister = {
                 form.fields.morada = this.formatAddressInputText(selectedData);
             }
         });
-    }
-};
+    });
 
-$(customerRegister.init);
+    return { form };
+})();
+

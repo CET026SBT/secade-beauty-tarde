@@ -1,9 +1,10 @@
 RewriteEngine On
-RewriteBase /CET026/secade-beauty-tarde/
+RewriteBase /secade-beauty-tarde/
 
 # Redireciona para o index.php na raiz caso haja acesso direto a um .php ou .html
 RewriteCond %{REQUEST_URI} \.(php|html)$ [NC]
 RewriteCond %{REQUEST_URI} !/index\.php$ [NC]
+RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^(.*)$ index.php [QSA,L]
 
 # Regra padrão do Front Controller para recursos estáticos (CSS, JS, Imagens)

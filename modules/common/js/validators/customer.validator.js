@@ -1,10 +1,9 @@
-const customerValidators = {
+const customerValidators = ({ supportedCities=[] }) => ({
     morada(val, { fields, data }) {
         if (val === '') return "A morada é obrigatória.";
         if (!data?.fromAutocomplete) return "Por favor, selecione uma morada válida a partir das sugestões da lista.";
-        // sbTODO: Não podemos aceder a customerRegister diretamente, pois este validator pode ser usado noutros ficheiros
-        if (!customerRegister.supportedCities.includes(fields.cidade)) { 
-            return `Lamentamos, mas de momento apenas aceitamos moradas nas cidades suportadas. (${customerRegister.supportedCities.join(', ')})`;
+        if (!supportedCities.includes(fields.cidade)) { 
+            return `Lamentamos, mas de momento apenas aceitamos moradas nas cidades suportadas. (${supportedCities.join(', ')})`;
         }
     },
     codigoPostal(val) {
@@ -21,4 +20,4 @@ const customerValidators = {
         if (val === '') return "O Cartão de Cidadão é obrigatório.";
         if (!this.isCC(val)) return "Formato de Cartão de Cidadão inválido.";
     }
-};
+});

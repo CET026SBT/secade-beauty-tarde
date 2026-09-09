@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/ValidationException.php';
+require_once __DIR__ . "/ValidationException.php";
 
 class Validator {
     private array $errors = [];
@@ -11,7 +11,7 @@ class Validator {
     }
 
     private function getValue(string $field): string {
-        return (string)($this->data[$field] ?? '');
+        return (string)($this->data[$field] ?? "");
     }
 
     public function hasError(?string $field = null): bool {
@@ -61,9 +61,9 @@ class Validator {
         $value = $this->getValue($field);
 
         $isLongEnough = strlen($value) >= 8;
-        $hasLetter    = preg_match('/[a-zA-Z]/', $value);
-        $hasDigit     = preg_match('/[0-9]/', $value);
-        $hasSymbol    = preg_match('/[!@#\$%\^&\*\(\)_\+\-\=\[\]\{\}\|;:,.<>\?]/', $value);
+        $hasLetter    = preg_match("/[a-zA-Z]/", $value);
+        $hasDigit     = preg_match("/[0-9]/", $value);
+        $hasSymbol    = preg_match("/[!@#\$%\^&\*\(\)_\+\-\=\[\]\{\}\|;:,.<>\?]/", $value);
 
         if (!$isLongEnough || !$hasLetter || !$hasDigit || !$hasSymbol) {
             $this->errors[$field] = $message;
@@ -71,24 +71,36 @@ class Validator {
         return $this;
     }
 
-    public function phonePT(string $field, string $message="Número de telemóvel/telefone inválido."): self {
+    public function phone(string $field, string $message="Número de telefone/telemóvel inválido."): self {
         if ($this->hasError($field)) return $this;
         
-        $cleaned = preg_replace('/\s+/', '', $this->getValue($field));
-        $pattern = '/^(?:(?:\+|00)?351)?(2\d{8}|9[1236]\d{7})$/';
+        $cleaned = preg_replace("/[\s\-()]/", "", $this->getValue($field));
         
-        if (!preg_match($pattern, $cleaned)) {
+        $isPT = preg_match("/^(?:(?:\+|00)?351)?(2\d{8}|9[1236]\d{7})$/", $cleaned);
+        if ($isPT) return $this;
+
+        $isBR = preg_match("/^(?:(?:\+|00)?55)?[1-9]{2}(?:9\d{8}|[2-5]\d{7})$/", $cleaned);
+        if ($isBR) return $this;
+
+        $normalized = preg_replace("/^(\+|00)/", "", $cleaned);
+        if (str_starts_with($normalized, "351") || str_starts_with($normalized, "55")) {
+            $this->errors[$field] = $message;
+            return $this;
+        }
+
+        if (!preg_match("/^\+?[0-9]{7,15}$/", $cleaned)) {
             $this->errors[$field] = $message;
         }
+
         return $this;
     }
 
     public function nif(string $field, string $message="Número de Contribuinte (NIF) inválido."): self {
         if ($this->hasError($field)) return $this;
         
-        $nif = preg_replace('/\s+/', '', $this->getValue($field));
+        $nif = preg_replace("/\s+/", "", $this->getValue($field));
         
-        if (!preg_match('/^[12356789]\d{8}$/', $nif)) {
+        if (!preg_match("/^[12356789]\d{8}$/", $nif)) {
             $this->errors[$field] = $message;
             return $this;
         }
@@ -113,8 +125,8 @@ class Validator {
     public function cc(string $field, string $message="Número de Cartão de Cidadão inválido."): self {
         if ($this->hasError($field)) return $this;
         
-        $cleaned = strtoupper(preg_replace('/\s+/', '', $this->getValue($field)));
-        $pattern = '/^\d{8}[0-9A-Z]{2}\d[0-9A-Z]$/';
+        $cleaned = strtoupper(preg_replace("/\s+/", "", $this->getValue($field)));
+        $pattern = "/^\d{8}[0-9A-Z]{2}\d[0-9A-Z]$/";
         
         if (!preg_match($pattern, $cleaned)) {
             $this->errors[$field] = $message;
@@ -126,7 +138,7 @@ class Validator {
         if ($this->hasError($field)) return $this;
         
         $value = trim($this->getValue($field));
-        $pattern = '/^\d{4}-\d{3}$/';
+        $pattern = "/^\d{4}-\d{3}$/";
         
         if (!preg_match($pattern, $value)) {
             $this->errors[$field] = $message;

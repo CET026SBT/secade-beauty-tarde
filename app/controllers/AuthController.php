@@ -1,8 +1,8 @@
 <?php
 
-require_once __DIR__ . '/BaseController.php';
-require_once APP_PATH . '/services/AuthService.php';
-require_once APP_PATH . '/services/CustomerService.php';
+require_once __DIR__ . "/BaseController.php";
+require_once APP_PATH . "/services/AuthService.php";
+require_once APP_PATH . "/services/CustomerService.php";
 
 class AuthController extends BaseController {
     private $authService;

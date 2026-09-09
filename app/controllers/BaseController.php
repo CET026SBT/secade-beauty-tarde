@@ -6,7 +6,7 @@ abstract class BaseController {
         $inputData = $_POST;
         
         if (empty($inputData)) {
-            $input = file_get_contents('php://input');
+            $input = file_get_contents("php://input");
             if (!empty($input)) {
                 $inputData = json_decode($input, true) ?? [];
             }

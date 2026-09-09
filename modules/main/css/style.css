@@ -9,7 +9,7 @@
     --bs-secondary-darker: #363636;
 }
 
-body {    
+body {
     display: flex;
     flex-flow: column;
     min-height: 100vh;
@@ -279,7 +279,7 @@ form .row > *:has([aria-invalid="true"])*/ {
 
 /* Hero Header */
 .hero-header {
-    background: url(../img/hero-bg.jpg) top left no-repeat;
+    background: url(../../common/img/hero-bg.jpg) top left no-repeat;
     background-size: cover;
 }
 
@@ -319,7 +319,7 @@ form .row > *:has([aria-invalid="true"])*/ {
 }
 
 .page-header {
-    background: url(../img/page-header.jpg) center center no-repeat;
+    background: url(../../common/img/page-header.jpg) center center no-repeat;
     background-size: contain;
 }
 
@@ -381,11 +381,11 @@ form .row > *:has([aria-invalid="true"])*/ {
 .team-item img {
     transition: .5s;
 }
-  
+
 .team-item:hover img {
     transform: scale(1.2);
 }
-  
+
 .team-overlay {
     position: absolute;
     padding: 30px;
@@ -559,13 +559,13 @@ form .row > *:has([aria-invalid="true"])*/ {
 .autocomplete-dropdown {
     position: absolute;
     position-anchor: var(--current-anchor);
-    
+
     top: anchor(bottom);
     left: anchor(left);
     width: anchor-size(width);
-    
+
     position-try-options: flip-block;
-    
+
     z-index: 9999;
     max-height: 250px;
     overflow-y: auto;
@@ -584,7 +584,7 @@ form .row > *:has([aria-invalid="true"])*/ {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);    
+    transform: translate(-50%, -50%);
     min-height: 100%;
     min-width: 100%;
     z-index: -1;

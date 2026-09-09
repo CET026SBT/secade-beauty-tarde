@@ -1,6 +1,6 @@
 <?php
 
-require_once APP_PATH . '/config/connection.php';
+require_once APP_PATH . "/config/connection.php";
 
 abstract class BaseRepository {
     protected $db;

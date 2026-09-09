@@ -1,18 +1,18 @@
 <?php
-register_script('validators/user.validator', 'common');
-register_script('validators/customer.validator', 'common');
-register_script('utils/addressAutocomplete', 'common');
-register_script('components/customerRegister', 'common');
+register_script("validators/user.validator", "common");
+register_script("validators/customer.validator", "common");
+register_script("utils/addressAutocomplete", "common");
+register_script("components/customerRegister", "main");
 ?>
 
 <div class="container-fluid px-0 d-flex flex-fill h-100">
     <div class="row align-items-center flex-fill m-0 w-100">
         <div class="col-xl-5 h-100 d-none d-xl-flex text-white position-relative align-items-center justify-content-center p-0 overflow-hidden">
-            <img src="<?= BASE_URL ?>/common/img/bg-login.png" alt="Imagem Lateral" class="auth-left-img">
+            <img src="<?= BASE_URL ?>/modules/common/img/bg-login.png" alt="Imagem Lateral" class="auth-left-img">
         </div>
 
         <div class="col-xl-7 h-100 d-flex flex-column align-items-center justify-content-center position-relative py-5 overflow-hidden bg-light">
-            <img src="<?= BASE_URL ?>/common/img/sb-logo-primary.svg" alt="Secade Beauty" class="auth-logo-watermark">
+            <img src="<?= BASE_URL ?>/modules/common/img/sb-logo-primary.svg" alt="Secade Beauty" class="auth-logo-watermark">
 
             <div class="col-xl-10 p-4 bg-white shadow-sm border-0 rounded position-relative my-auto d-flex flex-column overflow-hidden" style="z-index: 1; max-width: 600px;">
                 <div class="text-center mb-4">

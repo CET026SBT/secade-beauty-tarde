@@ -1,9 +1,9 @@
 <?php
 
-require_once __DIR__ . '/BaseService.php';
-require_once __DIR__ . '/UserService.php';
-require_once __DIR__ . '/CustomerAddressService.php';
-require_once APP_PATH . '/repositories/CustomerRepository.php';
+require_once __DIR__ . "/BaseService.php";
+require_once __DIR__ . "/UserService.php";
+require_once __DIR__ . "/CustomerAddressService.php";
+require_once APP_PATH . "/repositories/CustomerRepository.php";
 
 class CustomerService extends BaseService {
     private $userService;
@@ -19,7 +19,7 @@ class CustomerService extends BaseService {
 
     public function validateInput(array $data): void {
         $this->validate($data, function($v) use ($data) {
-            $v->accepted('termosCondicoes', 'Deve aceitar os termos e condições para continuar.');
+            $v->accepted("termosCondicoes", "Deve aceitar os termos e condições para continuar.");
         });
     }
 
@@ -31,7 +31,7 @@ class CustomerService extends BaseService {
             $this->customerRepository->create($userId, $data);
             $this->customerAddressService->addAddress($userId, $data);
 
-            return ['message' => 'Cliente registado com sucesso!'];
+            return ["message" => "Cliente registado com sucesso!"];
         });
     }
 }

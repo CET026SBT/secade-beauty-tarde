@@ -65,10 +65,21 @@ const [FormValidators, Form] = (() => {
             return isLongEnough && hasLetter && hasDigit && hasSymbol;
         }
 
-        isPhonePT(value) {
-            const cleaned = String(value).replace(/\s+/g, '');
-            const regex = /^(?:(?:\+|00)?351)?(2\d{8}|9[1236]\d{7})$/;
-            return regex.test(cleaned);
+        isPhone(value) {
+            const cleaned = String(value).replace(/[\s\-()]/g, '');
+
+            const isPT = /^(?:(?:\+|00)?351)?(2\d{8}|9[1236]\d{7})$/.test(cleaned);
+            if (isPT) return true;
+
+            const isBR = /^(?:(?:\+|00)?55)?[1-9]{2}(?:9\d{8}|[2-5]\d{7})$/.test(cleaned);
+            if (isBR) return true;
+
+            const normalized = cleaned.replace(/^(\+|00)/, '');
+            if (normalized.startsWith('351') || normalized.startsWith('55')) {
+                return false;
+            }
+
+            return /^\+?[0-9]{7,15}$/.test(cleaned);
         }
 
         isNIF(value) {
@@ -113,7 +124,7 @@ const [FormValidators, Form] = (() => {
         selector;
         $form;
         validators;
-        conditions;
+        expressions;
         fields;
         #rawFields;
         #fieldDependencies = new Map();
@@ -121,70 +132,103 @@ const [FormValidators, Form] = (() => {
         #currentRunningRule = null;
         #directiveHandlers = {
             'form-show': (ruleName, result) => {
-                this.$form.find(`[form-show="${ruleName}"]`).toggle(result);
+                this.$form.find(`[form-show="${ruleName}"]`).toggle(!!result);
             },
             'form-hide': (ruleName, result) => {
                 this.$form.find(`[form-hide="${ruleName}"]`).toggle(!result);
+            },
+            'form-disable': (ruleName, result) => {
+                this.$form.find(`[form-disable="${ruleName}"]`).prop('disabled', !!result);
+            },
+            'form-readonly': (ruleName, result) => {
+                this.$form.find(`[form-readonly="${ruleName}"]`).prop('readonly', !!result);
+            },
+            'form-require': (ruleName, result) => {
+                this.$form.find(`[form-require="${ruleName}"]`).prop('required', !!result);
+            },
+            'form-class': (ruleName, result) => {
+                const $target = this.$form.find(`[form-class="${ruleName}"]`);
+                if (typeof result === 'string') {
+                    $target.attr('class', result);
+                } else {
+                    const className = $target.attr('form-class-name') || 'active';
+                    $target.toggleClass(className, !!result);
+                }
             }
         };
 
-        constructor(selector, { validators={}, conditions={}, submit }) {
+        constructor(selector, { validators={}, expressions={}, submit }) {
             this.selector = selector;
             this.$form = $(selector);
             this.#submitHandler = submit;
-            this.conditions = conditions;
+            this.expressions = expressions;
 
             this.#rawFields = {};
             this.fields = new Proxy(this.#rawFields, {
                 get: (target, prop) => {
                     if (this.#currentRunningRule && typeof prop === 'string') {
-                        if (!this.#fieldDependencies.has(prop)) {
-                            this.#fieldDependencies.set(prop, new Set());
-                        }
-                        this.#fieldDependencies.get(prop).add(this.#currentRunningRule);
+                        this.#addDependency(prop, this.#currentRunningRule);
                     }
                     const $field = this.$form.find(`[name="${prop}"]`);
-                    if ($field.length > 0 && !$field.hasAttr('form-omit-when-hidden')) return normalize($field);
+                    if ($field.is('[form-omit-when-hidden]') && $field.is(':hidden')) {
+                        delete target[prop];
+                        return;
+                    }
+                    if ($field.length > 0) target[prop] = normalize($field);
                     return target[prop];
                 },
                 set: (target, prop, value) => {
                     const $field = this.$form.find(`[name="${prop}"]`);
                     if ($field.length > 0) $field.val(value).trigger('change');
-                    else target[prop] = value;
+                    target[prop] = value;
                     return true;
                 }
             });
 
             this.validators = new FormValidators(validators, this.fields, selector);
 
-            const prefixedMapping = {};
-            for (const [name, fn] of Object.entries(validators)) {
-                prefixedMapping[`validator:${name}`] = fn;
-            }
-            for (const [name, fn] of Object.entries(conditions)) {
-                prefixedMapping[`condition:${name}`] = fn;
-            }
-
-            this.#registerDependencies(prefixedMapping);
-            this.#evaluateAllConditions();
+            this.#registerDependencies();
+            this.#evaluateAllExpressions();
             this.#setupEvents();
+        }
+
+        #registerDependencies() {
+            for (const type of ['validators', 'expressions']) {
+                for (const name of Object.keys(this[type] || {})) {
+                    this.#executeWithDependencyTracking(`${type}:${name}`, false);
+                }
+            }
+        }
+
+        #addDependency(field, rule) {
+            if (!this.#fieldDependencies.has(field)) {
+                this.#fieldDependencies.set(field, new Set());
+            }
+            this.#fieldDependencies.get(field).add(rule);
         }
 
         #executeWithDependencyTracking(rule, clearExisting=false) {
             if (clearExisting) {
                 for (const [field, rulesSet] of this.#fieldDependencies.entries()) {
-                    for (const existingRule of rulesSet) {
-                        if (existingRule.key === rule.key) {
-                            rulesSet.delete(existingRule);
-                        }
+                    if (rulesSet.has(rule)) {
+                        rulesSet.delete(rule);
                     }
                     if (rulesSet.size === 0) this.#fieldDependencies.delete(field);
                 }
             }
 
+            const [type, name] = rule.split(':');
+            const fn = this[type][name];
+            if (typeof fn !== 'function') return;
+
             this.#currentRunningRule = rule;
-            try {
-                rule.fn.call(this);
+
+            if (type === 'validators') {
+                this.#addDependency(name, rule);
+            }
+
+            try {    
+                return fn.call(this[type]);
             } catch (e) {
                 // Ignore errors during preliminary tracking
             } finally {
@@ -192,55 +236,53 @@ const [FormValidators, Form] = (() => {
             }
         }
 
-        #evaluateRule(type, ruleName) {
-            const source = type === 'condition' ? this.conditions : this.validators;
-            const fn = source[ruleName];
+        #refreshDependenciesFor(rule) {
+            return this.#executeWithDependencyTracking(rule, true);
+        }
+
+        #evaluateAllExpressions() {
+            for (const name of Object.keys(this.expressions)) {
+                this.#evaluateRule(`expressions:${name}`);
+            }
+        }
+
+        #evaluateRule(rule) {
+            const [type, name] = rule.split(':');
+            const fn = this[type][name];
             if (typeof fn !== 'function') return;
 
-            this.#refreshDependenciesFor(type, ruleName, fn);
+            const result = this.#refreshDependenciesFor(rule);
 
-            const result = fn.call(this);
-
-            if (type === 'condition') {
+            if (type === 'expressions') {
                 for (const directive of Object.keys(this.#directiveHandlers)) {
-                    this.#directiveHandlers[directive](this.$form, ruleName, result);
+                    this.#directiveHandlers[directive](name, result);
                 }
             }
             return result;
         }
 
-        #refreshDependenciesFor(type, ruleName, fn) {
-            const rule = { key: `${type}:${ruleName}`, type, name: ruleName, fn };
-            this.#executeWithDependencyTracking(rule, true);
-        }
-
-        #evaluateAllConditions() {
-            for (const conditionName of Object.keys(this.conditions)) {
-                this.#evaluateRule('condition', conditionName);
-            }
-        }
-
-        #registerDependencies(mapping) {
-            for (const [prefixedName, fn] of Object.entries(mapping)) {
-                const [type, name] = prefixedName.split(':');
-                const rule = { key: prefixedName, type, name, fn };
-                this.#executeWithDependencyTracking(rule, false);
-            }
-        }
-
         #setupEvents() {
-            this.$form.on('input change', '[name]', (e) => {
-                const $field = $(e.target);
-                if (!$field.attr('form-validate-on').split(' ').includes(e.type)) return;
+            const defaultEvents = 'input change';
+            const containerEvents = 'input change blur keyup focusout';
 
+            this.$form.on(containerEvents, '[name]', (e) => {
+                const $field = $(e.target);
                 const fieldName = $field.attr('name');
                 if (!fieldName) return;
+                
+                this.#rawFields[fieldName] = normalize($field);
+
+                $field.removeClass('is-invalid');
+                $field.siblings('.invalid-feedback').text('');
+
+                const targetEvents = $field.attr('form-validate-on') ?? defaultEvents;
+                if (!targetEvents.includes(e.type)) return;
 
                 const dependentRules = this.#fieldDependencies.get(fieldName);
                 if (!dependentRules) return;
 
                 for (const rule of dependentRules) {
-                    this.#evaluateRule(rule.type, rule.name);
+                    this.#evaluateRule(rule);
                 }
             });
         }
@@ -268,6 +310,33 @@ const [FormValidators, Form] = (() => {
             return isValid;
         }
 
+        setErrors(errors, fieldMap={}) {
+            let firstErrorStepIndex = null;
+
+            for (const [field, message] of Object.entries(errors)) {
+                const targetField = fieldMap[field] || field;
+                const $field = this.$form.find(`[name="${targetField}"]`);
+                
+                if ($field.length > 0) {
+                    const $feedback = $field.siblings('.invalid-feedback');
+                    $feedback.text(message);
+                    $field.addClass('is-invalid');
+
+                    const $step = $field.closest('.form-step');
+                    if ($step.length > 0) {
+                        const stepIndex = this.$form.find('.form-step').index($step);
+                        if (firstErrorStepIndex === null || stepIndex < firstErrorStepIndex) {
+                            firstErrorStepIndex = stepIndex;
+                        }
+                    }
+                }
+            }
+
+            if (firstErrorStepIndex !== null) {
+                this.goTo(firstErrorStepIndex);
+            }
+        }
+
         goTo(targetIndex) {
             const $steps = this.$form.find('.form-step');
             const currentIndex = this.#getActiveStepIndex();
@@ -287,6 +356,21 @@ const [FormValidators, Form] = (() => {
             return this.goTo(this.#getActiveStepIndex() - 1);
         }
 
+        toFormData() {
+            const payload = { ...this.fields };
+            const formData = new FormData();
+
+            for (const [key, value] of Object.entries(payload)) {
+                if (Array.isArray(value)) {
+                    value.forEach(item => formData.append(key, item));
+                } else if (value !== null && value !== undefined) {
+                    formData.append(key, value);
+                }
+            }
+
+            return formData;
+        }
+
         submit() {
             const $steps = this.$form.find('.form-step');
             
@@ -294,8 +378,8 @@ const [FormValidators, Form] = (() => {
                 return false;
             }
 
-            const payload = { ...this.fields };
-            return this.#submitHandler?.(payload) ?? true;
+            const formData = this.toFormData();
+            return this.#submitHandler?.(formData) ?? true;
         }
     }];
 })();
