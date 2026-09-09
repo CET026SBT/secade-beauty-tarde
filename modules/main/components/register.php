@@ -80,7 +80,7 @@ register_script('components/customerRegister', 'common');
 
                                 <div class="col-12">
                                     <div class="form-floating">
-                                        <input name="morada" type="text" class="form-control" placeholder="Morada*" required list="moradas-list" sb-validate-on="change">
+                                        <input name="morada" type="text" class="form-control" placeholder="Morada*" required list="moradas-list" form-validate-on="change">
                                         <label>Morada*</label>
                                         <div class="invalid-feedback mt-0 mb-1"></div>
                                     </div>

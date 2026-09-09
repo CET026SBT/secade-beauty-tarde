@@ -115,62 +115,36 @@ const [FormValidators, Form] = (() => {
         validators;
         conditions;
         fields;
-        #fieldsRaw;
+        #rawFields;
         #fieldDependencies = new Map();
-        #submit;
-        #currentRunningFn = null;
-        
-        constructor(selector, { validators, conditions={}, submit }) {
+        #submitHandler;
+        #currentRunningRule = null;
+        #directiveHandlers = {
+            'form-show': (ruleName, result) => {
+                this.$form.find(`[form-show="${ruleName}"]`).toggle(result);
+            },
+            'form-hide': (ruleName, result) => {
+                this.$form.find(`[form-hide="${ruleName}"]`).toggle(!result);
+            }
+        };
+
+        constructor(selector, { validators={}, conditions={}, submit }) {
             this.selector = selector;
             this.$form = $(selector);
-            this.#submit = submit;
-            
-            this.#fieldsRaw = {};
-            this.fields = new Proxy(this.#fieldsRaw, {
-                get: (target, prop) => {
-                    const $field = this.$form.find(`[name="${prop}"]`);
-                    if ($field.length > 0) return normalize($field);
-                    return target[prop];
-                },
-                set: (target, prop, value) => {
-                    const $field = this.$form.find(`[name="${prop}"]`);
-                    if ($field.length > 0) $field.val(value).trigger('change');
-                    else this.#fieldsRaw[prop] = value;
-                    return true;
-                }
-            });
-
-            this.validators = new FormValidators(validators, this.fields, selector);
-
-            $(() => {
-                for (const field of Object.keys(validators)) {
-                    const $field = this.$form.find(`[name="${field}"]`);
-                    const event = $field.attr('sb-validate-on') || 'input change';
-                    this.$form.on(event, `[name="${field}"]`, (event, data) => {
-                        this.#fieldsRaw[field] = normalize($(event.target)); // any value would work, even null, since the getter always retrieves the normalized value from the $field
-                        this.validators[field](event, data);
-                    });
-                }
-            });
-        }
-
-        constructor(selector, { validators, conditions = {}, submit }) {
-            this.selector = selector;
-            this.$form = $(selector);
-            this.#submit = submit;
+            this.#submitHandler = submit;
             this.conditions = conditions;
 
-            this.#fieldsRaw = {};
-            this.fields = new Proxy(this.#fieldsRaw, {
+            this.#rawFields = {};
+            this.fields = new Proxy(this.#rawFields, {
                 get: (target, prop) => {
-                    if (this.#currentRunningFn && typeof prop === 'string') {
-                        if (!this.fieldDependencies.has(prop)) {
-                            this.fieldDependencies.set(prop, new Set());
+                    if (this.#currentRunningRule && typeof prop === 'string') {
+                        if (!this.#fieldDependencies.has(prop)) {
+                            this.#fieldDependencies.set(prop, new Set());
                         }
-                        this.fieldDependencies.get(prop).add(this.#currentRunningFn);
+                        this.#fieldDependencies.get(prop).add(this.#currentRunningRule);
                     }
-                    const field = this.$form.find(`[name="${prop}"]`);
-                    if (field.length > 0) return normalize(field);
+                    const $field = this.$form.find(`[name="${prop}"]`);
+                    if ($field.length > 0 && !$field.hasAttr('form-omit-when-hidden')) return normalize($field);
                     return target[prop];
                 },
                 set: (target, prop, value) => {
@@ -181,62 +155,94 @@ const [FormValidators, Form] = (() => {
                 }
             });
 
-            this.#registerDependencies({ ...validators, ...conditions });
+            this.validators = new FormValidators(validators, this.fields, selector);
+
+            const prefixedMapping = {};
+            for (const [name, fn] of Object.entries(validators)) {
+                prefixedMapping[`validator:${name}`] = fn;
+            }
+            for (const [name, fn] of Object.entries(conditions)) {
+                prefixedMapping[`condition:${name}`] = fn;
+            }
+
+            this.#registerDependencies(prefixedMapping);
             this.#evaluateAllConditions();
             this.#setupEvents();
-
-            this.validators = new FormValidators(validators, this.fields, selector);
         }
 
-        #evaluateRule(ruleName) {
-            const fn = this.conditions[ruleName];
+        #executeWithDependencyTracking(rule, clearExisting=false) {
+            if (clearExisting) {
+                for (const [field, rulesSet] of this.#fieldDependencies.entries()) {
+                    for (const existingRule of rulesSet) {
+                        if (existingRule.key === rule.key) {
+                            rulesSet.delete(existingRule);
+                        }
+                    }
+                    if (rulesSet.size === 0) this.#fieldDependencies.delete(field);
+                }
+            }
+
+            this.#currentRunningRule = rule;
+            try {
+                rule.fn.call(this);
+            } catch (e) {
+                // Ignore errors during preliminary tracking
+            } finally {
+                this.#currentRunningRule = null;
+            }
+        }
+
+        #evaluateRule(type, ruleName) {
+            const source = type === 'condition' ? this.conditions : this.validators;
+            const fn = source[ruleName];
             if (typeof fn !== 'function') return;
+
+            this.#refreshDependenciesFor(type, ruleName, fn);
 
             const result = fn.call(this);
 
-            for (const directive of Object.keys(directiveHandlers)) {
-                directiveHandlers[directive](this.$form, ruleName, result);
+            if (type === 'condition') {
+                for (const directive of Object.keys(this.#directiveHandlers)) {
+                    this.#directiveHandlers[directive](this.$form, ruleName, result);
+                }
             }
+            return result;
+        }
+
+        #refreshDependenciesFor(type, ruleName, fn) {
+            const rule = { key: `${type}:${ruleName}`, type, name: ruleName, fn };
+            this.#executeWithDependencyTracking(rule, true);
         }
 
         #evaluateAllConditions() {
             for (const conditionName of Object.keys(this.conditions)) {
-                this.#evaluateRule(conditionName);
+                this.#evaluateRule('condition', conditionName);
             }
         }
 
         #registerDependencies(mapping) {
-            for (const [name, fn] of Object.entries(mapping)) {
-                this.#currentRunningFn = { name, fn };
-                try {
-                    fn.call(this);
-                } catch (e) {
-                    // Ignora erros no arranque
-                } finally {
-                    this.#currentRunningFn = null;
-                }
+            for (const [prefixedName, fn] of Object.entries(mapping)) {
+                const [type, name] = prefixedName.split(':');
+                const rule = { key: prefixedName, type, name, fn };
+                this.#executeWithDependencyTracking(rule, false);
             }
         }
 
         #setupEvents() {
-            for (const [fieldName, dependentFns] of this.fieldDependencies.entries()) {
-                const $el = this.$form.find(`[name="${fieldName}"]`);
-                if ($el.length === 0) continue;
+            this.$form.on('input change', '[name]', (e) => {
+                const $field = $(e.target);
+                if (!$field.attr('form-validate-on').split(' ').includes(e.type)) return;
 
-                const event = $el.attr('sb-validate-on') || 'input change';
+                const fieldName = $field.attr('name');
+                if (!fieldName) return;
 
-                this.$form.on(event, `[name="${fieldName}"]`, (e) => {
-                    this.fields[fieldName]; // Garante leitura/normalização
+                const dependentRules = this.#fieldDependencies.get(fieldName);
+                if (!dependentRules) return;
 
-                    for (const rule of dependentFns) {
-                        if (this.conditions[rule.name]) {
-                            this.#evaluateRule(rule.name);
-                        } else {
-                            rule.fn.call(this);
-                        }
-                    }
-                });
-            }
+                for (const rule of dependentRules) {
+                    this.#evaluateRule(rule.type, rule.name);
+                }
+            });
         }
 
         #getActiveStep() {
@@ -289,7 +295,7 @@ const [FormValidators, Form] = (() => {
             }
 
             const payload = { ...this.fields };
-            return this.#submit?.(payload) ?? true;
+            return this.#submitHandler?.(payload) ?? true;
         }
     }];
 })();
