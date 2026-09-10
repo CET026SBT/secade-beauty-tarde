@@ -161,6 +161,7 @@ const [FormValidators, Form] = (() => {
             this.selector = selector;
             this.$form = $(selector);
             this.#submitHandler = submit;
+            this.validators = validators;
             this.expressions = expressions;
 
             this.#rawFields = {};
@@ -180,16 +181,16 @@ const [FormValidators, Form] = (() => {
                 set: (target, prop, value) => {
                     const $field = this.$form.find(`[name="${prop}"]`);
                     if ($field.length > 0) $field.val(value).trigger('change');
-                    target[prop] = value;
+                    else target[prop] = value;
                     return true;
                 }
             });
 
-            this.validators = new FormValidators(validators, this.fields, selector);
-
             this.#registerDependencies();
             this.#evaluateAllExpressions();
             this.#setupEvents();
+
+            this.validators = new FormValidators(validators, this.fields, selector);
         }
 
         #registerDependencies() {
@@ -200,20 +201,20 @@ const [FormValidators, Form] = (() => {
             }
         }
 
-        #addDependency(field, rule) {
-            if (!this.#fieldDependencies.has(field)) {
-                this.#fieldDependencies.set(field, new Set());
+        #addDependency(fieldName, rule) {
+            if (!this.#fieldDependencies.has(fieldName)) {
+                this.#fieldDependencies.set(fieldName, new Set());
             }
-            this.#fieldDependencies.get(field).add(rule);
+            this.#fieldDependencies.get(fieldName).add(rule);
         }
 
         #executeWithDependencyTracking(rule, clearExisting=false) {
             if (clearExisting) {
-                for (const [field, rulesSet] of this.#fieldDependencies.entries()) {
+                for (const [fieldName, rulesSet] of this.#fieldDependencies.entries()) {
                     if (rulesSet.has(rule)) {
                         rulesSet.delete(rule);
                     }
-                    if (rulesSet.size === 0) this.#fieldDependencies.delete(field);
+                    if (rulesSet.size === 0) this.#fieldDependencies.delete(fieldName);
                 }
             }
 
@@ -272,16 +273,16 @@ const [FormValidators, Form] = (() => {
                 
                 this.#rawFields[fieldName] = normalize($field);
 
-                $field.removeClass('is-invalid');
-                $field.siblings('.invalid-feedback').text('');
-
                 const targetEvents = $field.attr('form-validate-on') ?? defaultEvents;
                 if (!targetEvents.includes(e.type)) return;
+
+                $field.removeClass('is-invalid');
+                $field.siblings('.invalid-feedback').text('');
 
                 const dependentRules = this.#fieldDependencies.get(fieldName);
                 if (!dependentRules) return;
 
-                for (const rule of dependentRules) {
+                for (const rule of [...dependentRules]) {
                     this.#evaluateRule(rule);
                 }
             });

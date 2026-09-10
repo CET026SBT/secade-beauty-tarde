@@ -5,11 +5,11 @@ register_script("components/login", "main");
 <div class="container-fluid px-0 d-flex flex-fill">
     <div class="row align-items-center flex-fill m-0">
         <div class="col-lg-5 h-100 d-none d-lg-flex text-white position-relative align-items-center justify-content-center p-0 overflow-hidden">
-            <img src="<?= BASE_URL ?>/modules/common/img/bg-login.png" alt="Imagem Lateral" class="auth-left-img">
+            <img src="<?= BASE_URL ?>/modules/common/img/bg-login.png" alt="Imagem Lateral" class="auth-left-img user-select-none" draggable="false">
         </div>
 
         <div class="col-lg-7 h-100 d-flex align-items-center justify-content-center position-relative py-5 overflow-hidden bg-light">
-            <img src="<?= BASE_URL ?>/modules/common/img/sb-logo-primary.svg" alt="Secade Beauty" class="auth-logo-watermark">
+            <img src="<?= BASE_URL ?>/modules/common/img/sb-logo-primary.svg" alt="Secade Beauty" class="auth-logo-watermark user-select-none" draggable="false">
 
             <div class="col-md-10 p-4 bg-white shadow-sm border-0 rounded position-relative" style="z-index: 1; max-width: 500px;">
                 <div class="text-center mb-4">
