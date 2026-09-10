@@ -6,11 +6,10 @@ $isAuthPage = in_array($currentPage, ["login.php", "login", "customerRegister.ph
 <div class="container-fluid bg-dark sticky-top p-0">
     <nav class="navbar navbar-expand-lg navbar-dark p-0">
         <a href="<?= BASE_URL ?>/" class="navbar-brand px-3 px-md-5 me-0">
-            <img src="<?= BASE_URL ?>/modules/common/img/sb-logo.png" class="site-logo">
-            <img src="<?= BASE_URL ?>/modules/common/img/sb-title.png" class="site-title">
+            <img src="<?= BASE_URL ?>/modules/common/img/sb-logo.png" class="site-logo user-select-none" draggable="false">
+            <img src="<?= BASE_URL ?>/modules/common/img/sb-title.png" class="site-title user-select-none" draggable="false">
         </a>
-        <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse"
-            data-bs-target="#navbarCollapse">
+        <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse p-3" id="navbarCollapse">

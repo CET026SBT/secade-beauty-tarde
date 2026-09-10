@@ -8,11 +8,11 @@ register_script("components/customerRegister", "main");
 <div class="container-fluid px-0 d-flex flex-fill h-100">
     <div class="row align-items-center flex-fill m-0 w-100">
         <div class="col-xl-5 h-100 d-none d-xl-flex text-white position-relative align-items-center justify-content-center p-0 overflow-hidden">
-            <img src="<?= BASE_URL ?>/modules/common/img/bg-login.png" alt="Imagem Lateral" class="auth-left-img">
+            <img src="<?= BASE_URL ?>/modules/common/img/bg-login.png" alt="Imagem Lateral" class="auth-left-img user-select-none" draggable="false">
         </div>
 
         <div class="col-xl-7 h-100 d-flex flex-column align-items-center justify-content-center position-relative py-5 overflow-hidden bg-light">
-            <img src="<?= BASE_URL ?>/modules/common/img/sb-logo-primary.svg" alt="Secade Beauty" class="auth-logo-watermark">
+            <img src="<?= BASE_URL ?>/modules/common/img/sb-logo-primary.svg" alt="Secade Beauty Logo" class="auth-logo-watermark user-select-none" draggable="false">
 
             <div class="col-xl-10 p-4 bg-white shadow-sm border-0 rounded position-relative my-auto d-flex flex-column overflow-hidden" style="z-index: 1; max-width: 600px;">
                 <div class="text-center mb-4">
@@ -46,7 +46,7 @@ register_script("components/customerRegister", "main");
 
                                 <div class="col-12">
                                     <div class="form-floating">
-                                        <input name="password" type="password" class="form-control" placeholder="Palavra-passe*" required>
+                                        <input name="password" type="password" class="form-control" placeholder="Palavra-passe*" autocomplete="new-password" required>
                                         <label>Palavra-passe*</label>
                                         <div class="invalid-feedback mt-0 mb-1"></div>
                                     </div>
@@ -80,7 +80,7 @@ register_script("components/customerRegister", "main");
 
                                 <div class="col-12">
                                     <div class="form-floating">
-                                        <input name="morada" type="text" class="form-control" placeholder="Morada*" required list="moradas-list" form-validate-on="change">
+                                        <input name="morada" type="text" class="form-control" placeholder="Morada*" required list="moradas-list" form-validate-on="change" required>
                                         <label>Morada*</label>
                                         <div class="invalid-feedback mt-0 mb-1"></div>
                                     </div>
