@@ -1,23 +1,27 @@
-function getServicosPorCategoria(categoriaId, nomeCategoria) {
-    // Cria o FormData exatamente como no vosso exemplo
-    let dados = new FormData();
-    dados.append("endpoint", 'getServicesByCategory'); // Opção 1
-    dados.append("categoria_id", categoriaId);
+<?php
+require_once __DIR__ . '/../services/ServiceService.php';
 
-    $.ajax({
-        url: BASE_URL + '/app/controllers/controllerServico.php',
-        type: 'POST',
-        data: dados,
-        dataType: 'html',
-        cache: false,
-        contentType: false,
-        processData: false,
-        success: function(response) {
-            console.log("Serviços recebidos do servidor:", response);
-            // Aqui atualizam o Modal ou a div com os dados recebidos
-        },
-        error: function(xhr, status, error) {
-            console.error("Erro no pedido AJAX:", error);
+class ServiceController {
+
+    public function handleRequest() {
+        // Verifica se a requisição veio com o endpoint correto
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['endpoint'])) {
+            
+            if ($_POST['endpoint'] === 'getServicesByCategory') {
+                $categoryId = $_POST['categoria_id'] ?? null;
+
+                $service = new ServiceService();
+                $resultado = $service->getServicesByCategory($categoryId);
+
+                // Envia a resposta limpa em JSON para o frontend
+                header('Content-Type: application/json');
+                echo json_encode($resultado);
+                exit;
+            }
         }
-    });
+    }
 }
+
+// Instancia e executa o controlador
+$controller = new ServiceController();
+$controller->handleRequest();
