@@ -17,7 +17,7 @@ const userValidators = {
     },
     telemovel(val) {
         if (val === '') return 'O número de telemóvel é obrigatório.';
-        if (!this.isPhone(val)) return 'Insira um número de telemóvel válido com 9 dígitos.';
+        if (!this.isPhone(val)) return 'Insira um número de telemóvel válido.';
     },
     nif(val) {
         if (val === '') return "O NIF é obrigatório.";

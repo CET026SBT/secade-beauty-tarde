@@ -1,4 +1,5 @@
 <?php
+register_script("validators/login.validator", "common");
 register_script("components/login", "main");
 ?>
 
@@ -23,6 +24,7 @@ register_script("components/login", "main");
                             <div class="form-floating">
                                 <input name="email" type="email" class="form-control" placeholder="E-mail" required>
                                 <label>E-mail</label>
+                                <div class="invalid-feedback"></div>
                             </div>
                         </div>
 
@@ -30,6 +32,7 @@ register_script("components/login", "main");
                             <div class="form-floating">
                                 <input name="password" type="password" class="form-control" placeholder="Palavra-passe" required>
                                 <label>Palavra-passe</label>
+                                <div class="invalid-feedback"></div>
                             </div>
                         </div>
 
@@ -44,7 +47,7 @@ register_script("components/login", "main");
                         </div>
                     </div>
 
-                    <button type="button" class="btn btn-primary w-100 py-2 m-0 fw-bold text-uppercase">Entrar</button>
+                    <button type="submit" class="btn btn-primary w-100 py-2 m-0 fw-bold text-uppercase">Entrar</button>
                 </form>
 
                 <div class="text-center mt-4">
