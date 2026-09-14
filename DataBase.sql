@@ -1,8 +1,8 @@
 -- --------------------------------------------------------
--- Anfitrião:                    127.0.0.1
--- Versão do servidor:           8.4.3 - MySQL Community Server - GPL
--- SO do servidor:               Win64
--- HeidiSQL Versão:              12.8.0.6908
+-- Host:                         127.0.0.1
+-- Server version:               8.4.3 - MySQL Community Server - GPL
+-- Server OS:                    Win64
+-- HeidiSQL Version:             12.8.0.6908
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -15,12 +15,12 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 
--- A despejar estrutura da base de dados para secade_beauty
+-- Dumping database structure for secade_beauty
 DROP DATABASE IF EXISTS `secade_beauty`;
 CREATE DATABASE IF NOT EXISTS `secade_beauty` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `secade_beauty`;
 
--- A despejar estrutura para tabela secade_beauty.agendamento
+-- Dumping structure for table secade_beauty.agendamento
 DROP TABLE IF EXISTS `agendamento`;
 CREATE TABLE IF NOT EXISTS `agendamento` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -41,10 +41,10 @@ CREATE TABLE IF NOT EXISTS `agendamento` (
   CONSTRAINT `fk_agendamento_morada` FOREIGN KEY (`cliente_morada_id`) REFERENCES `cliente_morada` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- A despejar dados para tabela secade_beauty.agendamento: ~0 rows (aproximadamente)
+-- Dumping data for table secade_beauty.agendamento: ~0 rows (approximately)
 DELETE FROM `agendamento`;
 
--- A despejar estrutura para tabela secade_beauty.agendamento_servico
+-- Dumping structure for table secade_beauty.agendamento_servico
 DROP TABLE IF EXISTS `agendamento_servico`;
 CREATE TABLE IF NOT EXISTS `agendamento_servico` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -62,10 +62,10 @@ CREATE TABLE IF NOT EXISTS `agendamento_servico` (
   CONSTRAINT `fk_agend_serv_servico` FOREIGN KEY (`servico_id`) REFERENCES `servico` (`id`) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- A despejar dados para tabela secade_beauty.agendamento_servico: ~0 rows (aproximadamente)
+-- Dumping data for table secade_beauty.agendamento_servico: ~0 rows (approximately)
 DELETE FROM `agendamento_servico`;
 
--- A despejar estrutura para tabela secade_beauty.base_partida
+-- Dumping structure for table secade_beauty.base_partida
 DROP TABLE IF EXISTS `base_partida`;
 CREATE TABLE IF NOT EXISTS `base_partida` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -74,12 +74,12 @@ CREATE TABLE IF NOT EXISTS `base_partida` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- A despejar dados para tabela secade_beauty.base_partida: ~0 rows (aproximadamente)
+-- Dumping data for table secade_beauty.base_partida: ~0 rows (approximately)
 DELETE FROM `base_partida`;
 INSERT INTO `base_partida` (`id`, `nome`, `morada`) VALUES
 	(1, 'Évora', 'Rua do Centro de Formação');
 
--- A despejar estrutura para tabela secade_beauty.categoria_profissional
+-- Dumping structure for table secade_beauty.categoria_profissional
 DROP TABLE IF EXISTS `categoria_profissional`;
 CREATE TABLE IF NOT EXISTS `categoria_profissional` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -89,14 +89,14 @@ CREATE TABLE IF NOT EXISTS `categoria_profissional` (
   UNIQUE KEY `nome` (`nome`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- A despejar dados para tabela secade_beauty.categoria_profissional: ~3 rows (aproximadamente)
+-- Dumping data for table secade_beauty.categoria_profissional: ~3 rows (approximately)
 DELETE FROM `categoria_profissional`;
 INSERT INTO `categoria_profissional` (`id`, `nome`, `descricao`) VALUES
 	(1, 'Cabelereiro', 'Tranças e Penteados'),
 	(2, 'Barbearia', 'Cortes'),
 	(3, 'Estética', 'Maquiagem, Manicure e limpeza facial');
 
--- A despejar estrutura para tabela secade_beauty.cidade
+-- Dumping structure for table secade_beauty.cidade
 DROP TABLE IF EXISTS `cidade`;
 CREATE TABLE IF NOT EXISTS `cidade` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -106,7 +106,7 @@ CREATE TABLE IF NOT EXISTS `cidade` (
   UNIQUE KEY `nome` (`nome`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- A despejar dados para tabela secade_beauty.cidade: ~10 rows (aproximadamente)
+-- Dumping data for table secade_beauty.cidade: ~10 rows (approximately)
 DELETE FROM `cidade`;
 INSERT INTO `cidade` (`id`, `nome`, `distrito`) VALUES
 	(1, 'Arraiolos', 'Évora'),
@@ -120,7 +120,7 @@ INSERT INTO `cidade` (`id`, `nome`, `distrito`) VALUES
 	(9, 'Mourão', 'Évora'),
 	(10, 'Évora', 'Évora');
 
--- A despejar estrutura para tabela secade_beauty.cliente
+-- Dumping structure for table secade_beauty.cliente
 DROP TABLE IF EXISTS `cliente`;
 CREATE TABLE IF NOT EXISTS `cliente` (
   `id` int NOT NULL,
@@ -131,10 +131,10 @@ CREATE TABLE IF NOT EXISTS `cliente` (
   CONSTRAINT `fk_cliente_utilizador` FOREIGN KEY (`id`) REFERENCES `utilizador` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- A despejar dados para tabela secade_beauty.cliente: ~0 rows (aproximadamente)
+-- Dumping data for table secade_beauty.cliente: ~0 rows (approximately)
 DELETE FROM `cliente`;
 
--- A despejar estrutura para tabela secade_beauty.cliente_morada
+-- Dumping structure for table secade_beauty.cliente_morada
 DROP TABLE IF EXISTS `cliente_morada`;
 CREATE TABLE IF NOT EXISTS `cliente_morada` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -152,10 +152,10 @@ CREATE TABLE IF NOT EXISTS `cliente_morada` (
   CONSTRAINT `fk_cliente_morada_cliente` FOREIGN KEY (`cliente_id`) REFERENCES `cliente` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- A despejar dados para tabela secade_beauty.cliente_morada: ~0 rows (aproximadamente)
+-- Dumping data for table secade_beauty.cliente_morada: ~0 rows (approximately)
 DELETE FROM `cliente_morada`;
 
--- A despejar estrutura para tabela secade_beauty.execucao_agendamento
+-- Dumping structure for table secade_beauty.execucao_agendamento
 DROP TABLE IF EXISTS `execucao_agendamento`;
 CREATE TABLE IF NOT EXISTS `execucao_agendamento` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -172,10 +172,10 @@ CREATE TABLE IF NOT EXISTS `execucao_agendamento` (
   CONSTRAINT `fk_exec_rota` FOREIGN KEY (`rota_id`) REFERENCES `rota_ambulante` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- A despejar dados para tabela secade_beauty.execucao_agendamento: ~0 rows (aproximadamente)
+-- Dumping data for table secade_beauty.execucao_agendamento: ~0 rows (approximately)
 DELETE FROM `execucao_agendamento`;
 
--- A despejar estrutura para tabela secade_beauty.fecho_caixa_diario
+-- Dumping structure for table secade_beauty.fecho_caixa_diario
 DROP TABLE IF EXISTS `fecho_caixa_diario`;
 CREATE TABLE IF NOT EXISTS `fecho_caixa_diario` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -190,10 +190,10 @@ CREATE TABLE IF NOT EXISTS `fecho_caixa_diario` (
   CONSTRAINT `fk_fecho_funcionario` FOREIGN KEY (`funcionario_id`) REFERENCES `funcionario` (`id`) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- A despejar dados para tabela secade_beauty.fecho_caixa_diario: ~0 rows (aproximadamente)
+-- Dumping data for table secade_beauty.fecho_caixa_diario: ~0 rows (approximately)
 DELETE FROM `fecho_caixa_diario`;
 
--- A despejar estrutura para tabela secade_beauty.feedback_cliente
+-- Dumping structure for table secade_beauty.feedback_cliente
 DROP TABLE IF EXISTS `feedback_cliente`;
 CREATE TABLE IF NOT EXISTS `feedback_cliente` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -207,10 +207,10 @@ CREATE TABLE IF NOT EXISTS `feedback_cliente` (
   CONSTRAINT `feedback_cliente_chk_1` CHECK ((`classificacao_estrelas` between 1 and 5))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- A despejar dados para tabela secade_beauty.feedback_cliente: ~0 rows (aproximadamente)
+-- Dumping data for table secade_beauty.feedback_cliente: ~0 rows (approximately)
 DELETE FROM `feedback_cliente`;
 
--- A despejar estrutura para tabela secade_beauty.funcionario
+-- Dumping structure for table secade_beauty.funcionario
 DROP TABLE IF EXISTS `funcionario`;
 CREATE TABLE IF NOT EXISTS `funcionario` (
   `id` int NOT NULL,
@@ -222,10 +222,10 @@ CREATE TABLE IF NOT EXISTS `funcionario` (
   CONSTRAINT `fk_funcionario_utilizador` FOREIGN KEY (`id`) REFERENCES `utilizador` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- A despejar dados para tabela secade_beauty.funcionario: ~0 rows (aproximadamente)
+-- Dumping data for table secade_beauty.funcionario: ~0 rows (approximately)
 DELETE FROM `funcionario`;
 
--- A despejar estrutura para tabela secade_beauty.funcionario_categoria
+-- Dumping structure for table secade_beauty.funcionario_categoria
 DROP TABLE IF EXISTS `funcionario_categoria`;
 CREATE TABLE IF NOT EXISTS `funcionario_categoria` (
   `funcionario_id` int NOT NULL,
@@ -236,10 +236,10 @@ CREATE TABLE IF NOT EXISTS `funcionario_categoria` (
   CONSTRAINT `fk_func_cat_funcionario` FOREIGN KEY (`funcionario_id`) REFERENCES `funcionario` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- A despejar dados para tabela secade_beauty.funcionario_categoria: ~0 rows (aproximadamente)
+-- Dumping data for table secade_beauty.funcionario_categoria: ~0 rows (approximately)
 DELETE FROM `funcionario_categoria`;
 
--- A despejar estrutura para tabela secade_beauty.gorjeta
+-- Dumping structure for table secade_beauty.gorjeta
 DROP TABLE IF EXISTS `gorjeta`;
 CREATE TABLE IF NOT EXISTS `gorjeta` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -254,10 +254,10 @@ CREATE TABLE IF NOT EXISTS `gorjeta` (
   CONSTRAINT `fk_gorjeta_funcionario` FOREIGN KEY (`funcionario_id`) REFERENCES `funcionario` (`id`) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- A despejar dados para tabela secade_beauty.gorjeta: ~0 rows (aproximadamente)
+-- Dumping data for table secade_beauty.gorjeta: ~0 rows (approximately)
 DELETE FROM `gorjeta`;
 
--- A despejar estrutura para tabela secade_beauty.matriz_deslocacao
+-- Dumping structure for table secade_beauty.matriz_deslocacao
 DROP TABLE IF EXISTS `matriz_deslocacao`;
 CREATE TABLE IF NOT EXISTS `matriz_deslocacao` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -273,7 +273,7 @@ CREATE TABLE IF NOT EXISTS `matriz_deslocacao` (
   CONSTRAINT `fk_matriz_cidade` FOREIGN KEY (`cidade_id`) REFERENCES `cidade` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- A despejar dados para tabela secade_beauty.matriz_deslocacao: ~0 rows (aproximadamente)
+-- Dumping data for table secade_beauty.matriz_deslocacao: ~9 rows (approximately)
 DELETE FROM `matriz_deslocacao`;
 INSERT INTO `matriz_deslocacao` (`id`, `base_partida_id`, `cidade_id`, `distancia_km`, `tempo_estimado_minutos`, `custo_estimado_combustivel`) VALUES
 	(1, 1, 1, 45.00, 40, 6.75),
@@ -286,7 +286,7 @@ INSERT INTO `matriz_deslocacao` (`id`, `base_partida_id`, `cidade_id`, `distanci
 	(8, 1, 8, 115.00, 85, 17.24),
 	(9, 1, 9, 110.00, 90, 16.42);
 
--- A despejar estrutura para tabela secade_beauty.rota_ambulante
+-- Dumping structure for table secade_beauty.rota_ambulante
 DROP TABLE IF EXISTS `rota_ambulante`;
 CREATE TABLE IF NOT EXISTS `rota_ambulante` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -303,10 +303,10 @@ CREATE TABLE IF NOT EXISTS `rota_ambulante` (
   CONSTRAINT `fk_rota_cidade` FOREIGN KEY (`cidade_id`) REFERENCES `cidade` (`id`) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- A despejar dados para tabela secade_beauty.rota_ambulante: ~0 rows (aproximadamente)
+-- Dumping data for table secade_beauty.rota_ambulante: ~0 rows (approximately)
 DELETE FROM `rota_ambulante`;
 
--- A despejar estrutura para tabela secade_beauty.rota_funcionario
+-- Dumping structure for table secade_beauty.rota_funcionario
 DROP TABLE IF EXISTS `rota_funcionario`;
 CREATE TABLE IF NOT EXISTS `rota_funcionario` (
   `rota_id` int NOT NULL,
@@ -317,10 +317,10 @@ CREATE TABLE IF NOT EXISTS `rota_funcionario` (
   CONSTRAINT `fk_rota_func_rota` FOREIGN KEY (`rota_id`) REFERENCES `rota_ambulante` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- A despejar dados para tabela secade_beauty.rota_funcionario: ~0 rows (aproximadamente)
+-- Dumping data for table secade_beauty.rota_funcionario: ~0 rows (approximately)
 DELETE FROM `rota_funcionario`;
 
--- A despejar estrutura para tabela secade_beauty.servico
+-- Dumping structure for table secade_beauty.servico
 DROP TABLE IF EXISTS `servico`;
 CREATE TABLE IF NOT EXISTS `servico` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -335,7 +335,7 @@ CREATE TABLE IF NOT EXISTS `servico` (
   CONSTRAINT `fk_servico_categoria` FOREIGN KEY (`categoria_id`) REFERENCES `categoria_profissional` (`id`) ON DELETE RESTRICT
 ) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- A despejar dados para tabela secade_beauty.servico: ~0 rows (aproximadamente)
+-- Dumping data for table secade_beauty.servico: ~35 rows (approximately)
 DELETE FROM `servico`;
 INSERT INTO `servico` (`id`, `nome`, `descricao`, `categoria_id`, `duracao_estimada_minutos`, `preco_base`, `requer_espaco_fisico`) VALUES
 	(1, 'Box Braids', 'Serviço de tranças Box Braids.', 1, 240, 32.52, 0),
@@ -374,7 +374,7 @@ INSERT INTO `servico` (`id`, `nome`, `descricao`, `categoria_id`, `duracao_estim
 	(34, 'Limpeza Facial', 'Limpeza facial.', 3, 60, 24.39, 1),
 	(35, 'Design de Sobrancelha com Linha', 'Design de sobrancelhas com linha.', 3, 30, 8.13, 0);
 
--- A despejar estrutura para tabela secade_beauty.servico_foto
+-- Dumping structure for table secade_beauty.servico_foto
 DROP TABLE IF EXISTS `servico_foto`;
 CREATE TABLE IF NOT EXISTS `servico_foto` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -387,10 +387,10 @@ CREATE TABLE IF NOT EXISTS `servico_foto` (
   CONSTRAINT `fk_servico_foto_servico` FOREIGN KEY (`servico_id`) REFERENCES `servico` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- A despejar dados para tabela secade_beauty.servico_foto: ~0 rows (aproximadamente)
+-- Dumping data for table secade_beauty.servico_foto: ~0 rows (approximately)
 DELETE FROM `servico_foto`;
 
--- A despejar estrutura para tabela secade_beauty.servico_local
+-- Dumping structure for table secade_beauty.servico_local
 DROP TABLE IF EXISTS `servico_local`;
 CREATE TABLE IF NOT EXISTS `servico_local` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -404,10 +404,10 @@ CREATE TABLE IF NOT EXISTS `servico_local` (
   CONSTRAINT `fk_servico_local_servico` FOREIGN KEY (`servico_id`) REFERENCES `servico` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- A despejar dados para tabela secade_beauty.servico_local: ~0 rows (aproximadamente)
+-- Dumping data for table secade_beauty.servico_local: ~0 rows (approximately)
 DELETE FROM `servico_local`;
 
--- A despejar estrutura para tabela secade_beauty.transacao_financeira
+-- Dumping structure for table secade_beauty.transacao_financeira
 DROP TABLE IF EXISTS `transacao_financeira`;
 CREATE TABLE IF NOT EXISTS `transacao_financeira` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -426,10 +426,10 @@ CREATE TABLE IF NOT EXISTS `transacao_financeira` (
   CONSTRAINT `fk_transacao_funcionario` FOREIGN KEY (`funcionario_id`) REFERENCES `funcionario` (`id`) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- A despejar dados para tabela secade_beauty.transacao_financeira: ~0 rows (aproximadamente)
+-- Dumping data for table secade_beauty.transacao_financeira: ~0 rows (approximately)
 DELETE FROM `transacao_financeira`;
 
--- A despejar estrutura para tabela secade_beauty.utilizador
+-- Dumping structure for table secade_beauty.utilizador
 DROP TABLE IF EXISTS `utilizador`;
 CREATE TABLE IF NOT EXISTS `utilizador` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -444,7 +444,7 @@ CREATE TABLE IF NOT EXISTS `utilizador` (
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- A despejar dados para tabela secade_beauty.utilizador: ~0 rows (aproximadamente)
+-- Dumping data for table secade_beauty.utilizador: ~0 rows (approximately)
 DELETE FROM `utilizador`;
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;

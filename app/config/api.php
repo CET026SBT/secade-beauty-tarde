@@ -6,6 +6,8 @@ $routes = [
     "auth-login"     => ["controller" => "AuthController", "method" => "login", "http" => "POST"],
     "auth-logout"    => ["controller" => "AuthController", "method" => "logout", "http" => "POST"],
     "auth-register"  => ["controller" => "AuthController", "method" => "register", "http" => "POST"],
+    
+    "city-supported" => ["controller" => "CityController", "method" => "getSupportedCities", "http" => "GET"],
 ];
 
 try {

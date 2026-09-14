@@ -21,7 +21,7 @@ $pageTitle = isset($pageTitle) ? $pageTitle . " - " . SITE_NAME : SITE_NAME . " 
     <link href="<?= BASE_URL ?>/modules/common/lib/fonts/font-awesome/css/all.min.css" rel="stylesheet">
     <link href="<?= BASE_URL ?>/modules/common/lib/fonts/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
 
-    <!-- Libraries Stylesheet -->
+    <!-- Third-party Libraries Stylesheet -->
     <link href="<?= BASE_URL ?>/modules/common/lib/animate/animate.min.css" rel="stylesheet">
     <link href="<?= BASE_URL ?>/modules/common/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
 

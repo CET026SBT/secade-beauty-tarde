@@ -7,10 +7,10 @@ require_once APP_PATH . "/services/EmployeeService.php";
 require_once APP_PATH . "/services/ManagerService.php";
 
 class AuthService extends BaseService {
-    private $userRepository;
-    private $customerService;
-    private $employeeService;
-    private $managerService;
+    private UserRepository $userRepository;
+    private CustomerService $customerService;
+    private EmployeeService $employeeService;
+    private ManagerService $managerService;
 
     public function __construct() {
         parent::__construct();
@@ -31,11 +31,11 @@ class AuthService extends BaseService {
         });
     }
 
-    public function register(array $data) {
+    public function register(array $data): array {
         $tipoPerfil = $data["tipoPerfil"] = $data["tipoPerfil"] ?? "cliente";
 
         if ($tipoPerfil === "cliente") {
-            return $this->customerService->registerCustomer($data);
+            return $this->customerService->createCustomer($data);
         }
 
         if (!Session::isLoggedIn() || !Session::isManager()) {
@@ -43,13 +43,13 @@ class AuthService extends BaseService {
         }
 
         if ($tipoPerfil === "funcionario") {
-            return $this->employeeService->registerEmployee($data);
+            return $this->employeeService->createEmployee($data);
         } else {
-            return $this->managerService->registerManager($data);
+            return $this->managerService->createManager($data);
         }
     }
 
-    public function login(array $data): array {
+    public function authenticateLogin(array $data): array {
         $user = $this->userRepository->findByEmail($data["email"]);
 
         $this->validateLoginInput($data, $user);
@@ -66,8 +66,10 @@ class AuthService extends BaseService {
         ];
     }
 
-    public function logout(): array {
+    public function terminateSession(): array {
         Session::destroy();
-        return ["message" => "Sessão terminada com sucesso!"];
+        return [
+            "message" => "Sessão terminada com sucesso!"
+        ];
     }
 }
