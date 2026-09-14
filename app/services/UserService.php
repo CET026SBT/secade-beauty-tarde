@@ -4,7 +4,7 @@ require_once __DIR__ . "/BaseService.php";
 require_once APP_PATH . "/repositories/UserRepository.php";
 
 class UserService extends BaseService {
-    private $userRepository;
+    private UserRepository $userRepository;
 
     public function __construct() {
         parent::__construct();
@@ -22,16 +22,30 @@ class UserService extends BaseService {
                     "Este email já se encontra registado."
                 )
                 ->required("telemovel", "O número de telemóvel é obrigatório.")
-                ->phone("telemovel", "Insira um número de telemóvel válido com 9 dígitos.")
+                ->phone("telemovel", "Insira um número de telemóvel válido.")
                 ->required("password", "A password é obrigatória.")
                 ->password("password");
         });
     }
 
-    public function createUser(array $data): int {
+    /**
+     * Find a user by id
+     * @param int $userId
+     * @return array|null
+     */
+    public function findById(int $userId): ?array {
+        return $this->userRepository->findById($userId);
+    }
+
+    public function createUser(array $data): array {
         $this->validateInput($data);
 
         $passwordHash = password_hash($data["password"], PASSWORD_BCRYPT);
-        return $this->userRepository->create($data, $passwordHash);
+        $userId = $this->userRepository->create($data, $passwordHash);
+
+        return [
+            "userId" => $userId,
+            "message" => "Utilizador criado com sucesso!"
+        ];
     }
 }

@@ -1,5 +1,5 @@
 const customerRegister = (() => {
-    const supportedCities = ['Évora'];
+    const supportedCities = [];
     const customerAddresses = [];
 
     const form = new Form('#customerRegisterForm', {
@@ -23,7 +23,33 @@ const customerRegister = (() => {
         }
     });
 
+    function fetchAndStoreSupportedCities() {
+        return API.cities.getSupported().then(response => {
+            const cities = response.cities || [];
+            supportedCities.length = 0;
+            supportedCities.push(...cities);
+            return cities;
+        });
+    }
+
+    function updateCitiesTooltip(cities) {
+        if (!cities || cities.length === 0) return;
+
+        const tooltipText = `Cidades suportadas: ${cities.join(', ')}`;
+        const $icon = $('#citiesTooltip');
+        $icon.attr('title', tooltipText);
+
+        const tooltipInstance = bootstrap.Tooltip.getInstance($icon[0]);
+        if (tooltipInstance) {
+            tooltipInstance.dispose();
+        }
+        new bootstrap.Tooltip($icon[0]);
+    }
+
     $(() => {
+        fetchAndStoreSupportedCities()
+            .then(cities => updateCitiesTooltip(cities));
+
         new AddressAutocomplete({
             formSelector: form.selector,
             savedAddresses: customerAddresses,

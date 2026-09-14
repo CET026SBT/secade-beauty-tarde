@@ -12,6 +12,14 @@ class UserRepository extends BaseRepository {
         return $result !== false ? $result : null;
     }
 
+    public function findById(int $id): ?array {
+        $stmt = $this->db->prepare("SELECT * FROM utilizador WHERE id = :id LIMIT 1");
+        $stmt->execute(["id" => $id]);
+
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result !== false ? $result : null;
+    }
+
     public function create(array $data, string $passwordHash): int {
         $stmt = $this->db->prepare("
             INSERT INTO utilizador (nome, email, password_hash, telemovel, tipo_perfil) 
@@ -26,6 +34,6 @@ class UserRepository extends BaseRepository {
             "tipo_perfil" => $data["tipoPerfil"] ?? "cliente"
         ]);
 
-        return $this->db->lastInsertId();
+        return (int)$this->db->lastInsertId();
     }
 }
