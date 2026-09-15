@@ -21,16 +21,23 @@
  *    - Com número de linhas personalizado: $('.containers').preloader('.jq-skeleton-item', ...promises, 4) // 4 linhas
  */
 ?>
-<div id="jq-preloader-templates" style="display: none !important;">
+<div id="jq-preloader-templates">
 
-    <!-- 1. Spinner Overlay (Ecrã inteiro ou sobre um container) -->
+    <!-- Spinner Overlay em Fullscreen (substitui o id="spinner" antigo) -->
+    <div preloader-overlay class="jq-main-preloader bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+        <div class="spinner-grow text-primary" role="status">
+            <span class="visually-hidden">A carregar...</span>
+        </div>
+    </div>
+
+    <!-- Spinner Overlay (Ecrã inteiro ou sobre um container) -->
     <div preloader-overlay class="jq-overlay-process bg-white bg-opacity-75">
         <div class="spinner-border text-primary" role="status">
             <span class="visually-hidden">A processar...</span>
         </div>
     </div>
 
-    <!-- 2. Skeleton Box (Para blocos genéricos) -->
+    <!-- Skeleton Box (Para blocos genéricos) -->
     <div preloader-skeleton="1" class="jq-skeleton-item">
         <div class="jq-skeleton-line jq-skeleton-title"></div>
         <div class="jq-skeleton-line jq-skeleton-text"></div>

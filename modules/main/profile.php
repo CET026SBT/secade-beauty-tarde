@@ -15,7 +15,6 @@ $currentPage = "profile";
     <title>Meu Perfil - <?= SITE_NAME ?></title>
 </head>
 <body>
-    <?php include __DIR__ . "/includes/spinner.php"; ?>
     <?php include __DIR__ . "/includes/navbar.php"; ?>
 
     <!-- Page Header -->
@@ -39,8 +38,7 @@ $currentPage = "profile";
                     <div class="card-body text-center">
                         <img src="<?= BASE_URL ?>/modules/common/img/testimonial-1.jpg" 
                              alt="<?= htmlspecialchars($user['name']) ?>"
-                             class="rounded-circle mb-3"
-                             style="width: 150px; height: 150px; object-fit: cover; border: 3px solid #d4a574;">
+                             class="profile-image-150 mb-3">
                         <h4 class="mb-1"><?= htmlspecialchars($user['name']) ?></h4>
                         <p class="text-muted mb-3"><?= htmlspecialchars($user['email']) ?></p>
                         <span class="badge bg-primary"><?= ucfirst($user['profile']) ?></span>

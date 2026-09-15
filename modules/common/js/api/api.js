@@ -6,5 +6,8 @@ const API = ((baseApi) => ({
     },
     cities: {
         getSupported: () => baseApi.get('?action=city-supported')
+    },
+    categories: {
+        getAll: () => baseApi.get('?action=category-all')
     }
 }))(new ApiClient(`${BASE_URL ?? ''}/api`));

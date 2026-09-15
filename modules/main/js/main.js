@@ -3,12 +3,8 @@
 
     // Spinner
     function spinner() {
-        setTimeout(function () {
-            if ($('#spinner').length > 0) {
-                $('#spinner').removeClass('show');
-            }
-        }, 1);
-    };
+        $('body').preloader('.jq-main-preloader', Promise.resolve());
+    }
     spinner();
     
     // Initiate the wowjs

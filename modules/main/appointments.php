@@ -15,7 +15,6 @@ $currentPage = "appointments";
     <title>Meus Agendamentos - <?= SITE_NAME ?></title>
 </head>
 <body>
-    <?php include __DIR__ . "/includes/spinner.php"; ?>
     <?php include __DIR__ . "/includes/navbar.php"; ?>
 
     <!-- Page Header -->

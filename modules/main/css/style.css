@@ -194,6 +194,23 @@ form .row > *:has([aria-invalid="true"])*/ {
 }
 
 
+/* Profile Image */
+.profile-image-40 {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid var(--bs-primary);
+}
+
+.profile-image-150 {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid var(--bs-primary);
+}
+
 /* Navbar */
 .navbar .navbar-brand {
     font-size: 25px;

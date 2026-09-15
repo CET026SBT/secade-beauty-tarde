@@ -10,7 +10,7 @@ class CityController extends BaseController {
         $this->cityService = new CityService();
     }
 
-    public function getSupportedCities(): array {
-        return $this->cityService->fetchSupportedCities();
+    public function findSupportedCities(): array {
+        return $this->cityService->findSupportedCities();
     }
 }

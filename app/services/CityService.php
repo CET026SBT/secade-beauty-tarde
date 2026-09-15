@@ -11,7 +11,7 @@ class CityService extends BaseService {
         $this->cityRepository = new CityRepository();
     }
 
-    public function fetchSupportedCities(): array {
+    public function findSupportedCities(): array {
         return [
             "cities" => $this->cityRepository->findAllNames()
         ];

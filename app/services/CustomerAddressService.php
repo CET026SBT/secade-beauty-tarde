@@ -44,7 +44,7 @@ class CustomerAddressService extends BaseService {
      * @param int $customerId
      * @return array
      */
-    public function fetchCustomerAddresses(int $customerId): array {
+    public function findCustomerAddresses(int $customerId): array {
         $addresses = $this->addressRepository->findByCustomerId($customerId);
         $cities = $this->cityRepository->findAll();
 

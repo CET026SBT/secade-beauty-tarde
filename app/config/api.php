@@ -7,7 +7,9 @@ $routes = [
     "auth-logout"    => ["controller" => "AuthController", "method" => "logout", "http" => "POST"],
     "auth-register"  => ["controller" => "AuthController", "method" => "register", "http" => "POST"],
     
-    "city-supported" => ["controller" => "CityController", "method" => "getSupportedCities", "http" => "GET"],
+    "city-supported" => ["controller" => "CityController", "method" => "findSupportedCities", "http" => "GET"],
+
+    "category-all"   => ["controller" => "CategoryController", "method" => "findAll", "http" => "GET"]
 ];
 
 try {

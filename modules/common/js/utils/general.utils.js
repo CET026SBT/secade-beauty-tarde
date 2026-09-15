@@ -1,4 +1,4 @@
-const domUtils = (() => {
+const generalUtils = (() => {
     function getElement(selectorOrElement) {
         return typeof selectorOrElement === 'string' 
             ? document.querySelector(selectorOrElement) 
@@ -44,6 +44,9 @@ const domUtils = (() => {
                 top: offsetPosition,
                 behavior: 'smooth'
             });
+        },
+        normalizeString(str) {
+            return String(str).normalize("NFD").replace(/[\u0300-\u036f]/g, "");
         }
     };
 })();

@@ -29,7 +29,7 @@ class CustomerService extends BaseService {
      * @param int $userId
      * @return array|null
      */
-    public function fetchCustomerProfile(int $userId): ?array {
+    public function findCustomerProfile(int $userId): ?array {
         $user = $this->userService->findById($userId);
         $customer = $this->customerRepository->findById($userId);
 
