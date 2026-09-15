@@ -1,0 +1,33 @@
+# --- Sistema Operativo ---
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# --- VS Code & IDEs ---
+# Ignora pastas de workspace locais, mas podes manter extensões se quiseres partilhar
+.vscode/
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# --- Logs e Erros ---
+*.log
+error_log
+/logs/
+
+# --- Configurações Locais e Ambientes (caso venhas a usar .env) ---
+.env
+.env.local
+.env.*.local
+
+# --- Dependências (se no futuro usares Composer) ---
+/vendor/
+
+# --- Ficheiros temporários de servidores locais (XAMPP/WAMP) ---
+nbproject/
+.phpintel/
