@@ -1,0 +1,17 @@
+.service-price {
+    font-size: 1.15rem;
+    font-weight: 700;
+}
+
+.service-card {
+    min-height: 100%;
+}
+
+.hero-copy {
+    max-width: 720px;
+}
+
+.form-help {
+    color: #6c757d;
+    font-size: .9rem;
+}
