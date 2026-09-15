@@ -14,7 +14,7 @@ if ($isLoggedIn && $user):
         <span class="text-white me-2 d-none d-lg-inline"><?= htmlspecialchars($userName) ?></span>
         <img src="<?= BASE_URL ?>/modules/common/img/testimonial-1.jpg"
             alt="<?= htmlspecialchars($userName) ?>"
-            class="profile-image-40">
+            class="wh-40 rounded-circle object-fit-cover border border-2 border-primary">
     </button>
     <ul class="dropdown-menu dropdown-menu-end">
         <li>

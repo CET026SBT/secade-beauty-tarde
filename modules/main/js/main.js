@@ -3,7 +3,7 @@
 
     // Spinner
     function spinner() {
-        $('body').preloader('.jq-main-preloader', Promise.resolve());
+        $('body').preloader('.jq-overlay-main', Promise.resolve());
     }
     spinner();
     

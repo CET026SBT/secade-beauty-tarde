@@ -7,7 +7,7 @@ register_script("components/serviceCategories", "main");
             <h1 class="font-dancing-script text-primary">Os nossos serviços</h1>
             <h1 class="mb-5">Explorando os nossos serviços</h1>
         </div>
-        <div class="category-cards-container row g-4 g-md-0 text-center">
+        <div class="categories-container row g-4 g-md-0 text-center">
         </div>
     </div>
 </div>

@@ -3,7 +3,7 @@ const menuUser = (() => {
         e.preventDefault();
         if (!confirm('Tem a certeza que deseja terminar sessão?')) return;
         
-        const apiCall = API.auth.logout()
+        const request = API.auth.logout()
             .done(response => {
                 location.href = `${BASE_URL ?? ''}/`;
             })

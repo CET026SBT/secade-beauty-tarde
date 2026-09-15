@@ -38,7 +38,7 @@ $currentPage = "profile";
                     <div class="card-body text-center">
                         <img src="<?= BASE_URL ?>/modules/common/img/testimonial-1.jpg" 
                              alt="<?= htmlspecialchars($user['name']) ?>"
-                             class="profile-image-150 mb-3">
+                             class="wh-150 rounded-circle object-fit-cover mb-3 border border-3 border-primary">
                         <h4 class="mb-1"><?= htmlspecialchars($user['name']) ?></h4>
                         <p class="text-muted mb-3"><?= htmlspecialchars($user['email']) ?></p>
                         <span class="badge bg-primary"><?= ucfirst($user['profile']) ?></span>

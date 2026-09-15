@@ -23,8 +23,8 @@
 ?>
 <div id="jq-preloader-templates">
 
-    <!-- Spinner Overlay em Fullscreen (substitui o id="spinner" antigo) -->
-    <div preloader-overlay class="jq-main-preloader bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+    <!-- Spinner Overlay em Fullscreen -->
+    <div preloader-overlay class="jq-overlay-main bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
         <div class="spinner-grow text-primary" role="status">
             <span class="visually-hidden">A carregar...</span>
         </div>
@@ -37,11 +37,22 @@
         </div>
     </div>
 
-    <!-- Skeleton Box (Para blocos genéricos) -->
-    <div preloader-skeleton="1" class="jq-skeleton-item">
-        <div class="jq-skeleton-line jq-skeleton-title"></div>
-        <div class="jq-skeleton-line jq-skeleton-text"></div>
-        <div class="jq-skeleton-line jq-skeleton-text-short"></div>
+    <!-- Skeleton for Service Category cards -->
+    <div preloader-skeleton="3" class="jq-skeleton-service-category-card col-md-6 col-lg-4 wow fadeIn" data-wow-delay="0.1s">
+        <div class="service-item h-100 p-4 p-lg-5 bg-white border-bottom border-end shadow-sm rounded text-center placeholder-glow">
+            <div class="d-inline-flex align-items-center justify-content-center mb-4 placeholder rounded wh-60 bg-primary bg-opacity-25">
+                <i class="bi bi-brush text-white fs-3"></i>
+            </div>
+            <h3 class="mb-3 fw-light">
+                <span class="placeholder placeholder-sm col-6 bg-secondary bg-opacity-25"></span>
+            </h3>
+            <p class="mb-4">
+                <span class="placeholder placeholder-sm col-9 bg-secondary bg-opacity-10 d-block mx-auto mb-2"></span>
+            </p>
+            <div class="d-inline-block col-8">
+                <span class="placeholder placeholder-sm col-12 py-2 rounded border border-primary bg-transparent d-block"></span>
+            </div>
+        </div>
     </div>
-    
+        
 </div>

@@ -15,14 +15,60 @@ body {
     min-height: 100vh;
 }
 
+/* > Sizing */
+.wh-40 {
+    width: 40px !important;
+    height: 40px !important;
+}
+
+.wh-60 {
+    width: 60px !important;
+    height: 60px !important;
+}
+
+.wh-150 {
+    width: 150px !important;
+    height: 150px !important;
+}
+
+/* > Object Fit */
+.object-fit-contain   { object-fit: contain !important; }
+.object-fit-cover     { object-fit: cover !important; }
+.object-fit-fill      { object-fit: fill !important; }
+.object-fit-scale-down{ object-fit: scale-down !important; }
+.object-fit-none      { object-fit: none !important; }
+
+/* > Utilitary Color Classes (Bootstrap Style) */
+/* Primary Dark */
+.bg-primary-dark { background-color: var(--bs-primary-dark) !important; }
+.text-primary-dark { color: var(--bs-primary-dark) !important; }
+.border-primary-dark { border-color: var(--bs-primary-dark) !important; }
+
+/* Primary Light */
+.bg-primary-light { background-color: var(--bs-primary-light) !important; }
+.text-primary-light { color: var(--bs-primary-light) !important; }
+.border-primary-light { border-color: var(--bs-primary-light) !important; }
+
+/* Primary Lighter */
+.bg-primary-lighter { background-color: var(--bs-primary-lighter) !important; }
+.text-primary-lighter { color: var(--bs-primary-lighter) !important; }
+.border-primary-lighter { border-color: var(--bs-primary-lighter) !important; }
+
+/* Secondary Dark */
+.bg-secondary-dark { background-color: var(--bs-secondary-dark) !important; }
+.text-secondary-dark { color: var(--bs-secondary-dark) !important; }
+.border-secondary-dark { border-color: var(--bs-secondary-dark) !important; }
+
+/* Secondary Darker */
+.bg-secondary-darker { background-color: var(--bs-secondary-darker) !important; }
+.text-secondary-darker { color: var(--bs-secondary-darker) !important; }
+.border-secondary-darker { border-color: var(--bs-secondary-darker) !important; }
+
 /* > SVG Height to Font-Size */
-img.h6,
-img.h5,
-img.h4,
-img.h3,
-img.h2,
-img.h1 {
+img[src$=".svg"]:is(.h1, .h2, .h3, .h4, .h5, .h6) {
     height: 1em;
+    width: auto;
+    vertical-align: -0.1em;
 }
 
 /* > Squared Checboxes */
@@ -46,6 +92,7 @@ form .row > *:has([aria-invalid="true"])*/ {
 
 
 /* Spinner */
+/*
 #spinner {
     opacity: 0;
     visibility: hidden;
@@ -63,7 +110,7 @@ form .row > *:has([aria-invalid="true"])*/ {
     width: 3rem;
     height: 3rem;
 }
-
+*/
 
 /* Back to Top */
 .back-to-top {
@@ -193,23 +240,6 @@ form .row > *:has([aria-invalid="true"])*/ {
     height: 100px;
 }
 
-
-/* Profile Image */
-.profile-image-40 {
-    width: 40px;
-    height: 40px;
-    object-fit: cover;
-    border-radius: 50%;
-    border: 2px solid var(--bs-primary);
-}
-
-.profile-image-150 {
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 50%;
-    border: 3px solid var(--bs-primary);
-}
 
 /* Navbar */
 .navbar .navbar-brand {

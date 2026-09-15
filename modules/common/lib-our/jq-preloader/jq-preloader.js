@@ -4,12 +4,20 @@ $.fn.preloader = function(...args) {
 
     let templateSelector = null;
     if (typeof args[0] === 'string') {
-        templateSelector = args.shift();
+        templateSelector = args.shift()
+            .split(',')
+            .map(sel => {
+                sel = sel.trim();
+                return sel.startsWith('#jq-preloader-templates') 
+                    ? sel 
+                    : `#jq-preloader-templates ${sel}`;
+            })
+            .join(', ');
     }
 
-    let overrideRows = null;
-    if (args.length > 0 && Number.isInteger(args[args.length - 1])) {
-        overrideRows = args.pop();
+    let config = {};
+    if (args.length > 0 && $.isPlainObject(args[args.length - 1])) {
+        config = args.pop();
     }
 
     let promises = args;
@@ -35,9 +43,14 @@ $.fn.preloader = function(...args) {
         }
 
         const isSkeleton = $mold.is('[preloader-skeleton]');
-        const rows = overrideRows !== null 
-            ? overrideRows 
-            : (isSkeleton ? parseInt($mold.attr('preloader-skeleton'), 10) || 3 : 1);
+        
+        const rows = config.rows !== undefined 
+            ? config.rows 
+            : (parseInt($target.attr('preloader-rows') || $mold.attr('preloader-skeleton'), 10) || 3);
+
+        const shouldDefer = config.defer !== undefined 
+            ? config.defer 
+            : $target.is('[preloader-defer]') || $mold.is('[preloader-defer]');
 
         let batch = $target.data('preloader-batch');
         if (!batch) {
@@ -56,8 +69,10 @@ $.fn.preloader = function(...args) {
             };
             $target.data('preloader-batch', batch);
 
-            if (!isSkeleton) {
-                $target.addClass('jq-preloader-container');
+            $target.addClass('jq-preloader-container');
+
+            if (shouldDefer) {
+                $target.children().not('[preloader-skeleton], [preloader-overlay]').addClass('jq-preloader-existing');
             }
 
             let $clones = $([]);
@@ -80,10 +95,28 @@ $.fn.preloader = function(...args) {
             batch.promises = batch.promises.filter(p => !resolvedPromises.includes(p));
 
             if (batch.promises.length === 0) {
-                batch.$renderedNodes.remove();
-                $target.removeClass('preloader-container');
-                $target.removeData('preloader-batch');
-                batch.resolveComplete();
+                const $nodes = batch.$renderedNodes;
+                
+                const cleanUp = () => {
+                    $nodes.remove();
+                    $target.removeClass('jq-preloader-container');
+                    $target.find('.jq-preloader-existing').removeClass('jq-preloader-existing');
+                    $target.removeData('preloader-batch');
+                    batch.resolveComplete();
+                };
+
+                const $transitionNodes = $nodes.filter('.wow, [preloader-overlay]');
+
+                if ($transitionNodes.length > 0) {
+                    $transitionNodes.addClass('preloader-fade-out');
+                    $transitionNodes.first().one('transitionend', function(e) {
+                        if (e.target !== this) return;
+                        $(this).off('transitionend');
+                        cleanUp();
+                    });
+                } else {
+                    cleanUp();
+                }
             }
         }).catch(err => {
             batch.rejectComplete(err);

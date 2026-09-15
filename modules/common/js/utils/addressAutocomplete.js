@@ -196,7 +196,7 @@ class AddressAutocomplete {
 
             const $li = $('<li>')
                 .addClass('dropdown-item cursor-pointer text-wrap text-break py-2')
-                .html(`${domUtils.escapeHtml(text)} ${isSaved}`)
+                .html(`${generalUtils.escapeHtml(text)} ${isSaved}`)
                 .data('address', item);
 
             this.$dropdown.append($li);

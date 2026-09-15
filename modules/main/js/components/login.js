@@ -2,7 +2,7 @@ const login = (() => {
     const form = new Form('#loginForm', {
         validators: loginValidators,
         submit(formData) {
-            const apiCall = API.auth.login(formData)
+            const request = API.auth.login(formData)
                 .done(response => {
                     location.href = `${BASE_URL ?? ''}/`;
                 })
@@ -13,7 +13,7 @@ const login = (() => {
                     }
                 });
 
-            $('#loginForm').preloader('.jq-overlay-process', apiCall);
+            $('#loginForm').preloader('.jq-overlay-process', request);
         }
     });
 

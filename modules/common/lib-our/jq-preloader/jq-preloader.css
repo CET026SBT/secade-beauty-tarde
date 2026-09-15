@@ -1,9 +1,13 @@
-.jq-preloader-templates {
+#jq-preloader-templates {
     display: none;
 }
 
 .jq-preloader-container {
     position: relative !important;
+}
+
+.jq-preloader-container > *:not([preloader-skeleton]):not([preloader-overlay]):not(.jq-preloader-existing) {
+    display: none !important;
 }
 
 [preloader-overlay] {
@@ -17,4 +21,22 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+}
+
+[preloader-skeleton].wow,
+[preloader-overlay] {
+    opacity: 1;
+    transition: opacity 0.4s ease-in-out;
+}
+
+[preloader-skeleton].wow.preloader-fade-out,
+[preloader-overlay].preloader-fade-out {
+    opacity: 0;
+}
+
+@starting-style {
+    [preloader-skeleton].wow,
+    [preloader-overlay] {
+        opacity: 0;
+    }
 }
