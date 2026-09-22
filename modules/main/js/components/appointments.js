@@ -56,7 +56,7 @@ const appointments = (() => {
                     <span class="fw-bold">#${booking.id}</span>
                     <span class="badge ${className} ms-2">${generalUtils.escapeHtml(label)}</span>
                     <span class="badge bg-light text-dark ms-1">
-                        <i class="bi ${isAmbulatory ? "bi-truck" : "bi-buildings"} me-1"></i>
+                        <i class="bi ${isAmbulatory ? "bi-truck" : "bi-building"} me-1"></i>
                         ${isAmbulatory ? "Carrinha" : "Loja"}
                     </span>
                 </div>
@@ -91,7 +91,7 @@ const appointments = (() => {
                           placeholder="Deixe o seu comentário (opcional)" data-comment="${booking.id}"></textarea>
             </div>
             <button type="button" class="btn btn-sm btn-primary" data-submit-feedback="${booking.id}">
-                <i class="bi bi-send me-1"></i> Enviar avaliação
+                <i class="bi bi-envelope me-1"></i> Enviar avaliação
             </button>
             <div class="invalid-feedback d-block text-danger small" data-feedback-error="${booking.id}"></div>
         </div>`;

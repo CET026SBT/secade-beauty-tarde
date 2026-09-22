@@ -10,6 +10,13 @@ register_script("components/profile", "main");
 $user = Session::user();
 $currentPage = "profile";
 
+// A página é partilhada por todos os perfis, mas os dados de cliente (perfil
+// detalhado, telefone/NIF validado e moradas) só existem para clientes: a API
+// `customer-profile` responde 403 a gestores/funcionários.
+$isCustomer = Session::isCustomer();
+$profileLabels = ["cliente" => "Cliente", "funcionario" => "Funcionário", "gestor" => "Gestor"];
+$profileLabel = $profileLabels[$user["profile"] ?? ""] ?? "Cliente";
+
 include_once ROOT_PATH . "/modules/main/includes/header.php";
 include_once ROOT_PATH . "/modules/main/includes/navbar.php";
 ?>
@@ -28,7 +35,7 @@ include_once ROOT_PATH . "/modules/main/includes/navbar.php";
     </div>
 
     <!-- Profile Content -->
-    <div class="container py-5" id="profilePage" preloader-defer>
+    <div class="container py-5" id="profilePage" data-customer="<?= $isCustomer ? "1" : "0" ?>" preloader-defer>
         <div class="row">
             <div class="col-lg-4 mb-4">
                 <div class="card shadow-sm">
@@ -38,7 +45,7 @@ include_once ROOT_PATH . "/modules/main/includes/navbar.php";
                              class="wh-150 rounded-circle object-fit-cover mb-3 border border-3 border-primary">
                         <h4 class="mb-1"><?= htmlspecialchars($user['name']) ?></h4>
                         <p class="text-muted mb-3"><?= htmlspecialchars($user['email']) ?></p>
-                        <span class="badge bg-primary"><?= ucfirst($user['profile']) ?></span>
+                        <span class="badge bg-primary"><?= htmlspecialchars($profileLabel) ?></span>
                     </div>
                 </div>
             </div>
@@ -52,33 +59,41 @@ include_once ROOT_PATH . "/modules/main/includes/navbar.php";
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label text-muted small mb-1">Nome Completo</label>
-                                <p class="fw-bold mb-0" id="profileFieldName">-</p>
+                                <p class="fw-bold mb-0" id="profileFieldName"><?= htmlspecialchars($user['name']) ?></p>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label text-muted small mb-1">E-mail</label>
-                                <p class="fw-bold mb-0" id="profileFieldEmail">-</p>
+                                <p class="fw-bold mb-0" id="profileFieldEmail"><?= htmlspecialchars($user['email']) ?></p>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label text-muted small mb-1">Telemóvel</label>
-                                <p class="fw-bold mb-0" id="profileFieldPhone">-</p>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label text-muted small mb-1">NIF</label>
-                                <p class="fw-bold mb-0" id="profileFieldNif">-</p>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label text-muted small mb-1">Telemóvel validado por OTP</label>
-                                <p class="fw-bold mb-0" id="profileFieldVerified">-</p>
-                            </div>
+                            <?php if ($isCustomer): ?>
+                                <div class="col-md-6">
+                                    <label class="form-label text-muted small mb-1">Telemóvel</label>
+                                    <p class="fw-bold mb-0" id="profileFieldPhone">-</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-muted small mb-1">NIF</label>
+                                    <p class="fw-bold mb-0" id="profileFieldNif">-</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-muted small mb-1">Telemóvel validado por OTP</label>
+                                    <p class="fw-bold mb-0" id="profileFieldVerified">-</p>
+                                </div>
+                            <?php else: ?>
+                                <div class="col-md-6">
+                                    <label class="form-label text-muted small mb-1">Perfil de acesso</label>
+                                    <p class="fw-bold mb-0"><?= htmlspecialchars($profileLabel) ?></p>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
 
+                <?php if ($isCustomer): ?>
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                         <h5 class="mb-0"><i class="bi bi-geo-alt me-2"></i>Minhas Moradas</h5>
                         <button type="button" class="btn btn-sm btn-light" id="toggleAddressFormBtn">
-                            <i class="bi bi-plus-lg me-1"></i> Adicionar
+                            <i class="bi bi-plus me-1"></i> Adicionar
                         </button>
                     </div>
                     <div class="card-body">
@@ -103,7 +118,7 @@ include_once ROOT_PATH . "/modules/main/includes/navbar.php";
                                 </div>
                                 <div class="col-12 d-flex gap-2">
                                     <button type="button" class="btn btn-sm btn-primary" id="saveAddressBtn">
-                                        <i class="bi bi-check-lg me-1"></i> Guardar morada
+                                        <i class="bi bi-check2 me-1"></i> Guardar morada
                                     </button>
                                     <button type="button" class="btn btn-sm btn-outline-secondary" id="cancelAddressBtn">
                                         Cancelar
@@ -115,11 +130,43 @@ include_once ROOT_PATH . "/modules/main/includes/navbar.php";
                         <div id="profileAddressesList"></div>
                     </div>
                 </div>
+                <?php else: ?>
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="bi bi-speedometer2 me-2"></i>Área de Gestão</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted small">
+                            Como <strong><?= htmlspecialchars($profileLabel) ?></strong>, as suas ferramentas de trabalho
+                            estão no backoffice.
+                        </p>
+                        <div class="d-flex flex-wrap gap-2">
+                            <?php if (Session::isManager()): ?>
+                                <a class="btn btn-sm btn-primary" href="<?= BASE_URL ?>/gestao/agendamentos">
+                                    <i class="bi bi-calendar-check me-1"></i> Agendamentos
+                                </a>
+                                <a class="btn btn-sm btn-outline-primary" href="<?= BASE_URL ?>/gestao/rotas">
+                                    <i class="bi bi-signpost-split me-1"></i> Rotas
+                                </a>
+                                <a class="btn btn-sm btn-outline-primary" href="<?= BASE_URL ?>/gestao/fiscal">
+                                    <i class="bi bi-receipt-cutoff me-1"></i> Calendário Fiscal
+                                </a>
+                                <a class="btn btn-sm btn-outline-primary" href="<?= BASE_URL ?>/gestao/recibos-verdes">
+                                    <i class="bi bi-cash-stack me-1"></i> Recibos Verdes
+                                </a>
+                            <?php else: ?>
+                                <a class="btn btn-sm btn-primary" href="<?= BASE_URL ?>/gestao/servicos">
+                                    <i class="bi bi-list-check me-1"></i> Aceitação de Serviços
+                                </a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
 
     <div preloader-overlay class="jq-overlay-process-lg"></div>
-</div>
 
 <?php include_once ROOT_PATH . "/modules/main/includes/footer.php"; ?>

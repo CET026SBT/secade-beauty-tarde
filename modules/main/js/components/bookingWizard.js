@@ -17,9 +17,11 @@ const bookingWizard = (() => {
         slots: []
     };
 
+    // O canal é escolhido PRIMEIRO: é ele que decide a forma de escolher os serviços
+    // (lista simples na loja / por pessoa na carrinha) e que passos se seguem.
     const FLOWS = {
-        loja_fisica: ["services", "channel", "datetime", "professional", "summary"],
-        carrinha_ambulante: ["services", "channel", "address", "otp", "datetime", "policy", "summary"]
+        loja_fisica: ["channel", "services", "datetime", "professional", "summary"],
+        carrinha_ambulante: ["channel", "services", "address", "otp", "datetime", "policy", "summary"]
     };
 
     const STEP_LABELS = {
@@ -83,12 +85,54 @@ const bookingWizard = (() => {
     }
 
     function hasPhysicalSpaceService() {
+        // Em ambulatório os serviços vêm das pessoas; na loja, da seleção direta.
+        if (state.channel === "carrinha_ambulante") {
+            return state.people.some(person =>
+                person.serviceIds.some(serviceId => serviceById(serviceId)?.requiresPhysicalSpace)
+            );
+        }
         return selectedServices().some(service => service.requiresPhysicalSpace);
     }
 
     function updateTotals() {
-        $("#totalDuration").text(generalUtils.formatDuration(bookingDuration()));
-        $("#totalAmount").text(generalUtils.formatCurrency(bookingAmount()));
+        const duration = bookingDuration();
+        const amount = bookingAmount();
+
+        $("#totalDuration").text(generalUtils.formatDuration(duration));
+        $("#totalAmount").text(generalUtils.formatCurrency(amount));
+
+        // A grelha de horários oferece inícios dentro do horário de atendimento (09:00–19:00),
+        // mas uma marcação longa pode prolongar-se para lá do fecho: avisar o cliente.
+        const overruns = duration > 0 && (9 * 60 + duration) > 19 * 60;
+
+        $("#durationNotice")
+            .toggleClass("d-none", !overruns)
+            .html(overruns
+                ? '<i class="bi bi-info-circle me-1"></i>A duração total (' + generalUtils.escapeHtml(generalUtils.formatDuration(duration))
+                  + ') ultrapassa o horário de fecho (19:00); o atendimento poderá prolongar-se.'
+                : "");
+    }
+
+    // ------------------------------------------------------------------
+    // Serviços: a apresentação depende do canal escolhido
+    // ------------------------------------------------------------------
+
+    function applyChannelMode() {
+        const isAmb = state.channel === "carrinha_ambulante";
+
+        $("#peopleBlock").toggleClass("d-none", !isAmb);
+        $("#bookingServicePicker").toggleClass("d-none", isAmb);
+        $("#servicesHint").text(isAmb
+            ? "Indique cada pessoa e os serviços que vai receber. A duração e o valor são calculados por pessoa."
+            : "Escolha um ou mais serviços. O total e a duração são calculados automaticamente.");
+
+        if (isAmb) {
+            ensurePeople();
+        } else {
+            renderPeople();
+        }
+
+        updateTotals();
     }
 
     // ------------------------------------------------------------------
@@ -225,16 +269,22 @@ const bookingWizard = (() => {
 
     function personCard(person, index) {
         const services = state.services.map(service => {
+            // RN-01: serviços com requer_espaco_fisico=1 só existem na loja
+            const blocked = !!service.requiresPhysicalSpace;
             const checked = person.serviceIds.includes(service.id) ? "checked" : "";
             const inputId = `person-${index}-svc-${service.id}`;
+            const badge = blocked
+                ? '<span class="badge bg-warning text-dark ms-1">Apenas Loja</span>'
+                : "";
 
             return `<div class="col-md-6">
                 <div class="form-check">
                     <input class="form-check-input person-service-checkbox" type="checkbox" value="${service.id}"
-                           id="${inputId}" data-person-index="${index}" ${checked}>
-                    <label class="form-check-label small" for="${inputId}">
+                           id="${inputId}" data-person-index="${index}" ${checked} ${blocked ? "disabled" : ""}>
+                    <label class="form-check-label small ${blocked ? "text-muted" : ""}" for="${inputId}">
                         ${generalUtils.escapeHtml(service.name)}
-                        <span class="text-muted">· ${generalUtils.formatCurrency(service.basePrice)}</span>
+                        <span class="text-muted">· ${generalUtils.formatDuration(service.estimatedDurationMinutes)} · ${generalUtils.formatCurrency(service.basePrice)}</span>
+                        ${badge}
                     </label>
                 </div>
             </div>`;
@@ -513,7 +563,7 @@ const bookingWizard = (() => {
     // ------------------------------------------------------------------
 
     function currentFlow() {
-        if (!state.channel) return ["services", "channel"];
+        if (!state.channel) return ["channel", "services"];
         return FLOWS[state.channel];
     }
 
@@ -531,7 +581,7 @@ const bookingWizard = (() => {
             const isDone = currentIndex > index;
 
             return `<div class="booking-step${isActive ? " active" : ""}${isDone ? " done" : ""}">
-                <span class="booking-step-index">${isDone ? '<i class="bi bi-check-lg"></i>' : index + 1}</span>
+                <span class="booking-step-index">${isDone ? '<i class="bi bi-check2"></i>' : index + 1}</span>
                 <span class="booking-step-label">${STEP_LABELS[step] || step}</span>
             </div>`;
         }).join("");
@@ -540,13 +590,30 @@ const bookingWizard = (() => {
     }
 
     function showStep(name) {
+        const flow = currentFlow();
+        const index = flow.indexOf(name);
+
         $form.find(".form-step").removeClass("active");
-        $form.find(`.form-step[data-step="${name}"]`).addClass("active");
+        const $step = $form.find(`.form-step[data-step="${name}"]`).addClass("active");
+
+        // A numeração é dinâmica: a loja tem 5 passos, a carrinha tem 7.
+        $step.find(".section-title .step-number").text(index >= 0 ? `Passo ${index + 1} · ` : "");
+
         renderStepper();
         generalUtils.scrollToElement("#bookingStepsIndicator", 120);
     }
 
     function validateServicesStep() {
+        // Ambulatório: os serviços são definidos por pessoa
+        if (state.channel === "carrinha_ambulante") {
+            const peopleOk = validatePeople();
+            $("#servicesError")
+                .toggleClass("d-none", peopleOk)
+                .text(peopleOk ? "" : "Complete os serviços de cada pessoa para continuar.");
+
+            return peopleOk;
+        }
+
         const hasServices = state.selectedServiceIds.size > 0;
         $("#servicesError")
             .toggleClass("d-none", hasServices)
@@ -608,8 +675,6 @@ const bookingWizard = (() => {
             );
         }
 
-        checks.push(validatePeople());
-
         return checks.every(Boolean);
     }
 
@@ -639,7 +704,15 @@ const bookingWizard = (() => {
     }
 
     function onEnterStep(name) {
+        if (name === "channel") syncChannelCards();
+        if (name === "services") applyChannelMode();
         if (name === "address") loadAddressData();
+        if (name === "datetime") {
+            updateTotals();
+            // Voltar a este passo com a data já escolhida tem de recarregar a grelha:
+            // a duração pode ter mudado ao alterar serviços/pessoas.
+            if (state.date && form.validators.bookingDate()) loadSlots();
+        }
         if (name === "summary") renderSummary();
     }
 
@@ -672,7 +745,7 @@ const bookingWizard = (() => {
         $(document).on("click", "[data-step-prev]", goPrev);
         $(document).on("click", "#confirmBookingBtn", confirmBooking);
 
-        // Passo 1 — serviços
+        // Passo SERVIÇOS (loja: lista simples / carrinha: por pessoa)
         $(document).on("change", ".booking-service-checkbox", function () {
             const id = Number($(this).val());
 
@@ -696,22 +769,27 @@ const bookingWizard = (() => {
             applyServiceFilter();
         });
 
-        // Passo 2 — canal
+        // Passo CANAL
         $(document).on("change", 'input[name="channel"]', function () {
             state.channel = $(this).val();
+            applyChannelMode();
             syncChannelCards();
             updateTotals();
             renderStepper();
             $("#channelError").addClass("d-none");
         });
 
-        // Passo 2B — morada e pessoas
+        // Passo MORADA (ambulatório)
         $(document).on("change", "#addressChoice", toggleNewAddressForm);
-        $(document).on("click", "#addPersonBtn", addPerson);
+        $(document).on("click", "#addPersonBtn", function () {
+            addPerson();
+            updateTotals();
+        });
 
         $(document).on("click", ".person-remove", function () {
             state.people.splice(Number($(this).data("person-index")), 1);
             renderPeople();
+            updateTotals();
         });
 
         $(document).on("input", ".person-name", function () {
@@ -733,13 +811,15 @@ const bookingWizard = (() => {
             }
 
             $("#peopleError").addClass("d-none");
+            updateTotals();
+            syncChannelCards();
         });
 
-        // Passo 2C — OTP
+        // Passo OTP
         $(document).on("click", "#otpRequestBtn", requestOtp);
         $(document).on("change blur", "#otpCode", checkOtp);
 
-        // Passo 3 — data e hora
+        // Passo DATA E HORA
         $(document).on("change", "#bookingDate", function () {
             state.date = $(this).val();
 
@@ -777,7 +857,7 @@ const bookingWizard = (() => {
 
         renderServiceFilters();
         renderServicePicker();
-        updateTotals();
+        applyChannelMode();
         syncChannelCards();
         renderStepper();
 

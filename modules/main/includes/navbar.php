@@ -17,7 +17,7 @@ $isAuthPage = in_array($currentPage, ["login.php", "login", "customerRegister.ph
                 <a href="<?= BASE_URL ?>/" class="nav-item nav-link <?php echo in_array($currentPage, ["home.php", "home", ""]) ? "active" : ""; ?>">Home</a>
                 <?php if (!$isAuthPage): ?>
                     <a href="<?= BASE_URL ?>/sobre" class="nav-item nav-link <?php echo in_array($currentPage, ["about.php", "about", "sobre"]) ? "active" : ""; ?>">Acerca</a>
-                    <a href="<?= BASE_URL ?>/servicos" class="nav-item nav-link <?php echo in_array($currentPage, ["serviceCategories.php", "service", "servicos", "services.php"]) ? "active" : ""; ?>">Servicos</a>
+                    <a href="<?= BASE_URL ?>/servicos" class="nav-item nav-link <?php echo in_array($currentPage, ["serviceCategories.php", "service", "servicos"]) ? "active" : ""; ?>">Servicos</a>
                     <a href="<?= BASE_URL ?>/agendar" class="nav-item nav-link <?php echo in_array($currentPage, ["booking.php", "bookingSuccess.php", "agendar", "agendamento-sucesso"]) ? "active" : ""; ?>">Agendar</a>
                     <a href="<?= BASE_URL ?>/contacto" class="nav-item nav-link <?php echo in_array($currentPage, ["contact.php", "contact", "contacto"]) ? "active" : ""; ?>">Contactos</a>
                 <?php endif; ?>

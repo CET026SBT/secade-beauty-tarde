@@ -31,7 +31,7 @@ const boFiscal = (() => {
         const paidButton = paid
             ? `<button type="button" class="btn btn-sm btn-outline-secondary" disabled><i class="bi bi-check2-all"></i></button>`
             : `<button type="button" class="btn btn-sm btn-success" data-paid="${obligation.id}" title="Marcar como pago">
-                   <i class="bi bi-check-lg"></i>
+                   <i class="bi bi-check2"></i>
                </button>`;
 
         return `<tr>

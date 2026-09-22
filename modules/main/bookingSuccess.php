@@ -54,7 +54,7 @@ include_once ROOT_PATH . "/modules/main/includes/navbar.php";
                             <i class="bi bi-calendar-check me-1"></i> Ver os meus agendamentos
                         </a>
                         <a href="<?= BASE_URL ?>/agendar" class="btn btn-outline-primary px-4">
-                            <i class="bi bi-plus-lg me-1"></i> Nova marcação
+                            <i class="bi bi-plus me-1"></i> Nova marcação
                         </a>
                         <a href="<?= BASE_URL ?>/" class="btn btn-outline-secondary px-4">
                             <i class="bi bi-house me-1"></i> Início
