@@ -3,6 +3,12 @@
 Pasta de ferramentas de apoio ao desenvolvimento. **Não faz parte da aplicação** e não é
 servida pela web (ver `.htaccess`).
 
+> 📍 **Onde vive esta pasta.** Existe **apenas na branch `agent-workspace`** e está no `.gitignore`
+> (com `/especificacao_mvp.md`, `/mapaMentalMVP/` e `/.clinerules`). Nas branches de produto
+> (`main`, `dev`, …) os ficheiros ficam **no disco mas invisíveis para o Git** (`git status` limpo),
+> pelo que as ferramentas continuam utilizáveis. Para os versionar é obrigatório `git add -f`.
+> Detalhe: `.clinerules` §11.5 e `especificacao_mvp.md` §18.12.
+
 <!-- encoding-check:ignore-mojibake -->
 > Este ficheiro **documenta** mojibake como exemplo (na secção 1), pelo que contém
 > intencionalmente essas sequências. A linha `encoding-check:ignore-mojibake` acima
