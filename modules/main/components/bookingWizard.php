@@ -55,9 +55,9 @@ $bookingUserName = Session::user()["name"] ?? "";
                                     <div class="alert alert-danger d-none" id="servicesError" role="alert"></div>
 
                                     <div class="d-flex justify-content-between">
-                                        <button type="button" class="btn btn-primary px-4" data-step-prev>
+                                        <!--<button type="button" class="btn btn-primary px-4" data-step-prev>
                                             <i class="bi bi-arrow-left me-1"></i> Voltar
-                                        </button>
+                                        </button>-->
                                         <button type="button" class="btn btn-primary px-4" data-step-next>
                                             Continuar <i class="bi bi-arrow-right ms-1"></i>
                                         </button>
