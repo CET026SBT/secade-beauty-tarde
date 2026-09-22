@@ -1,5 +1,5 @@
 const userValidators = {
-    nome(val) {
+    name(val) {
         return val === '' && 'O nome completo é obrigatório.';
     },
     email(val) {
@@ -15,7 +15,7 @@ const userValidators = {
         if (!this.isPassword(fields.password)) return;
         if (val !== fields.password) return 'As palavras-passe têm de coincidir.';
     },
-    telemovel(val) {
+    phone(val) {
         if (val === '') return 'O número de telemóvel é obrigatório.';
         if (!this.isPhone(val)) return 'Insira um número de telemóvel válido.';
     },
@@ -23,7 +23,7 @@ const userValidators = {
         if (val === '') return "O NIF é obrigatório.";
         if (!this.isNIF(val)) return "NIF inválido.";
     },
-    tipoPerfil(val) {
+    profileType(val) {
         if (!val) return 'O tipo de perfil é obrigatório.';
     }
 };

@@ -12,29 +12,24 @@ class UserService extends BaseService {
     }
 
     public function validateInput(array $data): void {
-        $this->validate($data, function($v) {
-            $v  ->required("nome", "O nome completo é obrigatório.")
+        $this->validate($data, function($v) use ($data) {
+            $v  ->required("name", "O nome completo é obrigatório.")
                 ->required("email", "O e-mail é obrigatório.")
                 ->email("email", "Endereço de email inválido.")
                 ->custom(
                     "email",
-                    fn($email) => $this->userRepository->findByEmail($email),
+                    fn($email) => !empty($this->userRepository->find(null, $email)),
                     "Este email já se encontra registado."
                 )
-                ->required("telemovel", "O número de telemóvel é obrigatório.")
-                ->phone("telemovel", "Insira um número de telemóvel válido.")
+                ->required("phone", "O número de telemóvel é obrigatório.")
+                ->phone("phone", "Insira um número de telemóvel válido.")
                 ->required("password", "A password é obrigatória.")
                 ->password("password");
         });
     }
 
-    /**
-     * Find a user by id
-     * @param int $userId
-     * @return array|null
-     */
-    public function findById(int $userId): ?array {
-        return $this->userRepository->findById($userId);
+    public function find(int $userId): ?array {
+        return $this->userRepository->find($userId);
     }
 
     public function createUser(array $data): array {

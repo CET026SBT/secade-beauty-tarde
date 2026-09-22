@@ -1,29 +1,37 @@
 <?php
 
 require_once __DIR__ . "/BaseRepository.php";
+require_once APP_PATH . "/mappers/CustomerMapper.php";
 
 class CustomerRepository extends BaseRepository {
 
-    public function create(int $userId, array $data): int {
-        $stmt = $this->db->prepare("
-            INSERT INTO cliente (id, morada, telemovel_validado_otp)
-            VALUES (:id, :morada, :telemovel_validado_otp)
-        ");
+    protected ?string $mapper = CustomerMapper::class;
 
-        $stmt->execute([
-            "id" => $userId,
-            "morada" => $data["moradaRaw"] ?? $data["morada"] ?? "",
+    public function find(?int $id = null): mixed {
+        $sql = "SELECT * 
+                FROM cliente c
+                WHERE 1=1";
+        $params = [];
+
+        if ($id !== null) {
+            $sql .= " AND c.id = :id LIMIT 1";
+            $params["id"] = $id;
+            return $this->fetch($sql, $params);
+        }
+
+        $sql .= " ORDER BY c.id DESC";
+        return $this->fetchAll($sql, $params);
+    }
+
+    public function create(int $id, array $data): int {
+        $sql = "INSERT INTO cliente (id, telemovel_validado_otp)
+                VALUES (:id, :telemovel_validado_otp)";
+
+        $this->execute($sql, [
+            "id" => $id,
             "telemovel_validado_otp" => 0
         ]);
 
-        return $userId;
-    }
-
-    public function findById(int $id): ?array {
-        $stmt = $this->db->prepare("SELECT * FROM cliente WHERE id = :id LIMIT 1");
-        $stmt->execute(["id" => $id]);
-
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $result !== false ? $result : null;
+        return $id;
     }
 }

@@ -30,7 +30,7 @@ register_script("components/customerRegister", "main");
                             <div class="row g-4 mb-4">
                                 <div class="col-12">
                                     <div class="form-floating">
-                                        <input name="nome" type="text" class="form-control" placeholder="Nome Completo*" required>
+                                        <input name="name" type="text" class="form-control" placeholder="Nome Completo*" required>
                                         <label>Nome Completo*</label>
                                         <div class="invalid-feedback mt-0 mb-1"></div>
                                     </div>
@@ -72,7 +72,7 @@ register_script("components/customerRegister", "main");
                             <div class="row g-4 mb-4">
                                 <div class="col-12">
                                     <div class="form-floating">
-                                        <input name="telemovel" type="tel" class="form-control" placeholder="Telemóvel*" required>
+                                        <input name="phone" type="tel" class="form-control" placeholder="Telemóvel*" required>
                                         <label>Telemóvel*</label>
                                         <div class="invalid-feedback mt-0 mb-1"></div>
                                     </div>
@@ -80,7 +80,7 @@ register_script("components/customerRegister", "main");
 
                                 <div class="col-12">
                                     <div class="form-floating">
-                                        <input name="morada" type="text" class="form-control" placeholder="Morada*" required list="moradas-list" form-validate-on="change" required>
+                                        <input name="street" type="text" class="form-control" placeholder="Morada*" required list="moradas-list" form-validate-on="change" required>
                                         <label>Morada*</label>
                                         <div class="invalid-feedback mt-0 mb-1"></div>
                                     </div>
@@ -93,7 +93,7 @@ register_script("components/customerRegister", "main");
 
                                 <div class="col-6">
                                     <div class="form-floating">
-                                        <input name="numPorta" type="text" class="form-control" placeholder="Nº da Porta*" required>
+                                        <input name="doorNumber" type="text" class="form-control" placeholder="Nº da Porta*" required>
                                         <label>Nº da Porta*</label>
                                         <div class="invalid-feedback mt-0 mb-1"></div>
                                     </div>
@@ -101,14 +101,30 @@ register_script("components/customerRegister", "main");
 
                                 <div class="col-6">
                                     <div class="form-floating">
-                                        <input name="andarBloco" type="text" class="form-control" placeholder="Andar / Bloco">
+                                        <input name="floor" type="text" class="form-control" placeholder="Andar / Bloco">
                                         <label>Andar / Bloco</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-6">
+                                    <div class="form-floating">
+                                        <input name="zipCode" type="text" class="form-control" placeholder="Código Postal*" required>
+                                        <label>Código Postal*</label>
+                                        <div class="invalid-feedback mt-0 mb-1"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-6">
+                                    <div class="form-floating">
+                                        <input name="cityName" type="text" class="form-control" placeholder="Cidade*" required>
+                                        <label>Cidade*</label>
+                                        <div class="invalid-feedback mt-0 mb-1"></div>
                                     </div>
                                 </div>
 
                                 <div class="col-12">
                                     <div class="form-check">
-                                        <input name="termosCondicoes" class="form-check-input" type="checkbox" value="" required>
+                                        <input name="termsAccepted" class="form-check-input" type="checkbox" value="1" required>
                                         <label class="form-check-label small text-muted">
                                             Li e aceito os <a href="#" target="_blank" class="text-gold text-decoration-underline">Termos e Condições</a> e a Política de Privacidade.
                                         </label>

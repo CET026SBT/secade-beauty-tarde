@@ -5,7 +5,7 @@ const customerRegister = (() => {
     const form = new Form('#customerRegisterForm', {
         validators: {
             ...userValidators,
-            ...customerValidators(supportedCities)
+            ...customerValidators({ supportedCities })
         },
         submit(formData) {
             API.auth.register(formData)
@@ -15,29 +15,38 @@ const customerRegister = (() => {
                 .fail(xhr => {
                     const response = xhr.responseJSON;
                     if (response && response.errors) {
+                        // Os erros das chaves de morada são apresentados no campo visível `street`
                         form.setErrors(response.errors, {
-                            cidade: 'morada'
+                            cityName: 'street',
+                            zipCode: 'street'
                         });
                     }
                 });
         }
     });
 
+    /**
+     * Guarda os NOMES das cidades suportadas (a API devolve objetos { id, name, district }).
+     * O mesmo array é partilhado com o validador de `cityName`, que o lê por referência.
+     */
     function fetchAndStoreSupportedCities() {
         return API.cities.getSupported().then(response => {
-            const cities = response.cities || [];
+            const names = (response?.cities || []).map(city => city.name).filter(Boolean);
+
             supportedCities.length = 0;
-            supportedCities.push(...cities);
-            return cities;
+            supportedCities.push(...names);
+
+            return names;
         });
     }
 
-    function updateCitiesTooltip(cities) {
-        if (!cities || cities.length === 0) return;
+    function updateCitiesTooltip(cityNames) {
+        if (!cityNames || cityNames.length === 0) return;
 
-        const tooltipText = `Cidades suportadas: ${cities.join(', ')}`;
         const $icon = $('#citiesTooltip');
-        $icon.attr('title', tooltipText);
+        if ($icon.length === 0) return;
+
+        $icon.attr('title', `Cidades suportadas: ${cityNames.join(', ')}`);
 
         const tooltipInstance = bootstrap.Tooltip.getInstance($icon[0]);
         if (tooltipInstance) {
@@ -48,20 +57,14 @@ const customerRegister = (() => {
 
     $(() => {
         fetchAndStoreSupportedCities()
-            .then(cities => updateCitiesTooltip(cities));
+            .then(cityNames => updateCitiesTooltip(cityNames));
 
+        // O autocomplete escreve diretamente nos campos pelos seus `name`
+        // (street, doorNumber, floor, zipCode, cityName) e dispara `change`
+        // para o Form reavaliar os validadores.
         new AddressAutocomplete({
             formSelector: form.selector,
-            savedAddresses: customerAddresses,
-            onSelect(selectedData) {
-                form.fields.numPorta = selectedData.numPorta;
-                form.fields.andarBloco = selectedData.andarBloco;
-                form.fields.codigoPostal = selectedData.codigoPostal;
-                form.fields.cidade = selectedData.cidade;
-                form.fields.distrito = selectedData.distrito;
-                form.fields.moradaRaw = selectedData.morada;
-                form.fields.morada = this.formatAddressInputText(selectedData);
-            }
+            savedAddresses: customerAddresses
         });
     });
 

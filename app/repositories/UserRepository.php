@@ -1,39 +1,49 @@
 <?php
 
 require_once __DIR__ . "/BaseRepository.php";
+require_once APP_PATH . "/mappers/UserMapper.php";
 
 class UserRepository extends BaseRepository {
     
-    public function findByEmail(string $email): ?array {
-        $stmt = $this->db->prepare("SELECT * FROM utilizador WHERE email = :email LIMIT 1");
-        $stmt->execute(["email" => $email]);
-        
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $result !== false ? $result : null;
-    }
+    protected ?string $mapper = UserMapper::class;
 
-    public function findById(int $id): ?array {
-        $stmt = $this->db->prepare("SELECT * FROM utilizador WHERE id = :id LIMIT 1");
-        $stmt->execute(["id" => $id]);
+    public function find(?int $id = null, ?string $email = null): mixed {
+        $sql = "SELECT * 
+                FROM utilizador u
+                WHERE 1=1";
+        $params = [];
 
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $result !== false ? $result : null;
+        if ($id !== null) {
+            $sql .= " AND u.id = :id LIMIT 1";
+            $params["id"] = $id;
+            return $this->fetch($sql, $params);
+        }
+
+        if ($email !== null) {
+            $sql .= " AND u.email = :email LIMIT 1";
+            $params["email"] = $email;
+            return $this->fetch($sql, $params);
+        }
+
+        $sql .= " ORDER BY u.id DESC";
+        return $this->fetchAll($sql, $params);
     }
 
     public function create(array $data, string $passwordHash): int {
-        $stmt = $this->db->prepare("
-            INSERT INTO utilizador (nome, email, password_hash, telemovel, tipo_perfil) 
-            VALUES (:nome, :email, :password_hash, :telemovel, :tipo_perfil)
-        ");
+        $sql = "INSERT INTO utilizador (nome, email, password_hash, telemovel, nif, tipo_perfil) 
+                VALUES (:nome, :email, :password_hash, :telemovel, :nif, :tipo_perfil)";
         
-        $stmt->execute([
-            "nome" => $data["nome"],
-            "email" => $data["email"],
+        // As chaves de $data seguem o contrato do código (inglês), alinhado com UserMapper
+        // e com UserService::validateInput (name, phone, profileType).
+        $this->execute($sql, [
+            "nome"          => $data["name"],
+            "email"         => $data["email"],
             "password_hash" => $passwordHash,
-            "telemovel" => $data["telemovel"],
-            "tipo_perfil" => $data["tipoPerfil"] ?? "cliente"
+            "telemovel"     => $data["phone"],
+            "nif"           => $data["nif"] ?? null,
+            "tipo_perfil"   => $data["profileType"] ?? "cliente"
         ]);
 
-        return (int)$this->db->lastInsertId();
+        return (int)$this->lastInsertId();
     }
 }
