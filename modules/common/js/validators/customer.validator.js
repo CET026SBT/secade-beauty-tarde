@@ -1,9 +1,12 @@
 // Chaves = atributos `name` dos campos = chaves que a API espera
 // (ver CustomerAddressService::validateInput e CustomerService::validateInput).
 const customerValidators = ({ supportedCities=[] }) => ({
-    street(val, { data }) {
+    street(val, { fields, data }) {
         if (val === '') return "A morada é obrigatória.";
         if (!data?.fromAutocomplete) return "Por favor, selecione uma morada válida a partir das sugestões da lista.";
+        if (!supportedCities.includes(fields.cityName)) {
+            return `Lamentamos, mas de momento apenas aceitamos moradas nas cidades suportadas. (${supportedCities.join(', ')})`;
+        }
     },
     doorNumber(val) {
         return val === '' && 'Obrigatório.';

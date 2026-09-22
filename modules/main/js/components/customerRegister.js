@@ -17,8 +17,7 @@ const customerRegister = (() => {
                     if (response && response.errors) {
                         // Os erros das chaves de morada são apresentados no campo visível `street`
                         form.setErrors(response.errors, {
-                            cityName: 'street',
-                            zipCode: 'street'
+                            cityName: 'street'
                         });
                     }
                 });
@@ -64,10 +63,18 @@ const customerRegister = (() => {
         // para o Form reavaliar os validadores.
         new AddressAutocomplete({
             formSelector: form.selector,
-            savedAddresses: customerAddresses
+            savedAddresses: customerAddresses,
+            onSelect(selectedData) {
+                form.fields.doorNumber = selectedData.doorNumber;
+                form.fields.floor = selectedData.floor;
+                form.fields.zipCode = selectedData.zipCode;
+                form.fields.cityName = selectedData.cityName;
+                form.fields.district = selectedData.district;
+                form.fields.steetRaw = selectedData.steet;
+                form.fields.street = this.formatAddressInputText(selectedData);
+            }
         });
     });
 
     return { form };
 })();
-

@@ -21,16 +21,28 @@ $bookingUserName = Session::user()["name"] ?? "";
                         <form id="bookingWizardForm" data-client-name="<?= htmlspecialchars($bookingUserName) ?>">
                             <div class="form-steps-container">
 
-                                <!-- ============ PASSO 1: SERVIÇOS ============ -->
-                                <div class="form-step active" data-step="services">
+                                <!-- ============ PASSO: SERVIÇOS (+ PESSOAS em ambulatório) ============ -->
+                                <div class="form-step" data-step="services">
                                     <h4 class="section-title">
-                                        <i class="bi bi-scissors text-gold me-2"></i>Passo 1 · Seleção de Serviços
+                                        <i class="bi bi-scissors text-gold me-2"></i><span class="step-number"></span>Seleção de Serviços
                                     </h4>
-                                    <p class="text-muted small">Escolha um ou mais serviços. O total e a duração são calculados automaticamente.</p>
+                                    <p class="text-muted small" id="servicesHint">Escolha um ou mais serviços. O total e a duração são calculados automaticamente.</p>
 
                                     <div id="bookingServicePicker" class="mb-3" preloader-defer>
                                         <div class="filters d-flex flex-wrap gap-2 mb-3"></div>
                                         <div class="services-list row g-3"></div>
+                                    </div>
+
+                                    <!-- Ambulatório: os serviços são definidos por pessoa -->
+                                    <div id="peopleBlock" class="d-none">
+                                        <h6 class="fw-bold small text-uppercase mb-3">Pessoas e serviços</h6>
+                                        <div id="peopleContainer"></div>
+
+                                        <button type="button" class="btn btn-sm btn-outline-secondary mt-1 mb-3" id="addPersonBtn">
+                                            <i class="bi bi-person-plus me-1"></i> Adicionar pessoa
+                                        </button>
+
+                                        <div class="alert alert-danger d-none" id="peopleError" role="alert"></div>
                                     </div>
 
                                     <div class="alert alert-light border d-flex flex-wrap justify-content-between gap-2 mb-3">
@@ -38,19 +50,24 @@ $bookingUserName = Session::user()["name"] ?? "";
                                         <span><i class="bi bi-tag me-1 text-primary"></i>Valor total: <strong id="totalAmount">0,00 €</strong></span>
                                     </div>
 
+                                    <div id="durationNotice" class="alert alert-warning d-none mb-3"></div>
+
                                     <div class="alert alert-danger d-none" id="servicesError" role="alert"></div>
 
-                                    <div class="d-flex justify-content-end">
+                                    <div class="d-flex justify-content-between">
+                                        <button type="button" class="btn btn-primary px-4" data-step-prev>
+                                            <i class="bi bi-arrow-left me-1"></i> Voltar
+                                        </button>
                                         <button type="button" class="btn btn-primary px-4" data-step-next>
                                             Continuar <i class="bi bi-arrow-right ms-1"></i>
                                         </button>
                                     </div>
                                 </div>
 
-                                <!-- ============ PASSO 2: CANAL ============ -->
-                                <div class="form-step" data-step="channel">
+                                <!-- ============ PASSO 1: CANAL ============ -->
+                                <div class="form-step active" data-step="channel">
                                     <h4 class="section-title">
-                                        <i class="bi bi-geo-alt text-gold me-2"></i>Passo 2 · Onde prefere ser atendido?
+                                        <i class="bi bi-geo-alt text-gold me-2"></i><span class="step-number"></span>Onde prefere ser atendido?
                                     </h4>
 
                                     <div class="row g-4 mb-3">
@@ -59,7 +76,7 @@ $bookingUserName = Session::user()["name"] ?? "";
                                                 <input type="radio" name="channel" value="loja_fisica" class="d-none" form-validate-on="change">
                                                 <div class="card h-100 border channel-card-body">
                                                     <div class="card-body">
-                                                        <i class="bi bi-buildings fs-1 text-primary mb-3 d-block"></i>
+                                                        <i class="bi bi-building fs-1 text-primary mb-3 d-block"></i>
                                                         <h5 class="mb-2">Loja Física</h5>
                                                         <p class="text-muted small mb-2">Atendimento no nosso salão, em Évora.</p>
                                                         <ul class="small text-muted mb-0 ps-3">
@@ -98,7 +115,7 @@ $bookingUserName = Session::user()["name"] ?? "";
                                     </div>
 
                                     <div class="d-flex justify-content-between">
-                                        <button type="button" class="btn btn-outline-secondary" data-step-prev>
+                                        <button type="button" class="btn btn-primary px-4" data-step-prev>
                                             <i class="bi bi-arrow-left me-1"></i> Voltar
                                         </button>
                                         <button type="button" class="btn btn-primary px-4" data-step-next>
@@ -107,12 +124,11 @@ $bookingUserName = Session::user()["name"] ?? "";
                                     </div>
                                 </div>
 
-                                <!-- ============ PASSO 2B: MORADA + PESSOAS ============ -->
+                                <!-- ============ PASSO: MORADA (ambulatório) ============ -->
                                 <div class="form-step" data-step="address">
                                     <h4 class="section-title">
-                                        <i class="bi bi-house-heart text-gold me-2"></i>Passo 2B · Morada e Pessoas
+                                        <i class="bi bi-house-heart text-gold me-2"></i><span class="step-number"></span>Morada de Atendimento
                                     </h4>
-                                    <p class="text-muted small">Os serviços são agrupados por pessoa para estimar a duração no terreno.</p>
 
                                     <div class="mb-4">
                                         <label class="form-label fw-bold" for="addressChoice">Morada de atendimento</label>
@@ -158,17 +174,8 @@ $bookingUserName = Session::user()["name"] ?? "";
                                         </div>
                                     </div>
 
-                                    <h6 class="fw-bold small text-uppercase mb-3">Pessoas e serviços</h6>
-                                    <div id="peopleContainer"></div>
-
-                                    <button type="button" class="btn btn-sm btn-outline-secondary mt-1 mb-3" id="addPersonBtn">
-                                        <i class="bi bi-person-plus me-1"></i> Adicionar pessoa
-                                    </button>
-
-                                    <div class="alert alert-danger d-none" id="peopleError" role="alert"></div>
-
                                     <div class="d-flex justify-content-between">
-                                        <button type="button" class="btn btn-outline-secondary" data-step-prev>
+                                        <button type="button" class="btn btn-primary px-4" data-step-prev>
                                             <i class="bi bi-arrow-left me-1"></i> Voltar
                                         </button>
                                         <button type="button" class="btn btn-primary px-4" data-step-next>
@@ -177,10 +184,10 @@ $bookingUserName = Session::user()["name"] ?? "";
                                     </div>
                                 </div>
 
-                                <!-- ============ PASSO 2C: OTP ============ -->
+                                <!-- ============ PASSO: OTP ============ -->
                                 <div class="form-step" data-step="otp">
                                     <h4 class="section-title">
-                                        <i class="bi bi-shield-lock text-gold me-2"></i>Passo 2C · Verificação por OTP
+                                        <i class="bi bi-shield-lock text-gold me-2"></i><span class="step-number"></span>Verificação por OTP
                                     </h4>
                                     <p class="text-muted small">
                                         Simulação de SMS (restrição académica): o código é gerado e mostrado no ecrã.
@@ -211,7 +218,7 @@ $bookingUserName = Session::user()["name"] ?? "";
                                     </div>
 
                                     <div class="d-flex justify-content-between">
-                                        <button type="button" class="btn btn-outline-secondary" data-step-prev>
+                                        <button type="button" class="btn btn-primary px-4" data-step-prev>
                                             <i class="bi bi-arrow-left me-1"></i> Voltar
                                         </button>
                                         <button type="button" class="btn btn-primary px-4" data-step-next>
@@ -220,10 +227,10 @@ $bookingUserName = Session::user()["name"] ?? "";
                                     </div>
                                 </div>
 
-                                <!-- ============ PASSO 3: DATA E HORA ============ -->
+                                <!-- ============ PASSO: DATA E HORA ============ -->
                                 <div class="form-step" data-step="datetime">
                                     <h4 class="section-title">
-                                        <i class="bi bi-calendar-check text-gold me-2"></i>Passo 3 · Data e Hora
+                                        <i class="bi bi-calendar-check text-gold me-2"></i><span class="step-number"></span>Data e Hora
                                     </h4>
 
                                     <div class="row g-4">
@@ -249,7 +256,7 @@ $bookingUserName = Session::user()["name"] ?? "";
                                     </div>
 
                                     <div class="d-flex justify-content-between mt-4">
-                                        <button type="button" class="btn btn-outline-secondary" data-step-prev>
+                                        <button type="button" class="btn btn-primary px-4" data-step-prev>
                                             <i class="bi bi-arrow-left me-1"></i> Voltar
                                         </button>
                                         <button type="button" class="btn btn-primary px-4" data-step-next>
@@ -258,10 +265,10 @@ $bookingUserName = Session::user()["name"] ?? "";
                                     </div>
                                 </div>
 
-                                <!-- ============ PASSO 4 (LOJA): PROFISSIONAL ============ -->
+                                <!-- ============ PASSO (LOJA): PROFISSIONAL ============ -->
                                 <div class="form-step" data-step="professional">
                                     <h4 class="section-title">
-                                        <i class="bi bi-person-badge text-gold me-2"></i>Passo 4 · Preferência de Profissional
+                                        <i class="bi bi-person-badge text-gold me-2"></i><span class="step-number"></span>Preferência de Profissional
                                     </h4>
 
                                     <div class="form-check mb-2">
@@ -273,7 +280,7 @@ $bookingUserName = Session::user()["name"] ?? "";
                                     </p>
 
                                     <div class="d-flex justify-content-between">
-                                        <button type="button" class="btn btn-outline-secondary" data-step-prev>
+                                        <button type="button" class="btn btn-primary px-4" data-step-prev>
                                             <i class="bi bi-arrow-left me-1"></i> Voltar
                                         </button>
                                         <button type="button" class="btn btn-primary px-4" data-step-next>
@@ -282,10 +289,10 @@ $bookingUserName = Session::user()["name"] ?? "";
                                     </div>
                                 </div>
 
-                                <!-- ============ PASSO 4 (AMB): POLÍTICA DE SINAL ============ -->
+                                <!-- ============ PASSO (AMB): POLÍTICA DE SINAL ============ -->
                                 <div class="form-step" data-step="policy">
                                     <h4 class="section-title">
-                                        <i class="bi bi-cash-coin text-gold me-2"></i>Passo 4 · Política de Sinal
+                                        <i class="bi bi-cash-coin text-gold me-2"></i><span class="step-number"></span>Política de Sinal
                                     </h4>
 
                                     <div class="alert alert-info">
@@ -308,7 +315,7 @@ $bookingUserName = Session::user()["name"] ?? "";
                                     </div>
 
                                     <div class="d-flex justify-content-between">
-                                        <button type="button" class="btn btn-outline-secondary" data-step-prev>
+                                        <button type="button" class="btn btn-primary px-4" data-step-prev>
                                             <i class="bi bi-arrow-left me-1"></i> Voltar
                                         </button>
                                         <button type="button" class="btn btn-primary px-4" data-step-next>
@@ -317,10 +324,10 @@ $bookingUserName = Session::user()["name"] ?? "";
                                     </div>
                                 </div>
 
-                                <!-- ============ PASSO 5: RESUMO ============ -->
+                                <!-- ============ PASSO: RESUMO ============ -->
                                 <div class="form-step" data-step="summary">
                                     <h4 class="section-title">
-                                        <i class="bi bi-clipboard-check text-gold me-2"></i>Passo 5 · Resumo e Confirmação
+                                        <i class="bi bi-clipboard-check text-gold me-2"></i><span class="step-number"></span>Resumo e Confirmação
                                     </h4>
 
                                     <div id="summaryBody" class="mb-4"></div>
@@ -328,7 +335,7 @@ $bookingUserName = Session::user()["name"] ?? "";
                                     <div class="alert alert-danger d-none" id="submitError" role="alert"></div>
 
                                     <div class="d-flex justify-content-between">
-                                        <button type="button" class="btn btn-outline-secondary" data-step-prev>
+                                        <button type="button" class="btn btn-primary px-4" data-step-prev>
                                             <i class="bi bi-arrow-left me-1"></i> Voltar
                                         </button>
                                         <button type="button" class="btn btn-success px-4" id="confirmBookingBtn">

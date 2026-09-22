@@ -9,12 +9,8 @@ const profile = (() => {
         const data = state.profile;
         if (!data) return;
 
-        $("#profileName").text(data.name);
-        $("#profileEmail").text(data.email);
-
-        const typeLabels = { cliente: "Cliente", funcionario: "Funcionário", gestor: "Gestor" };
-        $("#profileType").text(typeLabels[data.profileType] || data.profileType || "Cliente");
-
+        // `#profileFieldName`/`#profileFieldEmail` já vêm preenchidos do servidor
+        // (sessão); os restantes dependem do perfil de cliente.
         $("#profileFieldName").text(data.name || "-");
         $("#profileFieldEmail").text(data.email || "-");
         $("#profileFieldPhone").text(data.phone || "-");
@@ -80,7 +76,16 @@ const profile = (() => {
         $select.html(options.join(""));
     }
 
+    // A página é partilhada por todos os perfis, mas as APIs de cliente
+    // (`customer-profile`, `customer-address-*`) respondem 403 a gestores e
+    // funcionários — e a página ficava vazia, sem qualquer conteúdo.
+    function isCustomerPage() {
+        return Number($("#profilePage").data("customer")) === 1;
+    }
+
     async function load() {
+        if (!isCustomerPage()) return;
+
         const promise = Promise.all([API.customer.profile(), API.customer.addresses(), API.cities.getSupported()]);
         const preloader = $("#profilePage").preloader(".jq-overlay-process", promise);
 
