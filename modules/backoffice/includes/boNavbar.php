@@ -27,7 +27,7 @@ $boLinks = $boIsEmployee
 <nav class="navbar navbar-expand-lg navbar-dark bo-navbar py-3">
     <div class="container-fluid">
         <a class="navbar-brand d-flex align-items-center gap-2" href="<?= $boHomeUrl ?>">
-            <img src="<?= BASE_URL ?>/modules/common/img/sb-logo.svg" alt="Secade Beauty" height="32" class="user-select-none" draggable="false">
+            <img src="<?= BASE_URL ?>/modules/common/img/sb-logo-primary.svg" alt="Secade Beauty" height="32" class="user-select-none" draggable="false">
             <span class="fw-bold">Backoffice</span>
         </a>
 
