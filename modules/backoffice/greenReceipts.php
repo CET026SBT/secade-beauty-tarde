@@ -57,7 +57,7 @@ include_once ROOT_PATH . "/modules/backoffice/includes/boNavbar.php";
                         </div>
                         <div class="col-12">
                             <button type="button" class="btn btn-sm btn-primary" id="saveGreenReceiptConfigBtn">
-                                <i class="bi bi-check-lg me-1"></i> Guardar configuração
+                                <i class="bi bi-check2 me-1"></i> Guardar configuração
                             </button>
                         </div>
                     </div>

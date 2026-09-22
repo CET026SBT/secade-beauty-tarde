@@ -93,7 +93,7 @@ include_once ROOT_PATH . "/modules/main/includes/navbar.php";
                     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                         <h5 class="mb-0"><i class="bi bi-geo-alt me-2"></i>Minhas Moradas</h5>
                         <button type="button" class="btn btn-sm btn-light" id="toggleAddressFormBtn">
-                            <i class="bi bi-plus-lg me-1"></i> Adicionar
+                            <i class="bi bi-plus me-1"></i> Adicionar
                         </button>
                     </div>
                     <div class="card-body">
@@ -118,7 +118,7 @@ include_once ROOT_PATH . "/modules/main/includes/navbar.php";
                                 </div>
                                 <div class="col-12 d-flex gap-2">
                                     <button type="button" class="btn btn-sm btn-primary" id="saveAddressBtn">
-                                        <i class="bi bi-check-lg me-1"></i> Guardar morada
+                                        <i class="bi bi-check2 me-1"></i> Guardar morada
                                     </button>
                                     <button type="button" class="btn btn-sm btn-outline-secondary" id="cancelAddressBtn">
                                         Cancelar

@@ -32,7 +32,7 @@ include_once ROOT_PATH . "/modules/main/includes/navbar.php";
                 <div class="card-header bg-primary text-white d-flex flex-wrap justify-content-between align-items-center gap-2">
                     <h5 class="mb-0"><i class="bi bi-calendar-check me-2"></i>Histórico de Agendamentos</h5>
                     <a href="<?= BASE_URL ?>/agendar" class="btn btn-sm btn-light">
-                        <i class="bi bi-plus-lg me-1"></i> Nova marcação
+                        <i class="bi bi-plus me-1"></i> Nova marcação
                     </a>
                 </div>
                 <div class="card-body" id="appointmentsPage" preloader-defer>

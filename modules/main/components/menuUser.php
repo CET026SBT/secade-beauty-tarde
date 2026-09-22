@@ -63,7 +63,7 @@ if ($isLoggedIn && $user):
         <?php else: ?>
             <li>
                 <a class="dropdown-item" href="<?= BASE_URL ?>/agendamentos">
-                    <i class="bi bi-calendar-heart me-2"></i>Agendamentos
+                    <i class="bi bi-calendar-check me-2"></i>Agendamentos
                 </a>
             </li>
         <?php endif; ?>
