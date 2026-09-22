@@ -26,12 +26,12 @@ class ApiClient {
                 dataType: 'json'
             })
             .done(res => {
-                if (res.success) {
+                /*if (res.success) {
                     this.#cache.set(endpoint, {
                         data: res,
                         expiresAt: now + ttlSeconds * 1000
                     });
-                }
+                }*/
             });
     }
 
@@ -47,14 +47,14 @@ class ApiClient {
             dataType: 'json'
         })
         .done(res => {
-            if (res.success) {
+            /*if (res.success) {
                 const actionMatch = endpoint.match(/[?&]action=([a-z-]+)-[a-z]+(&|$)/);
                 
                 if (actionMatch) {
                     const domain = actionMatch[1];
                     this.clearCacheByDomain(domain);
                 }
-            }
+            }*/
         });
     }
     
