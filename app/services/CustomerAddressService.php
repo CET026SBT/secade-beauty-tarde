@@ -15,22 +15,27 @@ class CustomerAddressService extends BaseService {
     }
 
     public function validateInput(array $data): void {
-        $supportedCities = $this->cityRepository->findAllNames();
+        $cities = $this->cityRepository->find();
+        $supportedCityNames = array_column($cities, 'name');
 
-        $this->validate($data, function($v) use ($data, $supportedCities) {
-            $v  ->required("morada", "A morada é obrigatória.")
-                ->required("numPorta", "O número de porta é obrigatório.")
-                ->required("codigoPostal", "O código postal é obrigatório.")
-                ->zipCode("codigoPostal", "Insira um código postal válido no formato 0000-000.")
-                ->contains("cidade", $supportedCities, "Lamentamos, mas de momento apenas aceitamos moradas nas cidades suportadas.");
+        $this->validate($data, function($v) use ($data, $supportedCityNames) {
+            $v  ->required("street", "A morada é obrigatória.")
+                ->required("doorNumber", "O número de porta é obrigatório.")
+                ->required("zipCode", "O código postal é obrigatório.")
+                ->zipCode("zipCode", "Insira um código postal válido no formato 0000-000.")
+                ->contains("cityName", $supportedCityNames, "Lamentamos, mas de momento apenas aceitamos moradas nas cidades suportadas.");
         });
     }
 
     public function createAddress(int $customerId, array $data): array {
         $this->validateInput($data);
 
-        $cityId = $this->cityRepository->findIdByName($data['cidade']);
-        $addressId = $this->addressRepository->create($customerId, $cityId, $data);
+        $city = $this->cityRepository->find(null, $data['cityName']);
+        if (!$city) {
+            throw new Exception("Cidade não encontrada.", 404);
+        }
+
+        $addressId = $this->addressRepository->create($customerId, $city['id'], $data);
 
         return [
             "addressId" => $addressId,
@@ -38,46 +43,21 @@ class CustomerAddressService extends BaseService {
         ];
     }
 
-    /**
-     * Fetch all addresses of a customer, enriching each one with the city name
-     * (composition done here, since the repository must not JOIN cross-context tables)
-     * @param int $customerId
-     * @return array
-     */
-    public function fetchCustomerAddresses(int $customerId): array {
-        $addresses = $this->addressRepository->findByCustomerId($customerId);
-        $cities = $this->cityRepository->findAll();
-
-        $citiesById = [];
-        foreach ($cities as $city) {
-            $citiesById[$city["id"]] = $city;
-        }
-
-        foreach ($addresses as &$address) {
-            $city = $citiesById[$address["cidade_id"]] ?? null;
-            $address["cidade_nome"] = $city["nome"] ?? null;
-            $address["distrito"] = $city["distrito"] ?? null;
-        }
-
-        return $addresses;
+    public function findCustomerAddresses(int $customerId): array {
+        return [
+            "addresses" => $this->addressRepository->find($customerId)
+        ];
     }
 
-    /**
-     * Set an address as the customer's principal one.
-     * Transaction managed here, coordinating two granular repository calls.
-     * @param int $addressId
-     * @param int $customerId
-     * @return array
-     */
-    public function setPrincipalAddress(int $addressId, int $customerId): array {
-        return $this->executeTransactional(function() use ($addressId, $customerId) {
-            $address = $this->addressRepository->findByIdAndCustomerId($addressId, $customerId);
+    public function setPrincipalAddress(int $customerId, int $addressId): array {
+        return $this->executeTransactional(function() use ($customerId, $addressId) {
+            $address = $this->addressRepository->find($customerId, $addressId);
             if (!$address) {
-                throw new Exception("Morada não encontrada.");
+                throw new Exception("Morada não encontrada.", 404);
             }
 
-            $this->addressRepository->unsetPrincipalForCustomer($customerId);
-            $this->addressRepository->setPrincipal($addressId, $customerId);
+            $this->addressRepository->updatePrincipal($customerId, 0);
+            $this->addressRepository->updatePrincipal($customerId, 1, $addressId);
 
             return [
                 "message" => "Morada principal atualizada com sucesso!"
@@ -85,19 +65,13 @@ class CustomerAddressService extends BaseService {
         });
     }
 
-    /**
-     * Delete an address belonging to a customer
-     * @param int $addressId
-     * @param int $customerId
-     * @return array
-     */
-    public function deleteAddress(int $addressId, int $customerId): array {
-        $address = $this->addressRepository->findByIdAndCustomerId($addressId, $customerId);
+    public function deleteAddress(int $customerId, int $addressId): array {
+        $address = $this->addressRepository->find($customerId, $addressId);
         if (!$address) {
-            throw new Exception("Morada não encontrada.");
+            throw new Exception("Morada não encontrada.", 404);
         }
 
-        $this->addressRepository->delete($addressId, $customerId);
+        $this->addressRepository->delete($customerId, $addressId);
 
         return [
             "message" => "Morada removida com sucesso!"

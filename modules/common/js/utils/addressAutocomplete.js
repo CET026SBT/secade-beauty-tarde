@@ -1,9 +1,20 @@
 class AddressAutocomplete {
+    // Os atributos `name` dos campos do formulário refletem, de forma transparente,
+    // as chaves que a API espera (ver CustomerAddressService::validateInput e
+    // os mappers do servidor). Alterar aqui = alterar o contrato do formulário.
+    static FIELD_NAMES = {
+        street:     'street',
+        doorNumber: 'doorNumber',
+        floor:      'floor',
+        zipCode:    'zipCode',
+        cityName:   'cityName'
+    };
+
     formSelector;
     savedAddresses;
     onSelect;
     $form;
-    $address;
+    $street;
     $door;
     $floor;
     $zipCode;
@@ -29,17 +40,17 @@ class AddressAutocomplete {
         const anchorName = `--address-${this.#instanceId}`;
 
         this.$form = $(this.formSelector);
-        this.$address = this.$form.find('[name="morada"]');
-        
-        this.$address.css('anchor-name', anchorName);
+        this.$street = this.$form.find(`[name="${AddressAutocomplete.FIELD_NAMES.street}"]`);
 
-        this.$door = this.$form.find('[name="numPorta"]');
-        this.$floor = this.$form.find('[name="andarBloco"]');
-        this.$zipCode = this.$form.find('[name="codigoPostal"]');
-        this.$city = this.$form.find('[name="cidade"]');
-        this.$district = this.$form.find('[name="distrito"]');
+        this.$street.css('anchor-name', anchorName);
 
-        this.#$allFields = this.$address
+        this.$door    = this.$form.find(`[name="${AddressAutocomplete.FIELD_NAMES.doorNumber}"]`);
+        this.$floor   = this.$form.find(`[name="${AddressAutocomplete.FIELD_NAMES.floor}"]`);
+        this.$zipCode = this.$form.find(`[name="${AddressAutocomplete.FIELD_NAMES.zipCode}"]`);
+        this.$city    = this.$form.find(`[name="${AddressAutocomplete.FIELD_NAMES.cityName}"]`);
+        this.$district = this.$form.find('[name="district"]');
+
+        this.#$allFields = this.$street
             .add(this.$door)
             .add(this.$floor)
             .add(this.$zipCode)
@@ -57,19 +68,19 @@ class AddressAutocomplete {
         const namespace = `.addressAutocomplete_${this.#instanceId}`;
 
         this.$dropdown.off(namespace);
-        this.$address.off(namespace);
+        this.$street.off(namespace);
         $(document.body).off(namespace);
 
         this.$dropdown.on(`click${namespace}`, 'li', (e) => {
             const $li = $(e.currentTarget);
             const selectedData = $li.data('address');
             
-            this.$address.val(this.formatAddressInputText(selectedData) || '');
-            this.$door.val(selectedData.numPorta || '');
-            this.$floor.val(selectedData.andarBloco || '');
-            this.$zipCode.val(selectedData.codigoPostal || '');
-            this.$city.val(selectedData.cidade || '');
-            this.$district.val(selectedData.distrito || '');
+            this.$street.val(this.formatAddressInputText(selectedData) || '');
+            this.$door.val(selectedData.doorNumber || '');
+            this.$floor.val(selectedData.floor || '');
+            this.$zipCode.val(selectedData.zipCode || '');
+            this.$city.val(selectedData.cityName || '');
+            this.$district.val(selectedData.district || '');
             
             this.$dropdown.hide().empty();
 
@@ -83,10 +94,10 @@ class AddressAutocomplete {
             }
         });
 
-        this.$address.on(`input${namespace}`, () => {
+        this.$street.on(`input${namespace}`, () => {
             this.#$allFields.removeData('fromAutocomplete');
 
-            const query = this.$address.val().trim();
+            const query = this.$street.val().trim();
             clearTimeout(this.#debounceTimer);
 
             if (query.length < 3) {
@@ -99,14 +110,14 @@ class AddressAutocomplete {
             }, 300);
         });
 
-        this.$address.on(`focus${namespace}`, () => {
-            if (this.$address.val().trim().length < 3 && this.savedAddresses.length > 0) {
+        this.$street.on(`focus${namespace}`, () => {
+            if (this.$street.val().trim().length < 3 && this.savedAddresses.length > 0) {
                 this.renderList(this.savedAddresses);
             }
         });
 
         $(document.body).on(`click${namespace}`, (e) => {
-            if (!$(e.target).closest(this.$address).length && !$(e.target).closest(this.$dropdown).length) {
+            if (!$(e.target).closest(this.$street).length && !$(e.target).closest(this.$dropdown).length) {
                 this.$dropdown.hide();
             }
         });
@@ -114,10 +125,10 @@ class AddressAutocomplete {
 
     #formatAddress(addressObj, { includeAll }) {
         const parts = [
-            addressObj.morada,
-            addressObj.numPorta && (includeAll || this.$door.length === 0) ? `Nº ${addressObj.numPorta}` : null,
-            addressObj.codigoPostal && (includeAll || this.$zipCode.length === 0) ? addressObj.codigoPostal : null,
-            addressObj.cidade && (includeAll || this.$city.length === 0) ? addressObj.cidade : null
+            addressObj.street,
+            addressObj.doorNumber && (includeAll || this.$door.length === 0) ? `Nº ${addressObj.doorNumber}` : null,
+            addressObj.zipCode && (includeAll || this.$zipCode.length === 0) ? addressObj.zipCode : null,
+            addressObj.cityName && (includeAll || this.$city.length === 0) ? addressObj.cityName : null
         ];
 
         return parts.filter(Boolean).join(', ');
@@ -134,23 +145,21 @@ class AddressAutocomplete {
     #mapApiResponseToAddress(item) {
         const addr = item.address || {};
 
-        const moradaParts = [
-            item.name,
+        // Rua: preferir o nome da via; o nome do resultado é o fallback.
+        const streetParts = [
             addr.road || addr.pedestrian || addr.square,
             addr.industrial,
             addr.leisure
         ].filter(Boolean);
 
-        const uniqueMorada = [...new Set(moradaParts)].join(', ');
-        
         return {
             isSaved: false,
-            morada: uniqueMorada,
-            numPorta: addr.house_number || '',
-            andarBloco: '',
-            codigoPostal: addr.postcode || '',
-            cidade: addr.city || addr.town || addr.village || addr.hamlet || '',
-            distrito: addr.county || '',
+            street: [...new Set(streetParts)].join(', ') || item.name || '',
+            doorNumber: addr.house_number || '',
+            floor: '',
+            zipCode: addr.postcode || '',
+            cityName: addr.city || addr.town || addr.village || addr.hamlet || '',
+            district: addr.county || '',
             raw: item
         };
     }
@@ -171,7 +180,7 @@ class AddressAutocomplete {
             const combined = [
                 ...this.savedAddresses
                     .map(a => ({ ...a }))
-                    .filter(a => (a.morada || '').toLowerCase().includes(query.toLowerCase())),
+                    .filter(a => (a.street || '').toLowerCase().includes(query.toLowerCase())),
                 ...apiResults
             ];
 
@@ -196,7 +205,7 @@ class AddressAutocomplete {
 
             const $li = $('<li>')
                 .addClass('dropdown-item cursor-pointer text-wrap text-break py-2')
-                .html(`${domUtils.escapeHtml(text)} ${isSaved}`)
+                .html(`${generalUtils.escapeHtml(text)} ${isSaved}`)
                 .data('address', item);
 
             this.$dropdown.append($li);

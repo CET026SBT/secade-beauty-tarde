@@ -19,34 +19,30 @@ class CustomerService extends BaseService {
 
     public function validateInput(array $data): void {
         $this->validate($data, function($v) use ($data) {
-            $v->accepted("termosCondicoes", "Deve aceitar os termos e condições para continuar.");
+            $v->accepted("termsAccepted", "Deve aceitar os termos e condições para continuar.");
         });
     }
 
-    /**
-     * Fetch full customer profile, composing data from utilizador + cliente
-     * (composition done here, since each Repository must stay scoped to its own table)
-     * @param int $userId
-     * @return array|null
-     */
-    public function fetchCustomerProfile(int $userId): ?array {
-        $user = $this->userService->findById($userId);
-        $customer = $this->customerRepository->findById($userId);
+    public function getCustomerProfile(int $userId): ?array {
+        $user = $this->userService->find($userId);
+        $customer = $this->customerRepository->find($userId);
 
         if (!$user || !$customer) {
             return null;
         }
 
+        $addressesData = $this->customerAddressService->findCustomerAddresses($userId);
+
         return [
-            "id"                     => $customer["id"],
-            "morada"                 => $customer["morada"],
-            "telemovel_validado_otp" => $customer["telemovel_validado_otp"],
-            "data_registo"           => $customer["data_registo"],
-            "nome"                   => $user["nome"],
-            "email"                  => $user["email"],
-            "telemovel"              => $user["telemovel"],
-            "nif"                    => $user["nif"] ?? null,
-            "tipo_perfil"            => $user["tipo_perfil"]
+            "id"            => $customer["id"],
+            "phoneVerified" => $customer["isMobileValidated"] ?? false,
+            "createdAt"     => $customer["createdAt"] ?? null,
+            "name"          => $user["name"],
+            "email"         => $user["email"],
+            "phone"         => $user["phone"],
+            "nif"           => $user["nif"] ?? null,
+            "profileType"   => $user["profileType"],
+            "addresses"     => $addressesData["addresses"] ?? []
         ];
     }
 
@@ -58,10 +54,16 @@ class CustomerService extends BaseService {
             $userId = $userResult["userId"];
 
             $this->customerRepository->create($userId, $data);
-            $this->customerAddressService->createAddress($userId, $data);
+
+            // A primeira morada do cliente passa a ser a principal (é a que o
+            // wizard de agendamento pré-seleciona via `isMain`).
+            $addressData = $data;
+            $addressData["isMain"] = 1;
+
+            $this->customerAddressService->createAddress($userId, $addressData);
 
             return [
-                "userId" => $userId,
+                "id" => $userId,
                 "message" => "Cliente registado com sucesso!"
             ];
         });

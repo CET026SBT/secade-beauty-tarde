@@ -26,15 +26,15 @@ class AuthService extends BaseService {
                 ->email("email", "Endereço de email inválido.")
                 ->required("password", "A password é obrigatória.")
                 ->custom("email", function() use ($data, $user) {
-                    return !$user || !password_verify($data["password"], $user["password_hash"]);
+                    return !$user || !password_verify($data["password"], $user["passwordHash"]);
                 }, "Credenciais inválidas.");
         });
     }
 
     public function register(array $data): array {
-        $tipoPerfil = $data["tipoPerfil"] = $data["tipoPerfil"] ?? "cliente";
+        $profileType = $data["profileType"] = $data["profileType"] ?? "cliente";
 
-        if ($tipoPerfil === "cliente") {
+        if ($profileType === "cliente") {
             return $this->customerService->createCustomer($data);
         }
 
@@ -42,7 +42,7 @@ class AuthService extends BaseService {
             throw new Exception("Não tem permissões para criar um registo com este tipo de perfil.", 403);
         }
 
-        if ($tipoPerfil === "funcionario") {
+        if ($profileType === "funcionario") {
             return $this->employeeService->createEmployee($data);
         } else {
             return $this->managerService->createManager($data);
@@ -50,7 +50,7 @@ class AuthService extends BaseService {
     }
 
     public function authenticateLogin(array $data): array {
-        $user = $this->userRepository->findByEmail($data["email"]);
+        $user = $this->userRepository->find(null, $data["email"]);
 
         $this->validateLoginInput($data, $user);
 
@@ -59,9 +59,9 @@ class AuthService extends BaseService {
         return [
             "message" => "Login efetuado com sucesso!",
             "user" => [
-                "name"      => $user["nome"],
-                "email"     => $user["email"],
-                "profile"   => $user["tipo_perfil"]
+                "name"        => $user["name"],
+                "email"       => $user["email"],
+                "profileType" => $user["profileType"]
             ]
         ];
     }
