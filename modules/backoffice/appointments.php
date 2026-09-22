@@ -49,13 +49,15 @@ include_once ROOT_PATH . "/modules/backoffice/includes/boNavbar.php";
                         <option value="">Todos</option>
                     </select>
                 </div>
-                <div class="col-md-3 d-flex gap-2">
-                    <button type="button" class="btn btn-sm btn-primary flex-fill" id="applyFiltersBtn">
-                        <i class="bi bi-funnel me-1"></i> Filtrar
-                    </button>
-                    <button type="button" class="btn btn-sm btn-outline-secondary" id="clearFiltersBtn">
-                        <i class="bi bi-x-lg"></i>
-                    </button>
+                <div class="col-md-3">
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-sm btn-outline-primary flex-fill" id="applyFiltersBtn">
+                            <i class="bi bi-funnel me-1"></i> Filtrar
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-primary flex-fill" id="clearFiltersBtn">
+                            <i class="bi bi-arrow-counterclockwise me-1"></i> Limpar
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

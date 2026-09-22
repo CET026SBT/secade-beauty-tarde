@@ -61,8 +61,8 @@ class ServiceAcceptanceService extends BaseService {
         $totalPlatform = 0.0;
 
         foreach ($services as $service) {
-            $totalEmployee += (float)($service["valor_recibo_verde_funcionario"] ?? 0);
-            $totalPlatform += (float)($service["valor_recibo_verde_plataforma"] ?? 0);
+            $totalEmployee += (float)($service["greenReceiptEmployee"] ?? 0);
+            $totalPlatform += (float)($service["greenReceiptPlatform"] ?? 0);
         }
 
         return [

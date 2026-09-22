@@ -10,26 +10,27 @@ const boServices = (() => {
     function money(value) { return generalUtils.formatCurrency(value); }
 
     function pendingCard(service) {
-        const person = service.nome_pessoa ? ` <span class="badge bg-light text-dark">${generalUtils.escapeHtml(service.nome_pessoa)}</span>` : "";
+        // A API devolve as chaves já mapeadas (camelCase) — ver BookingServiceMapper.
+        const person = service.personName ? ` <span class="badge bg-light text-dark">${generalUtils.escapeHtml(service.personName)}</span>` : "";
 
         return `<div class="border rounded p-3 mb-3">
             <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
                 <div>
-                    <span class="fw-bold">${generalUtils.escapeHtml(service.servico_nome)}</span>${person}
+                    <span class="fw-bold">${generalUtils.escapeHtml(service.serviceName || "")}</span>${person}
                     <div class="small text-muted">
-                        <i class="bi bi-tag me-1"></i>${generalUtils.escapeHtml(service.categoria_nome || "")}
-                        · ${generalUtils.formatDateTime(service.data_hora_pretendida)}
+                        <i class="bi bi-tag me-1"></i>${generalUtils.escapeHtml(service.categoryName || "")}
+                        · ${generalUtils.formatDateTime(service.dateTime)}
                     </div>
                 </div>
-                <span class="fw-bold">${money(service.preco_praticado)}</span>
+                <span class="fw-bold">${money(service.price)}</span>
             </div>
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
                 <span class="small text-muted">
-                    <i class="bi bi-person-badge me-1"></i>Agendamento #${service.agendamento_id}
-                    · ${generalUtils.formatDuration(service.duracao_minutos)}
+                    <i class="bi bi-person-badge me-1"></i>Agendamento #${service.bookingId}
+                    · ${generalUtils.formatDuration(service.durationMinutes)}
                 </span>
                 <button type="button" class="btn btn-sm btn-success"
-                        data-accept="${service.id}" data-booking="${service.agendamento_id}">
+                        data-accept="${service.id}" data-booking="${service.bookingId}">
                     <i class="bi bi-hand-thumbs-up me-1"></i> Aceitar serviço
                 </button>
             </div>
@@ -37,29 +38,29 @@ const boServices = (() => {
     }
 
     function acceptedCard(service) {
-        const person = service.nome_pessoa ? ` <span class="badge bg-light text-dark">${generalUtils.escapeHtml(service.nome_pessoa)}</span>` : "";
+        const person = service.personName ? ` <span class="badge bg-light text-dark">${generalUtils.escapeHtml(service.personName)}</span>` : "";
 
         return `<div class="border rounded p-3 mb-3">
             <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
                 <div>
-                    <span class="fw-bold">${generalUtils.escapeHtml(service.servico_nome)}</span>${person}
-                    <div class="small text-muted">${generalUtils.formatDateTime(service.data_hora_pretendida)}
-                        · ${generalUtils.escapeHtml(service.cliente_nome || "")}</div>
+                    <span class="fw-bold">${generalUtils.escapeHtml(service.serviceName || "")}</span>${person}
+                    <div class="small text-muted">${generalUtils.formatDateTime(service.dateTime)}
+                        · ${generalUtils.escapeHtml(service.customerName || "")}</div>
                 </div>
                 <span class="badge bg-success">Aceite</span>
             </div>
             <div class="row g-2 small mb-2">
                 <div class="col-6">
-                    <span class="text-muted d-block">A receber (${service.percentagem_funcionario_aplicada ?? "-"}%)</span>
-                    <span class="fw-bold text-success">${money(service.valor_recibo_verde_funcionario)}</span>
+                    <span class="text-muted d-block">A receber (${service.employeePercentage ?? "-"}%)</span>
+                    <span class="fw-bold text-success">${money(service.greenReceiptEmployee)}</span>
                 </div>
                 <div class="col-6">
                     <span class="text-muted d-block">Plataforma</span>
-                    <span class="fw-bold">${money(service.valor_recibo_verde_plataforma)}</span>
+                    <span class="fw-bold">${money(service.greenReceiptPlatform)}</span>
                 </div>
             </div>
             <button type="button" class="btn btn-sm btn-outline-danger"
-                    data-unaccept="${service.id}" data-booking="${service.agendamento_id}">
+                    data-unaccept="${service.id}" data-booking="${service.bookingId}">
                 <i class="bi bi-arrow-counterclockwise me-1"></i> Desfazer
             </button>
         </div>`;

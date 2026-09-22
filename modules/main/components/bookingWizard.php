@@ -55,9 +55,9 @@ $bookingUserName = Session::user()["name"] ?? "";
                                     <div class="alert alert-danger d-none" id="servicesError" role="alert"></div>
 
                                     <div class="d-flex justify-content-between">
-                                        <button type="button" class="btn btn-primary px-4" data-step-prev>
+                                        <!--<button type="button" class="btn btn-primary px-4" data-step-prev>
                                             <i class="bi bi-arrow-left me-1"></i> Voltar
-                                        </button>
+                                        </button>-->
                                         <button type="button" class="btn btn-primary px-4" data-step-next>
                                             Continuar <i class="bi bi-arrow-right ms-1"></i>
                                         </button>
@@ -127,7 +127,7 @@ $bookingUserName = Session::user()["name"] ?? "";
                                 <!-- ============ PASSO: MORADA (ambulatório) ============ -->
                                 <div class="form-step" data-step="address">
                                     <h4 class="section-title">
-                                        <i class="bi bi-house-heart text-gold me-2"></i><span class="step-number"></span>Morada de Atendimento
+                                        <i class="bi bi-house-door text-gold me-2"></i><span class="step-number"></span>Morada de Atendimento
                                     </h4>
 
                                     <div class="mb-4">
@@ -195,13 +195,13 @@ $bookingUserName = Session::user()["name"] ?? "";
 
                                     <div class="d-flex align-items-center gap-3 mb-3">
                                         <button type="button" class="btn btn-outline-primary" id="otpRequestBtn">
-                                            <i class="bi bi-send me-1"></i> Enviar Código
+                                            <i class="bi bi-envelope me-1"></i> Enviar Código
                                         </button>
                                         <span class="text-muted small" id="otpStatus"></span>
                                     </div>
 
                                     <div class="alert alert-warning d-none" id="otpSimulationBox">
-                                        <i class="bi bi-envelope-paper me-1"></i>
+                                        <i class="bi bi-envelope-open me-1"></i>
                                         <strong>Simulação SMS:</strong> o seu código OTP é
                                         <span class="fs-5 fw-bold text-dark" id="otpCodeDisplay">------</span>
                                     </div>
@@ -292,7 +292,7 @@ $bookingUserName = Session::user()["name"] ?? "";
                                 <!-- ============ PASSO (AMB): POLÍTICA DE SINAL ============ -->
                                 <div class="form-step" data-step="policy">
                                     <h4 class="section-title">
-                                        <i class="bi bi-cash-coin text-gold me-2"></i><span class="step-number"></span>Política de Sinal
+                                        <i class="bi bi-cash-stack text-gold me-2"></i><span class="step-number"></span>Política de Sinal
                                     </h4>
 
                                     <div class="alert alert-info">
@@ -339,7 +339,7 @@ $bookingUserName = Session::user()["name"] ?? "";
                                             <i class="bi bi-arrow-left me-1"></i> Voltar
                                         </button>
                                         <button type="button" class="btn btn-success px-4" id="confirmBookingBtn">
-                                            <i class="bi bi-check-lg me-1"></i> Confirmar Agendamento
+                                            <i class="bi bi-check2 me-1"></i> Confirmar Agendamento
                                         </button>
                                     </div>
 

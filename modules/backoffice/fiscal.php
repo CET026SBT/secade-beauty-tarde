@@ -27,7 +27,7 @@ include_once ROOT_PATH . "/modules/backoffice/includes/boNavbar.php";
             </p>
         </div>
         <button type="button" class="btn btn-primary" id="toggleObligationFormBtn">
-            <i class="bi bi-plus-lg me-1"></i> Nova obrigação
+            <i class="bi bi-plus me-1"></i> Nova obrigação
         </button>
     </div>
 
@@ -93,7 +93,7 @@ include_once ROOT_PATH . "/modules/backoffice/includes/boNavbar.php";
                 </div>
                 <div class="col-12">
                     <button type="button" class="btn btn-sm btn-primary" id="saveObligationBtn">
-                        <i class="bi bi-check-lg me-1"></i> Guardar obrigação
+                        <i class="bi bi-check2 me-1"></i> Guardar obrigação
                     </button>
                     <button type="button" class="btn btn-sm btn-outline-secondary ms-2" id="cancelObligationBtn">Cancelar</button>
                 </div>

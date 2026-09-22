@@ -133,7 +133,12 @@ class BookingServiceRepository extends BaseRepository {
                 LEFT JOIN agendamento_pessoa p ON s.agendamento_pessoa_id = p.id
                 WHERE s.estado_aceitacao = 'pendente'
                   AND a.local_prestacao = 'carrinha_ambulante'
-                  AND a.estado_reserva = 'pendente_aceitacao_funcionarios'";
+                  -- Tem de ser coerente com assertAcceptableBooking(): um serviço é aceitável
+                  -- enquanto o agendamento não estiver num estado terminal. Antes exigia-se
+                  -- 'pendente_aceitacao_funcionarios', o que escondia serviços por aceitar de
+                  -- agendamentos já confirmados (rota aprovada) — e esses nunca apareciam na
+                  -- lista, mesmo filtrando pelo dia certo.
+                  AND a.estado_reserva NOT IN ('cancelado', 'recusado', 'executado', 'concluido')";
         $params = [];
 
         if (!empty($filters["categoriaId"])) {
@@ -199,7 +204,8 @@ class BookingServiceRepository extends BaseRepository {
 
         $sql .= " ORDER BY a.data_hora_pretendida ASC, s.id ASC";
 
-        return $this->fetchAllRaw($sql, $params);
+        // Mapeado (camelCase) para ser consistente com findPending() e com o resto da API.
+        return $this->fetchAll($sql, $params);
     }
 
     /**

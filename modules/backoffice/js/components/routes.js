@@ -36,11 +36,11 @@ const boRoutes = (() => {
             ? `<div class="d-flex gap-1 justify-content-end">
                    <button type="button" class="btn btn-sm btn-success" data-decide="aprovada"
                            data-city="${route.cityId}" data-date="${route.routeDate}" title="Aprovar rota">
-                       <i class="bi bi-check-lg"></i>
+                       <i class="bi bi-check2"></i>
                    </button>
                    <button type="button" class="btn btn-sm btn-danger" data-decide="recusada"
                            data-city="${route.cityId}" data-date="${route.routeDate}" title="Recusar rota">
-                       <i class="bi bi-x-lg"></i>
+                       <i class="bi bi-x"></i>
                    </button>
                </div>`
             : '<span class="text-muted small">-</span>';

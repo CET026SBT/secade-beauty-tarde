@@ -581,7 +581,7 @@ const bookingWizard = (() => {
             const isDone = currentIndex > index;
 
             return `<div class="booking-step${isActive ? " active" : ""}${isDone ? " done" : ""}">
-                <span class="booking-step-index">${isDone ? '<i class="bi bi-check-lg"></i>' : index + 1}</span>
+                <span class="booking-step-index">${isDone ? '<i class="bi bi-check2"></i>' : index + 1}</span>
                 <span class="booking-step-label">${STEP_LABELS[step] || step}</span>
             </div>`;
         }).join("");
