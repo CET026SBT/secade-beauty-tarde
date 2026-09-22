@@ -124,9 +124,7 @@ INSERT INTO `cidade` (`id`, `nome`, `distrito`) VALUES
 DROP TABLE IF EXISTS `cliente`;
 CREATE TABLE IF NOT EXISTS `cliente` (
   `id` int NOT NULL,
-  `morada` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `telemovel_validado_otp` tinyint(1) DEFAULT '0',
-  `data_registo` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_cliente_utilizador` FOREIGN KEY (`id`) REFERENCES `utilizador` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -134,7 +132,6 @@ CREATE TABLE IF NOT EXISTS `cliente` (
 -- Dumping data for table secade_beauty.cliente: ~0 rows (approximately)
 DELETE FROM `cliente`;
 
--- Dumping structure for table secade_beauty.cliente_morada
 DROP TABLE IF EXISTS `cliente_morada`;
 CREATE TABLE IF NOT EXISTS `cliente_morada` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -145,12 +142,13 @@ CREATE TABLE IF NOT EXISTS `cliente_morada` (
   `numero_porta` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `andar_bloco` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `codigo_postal` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `principal` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `fk_cliente_morada_cliente` (`cliente_id`),
   KEY `fk_cliente_morada_cidade` (`cidade_id`),
   CONSTRAINT `fk_cliente_morada_cidade` FOREIGN KEY (`cidade_id`) REFERENCES `cidade` (`id`) ON DELETE RESTRICT,
   CONSTRAINT `fk_cliente_morada_cliente` FOREIGN KEY (`cliente_id`) REFERENCES `cliente` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=UTF8MB4_UNICODE_CI;
 
 -- Dumping data for table secade_beauty.cliente_morada: ~0 rows (approximately)
 DELETE FROM `cliente_morada`;
@@ -330,6 +328,7 @@ CREATE TABLE IF NOT EXISTS `servico` (
   `duracao_estimada_minutos` int NOT NULL,
   `preco_base` decimal(10,2) NOT NULL,
   `requer_espaco_fisico` tinyint(1) DEFAULT '0',
+  `ativo` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   KEY `fk_servico_categoria` (`categoria_id`),
   CONSTRAINT `fk_servico_categoria` FOREIGN KEY (`categoria_id`) REFERENCES `categoria_profissional` (`id`) ON DELETE RESTRICT
