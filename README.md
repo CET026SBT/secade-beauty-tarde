@@ -3,6 +3,11 @@
 > regras de negócio, arquitetura, BD, API, estados, testes e instalação) está em
 > **`especificacao_mvp.md`** — que **prevalece** sobre os restantes `.md`.
 > Este README mantém-se como guia de **instalação e uso rápido**. Mapa documental: §29.2 do documento-mestre.
+>
+> ⚠️ **Onde vive o documento-mestre:** `especificacao_mvp.md`, `mapaMentalMVP/`, `tools/` e
+> `.clinerules` **não são versionados nas branches de produto** (`main`, `dev` e restantes) — existem
+> apenas na branch **`agent-workspace`**, que **nunca é integrada**. Ver a secção
+> **Ramos do repositório** mais abaixo.
 
 ## Projeto Académico | Entrega: 21/09/2026
 
@@ -42,10 +47,7 @@ secade-beauty-tarde/
 │   ├── common/           # Recursos partilhados (JS, CSS, libs)
 │   ├── main/             # Páginas públicas (clientes)
 │   └── backoffice/       # Área de gestão (gestor)
-├── especificacao_mvp.md   # ⭐ Documento-mestre (fonte única de verdade)
 ├── README.md              # Este ficheiro (instalação + uso)
-├── mapaMentalMVP/         # Apoio a testes: guia manual + mapa de fluxo de dados
-├── tools/                 # Utilitários de manutenção dev-only (encoding, .md)
 ├── tests/                 # Testes automatizados (CLI + HTTP)
 ├── index.php              # Front Controller
 ├── DataBase_v2.sql        # Schema ATUAL (v2+): 24 tabelas + dados de referência
@@ -54,9 +56,61 @@ secade-beauty-tarde/
 ├── database_migration_v3.sql  # Migração incremental v2 -> v3 (idempotente)
 ├── DataBase.sql           # [legado] dump v1 — não usar em instalações novas
 ├── DataBase_backup_pre_v2.sql # [arquivo] cópia do estado antes da v2
-├── index.php              # Front Controller
 └── .htaccess              # Rewrite rules
+
+[existe apenas na branch agent-workspace — ver "Ramos do repositório"]
+especificacao_mvp.md       # Documento-mestre (fonte única de verdade)
+mapaMentalMVP/             # Apoio a testes: guia manual + mapa de fluxo de dados
+tools/                     # Utilitários de manutenção dev-only (encoding, .md)
+.clinerules                # Regras permanentes do assistente
 ```
+
+---
+
+## 🌿 RAMOS DO REPOSITÓRIO (BRANCHES)
+
+### Ramos principais
+
+| Branch            | Papel                                                        | Recebe merges/PR de              |
+| ----------------- | ------------------------------------------------------------ | -------------------------------- |
+| `main`            | Código final de qualidade — 100 % funcional de ponta a ponta | apenas de `dev`                  |
+| `dev`             | Desenvolvimento — estado mais avançado do projeto            | branches de contexto e de tarefa |
+| `agent-workspace` | Documento-mestre, `mapaMentalMVP/`, `tools/` e `.clinerules` | — (**nunca é integrada**)        |
+| restantes         | Branches de trabalho (contexto, funcionalidade, correção)    | —                                |
+
+- Nunca se faz commit **direto** em `dev` nem em `main`: o trabalho entra sempre por branch e
+  merge/PR. `main` só aceita merges vindos de `dev`.
+- Mensagens de commit: resumo simples, bullets com `-`, sem emoji nem formatação markdown.
+
+### Branch `agent-workspace` (ferramentas e documentação do assistente)
+
+É a branch **exclusiva do par agente/humano**. Guarda o **documento-mestre**
+(`especificacao_mvp.md`), o **mapa de apoio a testes** (`mapaMentalMVP/`), os **utilitários de
+manutenção** (`tools/`) e as **regras do assistente** (`.clinerules`).
+
+- **Nunca é integrada** em `dev` nem em `main` (o fluxo é no sentido oposto, se necessário).
+- Esses caminhos estão listados no `.gitignore`, por isso **não aparecem nas outras branches**
+  (`git status` fica limpo mesmo com os ficheiros no disco).
+- Um ficheiro já versionado **não** é afetado pelo `.gitignore`; para o voltar a versionar noutra
+  branch usa-se `git add -f <caminho>`.
+- O `README.md`, o `tests/` e todo o código de produto **são versionados normalmente em `dev`**.
+- Se a branch for apagada, os ficheiros **continuam no disco** (apenas deixam de estar versionados).
+
+### Branches de contexto integradas em `dev`
+
+| Branch                     | Âmbito                                                             |
+| -------------------------- | ------------------------------------------------------------------ |
+| `database-schema`          | Schema v2, migrações incrementais e dados de referência            |
+| `core-stabilization`       | Front controller, mapa de endpoints da API e infraestrutura base   |
+| `repo-hygiene`             | `.gitignore` e `.clinerules` fora do controlo de versão do produto |
+| `frontend-layout`          | Layout, tema, preloader e assets partilhados                       |
+| `customer-auth`            | Registo, login, perfil, moradas e cidades                          |
+| `service-catalog`          | Categorias e catálogo de serviços                                  |
+| `booking-wizard`           | Wizard de agendamento (loja física e carrinha) + OTP               |
+| `backoffice`               | Agendamentos, rotas, serviços e aceitação por funcionário          |
+| `fiscal-receipts-feedback` | Calendário fiscal, recibos verdes e feedback do cliente            |
+| `docs-and-tests`           | README e testes automatizados                                      |
+| `docs-branch-model`        | Modelo de ramos documentado neste README                           |
 
 ---
 
@@ -309,7 +363,8 @@ Body: { "email": "teste@test.com", "password": "Test@123" }
 ## 📅 ROADMAP POR FASES
 
 > O cronograma de 7 dias do planeamento inicial foi **revogado** (continha o algoritmo automático de
-> 100 €, entretanto substituído por decisão manual). Detalhe em `especificacao_mvp.md` §21.
+> 100 €, entretanto substituído por decisão manual). Detalhe em `especificacao_mvp.md` §21
+> (branch `agent-workspace`).
 
 | Fase | Âmbito                                                                                 | Estado       |
 | ---- | -------------------------------------------------------------------------------------- | ------------ |
@@ -334,6 +389,7 @@ Body: { "email": "teste@test.com", "password": "Test@123" }
 
 Para questões sobre o projeto, consultar o **documento-mestre** `especificacao_mvp.md`
 (índice no §0 e anexos no §29). Para testar manualmente, usar `mapaMentalMVP/guia_teste_manual.md`.
+Ambos residem na branch **`agent-workspace`** (nunca integrada em `dev`/`main`).
 
 ---
 
