@@ -10,9 +10,11 @@ class Session {
     public static function createLoginSession(array $user): void {
         self::init();
         $_SESSION["user_id"] = $user["id"];
-        $_SESSION["user_name"] = $user["nome"];
-        $_SESSION["user_email"] = $user["email"];
-        $_SESSION["user_profile"] = $user["tipo_perfil"];
+        // O mapper de utilizador devolve chaves em inglês (name/email/profileType);
+        // mantém-se compatibilidade com as chaves originais da BD (nome/tipo_perfil).
+        $_SESSION["user_name"]    = $user["name"]        ?? $user["nome"]        ?? null;
+        $_SESSION["user_email"]   = $user["email"]       ?? null;
+        $_SESSION["user_profile"] = $user["profileType"] ?? $user["tipo_perfil"] ?? null;
     }
 
     public static function isLoggedIn() {
@@ -54,6 +56,19 @@ class Session {
         if (!self::isLoggedIn()) {
             header("Location: {$url}");
             exit;
+        }
+    }
+
+    public static function requireLoginApi(): void {
+        if (!self::isLoggedIn()) {
+            throw new Exception("Sessão não iniciada.", 401);
+        }
+    }
+
+    public static function requireProfileApi(array $profiles): void {
+        self::requireLoginApi();
+        if (!in_array(self::getUserProfile(), $profiles, true)) {
+            throw new Exception("Sem permissões para esta operação.", 403);
         }
     }
 

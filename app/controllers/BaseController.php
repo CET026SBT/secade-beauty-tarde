@@ -14,4 +14,10 @@ abstract class BaseController {
 
         return is_array($inputData) ? $inputData : [];
     }
+
+    protected function requireCustomer(): int {
+        Session::requireProfileApi(["cliente"]);
+        $user = Session::user();
+        return (int)$user["id"];
+    }
 }
