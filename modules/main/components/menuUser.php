@@ -41,11 +41,13 @@ if ($isLoggedIn && $user):
             class="wh-40 rounded-circle object-fit-cover border border-2 border-primary">
     </button>
     <ul class="dropdown-menu dropdown-menu-end">
+        <!--
         <li>
             <a class="dropdown-item" href="<?= BASE_URL ?>/perfil">
                 <i class="bi bi-person-circle me-2"></i>Perfil
             </a>
         </li>
+        -->
 
         <?php if ($isStaff): ?>
             <li><hr class="dropdown-divider"></li>
