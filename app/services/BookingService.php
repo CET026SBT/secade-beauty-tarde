@@ -61,11 +61,14 @@ class BookingService extends BaseService {
 
         // Offsets em segundos desde a meia-noite (o horário da loja é relativo ao dia)
         $startOffset = $slotStart - $dayStart;
-        $endOffset   = $startOffset + $durationMinutes * 60;
         $open        = self::STORE_OPEN_HOUR * 3600;
         $close       = self::STORE_CLOSE_HOUR * 3600;
 
-        if ($startOffset < $open || $endOffset > $close) {
+        // O INÍCIO tem de estar dentro do horário de atendimento. A duração pode
+        // ultrapassar o fecho — é o que a grelha de slots oferece (RF-21 / RN-02) e é
+        // inevitável em serviços longos. Validar o fim aqui recusaria (422) precisamente
+        // os horários que o wizard acabou de apresentar ao cliente.
+        if ($startOffset < $open || $startOffset >= $close) {
             throw new Exception("O horário de atendimento é das 09:00 às 19:00.", 422);
         }
     }
@@ -115,10 +118,17 @@ class BookingService extends BaseService {
         $openStart  = strtotime($date . " " . self::STORE_OPEN_HOUR . ":00");
         $closeStart = strtotime($date . " " . self::STORE_CLOSE_HOUR . ":00");
 
-        for ($slotStart = $openStart; $slotStart + $durationMinutes * 60 <= $closeStart; $slotStart += self::SLOT_STEP_MINUTES * 60) {
+        // RF-21 / RN-02: a grelha de horários é 09:00–19:00 em passos de 30 min,
+        // independentemente da duração pedida. A duração serve apenas para detetar
+        // conflitos de janela. Exigir que a marcação inteira coubesse dentro do horário
+        // deixava a grelha vazia para serviços longos (ex.: Box Braids 240 min, Faux Locs
+        // 300 min) ou para vários serviços/pessoas — o cliente via sempre
+        // "Sem horários disponíveis para esta data" e não conseguia agendar.
+        for ($slotStart = $openStart; $slotStart < $closeStart; $slotStart += self::SLOT_STEP_MINUTES * 60) {
             if ($slotStart < time()) continue;
 
-            $startStr = date("H:i", $slotStart);
+            $slotEnd = $slotStart + $durationMinutes * 60;
+
             $conflicts = $this->bookingRepository->countByDateWindow(
                 date("Y-m-d H:i:s", $slotStart),
                 $durationMinutes,
@@ -126,9 +136,11 @@ class BookingService extends BaseService {
             );
 
             $slots[] = [
-                "time"        => $startStr,
-                "available"   => $conflicts === 0,
-                "conflicting" => $conflicts
+                "time"            => date("H:i", $slotStart),
+                "available"       => $conflicts === 0,
+                "conflicting"     => $conflicts,
+                "endTime"         => date("H:i", $slotEnd),
+                "overrunsClosing" => $slotEnd > $closeStart
             ];
         }
 

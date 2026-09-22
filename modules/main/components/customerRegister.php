@@ -106,6 +106,7 @@ register_script("components/customerRegister", "main");
                                     </div>
                                 </div>
 
+                                <!--
                                 <div class="col-6">
                                     <div class="form-floating">
                                         <input name="zipCode" type="text" class="form-control" placeholder="Código Postal*" required>
@@ -121,6 +122,7 @@ register_script("components/customerRegister", "main");
                                         <div class="invalid-feedback mt-0 mb-1"></div>
                                     </div>
                                 </div>
+                                -->
 
                                 <div class="col-12">
                                     <div class="form-check">

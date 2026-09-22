@@ -10,10 +10,12 @@ $boIsManager  = Session::isManager();
 $boIsEmployee = Session::isEmployee();
 $boHomeUrl    = $boIsEmployee ? BASE_URL . "/gestao/servicos" : BASE_URL . "/gestao/agendamentos";
 
+// Cada perfil só vê páginas a que tem acesso: /gestao/agendamentos exige perfil de
+// gestor (ver o guard em modules/backoffice/appointments.php) e redireciona o
+// funcionário para a home — por isso não é apresentada no menu dele.
 $boLinks = $boIsEmployee
     ? [
-        ["page" => "services",     "url" => "/gestao/servicos",       "icon" => "bi-list-check",      "label" => "Serviços"],
-        ["page" => "appointments", "url" => "/gestao/agendamentos",   "icon" => "bi-calendar-check",  "label" => "Agendamentos"]
+        ["page" => "services",     "url" => "/gestao/servicos",       "icon" => "bi-list-check",      "label" => "Serviços"]
       ]
     : [
         ["page" => "appointments", "url" => "/gestao/agendamentos",   "icon" => "bi-calendar-check",  "label" => "Agendamentos"],
