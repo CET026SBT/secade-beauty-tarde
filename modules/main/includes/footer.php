@@ -1,10 +1,19 @@
-<?php
-include ROOT_PATH . "/modules/common/lib-our/jq-preloader/templates.php";
+    <!-- Preloader principal do site -->
+    <div preloader-overlay preloader-fade class="jq-preloader-instance bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+        <div class="spinner-grow text-primary" role="status">
+            <span class="visually-hidden">A carregar...</span>
+        </div>
+    </div>
 
-if (!isset($showMainFooter) || $showMainFooter === true) {
-    include ROOT_PATH . "/modules/main/components/mainFooter.php";
-}
-?>
+    <!-- Preloader templates + Main footer markup -->
+    <?php
+    include ROOT_PATH . "/modules/common/lib-our/jq-preloader/templates.php";
+
+    if (!isset($showMainFooter) || $showMainFooter === true) {
+        include ROOT_PATH . "/modules/main/components/mainFooter.php";
+    }
+    ?>
+
     <!-- Copyright -->
     <div class="container-fluid bg-dark text-white border-top border-secondary py-4 wow fadeIn" data-wow-delay="0.1s">
         <div class="container">
@@ -36,7 +45,7 @@ if (!isset($showMainFooter) || $showMainFooter === true) {
     <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/js/api/api.js"></script>
 
     <!-- Essencial Utils -->
-    <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/js/utils/dom.utils.js"></script>
+    <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/js/utils/general.utils.js"></script>
     <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/js/utils/form.utils.js"></script>
 
     <!-- Main Javascript -->
