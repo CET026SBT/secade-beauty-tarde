@@ -75,9 +75,9 @@
 > Os ficheiros de planeamento/relatório anteriores foram **eliminados** na consolidação para evitar
 > divergência (mapa e rastreabilidade: `especificacao_mvp.md` §29.2).
 
-- **`especificacao_mvp.md`** (documento-mestre — obrigatório e mantido atualizado)
-- `README.md` (instalação + uso rápido)
-- `mapaMentalMVP/` (guia de teste manual + mapa de fluxo de dados)
+- **`especificacao_mvp.md`** (documento-mestre — obrigatório e mantido atualizado) — branch `agent-workspace` (§11.5)
+- `README.md` (instalação + uso rápido) — versionado em `dev`
+- `mapaMentalMVP/` (guia de teste manual + mapa de fluxo de dados) — branch `agent-workspace` (§11.5)
 - Comentários em lógica complexa
 - Diagrama de BD: `especificacao_mvp.md` §17.8 (relações + consulta SQL para regenerar)
 
@@ -115,10 +115,42 @@
 - Tipografia simples: sem emoji e sem formatação de markdown (sem negrito, títulos, tabelas).
 - Usar apenas `-` para bullet points, quando forem necessários.
 
+### 11.4 Modelo de branches do projeto
+
+| Branch            | Papel                                                        | Recebe merges/PR de              |
+| ----------------- | ------------------------------------------------------------ | -------------------------------- |
+| `main`            | Código final de qualidade, 100% funcional de ponta a ponta   | apenas de `dev`                  |
+| `dev`             | Desenvolvimento, estado mais avançado do projeto             | branches de contexto e de tarefa |
+| `agent-workspace` | Documento-mestre, `mapaMentalMVP/`, `tools/` e `.clinerules` | — (nunca é integrada)            |
+| restantes         | Branches de trabalho (contexto, funcionalidade, correção)    | —                                |
+
+- O trabalho deve ser dividido por **branches de contexto** (uma por âmbito) e integrado em `dev`
+  por merge/PR — nunca por commits diretos.
+- Para **evitar conflitos**, os ficheiros de cada branch de contexto têm de ser **disjuntos**: cada
+  ficheiro pertence a uma única branch. Ficheiros transversais (ex.: `index.php`,
+  `app/config/api.php`, `modules/main/css/style.css`) ficam numa branch de infraestrutura própria.
+- Ordem de integração: schema → core/infra → higiene → frontend → domínios → testes.
+
+### 11.5 Branch `agent-workspace` (relação agente/humano) — NUNCA integrar
+
+- Guarda **exclusivamente** os ficheiros de trabalho do agente: `.clinerules`,
+  `especificacao_mvp.md`, `mapaMentalMVP/` e `tools/`.
+- **Nunca** é integrada em `dev` nem em `main`. Se for preciso partilhar algum destes ficheiros, o
+  fluxo é no sentido oposto (a partir desta branch), e é sempre decisão do utilizador.
+- Esses caminhos estão listados no `.gitignore`, pelo que **nunca** são versionados nas outras
+  branches — o `git status` fica limpo mesmo com os ficheiros no disco.
+- Um ficheiro já versionado **não** é afetado pelo `.gitignore`. Para o voltar a versionar usa-se
+  obrigatoriamente `git add -f <caminho>`, o que **só** deve acontecer nesta branch.
+- Os ficheiros continuam **no disco** nas outras branches (apenas invisíveis para o Git).
+- `README.md`, `tests/` e todo o código de produto **são versionados normalmente** em `dev`.
+
 ## 12. FERRAMENTAS DE MANUTENÇÃO (`tools/`)
 
 Pasta **dev-only** (não faz parte da aplicação; protegida por `.htaccess`). Contém utilitários PHP
 reutilizáveis para evitar retrabalho. **Editar livremente quando não cumprirem o objetivo.**
+
+> 📍 Estes ficheiros existem **apenas na branch `agent-workspace`** (§11.5) e estão no `.gitignore`.
+> Nas restantes branches ficam no disco mas invisíveis para o Git.
 
 ### 12.1 REGRA OBRIGATÓRIA DE ESCRITA DE FICHEIROS
 
@@ -159,6 +191,11 @@ Sempre **UTF-8 sem BOM**, preservando o fim de linha do ficheiro (o projeto usa 
 - Assumem execução **a partir da raiz do projeto**.
 - **Recusam gravar** se o resultado não for UTF-8 válido.
 - `md-align-tables` **aborta** se detetar alteração de conteúdo (só alinha espaços).
+- `encoding-check` aceita `--ignore=<caminho>` para **exceções conhecidas** — estas passam a ser
+  listadas à parte e **não** contam como problema (ex.: `DataBase_backup_pre_v2.sql`, dump legado em
+  UTF-16). Aceita também `--ext=` (limitar extensões) e `--include-tools` (incluir a própria pasta
+  `tools/`).
+- `encoding-fix` também **converte UTF-16 → UTF-8** (ver §12.1 para a origem deste caso).
 
 ### 12.4 Pragma de mojibake
 
@@ -167,9 +204,17 @@ Ficheiros que **documentam** mojibake como exemplo (ex.: `tools/README.md`) deve
 
 ### 12.5 Antes de finalizar alterações a documentação
 
-Correr `php tools/health-check.php` e garantir que está tudo OK (exceto o
-`DataBase_backup_pre_v2.sql`, que é **UTF-16 legado por natureza** e não deve ser convertido).
+Correr `php tools/health-check.php` e garantir que está tudo OK. O `DataBase_backup_pre_v2.sql` é
+**UTF-16 legado por natureza** e não deve ser convertido — está já registado como exceção
+(`--ignore=`) em `tools/health-check.php`.
+
+### 12.6 Ficheiros a manter sempre atualizados
+
+`especificacao_mvp.md` (§29.3 — requisitos primeiro, código depois), `README.md` (modelo de branches
+e mapa de pastas), `.clinerules` (§11 e §12) e `tools/README.md`. Sempre que o modelo de branches,
+os utilitários ou as convenções mudarem, estes quatro ficheiros são atualizados no mesmo trabalho.
 
 ---
 **Este ficheiro NÃO deve ser alterado sem aprovação.**
-**Versão:** 1.2 Académica | **Data:** 14/09/2026 | **Última atualização:** 21/09/2026 (§11 Regras de Git · §12 Ferramentas `tools/`)
+**Versão:** 1.3 Académica | **Data:** 14/09/2026 | **Última atualização:** 22/09/2026
+(§11.4 Modelo de branches · §11.5 Branch `agent-workspace` · §12.6 Ficheiros a manter atualizados)

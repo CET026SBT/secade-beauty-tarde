@@ -1,11 +1,13 @@
 # SECADE BEAUTY — ESPECIFICAÇÃO ÚNICA E CENTRALIZADA
-**Documento-mestre (single source of truth)** · Versão 1.0 · 21/09/2026
+**Documento-mestre (single source of truth)** · Versão 1.1 · 22/09/2026 · branch **`agent-workspace`**
 **Âmbito:** requisitos, decisões finais, arquitetura, base de dados, API, estados, testes e instalação.
 
 > ⚠️ **PREVALÊNCIA:** este documento **centraliza e substitui** a informação de requisitos,
 > convenções e decisões que estava dispersa pelos restantes `.md` do projeto. Em caso de
 > contradição com qualquer outro ficheiro, **vale o que está aqui**.
-> Os ficheiros anteriores mantêm-se na raiz apenas como **registo histórico** — ver §29.2.
+> Os ficheiros anteriores são **registo histórico** — ver §29.2. Nesta branch (`agent-workspace`)
+> foram **eliminados**; em `dev` continuam presentes (a remoção é reversível com
+> `git checkout dev -- <ficheiro>`).
 
 > **Fontes consolidadas** (ficheiros **entretanto eliminados** na consolidação documental — mapa em §29.2):
 > `planeamento_geral.md` · `rectificacoes.md` (esclarecimento de conflitos
@@ -47,6 +49,7 @@
 | Implementar um **módulo**                                        | §6–§16                       |
 | Escrever **código**                                              | §18 (convenções) + §19 (API) |
 | **Fazer commits / integrar código**                              | §18.10 (fluxo de Git)        |
+| **Perceber as branches (main / dev / agent-workspace)**          | §18.10 + §18.12              |
 | **Editar/escrever ficheiros (encoding seguro)**                  | §18.11 (`tools/`)            |
 | Perceber **estados**                                             | §20                          |
 | Saber **o que falta fazer**                                      | §24 (gap) + §25 (futuro)     |
@@ -1107,30 +1110,40 @@ View (PHP) → JS componente → api.js → api.php (routing) → Controller →
 **Ferramentas de desenvolvimento**
 - `tools/` — utilitários de manutenção dev-only (encoding, formatação/validação de `.md`,
   edição segura de ficheiros). **Não faz parte da aplicação** — ver §18.11 e `tools/README.md`.
+  Existe **apenas na branch `agent-workspace`** (§18.12).
 
 ### 18.10 Fluxo de Git (branches e commits)
 
 **Estrutura de branches:**
 
-| Branch        | Papel                                     | Regra de integração                                                                                                                                          |
-| ------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **`main`**    | Qualidade / código final                  | Só recebe **merge/PR a partir de `dev`** — **nunca** de outras branches. O código aqui tem de estar **100% funcional de ponta a ponta**                      |
-| **`dev`**     | Desenvolvimento                           | Recebe o trabalho **terminado** das outras branches (merge ou PR). Reflete o **estado de desenvolvimento mais avançado** do projeto                          |
-| **Restantes** | Desenvolvimento manual + arquitetura core | Branches de desenvolvimento manual e da arquitetura core, com implementações específicas que servem de **base para definir convenções** a implementar depois |
+| Branch                | Papel                           | Regra de integração                                                                                                                             |
+| --------------------- | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`main`**            | Qualidade / código final        | Só recebe **merge/PR a partir de `dev`** — **nunca** de outras branches. O código aqui tem de estar **100% funcional de ponta a ponta**         |
+| **`dev`**             | Desenvolvimento                 | Recebe o trabalho **terminado** das branches de contexto/tarefa (merge ou PR). Reflete o **estado de desenvolvimento mais avançado** do projeto |
+| **`agent-workspace`** | Ficheiros de trabalho do agente | Documento-mestre, `mapaMentalMVP/`, `tools/` e `.clinerules`. **Nunca é integrada** em `dev` nem em `main` (§18.12)                             |
+| **Restantes**         | Branches de contexto / tarefa   | Branches de desenvolvimento por âmbito (contexto, funcionalidade, correção) que servem de **base para definir convenções** a implementar depois |
 
 ```
-  branch de desenvolvimento  ──merge/PR──▶  dev  ──merge/PR──▶  main
-   (onde o agente pode commitar)        (mais avançado)   (100% funcional)
+  branch de contexto  ──merge/PR──▶  dev  ──merge/PR──▶  main
+   (onde o agente pode commitar)   (mais avançado)   (100% funcional)
+
+  agent-workspace  ──✖──▶  dev / main          (nunca é integrada)
 ```
+
+**Branches de contexto — regra de ouro contra conflitos:** cada ficheiro pertence a **uma única**
+branch. Ficheiros transversais (`index.php`, `app/config/api.php`, `modules/main/css/style.css`,
+layout/includes, `api.js`, `apiClient.js`) ficam numa branch de infraestrutura/frontend própria, para
+que a integração em `dev` seja **sempre sem conflitos**.
 
 **Regras para o agente:**
 
-| Regra                                           | Detalhe                                                            |
-| ----------------------------------------------- | ------------------------------------------------------------------ |
-| ❌ **Nunca** commitar em `main`                 | Nem diretamente, nem por merge/PR                                  |
-| ❌ **Nunca** commitar em `dev`                  | Idem                                                               |
-| ✅ Commitar nas **branches de desenvolvimento** | Só nas restantes branches                                          |
-| ✅ Integração é **decisão do utilizador**       | O agente não promove merges/PR para `dev` nem de `dev` para `main` |
+| Regra                                               | Detalhe                                                                     |
+| --------------------------------------------------- | --------------------------------------------------------------------------- |
+| ❌ **Nunca** commitar em `main`                     | Nem diretamente, nem por merge/PR                                           |
+| ❌ **Nunca** commitar em `dev`                      | Idem                                                                        |
+| ✅ Commitar nas **branches de contexto / tarefa**   | É onde o agente desenvolve e commita                                        |
+| ✅ Integrar em `dev` **quando o utilizador o pede** | Por merge/PR, depois de a branch estar concluída; a decisão é do utilizador |
+| ❌ **Integrar `agent-workspace`**                   | **Proibido** — esta branch nunca entra em `dev` nem em `main` (§18.12)      |
 
 **Convenção das mensagens de commit** — tipografia **simples**:
 
@@ -1159,6 +1172,9 @@ fix: corrigir disponibilidade de slots ao alterar servicos
 > PHP reutilizáveis para automatizar tarefas recorrentes de manutenção da documentação e do
 > *encoding*. **Editar livremente** sempre que deixarem de cumprir o objetivo. Guia completo:
 > `tools/README.md`.
+>
+> 📍 Estes ficheiros existem **apenas na branch `agent-workspace`** (§18.12) e estão no `.gitignore`;
+> nas outras branches ficam no disco mas invisíveis para o Git.
 
 **⚠️ Regra obrigatória de escrita de ficheiros.** Nunca reescrever ficheiros com o ciclo
 `Get-Content` + `Set-Content` do **Windows PowerShell 5.1** — corrompe o conteúdo de forma silenciosa:
@@ -1194,7 +1210,31 @@ que suprime a deteção nesse ficheiro.
 
 **Antes de finalizar alterações à documentação:** correr `php tools/health-check.php`.
 (Exceção esperada: `DataBase_backup_pre_v2.sql` é **UTF-16 legado por natureza** e **não** deve ser
-convertido — ver §17.7.)
+convertido — ver §17.7. Está registado com `--ignore=` dentro do próprio `health-check.php`.)
+
+### 18.12 Branch `agent-workspace` (relação agente/humano)
+
+Branch **exclusiva do par agente/humano**. Guarda os ficheiros de trabalho que **não** pertencem ao
+produto:
+
+| Conteúdo               | Papel                                         |
+| ---------------------- | --------------------------------------------- |
+| `.clinerules`          | Regras permanentes do assistente              |
+| `especificacao_mvp.md` | Documento-mestre (fonte única de verdade)     |
+| `mapaMentalMVP/`       | Guia de teste manual + mapa de fluxo de dados |
+| `tools/`               | Utilitários de manutenção dev-only            |
+
+**Regras:**
+
+- **Nunca é integrada** em `dev` nem em `main` — o agente **não** faz merge desta branch.
+- Os caminhos acima estão no `.gitignore`, pelo que **nunca** são versionados nas outras branches:
+  o `git status` fica limpo mesmo com os ficheiros presentes no disco.
+- Um ficheiro **já versionado** não é afetado pelo `.gitignore`; para o voltar a versionar noutra
+  branch é obrigatório `git add -f <caminho>`, e isso **só** deve acontecer nesta branch.
+- O `README.md`, o `tests/` e todo o código de produto são versionados **normalmente** em `dev`.
+- Estes ficheiros **continuam no disco** nas restantes branches (apenas invisíveis para o Git), pelo
+  que as ferramentas continuam utilizáveis em qualquer branch.
+
 ## 19. API / ENDPOINTS
 
 **Padrão:** `?action=<dominio>-<acao>` · **37 endpoints** registados em `app/config/api.php`.
@@ -1835,29 +1875,31 @@ SET FOREIGN_KEY_CHECKS = 1;
 > antigos foram **eliminados**. A tabela abaixo mantém a **rastreabilidade**: onde estava cada
 > assunto e onde está agora.
 
-| Fonte (ficheiro)                     | Papel                                                                            | Destino / Estado                                                                                |
-| :----------------------------------- | :------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------- |
-| **`especificacao_mvp.md`**           | **Documento-mestre (SSOT)**                                                      | ✅ **Autoridade máxima** — prevalece sobre tudo                                                 |
-| `README.md`                          | Instalação e uso rápido (entrada do projeto)                                     | ✅ **Mantido** (aponta para este documento); conteúdo técnico em §1, §17, §26, §27              |
-| `mapaMentalMVP/guia_teste_manual.md` | Guia de teste manual passo-a-passo                                               | ℹ️ **Mantido** — ferramenta de apoio (não normativa)                                             |
-| `mapaMentalMVP/mapa_fluxo_dados.md`  | Mapa visual do fluxo de dados ponta-a-ponta                                      | ℹ️ **Mantido** — ferramenta de apoio (não normativa)                                             |
-| `tools/`                             | Utilitários de manutenção dev-only (encoding, `.md`, edição segura de ficheiros) | ℹ️ **Mantido** — ferramentas de apoio (não normativas); guia em `tools/README.md` e §18.11       |
-| `.clinerules`                        | Regras permanentes (stack, restrições, convenções)                               | ✅ **Mantido** — §9 atualizado para apontar ao mestre                                           |
-| `rectificacoes.md`                   | Esclarecimento dos conflitos PDF ↔ `.md` (11 decisões)                           | 🗑️ **Eliminado** → consolidado em **§3 (D-01 a D-11 + §3.12–3.13)**                             |
-| `planeamento_geral.md`               | Planeamento v3.0/3.1 (Regras de Ouro, fases, estados)                            | 🗑️ **Eliminado** → consolidado em **§2, §4–§16, §20–§22, §28**                                  |
-| `relatorio_implementacao.md`         | Relatório de implementação, defeitos e testes                                    | 🗑️ **Eliminado** → consolidado em **§18.9, §23, §26**                                           |
-| `tecnologias_projeto.md`             | Stack, inventário de BD, arquitetura, convenções                                 | 🗑️ **Eliminado** → consolidado em **§1.1, §17, §18**                                            |
-| `fluxo_funcionalidades.md`           | Fluxos v1 + RN01–RN12                                                            | 🗑️ **Eliminado** → **§5** (vigentes) e **§5.2** (revogadas)                                     |
-| `CARRINHA_SPEC.md`                   | Especificação v1 da carrinha (+ algoritmo 100 €)                                 | 🗑️ **Eliminado** → **§3.1, §9, §12**                                                            |
-| `plano_desenvolvimento.md`           | Cronograma de 7 dias + checklist                                                 | 🗑️ **Eliminado** → **§21** (roadmap por fases + entregáveis)                                    |
-| `ALTERACOES_PRIORIDADES.md`          | Histórico de prioridades (v1→v2)                                                 | 🗑️ **Eliminado** → **§21**                                                                      |
-| `relatorio_alteracoes.md`            | Registo do replaneamento v3.0                                                    | 🗑️ **Eliminado** → **§3.13**                                                                    |
-| `duvidas_planeamento.md`             | Dúvidas e resoluções (histórico)                                                 | 🗑️ **Eliminado** → **§3, §5, §22.2** (a dúvida §5.4 foi substituída pela janela de 24 h em §15) |
-| `LOGIN_PROFILE_TODO.md`              | TODO de login/perfil (fechado)                                                   | 🗑️ **Eliminado** → **§6, §18.6, §19.1, §22.2**                                                  |
+| Fonte (ficheiro)                     | Papel                                                                            | Destino / Estado                                                                                                                       |
+| :----------------------------------- | :------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------- |
+| **`especificacao_mvp.md`**           | **Documento-mestre (SSOT)**                                                      | ✅ **Autoridade máxima** — prevalece sobre tudo                                                                                        |
+| `README.md`                          | Instalação e uso rápido (entrada do projeto)                                     | ✅ **Mantido** (aponta para este documento); conteúdo técnico em §1, §17, §26, §27                                                     |
+| `mapaMentalMVP/guia_teste_manual.md` | Guia de teste manual passo-a-passo                                               | ℹ️ **Mantido** — ferramenta de apoio (não normativa)                                                                                    |
+| `mapaMentalMVP/mapa_fluxo_dados.md`  | Mapa visual do fluxo de dados ponta-a-ponta                                      | ℹ️ **Mantido** — ferramenta de apoio (não normativa)                                                                                    |
+| `tools/`                             | Utilitários de manutenção dev-only (encoding, `.md`, edição segura de ficheiros) | ℹ️ **Mantido** — ferramentas de apoio (não normativas); guia em `tools/README.md` e §18.11; **só na branch `agent-workspace`** (§18.12) |
+| `.clinerules`                        | Regras permanentes (stack, restrições, convenções)                               | ✅ **Mantido** — §9 aponta ao mestre; inclui §11.4/§11.5 (modelo de branches); **só na branch `agent-workspace`** (§18.12)             |
+| `rectificacoes.md`                   | Esclarecimento dos conflitos PDF ↔ `.md` (11 decisões)                           | 🗑️ **Eliminado** → consolidado em **§3 (D-01 a D-11 + §3.12–3.13)**                                                                    |
+| `planeamento_geral.md`               | Planeamento v3.0/3.1 (Regras de Ouro, fases, estados)                            | 🗑️ **Eliminado** → consolidado em **§2, §4–§16, §20–§22, §28**                                                                         |
+| `relatorio_implementacao.md`         | Relatório de implementação, defeitos e testes                                    | 🗑️ **Eliminado** → consolidado em **§18.9, §23, §26**                                                                                  |
+| `tecnologias_projeto.md`             | Stack, inventário de BD, arquitetura, convenções                                 | 🗑️ **Eliminado** → consolidado em **§1.1, §17, §18**                                                                                   |
+| `fluxo_funcionalidades.md`           | Fluxos v1 + RN01–RN12                                                            | 🗑️ **Eliminado** → **§5** (vigentes) e **§5.2** (revogadas)                                                                            |
+| `CARRINHA_SPEC.md`                   | Especificação v1 da carrinha (+ algoritmo 100 €)                                 | 🗑️ **Eliminado** → **§3.1, §9, §12**                                                                                                   |
+| `plano_desenvolvimento.md`           | Cronograma de 7 dias + checklist                                                 | 🗑️ **Eliminado** → **§21** (roadmap por fases + entregáveis)                                                                           |
+| `ALTERACOES_PRIORIDADES.md`          | Histórico de prioridades (v1→v2)                                                 | 🗑️ **Eliminado** → **§21**                                                                                                             |
+| `relatorio_alteracoes.md`            | Registo do replaneamento v3.0                                                    | 🗑️ **Eliminado** → **§3.13**                                                                                                           |
+| `duvidas_planeamento.md`             | Dúvidas e resoluções (histórico)                                                 | 🗑️ **Eliminado** → **§3, §5, §22.2** (a dúvida §5.4 foi substituída pela janela de 24 h em §15)                                        |
+| `LOGIN_PROFILE_TODO.md`              | TODO de login/perfil (fechado)                                                   | 🗑️ **Eliminado** → **§6, §18.6, §19.1, §22.2**                                                                                         |
 
 **Regra:** este documento é a **única fonte de requisitos e regras**. Os 11 ficheiros eliminados
-**estão recuperáveis no histórico do Git**: 6 já estavam versionados e os outros 5 foram
-**arquivados num commit de documentação** imediatamente antes da remoção.
+**estão recuperáveis no histórico do Git**: 5 foram **arquivados num commit de documentação**
+imediatamente antes da remoção; os outros 6 foram **eliminados apenas nesta branch**
+(`agent-workspace`, §18.12) e **continuam presentes em `dev`**, pelo que a remoção é reversível com
+`git checkout dev -- <ficheiro>`.
 
 ```powershell
 git show HEAD:<ficheiro>          # ver o conteúdo original
@@ -1888,7 +1930,8 @@ esclarecidos em §3 (prevalece sempre este documento).
    convenções, contrato de nomes e **fluxo de Git (§18.10)**) devem manter-se **espelhadas** aqui
    (§18) e no `.clinerules`.
 8. **Respeitar o fluxo de Git:** alterações de código/documentação são commitadas **apenas** nas
-   branches de desenvolvimento; `dev` e `main` recebem **exclusivamente** merge/PR (§18.10).
+   branches de contexto/tarefa; `dev` e `main` recebem **exclusivamente** merge/PR (§18.10). A branch
+   `agent-workspace` (§18.12) **nunca** é integrada e os seus ficheiros estão no `.gitignore`.
 9. **Usar escrita UTF-8 segura:** nunca reescrever ficheiros pela shell do PowerShell 5.1
    (`Get-Content`/`Set-Content` corrompem: BOM + mojibake); usar `tools/` (§18.11) e validar com
    `php tools/health-check.php` antes de finalizar.
