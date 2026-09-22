@@ -14,7 +14,7 @@ const login = (() => {
                 });
 
             // sbTODO: Testar
-            $('#loginForm').preloader('.jq-overlay-process', request);
+            //$('#loginForm').preloader('.jq-overlay-process', request);
         }
     });
 

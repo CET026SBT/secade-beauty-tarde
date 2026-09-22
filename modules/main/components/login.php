@@ -36,6 +36,7 @@ register_script("components/login", "main");
                             </div>
                         </div>
 
+                        <!--
                         <div class="col-12">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="form-check">
@@ -45,9 +46,10 @@ register_script("components/login", "main");
                                 <a href="<?= BASE_URL ?>/recuperar-passe" class="small text-primary text-decoration-none">Esqueceu-se da passe?</a>
                             </div>
                         </div>
+                        -->
                     </div>
 
-                    <button type="submit" class="btn btn-primary w-100 py-2 m-0 fw-bold text-uppercase">Entrar</button>
+                    <button type="button" class="btn btn-primary w-100 py-2 m-0 fw-bold text-uppercase" onclick="login.form.submit()">Entrar</button>
                 </form>
 
                 <div class="text-center mt-4">

@@ -16,14 +16,14 @@ const serviceCategories = (() => {
 
                 categories.forEach((category, i) => {
                     const delay = `${(i * 2 + 1) / 10}s`;
-                    const slugifiedName = generalUtils.slugify(category.nome).toLowerCase();
+                    const slugifiedName = generalUtils.slugify(category.name).toLowerCase();
                     const iconPath = `${BASE_URL ?? ''}/modules/common/img/${generalUtils.escapeHtml(slugifiedName)}.png`;
                     $content = $content.add(`<div class="col-md-6 col-lg-4">
                             <div class="service-item h-100 p-4 border-bottom border-end wow fadeIn" data-wow-delay="${delay}">
-                                <img class="img-fluid" src="${iconPath}" alt="${generalUtils.escapeHtml(category.nome)}">
-                                <h3 class="mb-3">${generalUtils.escapeHtml(category.nome)}</h3>
-                                <p class="mb-3">${generalUtils.escapeHtml(category.descricao)}</p>
-                                <a class="btn btn-sm btn-primary text-uppercase" href="${BASE_URL ?? ''}/servicos">mais informações <i class="bi bi-arrow-right"></i></a>
+                                <img class="img-fluid" src="${iconPath}" alt="${generalUtils.escapeHtml(category.name)}">
+                                <h3 class="mb-3">${generalUtils.escapeHtml(category.name)}</h3>
+                                <p class="mb-3">${generalUtils.escapeHtml(category.description)}</p>
+                                <a class="btn btn-sm btn-primary text-uppercase" href="${BASE_URL ?? ''}/agendar">agendar <i class="bi bi-arrow-right"></i></a>
                             </div>
                         </div>`);
                 });

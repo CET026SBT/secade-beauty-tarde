@@ -59,7 +59,7 @@ $bookingUserName = Session::user()["name"] ?? "";
                                                 <input type="radio" name="channel" value="loja_fisica" class="d-none" form-validate-on="change">
                                                 <div class="card h-100 border channel-card-body">
                                                     <div class="card-body">
-                                                        <i class="bi bi-buildings fs-1 text-primary mb-3 d-block"></i>
+                                                        <i class="bi bi-building fs-1 text-primary mb-3 d-block"></i>
                                                         <h5 class="mb-2">Loja Física</h5>
                                                         <p class="text-muted small mb-2">Atendimento no nosso salão, em Évora.</p>
                                                         <ul class="small text-muted mb-0 ps-3">
