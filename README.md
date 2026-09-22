@@ -182,11 +182,11 @@ manutenção** (`tools/`) e as **regras do assistente** (`.clinerules`).
 
 Criadas por `database_seed.sql`:
 
-| Perfil      | E-mail                  | Password      | Acesso                                                                |
-| ----------- | ----------------------- | ------------- | --------------------------------------------------------------------- |
-| Gestor      | `gestor@secade.pt`      | `Gestor@123`  | Backoffice em `/gestao/agendamentos` e `/gestao/rotas`                |
-| Cliente     | `cliente@teste.pt`      | `Cliente@123` | Marcações, perfil e moradas (morada pré-criada em Évora)              |
-| Funcionário | `funcionario@secade.pt` | `Func@12345`  | Perfil de funcionário (funcionalidades de aceitação em fase seguinte) |
+| Perfil      | E-mail                  | Password      | Acesso                                                                   |
+| ----------- | ----------------------- | ------------- | ------------------------------------------------------------------------ |
+| Gestor      | `gestor@secade.pt`      | `Gestor@123`  | Entra no backoffice em `/gestao/agendamentos` (e rotas, fiscal, recibos) |
+| Cliente     | `cliente@teste.pt`      | `Cliente@123` | Marcações, perfil e moradas (morada pré-criada em Évora)                 |
+| Funcionário | `funcionario@secade.pt` | `Func@12345`  | Entra no backoffice em `/gestao/servicos` (aceitação de serviços)        |
 
 > O **cliente não tem acesso** ao backoffice: os endpoints `admin-*` e as páginas `/gestao/*` validam o perfil (401/403/redirect).
 
@@ -203,8 +203,8 @@ Criadas por `database_seed.sql`:
 
 ### ✅ MVP Completo (entrega)
 - [x] **Catálogo de serviços** — `/servicos` e `/servicos/<categoria>`, filtros (categoria, preço, duração, pesquisa), modal de detalhes e badge "Apenas Loja"
-- [x] **Wizard de Agendamento LOJA FÍSICA** (5 passos: serviços → canal → data/hora → profissional → resumo) com slots de 30 min e sinal de 10% simulado
-- [x] **Wizard de Agendamento CARRINHA AMBULANTE** (7 passos: serviços → canal → morada/pessoas → OTP → data/hora → sinal → resumo)
+- [x] **Wizard de Agendamento LOJA FÍSICA** (5 passos: canal → serviços → data/hora → profissional → resumo) com slots de 30 min e sinal de 10% simulado
+- [x] **Wizard de Agendamento CARRINHA AMBULANTE** (7 passos: canal → serviços/pessoas → morada → OTP → data/hora → sinal → resumo)
 - [x] **OTP simulado** (código de 6 dígitos mostrado no ecrã, validado contra a sessão, com expiração de 10 min)
 - [x] **Estrutura por pessoa** no ambulatório ("Pessoa 1..N" com serviços partilhados)
 - [x] **Backoffice de Agendamentos** — lista paginada, filtros (data, local, estado), detalhe por serviço/funcionário, cancelamento e registo de execução
@@ -221,7 +221,7 @@ Criadas por `database_seed.sql`:
 - [x] **Simulador de Recibos Verdes** — percentagens configuráveis com vigência por data (`/gestao/recibos-verdes`), cálculo registado na aceitação
 - [x] **Calendário Fiscal** (`/gestao/fiscal`) — IVA, IRC, Segurança Social e Seguros, com **alertas progressivos 30/15/7/3/1 dia + diários em atraso**
 - [x] **Feedback do cliente** após execução do serviço, com reflexo público nos testemunhos da página inicial
-- [x] **Backoffice segregado por perfil**: o funcionário vê Serviços + Agendamentos; o gestor vê Agendamentos, Rotas, Fiscal e Recibos Verdes
+- [x] **Backoffice segregado por perfil**: o funcionário vê Serviços (aceitação) e o gestor vê Agendamentos, Rotas, Fiscal e Recibos Verdes
 
 ### 🔭 Trabalho futuro (prioridade definida em `especificacao_mvp.md` §25)
 
