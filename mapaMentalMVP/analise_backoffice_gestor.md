@@ -3,13 +3,20 @@
 <!-- md-wrap-tables:max=220 — a tabela do ponto 3 tem 5 colunas com muitos spans de
      código longos; 217 colunas é o mínimo possível sem partir palavras ao meio. -->
 
-**Ficheiro de trabalho (não normativo)** · branch **`agent-workspace`** · 23/09/2026
-**Entrada analisada:** requisitos refinados do *Painel de Backoffice — Tipo de Conta: Gestor*
+**Ficheiro de trabalho (não normativo)** · branch **`agent-workspace`** · **2.ª iteração** · 23/09/2026
+
+**Entrada analisada (iteração 1):** requisitos refinados do *Painel de Backoffice — Tipo de Conta: Gestor*
 (Resumo/Dashboard · Contabilidade e Gestão Financeira · Recursos Humanos · Promoções e Campanhas) +
 antecipação do perfil **Funcionário**.
+
+**Entrada analisada (iteração 2 — esta):** três requisitos de **frontend/catálogo**
+(§1.11): secção resumida de serviços no **Home** e no **About** · **IVA incluído** nos valores mostrados
+ao cliente · **imagens nos cards** de serviço do wizard de agendamento. Mais os **INPUTs** de
+esclarecimento (perguntas do cliente) — ver §2.7 e o ficheiro `mensagem_teams.txt`.
+
 **Cruzado com:** `especificacao_mvp.md` v1.1 (§2–§5, §11–§13, §17–§19, §22, §24–§26, §28, §29) e com o
 código/BD reais (`index.php`, `app/config/api.php`, `app/{controllers,services,repositories}`,
-`modules/backoffice/`, `DataBase_v2.sql`).
+`modules/main/`, `modules/backoffice/`, `DataBase_v2.sql`).
 
 > ⚠️ **Âmbito:** fase **estritamente de análise e proposta de fusão**. **Nenhum requisito existente foi
 > alterado, revogado ou sobrescrito.** A fonte única de verdade continua a ser `especificacao_mvp.md`
@@ -39,47 +46,53 @@ código/BD reais (`index.php`, `app/config/api.php`, `app/{controllers,services,
 
 ### 1.2 Quadro-resumo (o que entra onde)
 
-| Requisito novo                   | Página                  | Endpoints propostos                 | Camadas                          | BD: reutilizar ✚ / criar ➕                          | Estado |
-| :------------------------------- | :---------------------- | :---------------------------------- | :------------------------------- | :---------------------------------------------------- | :----: |
-| KPIs Gastos vs Rendimentos ·     | `/gestao`               | `admin-dashboard-summary`           | ManagerService +                 | agregações `fetchRaw` sobre ✚ (sem tabela nova)      | 🟡     |
-| Dívidas                          |                         |                                     | DashboardService                 |                                                       |        |
-| Sininho (contador, lista, marcar | barra superior          | `admin-alert-summary` ·             | AlertService + FiscalService     | `alerta_fiscal.visualizado` ✚ + origem extensível ➕ | 🟡     |
-| lido)                            |                         | `admin-alert-list` ·                |                                  |                                                       |        |
-|                                  |                         | `admin-alert-read`                  |                                  |                                                       |        |
-| Lembretes:                       | barra superior          | idem (tipos novos)                  | AlertService + SupplierService   | ➕ `notificacao` **ou** extensão de                   | ⬜     |
-| fornecedores/contratos/carrinha  |                         |                                     |                                  | `obrigacao_fiscal`                                    |        |
-| Ativos e Passivos + margem       | `/gestao/contabilidade` | `admin-accounting-balance`          | AccountingService +              | ✚ agendamento/rota_ambulante/agendamento_servico; ➕ | ⬜     |
-| global                           |                         |                                     | AccountingRepository             | despesas                                              |        |
-| Demonstração de Resultados       | `/gestao/contabilidade` | `admin-accounting-income-statement` | AccountingService + JS de barras | idem                                                  | ⬜     |
-| (barras)                         |                         |                                     | CSS/SVG                          |                                                       |        |
-| Simulador fiscal (RAI, IRC 20 %) | `/gestao/contabilidade` | `admin-accounting-tax-simulate`     | AccountingService +              | ➕ taxa configurável (`config_fiscal`)                | ⬜     |
-|                                  |                         |                                     | FiscalService                    |                                                       |        |
-| Balancete bancário + fluxo de    | `/gestao/contabilidade` | `admin-accounting-treasury`         | AccountingService                | ✚ `transacao_financeira` (hoje **sem UI**) ·         | ⬜     |
-| caixa                            |                         |                                     |                                  | `fecho_caixa_diario`                                  |        |
-| Controlo de IVA (apuramento)     | `/gestao/contabilidade` | `admin-accounting-vat`              | AccountingService +              | ✚ `obrigacao_fiscal(tipo=iva)` + ➕ taxa por serviço | ⬜     |
-|                                  |                         |                                     | FiscalService                    |                                                       |        |
-| Dívidas a fornecedores           | `/gestao/fornecedores`  | `admin-supplier-*` (§19.5 já os     | SupplierService +                | ➕ `fornecedor` + ➕ `fatura_fornecedor`              | ⬜     |
-|                                  |                         | prevê)                              | SupplierRepository               |                                                       |        |
-| RH: listagem + filtro por        | `/gestao/equipa`        | `admin-employee-list`               | EmployeeService ✚               | ✚ `funcionario.tipo_contrato`/`ativo` + `utilizador` | 🟡     |
-| vínculo                          |                         |                                     |                                  |                                                       |        |
-| RH: adicionar / editar /         | `/gestao/equipa`        | `admin-employee-save` ·             | EmployeeService +                | ✚ `funcionario.ativo` (soft-delete)                  | ⬜     |
-| desativar                        |                         | `admin-employee-toggle`             | UserService/AuthService          |                                                       |        |
-| RH → passivos (comissões,        | `/gestao/contabilidade` | (consumido pelo balanço)            | AccountingService +              | ✚                                                    | 🟡     |
-| salários)                        |                         |                                     | GreenReceiptService              | `agendamento_servico.valor_recibo_verde_funcionario`, |        |
-|                                  |                         |                                     |                                  | `funcionario.salario_base`                            |        |
-| Promoções: campanhas com datas   | `/gestao/promocoes`     | `admin-promotion-list` ·            | PromotionService +               | ➕ `promocao`                                         | ⬜     |
-|                                  |                         | `admin-promotion-save`              | PromotionRepository              |                                                       |        |
-| Tags sazonais (Natal, Verão, …)  | `/gestao/promocoes`     | `admin-promotion-context-*`         | PromotionService                 | ➕ `promocao_contexto`                                | ⬜     |
-| Matriz de impacto (serviços)     | `/gestao/promocoes`     | `admin-promotion-service-*`         | PromotionService                 | ➕ `promocao_servico` (N:N)                           | ⬜     |
-| Aplicação ao agendamento (2      | `/agendar` (wizard)     | `booking-promotion-*`               | BookingService +                 | ✚ `agendamento_servico.preco_praticado` + ➕ canal   | ⬜     |
-| canais)                          |                         |                                     | PromotionService                 |                                                       |        |
-| Funcionário: agenda própria      | `/gestao/agenda`        | `employee-agenda-list`              | BookingService ✚ + RBAC         | ✚ (dados existem)                                    | ⬜     |
-| Funcionário: comissões           | `/gestao/agenda`        | `employee-commission-list`          | GreenReceiptService ✚           | ✚ (dados existem em `agendamento_servico`)           | 🟡     |
-| individuais                      |                         |                                     |                                  |                                                       |        |
-| Funcionário: promoções só de     | `/gestao/promocoes`     | `admin-promotion-list` (perfil      | PromotionService + RBAC          | ➕                                                    | ⬜     |
-| leitura                          |                         | autorizado)                         |                                  |                                                       |        |
-| Menu/permissões por perfil       | `boNavbar`/`menuUserBo` | (transversal)                       | Session ✚ + mapa de permissões  | ➕ (código/config, sem tabela)                        | 🟡     |
-|                                  |                         |                                     | por perfil                       |                                                       |        |
+| Requisito novo                   | Página                               | Endpoints propostos                  | Camadas                               | BD: reutilizar ✚ / criar ➕                          | Estado |
+| :------------------------------- | :----------------------------------- | :----------------------------------- | :------------------------------------ | :---------------------------------------------------- | :----: |
+| KPIs Gastos vs Rendimentos ·     | `/gestao`                            | `admin-dashboard-summary`            | ManagerService +                      | agregações `fetchRaw` sobre ✚ (sem tabela nova)      | 🟡     |
+| Dívidas                          |                                      |                                      | DashboardService                      |                                                       |        |
+| Sininho (contador, lista, marcar | barra superior                       | `admin-alert-summary` ·              | AlertService + FiscalService          | `alerta_fiscal.visualizado` ✚ + origem extensível ➕ | 🟡     |
+| lido)                            |                                      | `admin-alert-list` ·                 |                                       |                                                       |        |
+|                                  |                                      | `admin-alert-read`                   |                                       |                                                       |        |
+| Lembretes:                       | barra superior                       | idem (tipos novos)                   | AlertService + SupplierService        | ➕ `notificacao` **ou** extensão de                   | ⬜     |
+| fornecedores/contratos/carrinha  |                                      |                                      |                                       | `obrigacao_fiscal`                                    |        |
+| Ativos e Passivos + margem       | `/gestao/contabilidade`              | `admin-accounting-balance`           | AccountingService +                   | ✚ agendamento/rota_ambulante/agendamento_servico; ➕ | ⬜     |
+| global                           |                                      |                                      | AccountingRepository                  | despesas                                              |        |
+| Demonstração de Resultados       | `/gestao/contabilidade`              | `admin-accounting-income-statement`  | AccountingService + JS de barras      | idem                                                  | ⬜     |
+| (barras)                         |                                      |                                      | CSS/SVG                               |                                                       |        |
+| Simulador fiscal (RAI, IRC 20 %) | `/gestao/contabilidade`              | `admin-accounting-tax-simulate`      | AccountingService +                   | ➕ taxa configurável (`config_fiscal`)                | ⬜     |
+|                                  |                                      |                                      | FiscalService                         |                                                       |        |
+| Balancete bancário + fluxo de    | `/gestao/contabilidade`              | `admin-accounting-treasury`          | AccountingService                     | ✚ `transacao_financeira` (hoje **sem UI**) ·         | ⬜     |
+| caixa                            |                                      |                                      |                                       | `fecho_caixa_diario`                                  |        |
+| Controlo de IVA (apuramento)     | `/gestao/contabilidade`              | `admin-accounting-vat`               | AccountingService +                   | ✚ `obrigacao_fiscal(tipo=iva)` + ➕ taxa por serviço | ⬜     |
+|                                  |                                      |                                      | FiscalService                         |                                                       |        |
+| Dívidas a fornecedores           | `/gestao/fornecedores`               | `admin-supplier-*` (§19.5 já os      | SupplierService +                     | ➕ `fornecedor` + ➕ `fatura_fornecedor`              | ⬜     |
+|                                  |                                      | prevê)                               | SupplierRepository                    |                                                       |        |
+| RH: listagem + filtro por        | `/gestao/equipa`                     | `admin-employee-list`                | EmployeeService ✚                    | ✚ `funcionario.tipo_contrato`/`ativo` + `utilizador` | 🟡     |
+| vínculo                          |                                      |                                      |                                       |                                                       |        |
+| RH: adicionar / editar /         | `/gestao/equipa`                     | `admin-employee-save` ·              | EmployeeService +                     | ✚ `funcionario.ativo` (soft-delete)                  | ⬜     |
+| desativar                        |                                      | `admin-employee-toggle`              | UserService/AuthService               |                                                       |        |
+| RH → passivos (comissões,        | `/gestao/contabilidade`              | (consumido pelo balanço)             | AccountingService +                   | ✚                                                    | 🟡     |
+| salários)                        |                                      |                                      | GreenReceiptService                   | `agendamento_servico.valor_recibo_verde_funcionario`, |        |
+|                                  |                                      |                                      |                                       | `funcionario.salario_base`                            |        |
+| Promoções: campanhas com datas   | `/gestao/promocoes`                  | `admin-promotion-list` ·             | PromotionService +                    | ➕ `promocao`                                         | ⬜     |
+|                                  |                                      | `admin-promotion-save`               | PromotionRepository                   |                                                       |        |
+| Tags sazonais (Natal, Verão, …)  | `/gestao/promocoes`                  | `admin-promotion-context-*`          | PromotionService                      | ➕ `promocao_contexto`                                | ⬜     |
+| Matriz de impacto (serviços)     | `/gestao/promocoes`                  | `admin-promotion-service-*`          | PromotionService                      | ➕ `promocao_servico` (N:N)                           | ⬜     |
+| Aplicação ao agendamento (2      | `/agendar` (wizard)                  | `booking-promotion-*`                | BookingService +                      | ✚ `agendamento_servico.preco_praticado` + ➕ canal   | ⬜     |
+| canais)                          |                                      |                                      | PromotionService                      |                                                       |        |
+| Funcionário: agenda própria      | `/gestao/agenda`                     | `employee-agenda-list`               | BookingService ✚ + RBAC              | ✚ (dados existem)                                    | ⬜     |
+| Funcionário: comissões           | `/gestao/agenda`                     | `employee-commission-list`           | GreenReceiptService ✚                | ✚ (dados existem em `agendamento_servico`)           | 🟡     |
+| individuais                      |                                      |                                      |                                       |                                                       |        |
+| Funcionário: promoções só de     | `/gestao/promocoes`                  | `admin-promotion-list` (perfil       | PromotionService + RBAC               | ➕                                                    | ⬜     |
+| leitura                          |                                      | autorizado)                          |                                       |                                                       |        |
+| Menu/permissões por perfil       | `boNavbar`/`menuUserBo`              | (transversal)                        | Session ✚ + mapa de permissões       | ➕ (código/config, sem tabela)                        | 🟡     |
+|                                  |                                      |                                      | por perfil                            |                                                       |        |
+| Secção resumida de serviços      | `/` (Home) e `/sobre`                | (sem endpoint — estático)            | Componente PHP partilhado (padrão do  | ✚ sem BD nova                                        | ⬜     |
+|                                  |                                      |                                      | `about.php`)                          |                                                       |        |
+| **IVA incluído** nos valores     | todas as listagens, wizard e tickets | (derivação/config)                   | `ServiceMapper`/`BookingService` +    | ➕ taxa (config/coluna) + valores no snapshot         | ⬜     |
+|                                  |                                      |                                      | config                                |                                                       |        |
+| **Imagem nos cards de serviço**  | `/agendar` (wizard) e `/servicos`    | `booking-services` (já existe; ganha | `ServiceRepository` + `ServiceMapper` | ✚ `servico_foto` (existe, dormente) + *seed* +       | ⬜     |
+|                                  |                                      | `imageUrl`)                          |                                       | fallback                                              |        |
 
 ### 1.3 Módulo A — Resumo/Dashboard e Sininho
 
@@ -326,20 +339,118 @@ mesma alteração) e manter as **289 verificações** atuais a passar.
 Por §29.3.2, novos requisitos entram como `RF-nn`, regras como `RN-nn` e decisões como `D-nn`.
 Blocos livres verificados: `RF-75+` (§4.6 termina em RF-74), `RN-30+` (§5.1 termina em RN-29), `D-12+` (§3.11 termina em D-11).
 
-| ID sugerido  | Tema a registar                                                                                                                                      |
-| :----------- | :--------------------------------------------------------------------------------------------------------------------------------------------------- |
-| RF-80..RF-84 | Painel do gestor: KPIs de gastos/rendimentos, dívidas a fornecedores, sininho com contador                                                           |
-| RF-85..RF-88 | Contabilidade: ativos/passivos, DR, simulador fiscal (RAI + IRC), tesouraria e IVA                                                                   |
-| RF-89..RF-90 | RH: listagem com filtro de vínculo; criar/editar/desativar perfil                                                                                    |
-| RF-91..RF-95 | Promoções: campanhas com datas, tags sazonais, matriz de impacto, aplicação nos 2 canais                                                             |
-| RF-96..RF-98 | Área do funcionário: agenda própria, comissões individuais, promoções em leitura                                                                     |
-| RN-30..RN-35 | Regras de cálculo: resultado mensal, IRC (0 se RAI ≤ 0), comissões como passivo, desconto no `preco_praticado`, efeito no sinal, critério de período |
-| D-12..D-14   | Decisões a fixar em §3: modelo de despesas/passivos · modelo de notificações · autorização por página                                                |
+| ID sugerido   | Tema a registar                                                                                                                                                                    |
+| :------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| RF-80..RF-84  | Painel do gestor: KPIs de gastos/rendimentos, dívidas a fornecedores, sininho com contador                                                                                         |
+| RF-85..RF-88  | Contabilidade: ativos/passivos, DR, simulador fiscal (RAI + IRC), tesouraria e IVA                                                                                                 |
+| RF-89..RF-90  | RH: listagem com filtro de vínculo; criar/editar/desativar perfil                                                                                                                  |
+| RF-91..RF-95  | Promoções: campanhas com datas, tags sazonais, matriz de impacto, aplicação nos 2 canais                                                                                           |
+| RF-96..RF-98  | Área do funcionário: agenda própria, comissões individuais, promoções em leitura                                                                                                   |
+| RF-99..RF-102 | Frontend: secção resumida de serviços no Home/About · **preços com IVA incluído** · **imagem por serviço nos cards** · IVA apurado para apuramento                                 |
+| RN-30..RN-35  | Regras de cálculo: resultado mensal, IRC (0 se RAI ≤ 0), comissões como passivo, desconto no `preco_praticado`, efeito no sinal, critério de período                               |
+| D-12..D-16    | Decisões a fixar em §3: modelo de despesas/passivos · modelo de notificações · autorização por página · **origem dos dados (interno vs ficheiros)** · **regime de IVA dos preços** |
+
+### 1.11 Módulo E — Frontend e catálogo (requisitos da 2.ª iteração)
+
+**E.1 Secção resumida de serviços no Home **e** na página About**
+
+| Facto verificado                                                                                                     | Consequência                                                                                   |
+| :------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------- |
+| `home.php` compõe `hero` + `about` + `serviceCategories` + `testimonial`                                             | O Home já junta componentes institucionais reutilizáveis — **não** é preciso rota nova         |
+| `components/about.php` é usado nas **duas** páginas (o botão *"Mais sobre nós"* só aparece quando **não** estamos no | **O padrão pedido já existe** para o About; basta replicá-lo para os serviços                  |
+| About — `$currentPage != "about.php"`)                                                                               |                                                                                                |
+| Já existe `serviceCategories.php` (3 cards de categoria, com imagens) e o catálogo `/servicos`                       | A secção pedida é **texto institucional** ("o que fazemos"), não o catálogo — não duplica nada |
+| Não existe nenhuma secção que **descreva os serviços prestados**                                                     | ⬜ **novo**                                                                                    |
+
+**Proposta:** novo componente partilhado `modules/main/components/servicesSummary.php` — 3 blocos
+(cabeleireiro · barbearia · estética) + texto resumido + CTA para `/servicos` — incluído em
+`home.php` e na página `/sobre`, **exatamente** com o padrão do `about.php`. **Sem BD nova**: é conteúdo
+institucional estático (como `hero.php` e `about.php`), e evita uma tabela de CMS fora do âmbito.
+
+**E.2 IVA incluído nos valores mostrados ao cliente — o achado desta iteração**
+
+Pergunta do cliente: *"de onde vamos buscar esse IVA? (ver se há alguma informação sobre isso na base de dados)"*.
+
+**Resposta: não existe informação de IVA em lado nenhum da BD.** A única ocorrência de "IVA" no schema é
+`obrigacao_fiscal.tipo = 'iva'` (calendário fiscal) — que é uma **obrigação a pagar**, não uma taxa de
+venda. Nem `servico`, nem `agendamento`, nem `agendamento_servico`, nem `transacao_financeira` têm taxa
+ou valor de imposto.
+
+**Mas os próprios preços denunciam a taxa.** Testei os 35 serviços: **35 de 35 `servico.preco_base` × 1,23
+dão valores exatos e redondos** —
+
+| Serviço               | `preco_base` | × 1,23 (valor de montra) |
+| :-------------------- | :----------- | :----------------------- |
+| Barba                 | 4,07 €       | **5,00 €**               |
+| Design de Sobrancelha | 8,13 €       | **10,00 €**              |
+| Corte de Cabelo       | 12,20 €      | **15,00 €**              |
+| Limpeza Facial        | 24,39 €      | **30,00 €**              |
+| Trança Twist          | 40,65 €      | **50,00 €**              |
+| Cordelete / Retro     | 48,78 €      | **60,00 €**              |
+
+**Conclusão (verificada, não inferida):** `preco_base` é o valor **LÍQUIDO (sem IVA)** e a taxa
+implícita é **23 %** (taxa geral de IVA em Portugal continental). Os preços "de montra" são os valores
+redondos. Consequência imediata: **`agendamento.valor_total` é hoje a soma de valores líquidos**, ou seja
+**o cliente está a ver preços sem IVA** — para consumidor final os preços ao público têm de incluir IVA.
+
+**Duas vias de fusão (decisão em C-17):**
+
+| Via                         | O que implica                                                                                                                                                | Avaliação                |
+| :-------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------- |
+| (a) Derivar na apresentação | Manter a BD líquida e multiplicar na UI (`preco × (1 + taxa)`); taxa em configuração. Zero alterações de schema, mas o valor **cobrado** não fica gravado em | ⚠️ Frágil para faturação |
+|                             | nenhum lado                                                                                                                                                  |                          |
+| (b) Gravar o bruto          | ➕ taxa (configurável, com *fallback* global) e persistir **valor líquido + taxa + IVA + total bruto** em `servico` e em `agendamento_servico`               | ✅ **Recomendada**       |
+
+A via (b) segue o **mesmo racional do snapshot dos recibos verdes** (§11): o valor tem de ficar
+**congelado no momento da marcação**, porque uma alteração futura da taxa **não pode** reescrever
+marcações antigas (faturação e testes).
+
+**Impactos obrigatórios a tratar em conjunto (ver C-17 e C-18):** `valor_total` · sinal de 10 % (RN-03) ·
+base dos recibos verdes 70/30 (§11) · **filtro de preço do catálogo** (`services.php` tem
+`max="50"` e `services.js` `maxPrice: 50` → com IVA o serviço mais caro passa a 60,00 € e **sai do
+filtro**) · exemplos de teste (§8.3: Barba 4,07 €) · resumo/ticket do wizard.
+
+**E.3 Imagens nos cards de serviço do wizard**
+
+| Facto verificado                                                                                                             | Consequência                                                         |
+| :--------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------- |
+| `servico_foto` **existe** (`servico_id`, `url_foto`, `destaque`, `ordem_exibicao`, FK CASCADE)                               | Tabela **já criada para isto** — não é preciso inventar nada         |
+| `servico_foto` tem **0 registos** e **não é referida em nenhum `.php`/`.js`** (varrimento completo)                          | É uma tabela **dormente** desde o schema inicial                     |
+| `servico` **não tem** coluna de imagem                                                                                       | O campo pedido "não existe" — mas a alternativa (a tabela) já existe |
+| **Precedente de convenção:** os cards de categoria carregam a imagem por **slug do nome** → `/modules/common/img/<slug>.png` | Já há um padrão de imagens no projeto que se pode seguir             |
+| (`serviceCategories.js`)                                                                                                     |                                                                      |
+| Não existem imagens por serviço em `modules/common/img` (só 3 de categoria + 4 de equipa + 4 testemunhos)                    | 35 serviços precisam de imagens **e** de um *fallback*               |
+
+O cliente pediu *"criar um campo na base de dados com um link para a respetiva imagem"*. Há duas vias:
+
+| Via                                | O que implica                                                                                                                      | Avaliação          |
+| :--------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------- | :----------------- |
+| (a) ➕ coluna `servico.url_imagem` | 1 imagem por serviço, simples, atende ao pedido **literalmente** — mas deixa `servico_foto` órfã e duplica a modelação             | ⚠️ Duplica         |
+| (b) Usar `servico_foto`            | **A tabela já existe e foi feita para isto**: `destaque=1` é a imagem do card, `ordem_exibicao` ordena, e as restantes alimentam o | ✅ **Recomendada** |
+|                                    | **carousel da página de detalhe** (§24.2)                                                                                          |                    |
+
+**Recomendação:** via (b) — resolve **os três** casos com **zero alterações de schema** (cards do wizard ·
+cards do catálogo · carousel do §24.2) e respeita a restrição de não alterar a BD sem justificação.
+Contrapartida: exige *seed* de imagens e um **fallback** obrigatório (sem foto → imagem por omissão por
+categoria), porque 35 serviços sem imagem dariam cards quebrados.
+
+**Encaixe:** `ServiceRepository` passa a devolver a imagem de destaque no mesmo SELECT (JOIN permitido
+**N:1** de lookup — §18.2) → `ServiceMapper` expõe-a como `imageUrl`; o contrato de nomes passa a ter
+`imageUrl` nos cards do catálogo e do wizard (`.clinerules`: a API dita o contrato).
 
 ## 2. DÚVIDAS TÉCNICAS/NEGOCIAIS
 
 > Todas resultaram **do cruzamento** com o que já existe. Nenhuma é resolúvel por inferência do código —
 > cada uma muda números, modelos de dados ou regras.
+
+### 2.0 Estado das dúvidas da 1.ª iteração (o que esta iteração fechou)
+
+| Dúvida                                      | Estado agora                                                                                                                                                           |
+| :------------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Q-01** — os preços são com IVA? Que taxa? | ✅ **RESOLVIDA por verificação** (§E.2): `preco_base` é **líquido**, taxa implícita **23 %** (35/35 preços × 1,23 = redondos). Falta só a decisão de **onde** gravar a |
+|                                             | taxa (**C-17**)                                                                                                                                                        |
+| **Q-01 (variante "onde está o IVA na BD")** | ✅ **RESOLVIDA**: **não existe**; só `obrigacao_fiscal.tipo='iva'` (obrigação, não taxa)                                                                               |
+| **Q-02 … Q-30**                             | ⬜ **em aberto** — seguem válidas; as que dependem de fonte de dados foram reformuladas em §2.7                                                                        |
 
 ### 2.1 Contabilidade e tesouraria
 
@@ -420,6 +531,101 @@ Blocos livres verificados: `RF-75+` (§4.6 termina em RF-74), `RN-30+` (§5.1 te
 | Q-30 | O âmbito total (painel + contabilidade + RH + promoções + área do funcionário) cabe no prazo | §25 diz que a ordem é **vinculativa** (Fornecedores → §24 → consolidações); pode exigir |
 |      | académico?                                                                                   | faseamento explícito                                                                    |
 
+### 2.7 Dúvidas novas — de onde vêm os números (CSV/XLS vs plataforma)
+
+> **Resposta transversal a todas:** o sistema **já produz** receita e parte dos custos; tudo o que é
+> **externo à operação** (rendas, água/luz, consumíveis, seguros, manutenção, honorários, banco) **não
+> existe** em nenhuma tabela. Proposta de princípio: **fonte interna para o que a plataforma faz, entrada
+> manual/importada para o que vem de fora** — nunca duplicar (ver **C-20**).
+
+| ID   | Pergunta do cliente                                       | O que o código/BD diz hoje                                                            | Opção / decisão necessária                                  |
+| :--- | :-------------------------------------------------------- | :------------------------------------------------------------------------------------ | :---------------------------------------------------------- |
+| Q-31 | Os KPIs vêm dos `.csv`/`.xls` do Balancete ou de serviços | Rendimentos **existem** (`agendamento.valor_total` + `local_prestacao`, por canal);   | **Interno como fonte primária** + registo/importação manual |
+|      | internos da plataforma?                                   | custos de rota **existem** (`rota_ambulante`); despesas externas **não existem**      | só para despesas externas (**C-19**)                        |
+| Q-32 | O que são "entradas brutas"? De onde vêm (banco ou        | Ambíguo: pode ser **receita faturada** (serviços) ou **entradas de caixa** (banco)    | Proposta:                                                   |
+|      | serviços)?                                                |                                                                                       | **receita bruta = Σ serviços prestados, COM IVA**, antes de |
+|      |                                                           |                                                                                       | deduzir custos — distinta de *recebimento*                  |
+| Q-33 | O lucro das vendas efetuadas vem da plataforma ou de      | A receita e o custo de rota são **100 % internos**; nada de vendas vem de ficheiros   | **Interno**, sem exceção (evita divergência)                |
+|      | ficheiros externos?                                       |                                                                                       |                                                             |
+| Q-34 | O que é a "margem de lucro" e como se calcula?            | Não existe cálculo hoje                                                               | Proposta em §2.7.1 (fórmula explícita e auditável)          |
+| Q-35 | De onde derivam internamente as despesas operacionais?    | Internamente só:                                                                      | Interno o que existe + **entrada manual** para o resto      |
+|      | Incluem CSV/XLS?                                          | **combustível + custo fixo 50 €/rota + comissões de recibos verdes + salários base**. | (formulário primeiro; CSV como conveniência)                |
+|      |                                                           | Rendas, consumíveis, eletricidade, seguros, manutenção: **nada**                      |                                                             |
+| Q-36 | As obrigações fiscais são as definidas na página Fiscal?  | ✅ Sim — `obrigacao_fiscal` (§13), `tipo` ∈ {iva, irc, seguranca_social, seguros},    | Confirmar: o **IVA apurado** (calculado) **não** substitui  |
+|      |                                                           | valor **manual**                                                                      | a obrigação manual (§2.7.2)                                 |
+
+#### 2.7.1 Proposta de definição da margem de lucro (Q-34)
+
+```text
+Receita bruta (periodo)  = SOMA agendamento.valor_total  [so estados executado/concluido]
+Custos variaveis         = comissoes de recibos verdes (valor_recibo_verde_funcionario)
+                         + combustivel das rotas (rota_ambulante.custo_estimado_combustivel)
+                         + custo fixo operacional das rotas (n x 50 EUR)
+Margem bruta             = Receita bruta - Custos variaveis
+Margem de lucro          = Margem bruta / Receita bruta x 100
+Despesas operacionais    = custos variaveis + custos fixos externos (registados manualmente)
+Resultado (RAI)          = Receita bruta - Despesas operacionais
+```
+
+**Nota:** se a receita incluir IVA, a margem fica **distorcida** (o IVA não é receita da empresa) —
+preferir o **valor líquido** para as margens e o **bruto** para o que o cliente paga (**C-17**).
+
+#### 2.7.2 IVA: obrigação fiscal vs IVA apurado (Q-36)
+
+São **duas coisas diferentes** que não podem ser confundidas:
+
+| Conceito                  | Origem                                                           | Papel                                           |
+| :------------------------ | :--------------------------------------------------------------- | :---------------------------------------------- |
+| **Obrigação fiscal IVA**  | `obrigacao_fiscal` (página Fiscal) — `valor_estimado` **manual** | O que se **paga** ao Estado, com prazo/alertas  |
+| **IVA apurado (posição)** | Calculado: IVA das vendas − IVA dedutível das despesas           | O que se **deveria** pagar; apoio ao apuramento |
+
+O cliente pediu *"controlo de IVA (posicionamento para apuramento periódico)"* → é o **segundo**.
+Proposta: mostrar o apurado e oferecer *"criar obrigação com este valor"* (mantém a decisão humana —
+**C-05**).
+
+### 2.8 Dúvidas novas — RH, notificações e acesso do Funcionário
+
+| ID   | Pergunta do cliente                                           | O que o código/BD diz hoje                                           | Opção / decisão necessária                                           |
+| :--- | :------------------------------------------------------------ | :------------------------------------------------------------------- | :------------------------------------------------------------------- |
+| Q-40 | Como é que os recibos verdes alimentam **indiretamente** os   | Os valores **já estão gravados** por aceitação                       | Mecanismo em §2.8.1 — **sem** novo lançamento (risco de dupla        |
+|      | passivos?                                                     | (`agendamento_servico.valor_recibo_verde_funcionario`, snapshot —    | contagem — **C-10**)                                                 |
+|      |                                                               | §11)                                                                 |                                                                      |
+| Q-41 | Os **lembretes (sininho)** devem ser enviados ao **cliente**? | O cliente **não tem** sistema de notificações; §15.3/§24.6 já        | **Separar**: notificações **internas** (backoffice) ≠ **ao cliente** |
+|      |                                                               | preveem o **lembrete das 24 h**                                      | (Main) — **C-21**                                                    |
+| Q-42 | A que terá acesso o **Funcionário** no backoffice?            | Hoje: **só** `/gestao/servicos` (aceitação); as APIs recusam o resto | Matriz concreta em **§1.7**; agregar em `/gestao/agenda` — ver       |
+|      |                                                               | com 403 (§22.2)                                                      | **C-22**                                                             |
+| Q-43 | (técnica) Um `.csv` é tratável? E `.xls`?                     | **Sem bibliotecas** (proibido instalar — `.clinerules` §3): `.csv` é | Preferir **CSV** (ou `.xlsx` previamente convertido) — ver **C-19**  |
+|      |                                                               | nativo do PHP; `.xls`/`.xlsx` é **binário** e exigiria biblioteca    |                                                                      |
+|      |                                                               | externa                                                              |                                                                      |
+
+#### 2.8.1 Mecanismo concreto: recibos verdes → passivos/gastos (Q-40)
+
+```text
+Custo de pessoal VARIAVEL do periodo (prestadores a recibo verde)
+  = SOMA agendamento_servico.valor_recibo_verde_funcionario
+    WHERE estado_aceitacao = 'aceite' AND aceito_em BETWEEN periodo
+
+Custo de pessoal FIXO do periodo (efetivos)
+  = SOMA funcionario.salario_base  WHERE tipo_contrato = 'efetivo_contratado' AND ativo = 1
+```
+
+Estes dois valores entram nos **Passivos** e nas **Despesas operacionais** (§2.7.1) — **sem** criar
+lançamento novo em `transacao_financeira`, porque a comissão **já está gravada** no serviço aceite.
+Uma segunda gravação seria **dupla contagem** (é a razão do **C-10**).
+
+### 2.9 Dúvidas novas — frontend desta iteração
+
+| ID   | Pergunta                                                            | O que o código/BD diz hoje                                         | Opção / decisão necessária                                           |
+| :--- | :------------------------------------------------------------------ | :----------------------------------------------------------------- | :------------------------------------------------------------------- |
+| Q-44 | A secção de serviços no Home/About é **estática** ou gerida no      | `hero`, `about` e `testimonial` são **componentes estáticos**; não | **Estática** (proposta), como o About — evita um módulo de CMS fora  |
+|      | backoffice?                                                         | existe CMS                                                         | do âmbito                                                            |
+| Q-45 | Quem fornece as **imagens dos serviços** e em que formato/dimensão? | Não existe nenhuma imagem de serviço; as de categoria são `.png`   | A definir com o cliente: formato (`.jpg`/`.png`), dimensão e quem    |
+|      |                                                                     | carregadas por *slug*                                              | carrega                                                              |
+| Q-46 | A taxa de IVA é **uniforme (23 %)** ou                              | Não há taxa em lado nenhum; a aritmética aponta para 23 % em       | Confirmar com o grupo de contabilidade (há serviços com taxas        |
+|      | **varia por serviço/categoria**?                                    | **todos** os 35 serviços                                           | diferentes em Portugal)                                              |
+| Q-47 | Os **preços de montra** (redondos) devem substituir os atuais na    | A BD tem os líquidos (4,07 €); a montra implica 5,00 € com IVA     | Decidir com **C-17**; a proposta é manter o líquido na BD e gravar o |
+|      | BD?                                                                 |                                                                    | bruto na marcação                                                    |
+
 ## 3. CONFLITOS A RESOLVER MANUALMENTE
 
 > Pontos em que os **novos requisitos colidem com regras/modelos já definidos** e que **não podem ser
@@ -489,28 +695,66 @@ Blocos livres verificados: `RF-75+` (§4.6 termina em RF-74), `RN-30+` (§5.1 te
 |      |                                               | gestor supervisiona `/gestao/servicos`                           | confundir-se com a lista de aceitação e | **já aceites** por ele (passado/futuro), distinta da |
 |      |                                               |                                                                  | com o `rota_funcionario` (as rotas não  | lista *"Por aceitar"* e da rota (que não é           |
 |      |                                               |                                                                  | guardam filhos — §17.8)                 | persistida por agendamento)                          |
+| C-17 | **IVA incluído** nos valores mostrados ao     | `preco_base`/`preco_praticado` são **líquidos**; `valor_total` é | Não há taxa em lado nenhum; mudar a     | **(1)** onde vive a taxa (coluna por serviço com     |
+|      | cliente                                       | a soma líquida; RN-03 (sinal 10 %) e §11 (base dos 70/30) usam   | apresentação **propaga-se** a sinal,    | *fallback* global em config); **(2)** gravar         |
+|      |                                               | esse valor; §8.3 fixa "Barba 4,07 €" nos testes                  | recibos verdes, margens, exemplos de    | **líquido + taxa + IVA + bruto** na marcação         |
+|      |                                               |                                                                  | teste e tickets                         | (snapshot, como §11); **(3)** margens sobre o        |
+|      |                                               |                                                                  |                                         | **líquido**, montra sobre o **bruto**; **(4)**       |
+|      |                                               |                                                                  |                                         | estratégia para os testes                            |
+| C-18 | Cards/filtros do catálogo passam a mostrar    | `services.php` `max="50"` e `services.js` `maxPrice: 50`; o      | O filtro de preço máximo                | Subir o máximo para 60 € (com IVA)                   |
+|      | preço com IVA                                 | serviço mais caro é 48,78 € líquido = **60,00 €** com IVA        | **deixa de alcançar** os serviços mais  | **na mesma alteração**; decidir se o filtro usa      |
+|      |                                               |                                                                  | caros (regressão silenciosa)            | bruto ou líquido                                     |
+| C-19 | KPIs/financeiro alimentados por `.csv`/`.xls` | Nada de importação existe; e **não** se podem instalar           | Prometer importação de Excel é prometer | Preferir **CSV**; e definir um princípio único:      |
+|      | do Balancete                                  | bibliotecas (`.clinerules` §3) → `.xlsx` é binário, `.csv` é     | trabalho que o stack proíbe; e dois     | **interno para o que a plataforma faz** (vendas,     |
+|      |                                               | nativo                                                           | donos do mesmo número geram divergência | comissões, rotas), **manual/importado** só para o    |
+|      |                                               |                                                                  |                                         | externo (rendas, utilities, seguros)                 |
+| C-20 | Importar o Balancete **e** somar aos dados    | `agendamento.valor_total` já contém as vendas                    | Se o ficheiro importado já incluir as   | Decidir o **dono de cada número**: a receita é       |
+|      | internos                                      |                                                                  | vendas, somá-las aos agendamentos       | **sempre** interna; ficheiros externos só trazem o   |
+|      |                                               |                                                                  | **duplica a receita**                   | que o sistema não produz (ou são puramente           |
+|      |                                               |                                                                  |                                         | informativos)                                        |
+| C-21 | Sininho também para o **cliente**             | §15.3/§24.6 já preveem o **lembrete das 24 h** ao cliente; o     | Misturar notificações internas com      | **Separar por canal/âmbito**: interno                |
+|      |                                               | backoffice tem o calendário fiscal (dados sensíveis)             | notificações ao cliente expõe dados de  | (gestor/funcionário) no backoffice; ao cliente,      |
+|      |                                               |                                                                  | gestão e duplica o mecanismo            | apenas os lembretes operacionais já previstos        |
+|      |                                               |                                                                  |                                         | (§15.3), no Main                                     |
+| C-22 | Ocultar módulos financeiros ao Funcionário    | As **páginas** não são segregadas por perfil; só as **APIs**     | Repetição do problema de autorização,   | Aplicar a **mesma** matriz de perfis (página +       |
+|      |                                               | recusam (403) — já é o **C-09**                                  | agora com mais páginas novas            | endpoint) definida em **C-09**, com testes de 403    |
+| C-23 | ➕ campo na BD com o link da imagem do        | `servico_foto` **já existe** (`url_foto`, `destaque`,            | O pedido literal (coluna nova)          | Usar `servico_foto` (via recomendada em §E.3) **ou** |
+|      | serviço                                       | `ordem_exibicao`) mas está **vazia e sem uso**; `servico` não    | **duplica** modelação existente e viola | justificar a coluna nova; em qualquer caso é         |
+|      |                                               | tem imagem                                                       | "não alterar BD sem justificação"       | obrigatório um **fallback** para os serviços sem     |
+|      |                                               |                                                                  |                                         | foto                                                 |
+| C-24 | Secção de serviços no Home e no About         | `about.php` é componente partilhado (padrão a replicar); não     | Introduzir gestão de conteúdo no        | Conteúdo **estático** num componente partilhado      |
+|      |                                               | existe CMS                                                       | backoffice para uma secção              | (`servicesSummary.php`), como                        |
+|      |                                               |                                                                  | institucional é âmbito novo não pedido  | `hero`/`about`/`testimonial`                         |
 
 ### 3.1 Checklist de decisões (para fechar esta fase)
 
-| #   | Decisão                                                                                         | ID   | Estado |
-| :-- | :---------------------------------------------------------------------------------------------- | :--- | :----- |
-| 1   | `/gestao` passa a painel e a lista fica em `/gestao/agendamentos`                               | C-01 | ⬜     |
-| 2   | Modelo de lembretes (entidade genérica vs extensão do calendário fiscal) + veículo/manutenção   | C-02 | ⬜     |
-| 3   | Lido dos alertas: global ou por utilizador                                                      | C-03 | ⬜     |
-| 4   | **Modelo de despesas**: criar `despesa` (+ fornecedor/fatura) ou alargar `transacao_financeira` | C-04 | ⬜     |
-| 5   | Simulador fiscal não escreve no calendário fiscal                                               | C-05 | ⬜     |
-| 6   | Reafirmar que nenhum KPI/indicador bloqueia ou decide rotas                                     | C-06 | ⬜     |
-| 7   | Âmbito do RH (criar/editar/desativar) e fronteira com §22.2                                     | C-07 | ⬜     |
-| 8   | Regras das promoções (base dos 70/30, sinal, preço no Main, testes)                             | C-08 | ⬜     |
-| 9   | Autorização por página + endpoints (403 server-side)                                            | C-09 | ⬜     |
-| 10  | Fonte única do custo de pessoal (comissões e salários)                                          | C-10 | ⬜     |
-| 11  | Sequência: Fornecedores antes da contabilidade completa                                         | C-11 | ⬜     |
-| 12  | Âmbito/critérios de aceitação: aceitar os 4 módulos novos como Fase 6 acrescida                 | C-12 | ⬜     |
-| 13  | Plano de testes por fase                                                                        | C-13 | ⬜     |
-| 14  | IRC: 20 % fixo (académico) ou configurável                                                      | C-14 | ⬜     |
-| 15  | Tesouraria antes ou depois de §24.5 (10/90 + métodos)                                           | C-15 | ⬜     |
-| 16  | Definição da "agenda do funcionário" face à aceitação e às rotas                                | C-16 | ⬜     |
-| 17  | Questões Q-01…Q-30 (§2) — IVA, período, saldo inicial, subsídios, tags, contador, gráficos      | §2   | ⬜     |
+| #   | Decisão                                                                                                | ID   | Estado |
+| :-- | :----------------------------------------------------------------------------------------------------- | :--- | :----- |
+| 1   | `/gestao` passa a painel e a lista fica em `/gestao/agendamentos`                                      | C-01 | ⬜     |
+| 2   | Modelo de lembretes (entidade genérica vs extensão do calendário fiscal) + veículo/manutenção          | C-02 | ⬜     |
+| 3   | Lido dos alertas: global ou por utilizador                                                             | C-03 | ⬜     |
+| 4   | **Modelo de despesas**: criar `despesa` (+ fornecedor/fatura) ou alargar `transacao_financeira`        | C-04 | ⬜     |
+| 5   | Simulador fiscal não escreve no calendário fiscal                                                      | C-05 | ⬜     |
+| 6   | Reafirmar que nenhum KPI/indicador bloqueia ou decide rotas                                            | C-06 | ⬜     |
+| 7   | Âmbito do RH (criar/editar/desativar) e fronteira com §22.2                                            | C-07 | ⬜     |
+| 8   | Regras das promoções (base dos 70/30, sinal, preço no Main, testes)                                    | C-08 | ⬜     |
+| 9   | Autorização por página + endpoints (403 server-side)                                                   | C-09 | ⬜     |
+| 10  | Fonte única do custo de pessoal (comissões e salários)                                                 | C-10 | ⬜     |
+| 11  | Sequência: Fornecedores antes da contabilidade completa                                                | C-11 | ⬜     |
+| 12  | Âmbito/critérios de aceitação: aceitar os 4 módulos novos como Fase 6 acrescida                        | C-12 | ⬜     |
+| 13  | Plano de testes por fase                                                                               | C-13 | ⬜     |
+| 14  | IRC: 20 % fixo (académico) ou configurável                                                             | C-14 | ⬜     |
+| 15  | Tesouraria antes ou depois de §24.5 (10/90 + métodos)                                                  | C-15 | ⬜     |
+| 16  | Definição da "agenda do funcionário" face à aceitação e às rotas                                       | C-16 | ⬜     |
+| 17  | Questões Q-02…Q-47 (§2) — período, saldo inicial, subsídios, tags, contador, gráficos, fontes de dados | §2   | ⬜     |
+| 18  | **IVA**: onde vive a taxa + gravar líquido/taxa/IVA/bruto na marcação                                  | C-17 | ⬜     |
+| 19  | Filtro de preço do catálogo sobe para 60 € (bruto)                                                     | C-18 | ⬜     |
+| 20  | Formato de importação (**CSV**) e princípio interno-vs-externo                                         | C-19 | ⬜     |
+| 21  | Dono de cada número (receita sempre interna; evitar duplicação)                                        | C-20 | ⬜     |
+| 22  | Notificações: separar backoffice (interno) de cliente (Main)                                           | C-21 | ⬜     |
+| 23  | Acesso do Funcionário: matriz de perfis por página + endpoint                                          | C-22 | ⬜     |
+| 24  | Imagem do serviço: usar `servico_foto` ou justificar coluna nova (+ *fallback*)                        | C-23 | ⬜     |
+| 25  | Secção de serviços no Home/About: estática (proposta)                                                  | C-24 | ⬜     |
 
 **Depois das decisões:** registar em `especificacao_mvp.md` (é o único documento normativo) como
 `RF-80+`/`RN-30+`/`D-12+` (§1.10) e só então implementar — ciclo de §29.3.
@@ -518,4 +762,5 @@ Blocos livres verificados: `RF-75+` (§4.6 termina em RF-74), `RN-30+` (§5.1 te
 ---
 
 **Ficheiro:** `mapaMentalMVP/analise_backoffice_gestor.md` · **branch:** `agent-workspace` ·
+**Companheiro:** `mapaMentalMVP/mensagem_teams.txt` (resumo para o grupo/Teams, sem detalhe técnico) ·
 **Nota:** documento de apoio à decisão, **não normativo**; a autoridade é `especificacao_mvp.md` (§29.2).

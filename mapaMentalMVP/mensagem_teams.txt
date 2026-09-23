@@ -1,0 +1,157 @@
+SECADE BEAUTY - BACKOFFICE
+Estrutura proposta e duvidas a esclarecer
+
+============================================================
+1) ESTRUTURA DO BACKOFFICE
+============================================================
+
+GESTOR
+- Resumo (painel de entrada)
+    - Gastos vs. Rendimentos do mes corrente
+    - Dividas a fornecedores
+    - Avisos / lembretes de obrigacoes (sino na barra de cima)
+- Agendamentos        (ja existe)
+- Rotas               (ja existe)
+- Fiscal              (ja existe: IVA, IRC, Seguranca Social, Seguros)
+- Recibos verdes      (ja existe: percentagens + simulador)
+- Contabilidade       (NOVO)
+    - Ativos e Passivos
+    - Demonstracao de Resultados (gastos, rendimentos, resultado liquido)
+    - Simulador fiscal (resultado antes do imposto e IRC)
+    - Balancete e tesouraria (saldo, entradas/saidas, posicao de IVA)
+- Equipa / Recursos Humanos (NOVO)
+    - Listagem, adicionar, editar, desativar
+    - Filtro por vinculo: efetivos vs. recibos verdes
+- Promocoes           (NOVO)
+    - Campanhas com data de inicio e fim
+    - Tags sazonais (Natal, Verao, Black Friday, Campanha Local Evora)
+    - Servicos abrangidos (loja fisica e carrinha)
+- Fornecedores        (NOVO - prioridade 1 do trabalho futuro)
+    - Fornecedores, faturas e dividas a pagar
+- Servicos            (ja existe, em modo supervisao)
+
+FUNCIONARIO
+- A minha agenda
+    - Marcacoes que lhe estao atribuidas
+- Aceitacao de servicos  (ja existe: aceitar, desfazer, trocar)
+- As minhas comissoes
+    - Historico individual de recibos verdes
+- Promocoes (apenas leitura)
+    - Para saber que descontos estao ativos ao aplicar um servico
+- Avisos / lembretes operacionais no sino
+    - Ex.: nova marcacao atribuida, alteracao de rota
+
+SEM ACESSO (so gestor)
+- Contabilidade, Equipa, Fornecedores, Resultados
+
+SITE PUBLICO (novos requisitos)
+- Seccao resumida sobre os servicos prestados, no Inicio e no Sobre
+- Valores mostrados ao cliente com IVA incluido
+- Imagem em cada card de servico (criacao de marcacao e catalogo)
+
+============================================================
+2) DUVIDAS A ESCLARECER COM O GRUPO DE CONTABILIDADE
+============================================================
+
+VALORES E IVA
+
+1. Os valores hoje registados nos servicos sao sem IVA. Confirmam que o
+   preco que o cliente paga deve aparecer ja com IVA incluido?
+
+2. A taxa de IVA e a mesma para todos os servicos (23%) ou ha servicos
+   com taxa diferente?
+
+3. O sinal de reserva (10%) e as comissoes dos profissionais a recibo
+   verde devem ser calculados sobre o valor com IVA ou sem IVA?
+
+4. Confirmam a diferenca entre "obrigacao de IVA" (o que a empresa paga
+   ao Estado, que registamos com prazo e valor) e "IVA apurado" (o que
+   resultaria das vendas menos o IVA das despesas)? O painel deve mostrar
+   os dois ou so um?
+
+5. No IRC, confirmam o calculo simples: resultado antes do imposto x 20%,
+   e zero quando o resultado for negativo? A taxa e fixa ou muda?
+
+ORIGEM DOS NUMEROS
+
+6. Os indicadores do painel (gastos, rendimentos) devem vir das marcacoes
+   feitas na plataforma, ou de um ficheiro tipo balancete que nos enviam?
+   Se vierem dos dois lados, corremos o risco de contar a mesma coisa duas
+   vezes - precisamos de saber qual e a fonte de cada numero.
+
+7. "Entradas brutas" e a faturacao total dos servicos prestados ou e o
+   dinheiro que entra na conta bancaria? Sao coisas diferentes.
+
+8. "Lucro das vendas": consideramos todas as vendas ou existem vendas
+   fora da plataforma (atendimento sem marcacao)?
+
+9. Margem de lucro: confirmam que e (vendas menos custos) a dividir pelas
+   vendas, em percentagem? E que custos contam para essa margem?
+
+10. Despesas operacionais: a plataforma so conhece o combustivel e o custo
+    fixo das rotas, as comissoes e os salarios base. As restantes (rendas,
+    luz, agua, consumiveis, seguros, manutencao da carrinha, contabilidade)
+    nao existem no sistema. Como nos chegam? Introduzidas a mao na
+    plataforma, por ficheiro, ou nao devem aparecer?
+
+11. Saldo bancario: e um valor que introduzem e vao atualizando, ou vem de
+    um ficheiro do banco?
+
+12. Fluxo de caixa (entradas e saidas): mesmo tipo de resposta. O que o
+    sistema ja sabe sao os recebimentos das marcacoes.
+
+13. Balancete: o que querem ver exatamente? A nossa proposta e saldo
+    inicial, entradas, saidas, saldo atual, IVA do periodo e o acumulado
+    das dividas a fornecedores. Faz sentido? Falta algo?
+
+PESSOAL
+
+14. As comissoes dos profissionais a recibo verde contam como custo do mes
+    em que o servico e aceite, ou do mes em que e efetivamente pago?
+
+15. Nos contratos efetivos: o valor mensal e apenas o salario base ou
+    inclui subsidios? Quais?
+
+16. Ao desativar um funcionario, o que acontece aos servicos que ja lhe
+    estao atribuidos e as marcacoes futuras?
+
+AVISOS E NOTIFICACOES
+
+17. Os avisos do sino sao apenas para quem trabalha no backoffice (gestor
+    e funcionario) ou tambem devem chegar ao cliente?
+
+18. Quais os avisos que querem ao certo e com quanta antecedencia? A nossa
+    proposta: entrega de IVA, pagamentos a fornecedores, renovacao de
+    contratos e revisao da carrinha, avisando a 30, 15, 7, 3 e 1 dia.
+
+19. "Renovacao de contratos" refere-se a contratos de trabalho, de
+    fornecimento ou de instalacoes?
+
+PROMOCOES
+
+20. O desconto e uma percentagem, um valor fixo, ou os dois?
+
+21. Duas promocoes podem estar ativas ao mesmo tempo para o mesmo servico?
+    Se sim, acumulam ou aplica-se so a mais vantajosa?
+
+22. O cliente ve o preco ja com o desconto no site, ou o desconto e
+    aplicado pelo profissional no momento do atendimento?
+
+CONTEUDO DO SITE
+
+23. A seccao sobre os servicos no Inicio e no Sobre e um texto nosso fixo
+    ou querem poder altera-lo? A nossa proposta e texto fixo, sem
+    complicar.
+
+24. As imagens dos 35 servicos: quem as fornece, em que formato e tamanho?
+    Enquanto nao existirem, mostramos uma imagem por categoria para os
+    cards nao ficarem vazios.
+
+25. Confirmam que os precos no site passam a ser mostrados com IVA
+    incluido (valores redondos, como 5, 10, 15 euros)?
+
+============================================================
+Nota: as respostas as perguntas 1 a 9 e 13 a 17 condicionam o desenho
+final do painel e da contabilidade. Sem elas, avancamos apenas com os
+modulos que nao dependem de valores externos.
+============================================================
