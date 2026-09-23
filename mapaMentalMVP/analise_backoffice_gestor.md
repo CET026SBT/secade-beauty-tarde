@@ -116,6 +116,11 @@ código/BD reais (`index.php`, `app/config/api.php`, `app/{controllers,services,
 | "Lido" por conta                            | 🟡 `alerta_fiscal.visualizado` é **global** (não por utilizador)     | Com 2+ gestores, quem marca "lido" silencia os outros → decisão em    |
 |                                             |                                                                      | **C-03**                                                              |
 
+> 📌 **Divergência detetada (especificação ↔ BD).** §17.6 descreve `alerta_fiscal` com `mensagem` e `lido`,
+> mas a tabela real (`DataBase_v2.sql`, L549) tem **`visualizado`** e **não tem `mensagem`**. O contador do
+> sininho deve usar `visualizado`; se os alertas precisarem de texto próprio, é preciso ➕ coluna (hoje a
+> mensagem é composta na apresentação, a partir do tipo/prazo). Ideia para a lista de limpezas técnicas.
+
 **Regras que o sininho deve herdar** (para não colidir com o que já está decidido):
 
 - **Nunca bloqueia** decisões do gestor — é apoio à decisão (RN-05 · §12.4 · P4/P5).
