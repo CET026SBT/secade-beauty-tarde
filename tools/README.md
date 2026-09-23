@@ -66,21 +66,23 @@ $txt = [System.IO.File]::ReadAllText($path, $enc)
 
 ## 2. FERRAMENTAS
 
-| Ficheiro              | Para que serve                                                                                                                                                                                   |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `_common.php`         | Módulo comum: I/O UTF-8 seguro, CLI, largura de texto/emoji, deteção de encoding. **Não executar directamente**                                                                                  |
-| `encoding-check.php`  | Deteta BOM, mojibake, UTF-8 inválido, **UTF-16** e fins de linha mistos. Aceita `--ignore=` (exceções conhecidas)                                                                                |
-| `encoding-fix.php`    | **Repara** BOM e mojibake (mapa CP1252 explícito + verificação *round-trip*) e **converte UTF-16 → UTF-8**                                                                                       |
-| `md-align-tables.php` | Alinha as tabelas markdown (largura de ecrã; emoji = 2 colunas; ignora *code fences*; aceita separadores com 1+ hífenes (GFM) e pipes escapados `\|`)                                            |
-| `md-verify.php`       | Verifica encoding, code fences, referências `§NN` (com **resolução cruzada** entre documentos e allowlist `<!-- md-verify:allow-refs=… -->`), tabelas (pipes escapados não                       |
-|                       | contam) e marcadores residuais                                                                                                                                                                   |
-| `file-edit.php`       | `show` / `write` / `replace` / `lines` / `grep` — leitura e escrita UTF-8 **segura**                                                                                                             |
-| `ascii-align.php`     | Nivela **tabelas ASCII** desenhadas à mão dentro de *code fences*: boxes `+---+` e a coluna de referência `│` dos diagramas de fluxo (`--boxes-only` limita aos boxes)                           |
-| `md-wrap-tables.php`  | **Quebra o texto das células** para que nenhuma linha de tabela markdown exceda `--max` colunas (200 por omissão; aceita o pragma `<!-- md-wrap-tables:max=N -->` do ficheiro).                  |
-|                       | **Nunca parte palavras a meio**                                                                                                                                                                  |
-| `widthcheck.php`      | Verifica a **uniformidade** das tabelas: todas as linhas do mesmo bloco têm de ter a mesma **largura de ecrã** e caber no limite. Puro diagnóstico (só lê)                                       |
-| `health-check.php`    | Corre as **6** verificações de uma vez (encoding · `md-verify` · `md-align-tables` · `ascii-align` · `md-wrap-tables` · `md-widths`, as quatro últimas em *dry-run* por ficheiro) e dá um resumo |
-|                       | com `[OK]`/`[!!]`                                                                                                                                                                                |
+| Ficheiro              | Para que serve                                                                                                                                                             |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `_common.php`         | Módulo comum: I/O UTF-8 seguro, CLI, largura de texto/emoji, deteção de encoding. **Não executar directamente**                                                            |
+| `encoding-check.php`  | Deteta BOM, mojibake, UTF-8 inválido, **UTF-16** e fins de linha mistos. Aceita `--ignore=` (exceções conhecidas)                                                          |
+| `encoding-fix.php`    | **Repara** BOM e mojibake (mapa CP1252 explícito + verificação *round-trip*) e **converte UTF-16 → UTF-8**                                                                 |
+| `md-align-tables.php` | Alinha as tabelas markdown (largura de ecrã; emoji = 2 colunas; ignora *code fences*; aceita separadores com 1+ hífenes (GFM) e pipes escapados `\|`)                      |
+| `md-verify.php`       | Verifica encoding, code fences, referências `§NN` (com **resolução cruzada** entre documentos e allowlist `<!-- md-verify:allow-refs=… -->`), tabelas (pipes escapados não |
+|                       | contam) e marcadores residuais                                                                                                                                             |
+| `file-edit.php`       | `show` / `write` / `replace` / `lines` / `grep` — leitura e escrita UTF-8 **segura**                                                                                       |
+| `ascii-align.php`     | Nivela **tabelas ASCII** desenhadas à mão dentro de *code fences*: boxes `+---+` e a coluna de referência `│` dos diagramas de fluxo (`--boxes-only` limita aos boxes)     |
+| `md-wrap-tables.php`  | **Quebra o texto das células** para que nenhuma linha de tabela markdown exceda `--max` colunas (200 por omissão; aceita o pragma `<!-- md-wrap-tables:max=N -->` do       |
+|                       | ficheiro).                                                                                                                                                                 |
+|                       | **Nunca parte palavras a meio**                                                                                                                                            |
+| `widthcheck.php`      | Verifica a **uniformidade** das tabelas: todas as linhas do mesmo bloco têm de ter a mesma **largura de ecrã** e caber no limite. Puro diagnóstico (só lê)                 |
+| `health-check.php`    | Corre as **6** verificações de uma vez (encoding · `md-verify` · `md-align-tables` · `ascii-align` · `md-wrap-tables` · `md-widths`, as quatro últimas em *dry-run* por    |
+|                       | ficheiro) e dá um resumo                                                                                                                                                   |
+|                       | com `[OK]`/`[!!]`                                                                                                                                                          |
 
 **Convenções comuns**
 - Todos assumem que são corridos **a partir da raiz do projeto**.
@@ -179,14 +181,17 @@ desacordo (cada uma «corrigia» a outra). Está alinhado com a passagem final d
 
 **As três armadilhas de formatação (encontradas e corrigidas na v1.4)**
 
-| Armadilha                                | Sintoma                                                                                     | Resolução                                                                      |
-| ---------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| Linha em branco **dentro** de uma tabela | A tabela é lida como **dois blocos**; o segundo não tem divisor no cabeçalho → é ignorado e | Não deixar linhas vazias dentro de tabelas                                     |
-|                                          | fica todo desformatado                                                                      |                                                                                |
-| Tabela que **já cabe** no limite         | O `wrap` deixa-a intacta (correto), mas o `align` re-renderiza-a a seguir — incluindo a     | Executar sempre `wrap` **e depois** `align`; confirmar com `widthcheck`        |
-|                                          | divisória larga «a mais»                                                                    |                                                                                |
-| Pisos de coluna relaxados pelo `shrink`  | Coluna mais estreita que o átomo mais longo → a palavra era **partida ao meio**             | Os pisos **nunca** são relaxados: a tabela fica mais larga e o relatório di-lo |
-|                                          | (`edi`/`táveis`) → o guard detetava e a tabela ficava **meio formatada**                    |                                                                                |
+| Armadilha                                | Sintoma                                                                     | Resolução                                                                |
+| ---------------------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Linha em branco **dentro** de uma tabela | A tabela é lida como **dois blocos**; o segundo não tem divisor no          | Não deixar linhas vazias dentro de tabelas                               |
+|                                          | cabeçalho → é ignorado e                                                    |                                                                          |
+|                                          | fica todo desformatado                                                      |                                                                          |
+| Tabela que **já cabe** no limite         | O `wrap` deixa-a intacta (correto), mas o `align` re-renderiza-a a seguir — | Executar sempre `wrap` **e depois** `align`; confirmar com `widthcheck`  |
+|                                          | incluindo a                                                                 |                                                                          |
+|                                          | divisória larga «a mais»                                                    |                                                                          |
+| Pisos de coluna relaxados pelo `shrink`  | Coluna mais estreita que o átomo mais longo → a palavra era                 | Os pisos **nunca** são relaxados: a tabela fica mais larga e o relatório |
+|                                          | **partida ao meio**                                                         | di-lo                                                                    |
+|                                          | (`edi`/`táveis`) → o guard detetava e a tabela ficava **meio formatada**    |                                                                          |
 
 **Tabelas que não cabem sem partir palavras.** Uma tabela densa (muitas colunas com *spans* de
 código longos) pode exigir mais do que 200 colunas com as palavras intactas. O `md-wrap-tables`
@@ -200,7 +205,9 @@ TABELA(S) ACIMA DO LIMITE MESMO COM PALAVRAS INTACTAS:
 Para esses ficheiros declara-se o limite real num **pragma** (mesma convenção do
 `encoding-check:ignore-mojibake` e do `md-verify:allow-refs`), que passa a ser o default do
 ficheiro e é respeitado automaticamente pelo `health-check` (o `--max` da linha de comandos
-continua a sobrepor-se):
+continua a sobrepor-se). O pragma só conta se estiver **no topo do ficheiro** (primeiras 10
+linhas): assim, um ficheiro que apenas **documente** o pragma — como este README — não vê o seu
+limite alterado por o citar num exemplo.
 
 ```html
 <!-- md-wrap-tables:max=220 -->

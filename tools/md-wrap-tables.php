@@ -321,7 +321,11 @@ $n     = count($lines);
 // sobrepor-se). O health-check respeita-o automaticamente.
 $limitSrc = 'default';
 if ($maxArg === null) {
-    if (preg_match('/md-wrap-tables:max=(\d+)/', $text, $pm)) {
+    // So conta se estiver DECLARADO NO TOPO (primeiras 10 linhas): um ficheiro que
+    // apenas DOCUMENTE o pragma (ex.: tools/README.md) nao pode ver o seu limite
+    // alterado por citá-lo num exemplo.
+    $head = implode("\n", array_slice($lines, 0, 10));
+    if (preg_match('/md-wrap-tables:max=(\d+)/', $head, $pm)) {
         $maxCols  = max(40, (int) $pm[1]);
         $limitSrc = 'pragma do ficheiro';
     }

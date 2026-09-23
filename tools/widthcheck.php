@@ -12,11 +12,12 @@ $file  = $argv[1] ?? 'especificacao_mvp.md';
 $lines = toLines(readText($file));
 $limit = (int) ($argv[2] ?? 0);
 if ($limit <= 0) {
-    // Pragmas suportados (mesma convencao do md-wrap-tables e do encoding-check):
+    // Pragmas suportados no TOPO do ficheiro (primeiras 10 linhas, mesma convencao
+    // do md-wrap-tables e do encoding-check):
     //   <!-- md-widths:max=NNN -->   ou   <!-- md-wrap-tables:max=NNN -->
-    $raw   = readText($file);
     $limit = 200;
-    if (preg_match('/md-(?:widths|wrap-tables):max=(\d+)/', $raw, $pm)) $limit = max(40, (int) $pm[1]);
+    $head  = implode("\n", array_slice($lines, 0, 10));
+    if (preg_match('/md-(?:widths|wrap-tables):max=(\d+)/', $head, $pm)) $limit = max(40, (int) $pm[1]);
 }
 $inCode = false;
 $blk = []; $blkStart = 0; $nTables = 0; $bad = 0;
