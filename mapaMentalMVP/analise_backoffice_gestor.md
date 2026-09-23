@@ -1,5 +1,8 @@
 # ANÁLISE FUNCIONAL — BACKOFFICE DO GESTOR (PROPOSTA DE FUSÃO)
 
+<!-- md-wrap-tables:max=220 — a tabela do ponto 3 tem 5 colunas com muitos spans de
+     código longos; 217 colunas é o mínimo possível sem partir palavras ao meio. -->
+
 **Ficheiro de trabalho (não normativo)** · branch **`agent-workspace`** · 23/09/2026
 **Entrada analisada:** requisitos refinados do *Painel de Backoffice — Tipo de Conta: Gestor*
 (Resumo/Dashboard · Contabilidade e Gestão Financeira · Recursos Humanos · Promoções e Campanhas) +
@@ -22,7 +25,7 @@ código/BD reais (`index.php`, `app/config/api.php`, `app/{controllers,services,
 ### 1.1 Princípios de encaixe respeitados pela proposta
 
 | #   | Princípio                                                                         | Onde está definido    |
-| :--- | :-------------------------------------------------------------------------------- | :-------------------- |
+| :-- | :-------------------------------------------------------------------------------- | :-------------------- |
 | P1  | Nenhum menu paralelo: tudo entra em `/gestao/...`                                 | §25.5                 |
 | P2  | Camadas View → `api.js` → `api.php` → Controller → Service → Repository+Mapper    | §18.1                 |
 | P3  | Endpoints `admin-<dominio>-<acao>`; páginas `/gestao/<area>`                      | §19.3 · §25.5         |
@@ -422,59 +425,75 @@ Blocos livres verificados: `RF-75+` (§4.6 termina em RF-74), `RN-30+` (§5.1 te
 > Pontos em que os **novos requisitos colidem com regras/modelos já definidos** e que **não podem ser
 > decididos por inferência**. Nenhum foi alterado: cada linha está à espera de decisão do gestor.
 
-| ID   | Requisito novo                         | Regra / artefacto existente                                      | Natureza do conflito                    | Decisão necessária (recomendação)       |
-| :--- | :------------------------------------- | :--------------------------------------------------------------- | :-------------------------------------- | :-------------------------------------- |
-| C-01 | Painel de entrada do gestor            | `/gestao` **já é** a lista de agendamentos (`index.php` L30 →    | Duas funções para a mesma rota          | **`/gestao` = painel** e                |
-|      |                                        | `modules/backoffice/appointments.php`)                           |                                         | `/gestao/agendamentos` mantém a lista   |
-|      |                                        |                                                                  |                                         | (rota já existe). Alternativa: painel   |
-|      |                                        |                                                                  |                                         | em `/gestao/painel`                     |
-| C-02 | Lembretes de fornecedores, contratos e | `obrigacao_fiscal.tipo` ∈                                        | Alargar o enum mistura encargos fiscais | Recomendação: ➕ `notificacao` genérica |
-|      | revisões da carrinha                   | {`iva`,`irc`,`seguranca_social`,`seguros`} + `alerta_fiscal`;    | com não fiscais; criar entidade nova    | (com `origem`) alimentada pelo mesmo    |
-|      |                                        | §13 define o calendário como **fiscal**                          | duplica mecanismos                      | padrão on-demand, e o                   |
-|      |                                        |                                                                  |                                         | **calendário fiscal fica fiscal** (§13  |
-|      |                                        |                                                                  |                                         | intacto). Contador = `alerta_fiscal` +  |
-|      |                                        |                                                                  |                                         | `notificacao`                           |
-| C-03 | *Sininho* com contador e marcação de   | `alerta_fiscal.visualizado` é **global** (não por utilizador)    | Com 2+ gestores, marcar lido silencia   | Se houver **1 gestor** no MVP: manter   |
-|      | lido                                   |                                                                  | os outros                               | global e registar como limitação        |
-|      |                                        |                                                                  |                                         | (§22.2). Se ≥ 2: ➕ tabela de leitura   |
-|      |                                        |                                                                  |                                         | por utilizador                          |
-| C-04 | Ativos/Passivos, DR, tesouraria        | `transacao_financeira` é livro de **recebimentos**:              | **Não é possível registar despesas**    | **Alteração de BD obrigatória** (e      |
-|      |                                        | `agendamento_id` e `funcionario_id` **NOT NULL**,                | (fornecedores, salários, IVA, seguros)  | `.clinerules` exige justificação).      |
-|      |                                        | `tipo_transacao` só com recebimentos                             |                                         | Recomendação: via **(b)** de §B.2 — ➕  |
-|      |                                        |                                                                  |                                         | `despesa` (+                            |
-|      |                                        |                                                                  |                                         | `fornecedor`/`fatura_fornecedor`) e     |
-|      |                                        |                                                                  |                                         | **não** deformar `transacao_financeira` |
-| C-05 | Simulador fiscal automático (RAI, IRC) | §13: obrigações fiscais com `valor_estimado`                     | Automação vs lançamento manual (fonte   | Simulador **só lê e calcula** (não      |
-|      |                                        | **introduzido manualmente**; alertas 30/15/7/3/1/atraso          | de erro e de divergência de números)    | escreve); ação explícita                |
-|      |                                        |                                                                  |                                         | *"criar obrigação com este valor"*      |
-|      |                                        |                                                                  |                                         | mantém a decisão humana                 |
-| C-06 | KPIs financeiros no painel             | RN-05 / §3.1 / §12.3: 50 € é **indicador visual** e a decisão de | Risco de reintroduzir, pela porta do    | Confirmar proibição explícita: nenhum   |
-|      |                                        | rotas é **livre e manual**                                       | dashboard, um **gatilho automático** de | KPI/alerta bloqueia ou decide rotas.    |
-|      |                                        |                                                                  | viabilidade                             | Registar como RN novo                   |
-| C-07 | RH: criar / editar / desativar perfis  | §22.2:                                                           | Edição pelo gestor é **nova** e pode    | Esclarecer que §22.2 se refere ao       |
-|      |                                        | *"o perfil é de leitura (dados pessoais não editáveis no MVP)"*; | ser lida como revogação daquela         | **cliente em `/perfil`** e definir o    |
-|      |                                        | `auth-register` já permite ao gestor criar perfis                | limitação                               | âmbito do RH (só funcionários? password |
-|      |                                        |                                                                  |                                         | inicial? e-mail editável?)              |
-| C-08 | Promoções aplicadas a marcações        | §11 (base = `preco_praticado`), RN-03 (sinal 10 %),              | O desconto **propaga-se** a recibos     | Definir: (1) base dos 70/30 com/sem     |
-|      |                                        | `valor_total`, §5.2 (*"catálogo é somente leitura no Main"*) e   | verdes, sinal, margem e testes — e      | desconto; (2) sinal sobre valor com     |
-|      |                                        | os testes de referência                                          | altera preços apresentados no Main      | desconto; (3) se o Main mostra preço    |
-|      |                                        |                                                                  |                                         | promocional; (4) estratégia de testes   |
-| C-09 | Ocultar módulos financeiros ao         | As páginas **não** são segregadas por perfil (o gestor abre      | Esconder no menu **não** é autorizar;   | Autorização **por página + endpoint**   |
-|      | funcionário                            | `/gestao/servicos`; só as APIs recusam)                          | sem enforcement server-side cria-se uma | (matriz de perfis) e testes de **403**  |
-|      |                                        |                                                                  | falha de segurança                      | como já existe para `admin-service-*`   |
-
-| C-10 | RH *"alimenta indiretamente os passivos/gastos"* | §11: valores de recibos verdes são **snapshot** na aceitação; §25.3: `transacao_financeira`/`fecho_caixa_diario`/`gorjeta` **sem UI** | Risco de **dupla contagem** (comissão gravada em `agendamento_servico` **e** lançada como despesa) e de divergência de fontes | Fixar **fonte única** de custo de pessoal: comissões do mês = Σ `agendamento_servico.valor_recibo_verde_funcionario` (**sem** novo lançamento); salários = `salario_base` (+ subsídios a definir, Q-11) |
-| C-11 | Card *"Dívidas a Fornecedores"* no painel | **§25.1** (Fornecedores = prioridade 1, ainda ⬜) e §25 ordem **vinculativa** | O painel pede um indicador cujo módulo **não existe**; cria pressão para inverter prioridades                                        | Sequenciar: **Fornecedores/despesas antes** da contabilidade completa (§1.9, fase 6.1) e mostrar estado vazio explícito no painel  |
-| C-12 | Módulos novos (contabilidade, RH, promoções) | §22.3 (fora de escopo declarado) e §28 (critérios de aceitação) **não** os incluem; §4.5 só tem RF-50…RF-63    | Acrescentar módulos **altera o âmbito do MVP** e os critérios de aceitação                                                     | Decisão explícita de âmbito + registo em §4 (estado), §24 (gap), §28.2 (critérios) e §26 (testes) — ciclo §29.3.6                     |
-| C-13 | Testes das novas funcionalidades        | 289 verificações atuais (§26.1) + §26.4 (cobertura em falta para a §24)                                     | Promoções podem alterar preços de referência; módulos financeiros podem mexer em dados partilhados                             | Definir por fase: testes *server-to-end* para cálculo de IRC, passivos, filtro de vínculo e regras de promoção, mantendo as 289 verdes |
-| C-14 | IRC fixo em 20 %                        | Nenhuma regra fiscal no projeto define taxa; §13 só guarda `valor_estimado`                                  | Rigor real: taxa geral 20 % **+ derrama municipal** (até 9 %); PME tem taxa reduzida até 50 000 €                              | Confirmar **20 % fixo académico** (simples) ou **taxa configurável** (➕ `config_fiscal`); registar como `D-nn`/`RN-nn` com o critério de aceitação |
-| C-15 | Tesouraria / fluxo de caixa             | §14.2 (P-1…P-5): sinal configurável, cobrança dos 90 %, métodos de pagamento — **ainda ⬜** (§24.5)           | A tesouraria depende de pagamentos que hoje são teóricos (`sinal_pago = 0`)                                                    | Decidir se a tesouraria (§6.2) só avança **depois** de §24.5 (10/90 + métodos) ou se assume tudo como simulado                     |
-| C-16 | Área do funcionário (agenda própria)    | §10: a aceitação é a dinâmica central do funcionário; §22.2: o gestor supervisiona `/gestao/servicos`        | A "agenda do funcionário" pode confundir-se com a lista de aceitação e com o `rota_funcionario` (as rotas não guardam filhos — §17.8) | Definir a diferença: agenda = serviços **já aceites** por ele (passado/futuro), distinta da lista *"Por aceitar"* e da rota (que não é persistida por agendamento) |
+| ID   | Requisito novo                                | Regra / artefacto existente                                      | Natureza do conflito                    | Decisão necessária (recomendação)                    |
+| :--- | :-------------------------------------------- | :--------------------------------------------------------------- | :-------------------------------------- | :--------------------------------------------------- |
+| C-01 | Painel de entrada do gestor                   | `/gestao` **já é** a lista de agendamentos (`index.php` L30 →    | Duas funções para a mesma rota          | **`/gestao` = painel** e                             |
+|      |                                               | `modules/backoffice/appointments.php`)                           |                                         | `/gestao/agendamentos` mantém a lista                |
+|      |                                               |                                                                  |                                         | (rota já existe). Alternativa: painel                |
+|      |                                               |                                                                  |                                         | em `/gestao/painel`                                  |
+| C-02 | Lembretes de fornecedores, contratos e        | `obrigacao_fiscal.tipo` ∈                                        | Alargar o enum mistura encargos fiscais | Recomendação: ➕ `notificacao` genérica              |
+|      | revisões da carrinha                          | {`iva`,`irc`,`seguranca_social`,`seguros`} + `alerta_fiscal`;    | com não fiscais; criar entidade nova    | (com `origem`) alimentada pelo mesmo                 |
+|      |                                               | §13 define o calendário como **fiscal**                          | duplica mecanismos                      | padrão on-demand, e o                                |
+|      |                                               |                                                                  |                                         | **calendário fiscal fica fiscal** (§13               |
+|      |                                               |                                                                  |                                         | intacto). Contador = `alerta_fiscal` +               |
+|      |                                               |                                                                  |                                         | `notificacao`                                        |
+| C-03 | *Sininho* com contador e marcação de          | `alerta_fiscal.visualizado` é **global** (não por utilizador)    | Com 2+ gestores, marcar lido silencia   | Se houver **1 gestor** no MVP: manter                |
+|      | lido                                          |                                                                  | os outros                               | global e registar como limitação                     |
+|      |                                               |                                                                  |                                         | (§22.2). Se ≥ 2: ➕ tabela de leitura                |
+|      |                                               |                                                                  |                                         | por utilizador                                       |
+| C-04 | Ativos/Passivos, DR, tesouraria               | `transacao_financeira` é livro de **recebimentos**:              | **Não é possível registar despesas**    | **Alteração de BD obrigatória** (e                   |
+|      |                                               | `agendamento_id` e `funcionario_id` **NOT NULL**,                | (fornecedores, salários, IVA, seguros)  | `.clinerules` exige justificação).                   |
+|      |                                               | `tipo_transacao` só com recebimentos                             |                                         | Recomendação: via **(b)** de §B.2 — ➕               |
+|      |                                               |                                                                  |                                         | `despesa` (+                                         |
+|      |                                               |                                                                  |                                         | `fornecedor`/`fatura_fornecedor`) e                  |
+|      |                                               |                                                                  |                                         | **não** deformar `transacao_financeira`              |
+| C-05 | Simulador fiscal automático (RAI, IRC)        | §13: obrigações fiscais com `valor_estimado`                     | Automação vs lançamento manual (fonte   | Simulador **só lê e calcula** (não                   |
+|      |                                               | **introduzido manualmente**; alertas 30/15/7/3/1/atraso          | de erro e de divergência de números)    | escreve); ação explícita                             |
+|      |                                               |                                                                  |                                         | *"criar obrigação com este valor"*                   |
+|      |                                               |                                                                  |                                         | mantém a decisão humana                              |
+| C-06 | KPIs financeiros no painel                    | RN-05 / §3.1 / §12.3: 50 € é **indicador visual** e a decisão de | Risco de reintroduzir, pela porta do    | Confirmar proibição explícita: nenhum                |
+|      |                                               | rotas é **livre e manual**                                       | dashboard, um **gatilho automático** de | KPI/alerta bloqueia ou decide rotas.                 |
+|      |                                               |                                                                  | viabilidade                             | Registar como RN novo                                |
+| C-07 | RH: criar / editar / desativar perfis         | §22.2:                                                           | Edição pelo gestor é **nova** e pode    | Esclarecer que §22.2 se refere ao                    |
+|      |                                               | *"o perfil é de leitura (dados pessoais não editáveis no MVP)"*; | ser lida como revogação daquela         | **cliente em `/perfil`** e definir o                 |
+|      |                                               | `auth-register` já permite ao gestor criar perfis                | limitação                               | âmbito do RH (só funcionários? password              |
+|      |                                               |                                                                  |                                         | inicial? e-mail editável?)                           |
+| C-08 | Promoções aplicadas a marcações               | §11 (base = `preco_praticado`), RN-03 (sinal 10 %),              | O desconto **propaga-se** a recibos     | Definir: (1) base dos 70/30 com/sem                  |
+|      |                                               | `valor_total`, §5.2 (*"catálogo é somente leitura no Main"*) e   | verdes, sinal, margem e testes — e      | desconto; (2) sinal sobre valor com                  |
+|      |                                               | os testes de referência                                          | altera preços apresentados no Main      | desconto; (3) se o Main mostra preço                 |
+|      |                                               |                                                                  |                                         | promocional; (4) estratégia de testes                |
+| C-09 | Ocultar módulos financeiros ao                | As páginas **não** são segregadas por perfil (o gestor abre      | Esconder no menu **não** é autorizar;   | Autorização **por página + endpoint**                |
+|      | funcionário                                   | `/gestao/servicos`; só as APIs recusam)                          | sem enforcement server-side cria-se uma | (matriz de perfis) e testes de **403**               |
+|      |                                               |                                                                  | falha de segurança                      | como já existe para `admin-service-*`                |
+| C-10 | RH                                            | §11: valores de recibos verdes são **snapshot** na aceitação;    | Risco de **dupla contagem** (comissão   | Fixar **fonte única** de custo de pessoal: comissões |
+|      | *"alimenta indiretamente os passivos/gastos"* | §25.3: `transacao_financeira`/`fecho_caixa_diario`/`gorjeta`     | gravada em `agendamento_servico` **e**  | do mês = Σ                                           |
+|      |                                               | **sem UI**                                                       | lançada como despesa) e de divergência  | `agendamento_servico.valor_recibo_verde_funcionario` |
+|      |                                               |                                                                  | de fontes                               | (**sem** novo lançamento); salários = `salario_base` |
+|      |                                               |                                                                  |                                         | (+ subsídios a definir, Q-11)                        |
+| C-11 | Card *"Dívidas a Fornecedores"* no painel     | **§25.1** (Fornecedores = prioridade 1, ainda ⬜) e §25 ordem    | O painel pede um indicador cujo módulo  | Sequenciar: **Fornecedores/despesas antes** da       |
+|      |                                               | **vinculativa**                                                  | **não existe**; cria pressão para       | contabilidade completa (§1.9, fase 6.1) e mostrar    |
+|      |                                               |                                                                  | inverter prioridades                    | estado vazio explícito no painel                     |
+| C-12 | Módulos novos (contabilidade, RH, promoções)  | §22.3 (fora de escopo declarado) e §28 (critérios de aceitação)  | Acrescentar módulos                     | Decisão explícita de âmbito + registo em §4          |
+|      |                                               | **não** os incluem; §4.5 só tem RF-50…RF-63                      | **altera o âmbito do MVP** e os         | (estado), §24 (gap), §28.2 (critérios) e §26         |
+|      |                                               |                                                                  | critérios de aceitação                  | (testes) — ciclo §29.3.6                             |
+| C-13 | Testes das novas funcionalidades              | 289 verificações atuais (§26.1) + §26.4 (cobertura em falta para | Promoções podem alterar preços de       | Definir por fase: testes *server-to-end* para        |
+|      |                                               | a §24)                                                           | referência; módulos financeiros podem   | cálculo de IRC, passivos, filtro de vínculo e regras |
+|      |                                               |                                                                  | mexer em dados partilhados              | de promoção, mantendo as 289 verdes                  |
+| C-14 | IRC fixo em 20 %                              | Nenhuma regra fiscal no projeto define taxa; §13 só guarda       | Rigor real: taxa geral 20 %             | Confirmar **20 % fixo académico** (simples) ou       |
+|      |                                               | `valor_estimado`                                                 | **+ derrama municipal** (até 9 %); PME  | **taxa configurável** (➕ `config_fiscal`); registar |
+|      |                                               |                                                                  | tem taxa reduzida até 50 000 €          | como `D-nn`/`RN-nn` com o critério de aceitação      |
+| C-15 | Tesouraria / fluxo de caixa                   | §14.2 (P-1…P-5): sinal configurável, cobrança dos 90 %, métodos  | A tesouraria depende de pagamentos que  | Decidir se a tesouraria (§6.2) só avança **depois**  |
+|      |                                               | de pagamento — **ainda ⬜** (§24.5)                              | hoje são teóricos (`sinal_pago = 0`)    | de §24.5 (10/90 + métodos) ou se assume tudo como    |
+|      |                                               |                                                                  |                                         | simulado                                             |
+| C-16 | Área do funcionário (agenda própria)          | §10: a aceitação é a dinâmica central do funcionário; §22.2: o   | A "agenda do funcionário" pode          | Definir a diferença: agenda = serviços               |
+|      |                                               | gestor supervisiona `/gestao/servicos`                           | confundir-se com a lista de aceitação e | **já aceites** por ele (passado/futuro), distinta da |
+|      |                                               |                                                                  | com o `rota_funcionario` (as rotas não  | lista *"Por aceitar"* e da rota (que não é           |
+|      |                                               |                                                                  | guardam filhos — §17.8)                 | persistida por agendamento)                          |
 
 ### 3.1 Checklist de decisões (para fechar esta fase)
 
 | #   | Decisão                                                                                         | ID   | Estado |
-| :--- | :---------------------------------------------------------------------------------------------- | :--- | :----- |
+| :-- | :---------------------------------------------------------------------------------------------- | :--- | :----- |
 | 1   | `/gestao` passa a painel e a lista fica em `/gestao/agendamentos`                               | C-01 | ⬜     |
 | 2   | Modelo de lembretes (entidade genérica vs extensão do calendário fiscal) + veículo/manutenção   | C-02 | ⬜     |
 | 3   | Lido dos alertas: global ou por utilizador                                                      | C-03 | ⬜     |

@@ -7,7 +7,7 @@ Data: 21/09/2026 · Comprovar com: `guia_teste_manual.md`
 ## ÍNDICE
 
 | §   | Conteúdo                                                     |
-| :--- | :----------------------------------------------------------- |
+| :-- | :----------------------------------------------------------- |
 | 1   | Legenda e convenções                                         |
 | 2   | Arquitetura em camadas (visão geral)                         |
 | 3   | Mapa hierárquico de funcionalidades                          |
