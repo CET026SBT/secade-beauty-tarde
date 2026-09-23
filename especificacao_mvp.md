@@ -1217,7 +1217,8 @@ editor do IDE. Sempre **UTF-8 sem BOM**, preservando o fim de linha (**CRLF** ne
 | `tools/ascii-align.php`     | Nivela **tabelas ASCII** dentro de *code fences* (boxes `+---+` e a coluna de referência `│` dos diagramas de fluxo; `--boxes-only` limita aos boxes)                  |
 | `tools/md-wrap-tables.php`  | **Quebra o texto das células** para nenhuma linha de tabela markdown exceder `--max` colunas (200 por omissão; pragma `<!-- md-wrap-tables:max=N -->` para ficheiros   |
 |                             | densos). **Nunca parte palavras a meio**                                                                                                                               |
-| `tools/widthcheck.php`      | Verifica a **uniformidade** das tabelas (todas as linhas de um bloco com a mesma largura de ecra, dentro do limite efetivo). So le                                     |
+| `tools/widthcheck.php`      | Verifica a **uniformidade** das tabelas: largura igual em todas as linhas do bloco, divisor presente e limite efetivo. Só lê.                                          |
+| `tools/md-join-tables.php`  | Junta blocos de tabela **partidos por uma linha em branco** (o bloco seguinte fica sem divisor e passa a ser ignorado pelos formatadores). Só lê *dry-run* por omissão |
 | `tools/file-edit.php`       | `show` / `write` / `replace` / `lines` / `grep` em UTF-8 seguro                                                                                                        |
 | `tools/_common.php`         | Módulo comum (**não executar diretamente**)                                                                                                                            |
 

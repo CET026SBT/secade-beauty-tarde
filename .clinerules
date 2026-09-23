@@ -176,10 +176,14 @@ Sempre **UTF-8 sem BOM**, preservando o fim de linha do ficheiro (o projeto usa 
 
 | Ferramenta                  | Função                                                                 |
 | --------------------------- | ---------------------------------------------------------------------- |
-| `tools/health-check.php`    | Corre tudo (encoding + `.md` + alinhamento) e dá um resumo             |
+| `tools/health-check.php`    | Corre as 6 verificações (encoding + `.md` + alinhamento + larguras) e dá um resumo |
 | `tools/encoding-check.php`  | Deteta BOM, mojibake, UTF-8 inválido e fins de linha mistos            |
 | `tools/encoding-fix.php`    | Repara BOM/mojibake (com *round-trip*) e converte UTF-16 → UTF-8       |
 | `tools/md-align-tables.php` | Alinha tabelas markdown (largura de ecrã, emoji = 2)                   |
+| `tools/md-wrap-tables.php`  | Quebra células para respeitar o limite de colunas (pragma `md-wrap-tables:max=N` no topo); **nunca parte palavras** |
+| `tools/md-join-tables.php`  | Junta tabelas partidas por uma linha em branco (bloco sem divisor)     |
+| `tools/ascii-align.php`     | Nivela tabelas ASCII/boxes e diagramas dentro de *code fences*          |
+| `tools/widthcheck.php`      | Confere a uniformidade das tabelas (largura igual, divisor, limite)     |
 | `tools/md-verify.php`       | Valida code fences, referências `§NN` (com resolução cruzada), tabelas |
 | `tools/file-edit.php`       | `show` / `write` / `replace` / `lines` / `grep` em UTF-8 seguro        |
 | `tools/_common.php`         | Módulo comum (**não executar diretamente**)                            |

@@ -25,6 +25,29 @@ $blk = []; $blkStart = 0; $nTables = 0; $bad = 0;
 $report = function (array $blk, int $start) use ($limit, &$nTables, &$bad): void {
     if (count($blk) < 2) return;
     $nTables++;
+
+    // Um bloco cuja 2.a linha NAO e um divisor nao e uma tabela valida: e sinal de
+    // tabela PARTIDA (normalmente por uma linha em branco pelo meio) ou de linhas de
+    // tabela escritas a mao sem cabecalho. Sem divisor, os restantes utilitarios
+    // ignoram o bloco -- e este e o unico sitio onde isso se torna visivel.
+    $divider = function (string $l): bool {
+        $c = trim($l);
+        $c = preg_replace('/^\|/', '', $c);
+        $len = strlen($c);
+        if ($len > 0 && $c[$len - 1] === '|') $c = substr($c, 0, $len - 1);
+        foreach (explode('|', $c) as $cell) {
+            if (!preg_match('/^:?-+:?$/', trim($cell))) return false;
+        }
+        return true;
+    };
+    $ok = $divider($blk[1][1]);
+    if (!$ok) {
+        $bad++;
+        printf("  L%-5d %2d linhas  SEM DIVISOR na 2.a linha -> bloco nao e tabela valida "
+             . "(tabela partida? ver tools/md-join-tables.php)\n", $start, count($blk));
+        return;
+    }
+
     $ws = [];
     $max = 0;
     foreach ($blk as [$ln, $t]) { $w = strWidth($t); $ws[$w] = true; if ($w > $max) $max = $w; }
