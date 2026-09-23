@@ -21,7 +21,7 @@
 ## ÍNDICE
 
 | §   | Secção                            | §   | Secção                                    |
-| :--- | :-------------------------------- | :--- | :---------------------------------------- |
+| :-- | :-------------------------------- | :-- | :---------------------------------------- |
 | 1   | Visão geral, contexto e stack     | 16  | Feedback do cliente                       |
 | 2   | Regras de Ouro (prevalência)      | 17  | Modelo de dados                           |
 | 3   | Conflitos e decisões finais       | 18  | Arquitetura e convenções                  |
@@ -298,7 +298,7 @@ visuais** e nunca gatilhos automáticos. Alertas fiscais são gerados **on-deman
 > o conteúdo original continua recuperável pelo histórico do Git (`git show <revisão>:<ficheiro>`).
 
 | #   | Conflito                                                   | Fontes                                                     | Resolução                                                        |
-| :--- | :--------------------------------------------------------- | :--------------------------------------------------------- | :--------------------------------------------------------------- |
+| :-- | :--------------------------------------------------------- | :--------------------------------------------------------- | :--------------------------------------------------------------- |
 | 1   | Limiar automático de **100 €**                             | `fluxo_funcionalidades.md`, `CARRINHA_SPEC.md`, etc.       | **REVOGADO** → decisão manual + 50 € visual (§3.1)               |
 | 2   | "Funcionário deve cobrir todas as categorias"              | `fluxo_funcionalidades.md` (RN04 antiga)                   | **REVOGADA** → categorias = filtros (§3.2)                       |
 | 3   | Estado `pendente_aprovacao_viabilidade`                    | `fluxo_funcionalidades.md`, `ALTERACOES_PRIORIDADES.md`    | Substituído por `pendente_aceitacao_funcionarios` /              |
@@ -743,7 +743,7 @@ fiscal, serviços):
 
 ### 14.2 Regras a implementar (D-05 / D-10 · ver §24.5)
 | #   | Regra                                                                                                                                            |
-| :--- | :----------------------------------------------------------------------------------------------------------------------------------------------- |
+| :-- | :----------------------------------------------------------------------------------------------------------------------------------------------- |
 | P-1 | **Configuração do sinal** numa **secção dedicada do backoffice** (generalizando uma secção existente, ex.: recibos verdes) — substitui constante |
 | P-2 | **Cobrança dos 90 %** restantes **no término do serviço**                                                                                        |
 | P-3 | **Escolha simulada do método de pagamento:** **Dinheiro · Multibanco · MB Way**                                                                  |
@@ -1206,17 +1206,20 @@ fix: corrigir disponibilidade de slots ao alterar servicos
 (`New-Object System.Text.UTF8Encoding($false)` + `[System.IO.File]::ReadAllText/WriteAllText`) ·
 editor do IDE. Sempre **UTF-8 sem BOM**, preservando o fim de linha (**CRLF** neste projeto).
 
-| Ferramenta                  | Função                                                                                                                                                       |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `tools/health-check.php`    | Corre as **5** verificações (encoding · `md-verify` · `md-align-tables` · `ascii-align` · `md-wrap-tables`, em *dry-run* por ficheiro) e apresenta um resumo |
-| `tools/encoding-check.php`  | Deteta BOM, mojibake, UTF-8 inválido e fins de linha mistos                                                                                                  |
-| `tools/encoding-fix.php`    | Repara BOM/mojibake (*mapa CP1252* + verificação *round-trip*) e converte **UTF-16 → UTF-8**                                                                 |
-| `tools/md-align-tables.php` | Alinha tabelas markdown (largura de ecrã; emoji = 2 colunas; ignora *code fences*)                                                                           |
-| `tools/md-verify.php`       | Valida encoding, *code fences*, referências `§NN` (**com resolução cruzada** no §29.2) e consistência das tabelas                                            |
-| `tools/ascii-align.php`     | Nivela **tabelas ASCII** dentro de *code fences* (boxes `+---+` e a coluna de referência `│` dos diagramas de fluxo; `--boxes-only` limita aos boxes)        |
-| `tools/md-wrap-tables.php`  | **Quebra o texto das células** para nenhuma linha de tabela markdown exceder `--max` colunas (200 por omissão); nunca altera texto                           |
-| `tools/file-edit.php`       | `show` / `write` / `replace` / `lines` / `grep` em UTF-8 seguro                                                                                              |
-| `tools/_common.php`         | Módulo comum (**não executar diretamente**)                                                                                                                  |
+| Ferramenta                  | Função                                                                                                                                                                 |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `tools/health-check.php`    | Corre as **6** verificações (encoding · `md-verify` · `md-align-tables` · `ascii-align` · `md-wrap-tables` · `md-widths`, as quatro últimas em *dry-run* por ficheiro) |
+|                             | e apresenta um resumo                                                                                                                                                  |
+| `tools/encoding-check.php`  | Deteta BOM, mojibake, UTF-8 inválido e fins de linha mistos                                                                                                            |
+| `tools/encoding-fix.php`    | Repara BOM/mojibake (*mapa CP1252* + verificação *round-trip*) e converte **UTF-16 → UTF-8**                                                                           |
+| `tools/md-align-tables.php` | Alinha tabelas markdown (largura de ecrã; emoji = 2 colunas; ignora *code fences*)                                                                                     |
+| `tools/md-verify.php`       | Valida encoding, *code fences*, referências `§NN` (**com resolução cruzada** no §29.2) e consistência das tabelas                                                      |
+| `tools/ascii-align.php`     | Nivela **tabelas ASCII** dentro de *code fences* (boxes `+---+` e a coluna de referência `│` dos diagramas de fluxo; `--boxes-only` limita aos boxes)                  |
+| `tools/md-wrap-tables.php`  | **Quebra o texto das células** para nenhuma linha de tabela markdown exceder `--max` colunas (200 por omissão; pragma `<!-- md-wrap-tables:max=N -->` para ficheiros   |
+|                             | densos). **Nunca parte palavras a meio**                                                                                                                               |
+| `tools/widthcheck.php`      | Verifica a **uniformidade** das tabelas (todas as linhas de um bloco com a mesma largura de ecra, dentro do limite efetivo). So le                                     |
+| `tools/file-edit.php`       | `show` / `write` / `replace` / `lines` / `grep` em UTF-8 seguro                                                                                                        |
+| `tools/_common.php`         | Módulo comum (**não executar diretamente**)                                                                                                                            |
 
 **Convenções:** *dry-run* por omissão (gravar só com `--write`) · *exit* `0` = ok, `1` = problema ·
 execução a partir da raiz do projeto · recusam gravar UTF-8 inválido · o alinhador **aborta** se
