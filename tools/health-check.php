@@ -5,7 +5,9 @@
  * Corre, por ordem:
  *   1. encoding-check  (BOM / mojibake / UTF-8 / fins de linha)
  *   2. md-verify       (code fences, referencias cruzadas, tabelas)
- *   3. md-align-tables em dry-run (diz se ha tabelas desalinhadas)
+ *   3. md-align-tables em dry-run (diz se ha tabelas markdown desalinhadas)
+ *   4. ascii-align     em dry-run (diz se ha tabelas ASCII/diagramas desalinhados)
+ *   5. md-wrap-tables  em dry-run (diz se ha tabelas acima da largura maxima)
  *
  * Uso:
  *   php tools/health-check.php            (projeto inteiro)
@@ -43,6 +45,8 @@ $steps = [
     ]],
     ["md-verify",      "md-verify.php",      []],
     ["md-align-tables", "md-align-tables.php", []],
+    ["ascii-align",    "ascii-align.php",    []],
+    ["md-wrap-tables", "md-wrap-tables.php", []],
 ];
 
 $results = [];
@@ -51,19 +55,19 @@ $failures = 0;
 foreach ($steps as [$label, $script, $args]) {
     $path = $tools . "/" . $script;
 
-    if ($script === "md-align-tables.php") {
+    if ($script === "md-align-tables.php" || $script === "ascii-align.php" || $script === "md-wrap-tables.php") {
         // dry-run por ficheiro .md
         $mdFiles = collectFiles(getcwd(), ["md"]);
         $desaligned = [];
         foreach ($mdFiles as $f) {
             [$code, $out] = run($php, $path, [$f], true);
-            if (preg_match('/Linhas alteradas:\s*(\d+)/', $out, $m) && (int) $m[1] > 0) {
-                $desaligned[] = relPath(getcwd(), $f) . " ({$m[1]} linhas)";
+            if (preg_match('/(?:Linhas alteradas|Tabelas a quebrar):\s*(\d+)/', $out, $m) && (int) $m[1] > 0) {
+                $desaligned[] = relPath(getcwd(), $f) . " ({$m[1]})";
             }
         }
         $ok = !$desaligned;
-        $results[] = [$label, $ok, $desaligned ? "desalinhadas: " . implode(", ", $desaligned)
-                                             : "todas alinhadas"];
+        $results[] = [$label, $ok, $desaligned ? "por nivelar/quebrar: " . implode(", ", $desaligned)
+                                             : "tudo nivelado"];
         if (!$ok) $failures++;
         continue;
     }

@@ -5,7 +5,9 @@
  * Valida:
  *   1. encoding (UTF-8 valido, sem BOM, sem mojibake, fim de linha consistente)
  *   2. code fences emparelhadas
- *   3. referencias cruzadas §NN e §NN.N a secoes existentes
+ *   3. referencias cruzadas §NN e §NN.N a secoes existentes (no proprio ficheiro ou,
+ *      por resolucao cruzada, em qualquer outro .md do projeto; aceita allowlist via
+ *      a diretiva <!-- md-verify:allow-refs=NN,NN --> para documentos externos)
  *   4. tabelas com numero de colunas consistente em cada bloco
  *   5. marcadores de substituicao residuais (@@XXX@@)
  *
@@ -36,16 +38,39 @@ if ($targets) {
 $files = array_values(array_unique($files));
 if (!$files) fail("nenhum ficheiro .md encontrado");
 
-// Documento-mestre: serve para resolver referencias cruzadas §NN feitas por outros
-// ficheiros (ex.: README.md -> §29.2 do documento-mestre). Sem isto, qualquer
-// referencia externa seria reportada como invalida.
-$masterSections = [];
+// Resolucao cruzada: uma referencia §NN pode apontar para uma seccao de OUTRO ficheiro
+// do projeto (ex.: duvidas.md -> levantamento-requisitos.md §3.1.2). Construimos um
+// indice global com as seccoes numeradas de todos os .md analisados.
+// Mantem-se o suporte original ao documento-mestre (especificacao_mvp.md), se existir,
+// e aceita-se uma allowlist declarada no proprio ficheiro:
+//   <!-- md-verify:allow-refs=11.5,18.12 -->   (referencias a documentos externos)
+$globalSections = [];
 $masterName = "especificacao_mvp.md";
 $masterPath = getcwd() . "/" . $masterName;
-if (is_file($masterPath)) {
-    foreach (toLines(file_get_contents($masterPath)) as $ln) {
-        if (preg_match('/^## (\d+)\./', $ln, $m)) $masterSections[(int) $m[1]] = true;
+$indexFiles = $files;
+if (is_file($masterPath) && !in_array($masterPath, $indexFiles, true)) $indexFiles[] = $masterPath;
+foreach ($indexFiles as $indexPath) {
+    $indexRaw = (string) file_get_contents($indexPath);
+    foreach (toLines($indexRaw) as $ln) {
+        if (preg_match('/^#{1,3}\s*(\d+)\./', $ln, $m)) $globalSections[(int) $m[1]] = true;
     }
+}
+$masterSections = $globalSections;   // compatibilidade com a designacao anterior
+
+/**
+ * Conta separadores de tabela: pipes NAO escapados (`\|` e conteudo).
+ * Sem isto, uma celula com `\|` contava como separador e a tabela era dada
+ * como tendo colunas inconsistentes.
+ */
+function countPipes(string $l): int
+{
+    $n = 0;
+    $len = strlen($l);
+    for ($i = 0; $i < $len; $i++) {
+        if ($l[$i] === '\\') { $i++; continue; }
+        if ($l[$i] === '|') $n++;
+    }
+    return $n;
 }
 
 $failures = 0;
@@ -84,6 +109,12 @@ foreach ($files as $path) {
     foreach ($lines as $ln) {
         if (preg_match('/^## (\d+)\./', $ln, $m)) $sections[(int) $m[1]] = true;
     }
+    // allowlist declarada no proprio ficheiro (referencias a documentos externos):
+    //   <!-- md-verify:allow-refs=11.5,18.12 -->
+    $allowed = [];
+    if (preg_match('/md-verify:allow-refs=([0-9.,\s]+)/', $raw, $am)) {
+        foreach (preg_split('/[,\s]+/', trim($am[1])) as $a) if ($a !== "") $allowed[$a] = true;
+    }
     preg_match_all('/§(\d+)(?:\.(\d+))?/', $raw, $ms, PREG_SET_ORDER);
     $badRefs = [];
     $externalRefs = 0;
@@ -93,9 +124,11 @@ foreach ($files as $path) {
         if (isset($seen[$key])) continue;
         $seen[$key] = true;
 
+        if (isset($allowed[$key])) { $externalRefs++; continue; }   // allowlist do ficheiro
+
         $num = (int) $m[1];
         if (isset($sections[$num])) continue;          // resolve no proprio ficheiro
-        if (isset($masterSections[$num])) {           // resolve no documento-mestre
+        if (isset($globalSections[$num])) {            // resolve noutro documento do projeto
             $externalRefs++;
             continue;
         }
@@ -111,7 +144,7 @@ foreach ($files as $path) {
     $flush = function () use (&$cur, &$tables, &$badTables) {
         if (count($cur) < 2) { $cur = []; return; }
         $tables++;
-        $counts = array_map(fn($l) => substr_count($l, "|"), $cur);
+        $counts = array_map(fn($l) => countPipes($l), $cur);
         if (count(array_unique($counts)) > 1) $badTables++;
         $cur = [];
     };
