@@ -3,20 +3,28 @@
 <!-- md-wrap-tables:max=220 — a tabela do ponto 3 tem 5 colunas com muitos spans de
      código longos; 217 colunas é o mínimo possível sem partir palavras ao meio. -->
 
-**Ficheiro de trabalho (não normativo)** · branch **`agent-workspace`** · **2.ª iteração** · 23/09/2026
+**Ficheiro de trabalho (não normativo)** · branch **`agent-workspace`** · **3.ª iteração** · 23/09/2026
 
 **Entrada analisada (iteração 1):** requisitos refinados do *Painel de Backoffice — Tipo de Conta: Gestor*
 (Resumo/Dashboard · Contabilidade e Gestão Financeira · Recursos Humanos · Promoções e Campanhas) +
 antecipação do perfil **Funcionário**.
 
-**Entrada analisada (iteração 2 — esta):** três requisitos de **frontend/catálogo**
+**Entrada analisada (iteração 2):** três requisitos de **frontend/catálogo**
 (§1.11): secção resumida de serviços no **Home** e no **About** · **IVA incluído** nos valores mostrados
 ao cliente · **imagens nos cards** de serviço do wizard de agendamento. Mais os **INPUTs** de
 esclarecimento (perguntas do cliente) — ver §2.7 e o ficheiro `mensagem_teams.txt`.
 
-**Cruzado com:** `especificacao_mvp.md` v1.1 (§2–§5, §11–§13, §17–§19, §22, §24–§26, §28, §29) e com o
-código/BD reais (`index.php`, `app/config/api.php`, `app/{controllers,services,repositories}`,
-`modules/main/`, `modules/backoffice/`, `DataBase_v2.sql`).
+**Entrada analisada (iteração 3 — esta):** dois **templates informativos** entregues pelo cliente:
+`mapaMentalMVP/Menu APOIO 3.docx` (estrutura de menus do software de contabilidade + 3 capturas com o
+**mapa de células** do balancete) e `mapaMentalMVP/CUSTOS RH 2.xlsx` (folha de cálculo do custo de pessoal:
+REMUNERAÇÃO / SS / IRS). São **modelos**, não dados reais — as versões concretas virão com os ficheiros de
+**balancete** a importar. Cruzamento e achados em **§1.12 (Módulo F)**; dúvidas novas em **§2.10**;
+conflitos novos em **C-25…C-30**; prova de verificação em **§4**.
+
+**Cruzado com:** `especificacao_mvp.md` v1.1 (§2–§5, §11–§13, §17–§19, §22, §24–§26, §28, §29), os
+**templates da 3.ª iteração** (`Menu APOIO 3.docx` · `CUSTOS RH 2.xlsx`) e o código/BD reais (`index.php`,
+`app/config/api.php`, `app/{controllers,services,repositories}`, `modules/main/`, `modules/backoffice/`,
+`DataBase_v2.sql` · `DataBase_v3.sql`).
 
 > ⚠️ **Âmbito:** fase **estritamente de análise e proposta de fusão**. **Nenhum requisito existente foi
 > alterado, revogado ou sobrescrito.** A fonte única de verdade continua a ser `especificacao_mvp.md`
@@ -203,6 +211,11 @@ Duas vias — decisão em **C-04**:
   futuras (§11) → a contabilidade **lê** o que está gravado, **nunca recalcula**.
 - Pagamentos continuam **simulados** (§22.1): não há gateway e `sinal_pago` permanece `0` → **Q-03**.
 - Nada de CRON: os totais são calculados **na leitura** (P6).
+
+> 📌 **3.ª iteração.** O modelo **concreto** de ativos + depreciações, financiamentos (empréstimo) e a
+> decomposição do custo de pessoal chegaram nos templates do cliente — ver **§1.12 (F.4/F.5/F.6)**. O gap
+> estrutural de **B.2** mantém-se: **nada disto existe na BD** (varrimento: não há `ativo`, `emprestimo`,
+> `despesa` nem qualquer campo de depreciação).
 
 ### 1.5 Módulo C — Recursos Humanos (Equipa)
 
@@ -438,19 +451,261 @@ categoria), porque 35 serviços sem imagem dariam cards quebrados.
 **N:1** de lookup — §18.2) → `ServiceMapper` expõe-a como `imageUrl`; o contrato de nomes passa a ter
 `imageUrl` nos cards do catálogo e do wizard (`.clinerules`: a API dita o contrato).
 
+### 1.12 Módulo F — Contabilidade de apoio ("MENU APOIO") e custo de pessoal (templates da 3.ª iteração)
+
+> **Natureza dos ficheiros.** `Menu APOIO 3.docx` e `CUSTOS RH 2.xlsx` são **templates informativos** (modelos),
+> não dados reais: o `Menu APOIO` descreve a **estrutura de menus de um software de contabilidade** e inclui
+> 3 capturas desse software; o `CUSTOS RH` é a folha de cálculo que produz os números de pessoal. A entidade
+> das capturas (**"Empresa Solução Certa", NIF 513122095**, ativos `2026.00001..4`, classe 435 *Equipamento
+> administrativo*) é **de exemplo** — confirmar em **Q-48**. As versões concretas devem chegar com os ficheiros
+> de **balancete** a integrar.
+
+#### F.1 O requisito real escondido nos dois ficheiros: o **mapa de células**
+
+O `Menu APOIO 3.docx` é, na prática, um **guião** dirigido aos alunos do CET. A instrução repete-se em quase
+todos os menus:
+
+> *"enviar o excel do balancete **e identificar aos colegas do CET as células que devem ir buscar** para os
+> Card's"* — e, no RH: *"identificar as células que devem ir buscar pra os Card's"*.
+
+Ou seja: o cliente **já tem** a informação contabilística (num software que **exporta Excel**) e o que pede é um
+**mapeamento declarativo** — *"este card lê a célula J16 do balancete"*. Isto **não** é o mesmo que *"importar um
+ficheiro para as tabelas"*:
+
+| Via                           | O que exige                                                                        | Avaliação                                 |
+| :---------------------------- | :--------------------------------------------------------------------------------- | :---------------------------------------- |
+| (a) Importar para tabelas     | Escrever N registos em tabelas novas, por período, com validação e histórico       | ⚠️ Amplo; cria **duas fontes** do mesmo   |
+|                               |                                                                                    | número (B.2 · C-20)                       |
+| (b) **Mapa de células (ler)** | Guardar **de onde vem cada número** (ficheiro + folha + célula) e ler na altura do | ✅ **Aderente ao que o cliente descreve** |
+|                               | apuramento                                                                         |                                           |
+
+A decisão entre as duas fica em **C-29**. Nota metodológica: a via (b) **não escreve** na BD de negócio — logo
+**não colide** com "não alterar a BD sem justificação" (`.clinerules` §3); só precisa de um **mapa** (ficheiro de
+configuração ou tabela de apoio, a decidir).
+
+> ⚠️ **Correção de uma afirmação da 2.ª iteração (C-19 · Q-43).** Ficou escrito que `.xlsx` *"é binário e exigiria
+> biblioteca externa"*. A verificação desta iteração **desmente** essa afirmação: **F.7**. Ver **C-30**.
+
+#### F.2 Os 6 menus que o cliente quer (estrutura do "MENU APOIO")
+
+| Menu pedido            | Card's pedidos                                            | Origem declarada pelo cliente                              |
+| :--------------------- | :-------------------------------------------------------- | :--------------------------------------------------------- |
+| **Dashboard**          | Disponibilidades · Dívidas a receber · Dívidas a pagar    | Células do **balancete** (F.3); gráficos opcionais         |
+| **Rácios**             | Ativo corrente · Ativo não corrente · Capital próprio ·   | Células do balancete; *fundo de maneio* opcional; imagem   |
+|                        | Passivo não corrente                                      | do *balanço funcional* (opcional)                          |
+| **Ativos** *(dividir)* | Lista de inventário de ativos + **Mapa de depreciações**  | **2 exports**: inventário de ativos e balancete de ativos  |
+|                        |                                                           | /depreciações (**F.5**)                                    |
+| **Financiamentos**     | Capital inicial · Capital amortizado · Capital em dívida  | **Plano de amortizações do empréstimo** (Excel)            |
+| **Análise financeira** | Rendimentos · Gastos · **RAI**                            | **DR em Excel** + *caixa* para a **taxa de IRC** e *caixa* |
+|                        |                                                           | com o **valor de IRC a pagar**                             |
+| **Recursos Humanos**   | *(dividir)* Funcionários · Impostos (**DMR** e **DRI**) · | `CUSTOS RH 2.xlsx` (**F.4**); PDF/imagem das declarações   |
+|                        | Custos de funcionários                                    |                                                            |
+
+Pedidos transversais do documento: **"podem adicionar gráficos"**, opção **mensal / trimestral / anual**, e um
+gráfico específico do **RH** — *"custos de salários divididos pela tipologia: REMUNERAÇÃO, SS, IRS"* — e outro em
+*"CUSTOS FUNCIONÁRIOS"*: *"relacionar o valor da remuneração com o valor que o funcionário recebe"*.
+
+#### F.3 O **mapa de células** já está desenhado nas capturas (imagem 1)
+
+A 3.ª imagem do `.docx` é um **manuscrito** com o mapeamento que o cliente quer ver implementado. Reprodução
+literal (as referências são **células do ficheiro do balancete**):
+
+```text
+Dashboard
+  Disponibilidades = 16 954,73      ->  "vai buscar ao balancete"
+        caixa 246  +  banco 16 708,73   =>  J13 / J25
+  Dívidas a receber  = 0 €          =>  J16
+  Dívidas a pagar    ->  fornecedores          K48
+                         retenções/impostos    K85
+                         IVA                   K86
+                         Segurança Social      K113
+                         (empresa?)            K118
+```
+
+**Verificação aritmética (feita, não assumida):** `246,00 + 16 708,73 = 16 954,73` ✔ — a Disponibilidades do card
+é **exatamente** caixa + banco. Prova em **§4**.
+
+**Quatro consequências diretas deste mapa:**
+
+1. **A "Disponibilidades" confirma a existência de caixa e banco separados** — a tesouraria **não** é um saldo
+   único. Responde parcialmente a **Q-04** (que perguntava se havia uma ou várias contas) e reforça a proposta de
+   `conta_bancaria` **ou**, no mínimo, **dois parâmetros** (caixa · banco).
+2. **"Dívidas a receber = 0 €"** é hoje **coerente** com o sistema: os recebimentos são registados à cabeça e
+   `sinal_pago` está sempre `0` (§14.1 · Q-03) — não há crédito a clientes. Serve de **caso de teste** (deve dar 0).
+3. **"Dívidas a pagar" decompõe-se por natureza**, não num total: fornecedores · impostos (retenções na fonte) ·
+   **IVA** · Segurança Social. É a **mesma decomposição** que `obrigacao_fiscal.tipo` já usa
+   (`iva` / `irc` / `seguranca_social` / `seguros`) — logo há encaixe direto com o **calendário fiscal** (§13).
+4. **O IVA aparece como dívida a pagar** e **não** como taxa de venda. Confirma o que já se tinha verificado na
+   2.ª iteração (§E.2): na BD **não existe taxa de IVA em lado nenhum**; o IVA do balancete é **IVA a pagar ao
+   Estado** — o mesmo conceito de `obrigacao_fiscal(tipo='iva')`. Reforça **C-17** e **Q-36**.
+
+#### F.4 `CUSTOS RH 2.xlsx` — a estrutura do custo de pessoal, decifrada
+
+Uma folha (`Folha1`), 9 cabeçalhos, 6 linhas de trabalhador. É a **fórmula completa** de pessoal, com o
+**subsídio de alimentação a aparecer explicitamente** — o que responde a perguntas que estavam em aberto.
+
+| Coluna | Cabeçalho           | Fórmula real no ficheiro           | Significado                                    |
+| :----- | :------------------ | :--------------------------------- | :--------------------------------------------- |
+| C      | `remuneração`       | valor base mensal (1200/1000/1250) | salário base do trabalhador                    |
+| D      | `SA`                | `129,15*3` = **387,45**            | **subsídio de alimentação** (129,15 €/mês × 3) |
+| E      | `n meses`           | 3                                  | período                                        |
+| F      | `REMUNERAÇÃO`       | `C*E`                              | remuneração bruta do período = 19 950,00 €     |
+| G      | `REMUNERAÇÃO` (2.ª) | `F+D`                              | **bruta + SA** = 22 274,70 €                   |
+| H      | `IRS`               | `F*0,08` · `F*3,6%` · `F*8,56%`    | retenção na fonte de IRS (**por escalão**)     |
+| I      | `SS 11`             | `F*0,11`                           | Segurança Social do **trabalhador**            |
+| J      | `SS 23,75`          | `F*0,2375`                         | Segurança Social da **entidade patronal**      |
+| K      | `PAGAR AO PESSOAL`  | `G9-H9-I9`                         | líquido a pagar ao pessoal = 18 859,20 €       |
+
+**As 4 linhas de rodapé (o que o cliente quer nos Card's)** — e o comentário:
+
+| Rótulo             | Valor       | De onde vem | Comentário                                                              |
+| :----------------- | :---------- | :---------- | :---------------------------------------------------------------------- |
+| `REMUNERAÇÃO`      | 22 274,70 € | `G9`        | inclui o **subsídio de alimentação** (responde a **Q-09/Q-11**)         |
+| `IRS`              | 1 221,00 €  | `H9`        | é o IRS **retido** (dívida da empresa ao Estado), não um custo próprio  |
+| `SS`               | 6 932,63 €  | `I9+J9`     | ✅ **junta trabalhador + empresa** — é a leitura contabilística correta |
+| *(K9, disponível)* | 18 859,20 € | `G9-H9-I9`  | o **líquido** a pagar ao pessoal (o cliente não lhe deu Card)           |
+
+**Leituras críticas (o que isto altera no que estava planeado):**
+
+1. **`SA = 129,15 €/mês` = 6,15 €/dia × 21 dias úteis** (verificado em §4). **Não** vem de tabela nenhuma: é dado
+   de entrada → mais um parâmetro de configuração. Cruza com **Q-11** ("que subsídios?"): agora sabe-se que **é** o
+   de alimentação; o **13.º/14.º mês continuam não modelados**.
+2. **A taxa de IRS varia *dentro* da mesma folha** (8 % · 3,6 % · 8,56 %). Prova que **a retenção de IRS não é uma
+   percentagem da empresa**: depende do salário **e** da situação pessoal do trabalhador. **Não é derivável** de
+   `salario_base` — tem de ser **introduzida** (ou lida por célula, F.1(b)) → **C-28**.
+3. **Segurança Social = 11 % + 23,75 % = 34,75 %** sobre a remuneração base. São os **primeiros números reais** de
+   SS no projeto. Cruza com **Q-09** e **Q-14** — e a folha do cliente **responde afirmativamente** à segunda
+   (o Card da SS junta trabalhador + empresa).
+4. **`K9` está correto e é subtil:** subtrai IRS e SS **do trabalhador**, mas **não** a SS patronal. Não é erro: os
+   23,75 % são **custo da empresa**, não desconto do trabalhador. Fica como **nota de implementação** para que
+   ninguém "corrija" a fórmula.
+5. **6 trabalhadores, um com escalão diferente (8,56 %) e remuneração mais alta (1250 €).** A equipa é **pequena**
+   → tratável **à mão**, sem motor fiscal. Resolve a tensão de âmbito (**Q-30**) a favor do MVP.
+6. **A SS incide só sobre `F` (remuneração), não sobre `G`** (+SA) — coerente com o regime real (o SA em cartão
+   tem limite de isenção). Simplifica o cálculo e confirma que a **base de incidência é a remuneração**.
+
+#### F.5 Ativos e depreciações — o que as capturas provam
+
+As imagens 2 e 3 são **dois ecrãs do software de contabilidade** (não o Excel do balancete): a *Lista de
+Inventário de Ativos* e o *Balancete de Ativos com Análise Contabilística*. Do que se vê:
+
+| Campo do software                          | Exemplo                              | Tradução para o projeto                                        |
+| :----------------------------------------- | :----------------------------------- | :------------------------------------------------------------- |
+| `Código de Ativo`                          | `2026.00001`                         | identificador do ativo (código, não AUTO_INCREMENT)            |
+| `Descrição`                                | Computador Desktop Lenovo            | designação                                                     |
+| `Tipo de Ativo` / `Classe de Investimento` | Equipamento administrativo / **435** | **classe contabilística** (equipamento administrativo)         |
+| `Localização`                              | Sede                                 | local (Sede / loja / carrinha — ver **Q-52**)                  |
+| `Data de Aquisição`                        | 2026-01-10                           | ponto de partida das depreciações                              |
+| `Valor de Aquisição`                       | 406,50 €                             | valor de compra (base da depreciação)                          |
+| `Vida Útil Esperada`                       | **3**                                | anos → **36 meses**                                            |
+| `Data de Início da Depreciação`            | 2026-01-10                           | pode diferir da data de aquisição                              |
+| `Deprec. Acum.` / `Valor contabilístico`   | 135,48 € / 271,02 €                  | acumulado / valor de balanço                                   |
+| `Imparidade`, `Revalorização`              | vazio                                | **fora do âmbito** (não pedido)                                |
+| `Sub-Total 435` · `Sub-Total 43` · `TOTAL` | 1 463,40 €                           | subtotais por classe e por grupo (43 = ativos fixos tangíveis) |
+
+**A fórmula da depreciação foi reproduzida — o achado mais fino desta iteração.** Os valores do ficheiro **não**
+saem de `total ÷ vida útil`:
+
+| Hipótese                                                        | Resultado    | Bate com o ficheiro?         |
+| :-------------------------------------------------------------- | :----------- | :--------------------------- |
+| (A) `Σ valores de aquisição ÷ 3 anos` = 1463,40 / 3             | 487,80 €     | ❌ não (ficheiro: 487,68 €)  |
+| (B) `floor(1463,40 / 36) × 12`                                  | 487,80 €     | ❌ não                       |
+| **(C) por ativo: `floor(valor / 36) × 12`, truncando ao cêntimo | **487,68 €** | ✅ **sim** (bate ao cêntimo) |
+| *por ativo*, e só depois somando**                              |              |                              |
+
+Em números: `406,50 / 36 = 11,2916…` → **11,29 €/mês** (truncado) → `× 12 = 135,48 €`;
+`325,20 / 36 = 9,03 €/mês` → `× 12 = 108,36 €`. Somando:
+`135,48 + 135,48 + 108,36 + 108,36 = 487,68` ✔ · `271,02 = 406,50 − 135,48` ✔ ·
+`216,84 = 325,20 − 108,36` ✔ · `975,72 = 1 463,40 − 487,68` ✔. **Prova executada em §4.**
+
+**Consequências:**
+
+1. A depreciação **tem de ser calculada por ativo, com arredondamento a cêntimos por ativo** — fazê-lo no total
+   dá **0,12 €** de diferença (e o software do cliente não o faz). É **regra de implementação**, não detalhe.
+2. **`Deprec. Acum.` ≠ depreciação do ano** no caso geral (é acumulado desde o início; aqui coincidem porque os
+   ativos são de janeiro). O Card *"Mapa de depreciações"* deve mostrar **as duas** leituras, ou o gestor lê mal o
+   valor de balanço.
+3. **O `Valor de Aquisição` não é um líquido de IVA "redondo":** `406,50 / 1,23 = 330,49 €` e
+   `325,20 / 1,23 = 264,39 €` — **não** seguem a lógica implícita dos serviços (§E.2, onde `preco_base × 1,23` é
+   sempre redondo). É **coerente** com o regime real (a empresa **deduz** o IVA dos ativos), mas é uma **segunda
+   lógica de IVA** a conviver com a primeira → **Q-53**.
+
+#### F.6 Financiamentos e "Análise financeira" — o que muda face ao planeado
+
+| Menu pedido            | Card's do cliente                                      | Estado no projeto hoje                                             |
+| :--------------------- | :----------------------------------------------------- | :----------------------------------------------------------------- |
+| **Financiamentos**     | Capital inicial · Capital amortizado · **Capital em    | ⬜ **Não existe** — nem entidade `emprestimo`, nem plano de        |
+|                        | dívida**                                               | amortizações (varrimento em §4)                                    |
+| **Análise financeira** | Rendimentos · Gastos · **RAI** + caixa de **taxa IRC** | 🟡 Rendimentos e Gastos já calculáveis (§B.1); **RAI existe        |
+|                        | + caixa do **valor de IRC**                            | como conceito** (§1.4), mas o IRC 20 % está *hardcoded* (**Q-08**) |
+
+**Três achados relevantes:**
+
+1. **O empréstimo é uma entidade própria, com plano de amortizações.** O capricho do pedido (*"capital inicial,
+   amortizado e em dívida"*) é **exatamente** o trio que sai de uma tabela de amortização francesa/linear. Logo
+   não basta uma "despesa" — precisa de ➕ `emprestimo` (+ tabela de prestações, ou prestações calculadas na
+   leitura). Isto **acrescenta uma tabela** à lista de §1.8 → **C-26**.
+2. **A caixa "taxa de IRC" confirma o que já se propunha em Q-08/C-14:** a taxa tem de ser **configurável**, não
+   constante de código. O cliente quer **poder mexer nela na UI** — logo é **parâmetro de configuração** (não
+   valor escrito em BD de negócio). Fecha a discussão "20 % fixo vs configurável" a favor de **configurável**.
+3. **A caixa "valor do IRC que a empresa vai pagar" diz que o simulador não escreve sozinho** — o gestor vê a
+   **estimativa** e decide o valor. Confirma a via recomendada em **C-05** (*"não escrever em
+   `obrigacao_fiscal`; oferecer ação explícita 'criar obrigação com este valor'"*). **Boa notícia: não é preciso
+   alterar o desenho.**
+
+**O que isto faz ao módulo B (Contabilidade):** o menu pedido tem **6 secções**, não 5 — a nº. 6 são os
+**Rácios** (Ativo corrente/não corrente, Capital próprio, Passivo não corrente, ± fundo de maneio), que **só
+existem com o balancete** e que, hoje, **nenhuma tabela do projeto alimenta**. Os Rácios são, por isso, o
+**melhor candidato** à via "mapa de células" (F.1b) e o pior candidato a "recalcular internamente".
+
+#### F.7 Prova de viabilidade técnica: ler `.xlsx` **sem instalar nada** (corrige C-19/Q-43)
+
+A 2.ª iteração concluiu que ler `.xlsx` exigiria biblioteca externa (proibida — `.clinerules` §3). **Fui verificar
+e a conclusão está errada.** Factos medidos no ambiente real:
+
+| Verificação                                         | Resultado                                                |
+| :-------------------------------------------------- | :------------------------------------------------------- |
+| Extensão `zip` do PHP disponível?                   | ❌ **não** (`ZipArchive` inexistente)                    |
+| Extensão `zlib` disponível?                         | ✅ **sim** (`gzinflate` confirmado)                      |
+| `.xlsx`/`.docx` são ZIP?                            | ✅ sim — 12 e 15 entradas, código **deflate (método 8)** |
+| Dá para as ler com `zlib` **sem** a extensão `zip`? | ✅ **SIM — 12/12 e 15/15 entradas lidas com sucesso**    |
+
+Ou seja, um **leitor mínimo de ZIP em PHP puro** (localizar o *End Of Central Directory*, percorrer o diretório
+central de cada entrada, `gzinflate` do bloco comprimido) resolve o problema **sem pacote nenhum** — e é o mesmo
+mecanismo que já foi usado, nesta análise, para **extrair o conteúdo destes dois templates**. **Prova e comando em §4.**
+
+Consequências:
+
+- **`C-19`/`Q-43` deixam de ter fundamento técnico** para excluir `.xlsx` — a limitação era **minha**, não do
+  stack. Passa a ser uma decisão de **âmbito** (importar vs mapa de células), não de **possibilidade** →
+  **C-30**.
+- Deve ser criada, **se essa via for aprovada**, uma ferramenta reutilizável (ex.: `tools/xlsx-read.php`, com o
+  mesmo padrão dos utilitários de `tools/` — dry-run por omissão, exit code 0/1) e registada em
+  `tools/README.md` e `.clinerules` §12.2. **Só depois da decisão** — não se implementa sem aprovação (§29.3).
+- ⚠️ **Limite honesto:** um leitor próprio lê o **conteúdo** (células, valores, fórmulas), **não** a *pintura*
+  visual, macros, gráficos nem formatação condicional. Para "ler as células que o cliente indicou" **chega
+  perfeitamente**; para "reproduzir o balancete como no Excel" **não**.
+
 ## 2. DÚVIDAS TÉCNICAS/NEGOCIAIS
 
 > Todas resultaram **do cruzamento** com o que já existe. Nenhuma é resolúvel por inferência do código —
 > cada uma muda números, modelos de dados ou regras.
 
-### 2.0 Estado das dúvidas da 1.ª iteração (o que esta iteração fechou)
+### 2.0 Estado das dúvidas das iterações anteriores (o que esta iteração fechou)
 
 | Dúvida                                      | Estado agora                                                                                                                                                           |
 | :------------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Q-01** — os preços são com IVA? Que taxa? | ✅ **RESOLVIDA por verificação** (§E.2): `preco_base` é **líquido**, taxa implícita **23 %** (35/35 preços × 1,23 = redondos). Falta só a decisão de **onde** gravar a |
 |                                             | taxa (**C-17**)                                                                                                                                                        |
 | **Q-01 (variante "onde está o IVA na BD")** | ✅ **RESOLVIDA**: **não existe**; só `obrigacao_fiscal.tipo='iva'` (obrigação, não taxa)                                                                               |
-| **Q-02 … Q-30**                             | ⬜ **em aberto** — seguem válidas; as que dependem de fonte de dados foram reformuladas em §2.7                                                                        |
+| **Q-09 / Q-11** — que subsídios?            | ✅ **PARCIALMENTE RESOLVIDA** (§F.4): o subsídio é o de **alimentação** (`129,15 €/mês = 6,15 × 21 dias`), tratado como **dado de entrada**. O **13.º/14.º mês**       |
+|                                             | continuam **não modelados** e continuam em aberto                                                                                                                      |
+| **Q-14** — a SS patronal entra no custo?    | ✅ **RESOLVIDA pela folha do cliente** (§F.4): o Card da SS **junta** trabalhador (11 %) **e** empresa (23,75 %) = **34,75 %**                                         |
+| **Q-04** — uma conta ou várias?             | 🟡 **PARCIALMENTE RESOLVIDA** (§F.3): o balancete mostra **caixa e banco separados** (246 € + 16 708,73 €); resta decidir se são ➕ tabela `conta_bancaria` ou         |
+|                                             | parâmetros de configuração — **C-25**                                                                                                                                  |
+| **Q-08 / C-14** — IRC 20 % fixo ou config.? | ✅ **RESOLVIDA** (§F.6): o cliente quer **editar a taxa na UI** → **configurável**, com o valor de IRC **decidido pelo gestor** (confirma **C-05**)                    |
+| **Q-43 / C-19** — `.xlsx` é tratável?       | ✅ **RESOLVIDA (e corrigida)** (§F.7): **é** tratável com `zlib` em PHP puro — **12/12** e **15/15** entradas lidas. A limitação anterior era **incorreta** → **C-30** |
+| **Q-02 … Q-30** (restantes) e **Q-31…Q-47** | ⬜ **em aberto** — seguem válidas; as novas desta iteração são **§2.10**                                                                                               |
 
 ### 2.1 Contabilidade e tesouraria
 
@@ -626,6 +881,66 @@ Uma segunda gravação seria **dupla contagem** (é a razão do **C-10**).
 | Q-47 | Os **preços de montra** (redondos) devem substituir os atuais na    | A BD tem os líquidos (4,07 €); a montra implica 5,00 € com IVA     | Decidir com **C-17**; a proposta é manter o líquido na BD e gravar o |
 |      | BD?                                                                 |                                                                    | bruto na marcação                                                    |
 
+### 2.10 Dúvidas novas — templates "MENU APOIO" e custo de pessoal (3.ª iteração)
+
+| ID   | Pergunta                                                           | O que o código/BD diz hoje                                          | Opção / decisão necessária                                           |
+| :--- | :----------------------------------------------------------------- | :------------------------------------------------------------------ | :------------------------------------------------------------------- |
+| Q-48 | A entidade das capturas (**"Empresa Solução Certa", NIF            | Nada no projeto refere esta empresa nem este NIF                    | **Confirmar que é de exemplo** (template). Se for a empresa real, os |
+|      | 513122095**, ativos                                                |                                                                     |                                                                      |
+|      | `2026.00001..4`) é a empresa real ou um exemplo do template?       |                                                                     | dados de teste e o seed passam a ter de a refletir                   |
+| Q-49 | O balancete chega em **`.xlsx` do software de contabilidade** — e  | Nada de importação existe                                           | Alimenta **C-29**/**C-30**. Saber se o export tem **abas estáveis**  |
+|      | com que                                                            |                                                                     |                                                                      |
+|      | regularidade: mensal, trimestral ou anual?                         |                                                                     | (nome e ordem fixos) ou se muda a cada emissão                       |
+| Q-50 | O **mapa de células** (`J13`, `J16`, `J25`, `K48`, `K85`, `K86`,   | Desconhecido: as células referem-se ao ficheiro do **cliente**, que | ⚠️ **Bloqueante para os Rácios** (as referências da captura estão    |
+|      | `K113`,                                                            |                                                                     |                                                                      |
+|      | `K118`) mantém-se nas próximas emissões, ou **muda de posição**?   | **ainda não temos**                                                 | **riscadas/corrigidas** à mão — sinal de instabilidade) → **C-29**   |
+| Q-51 | As **dívidas a pagar** decompõem-se em fornecedores (**K48**) ·    | `obrigacao_fiscal.tipo` ∈ {iva, irc, seguranca_social, seguros};    | Decidir se estes 5 passam a **tipos** de obrigação, ou se o card das |
+|      | retenções/                                                         |                                                                     |                                                                      |
+|      | impostos (**K85**) · IVA (**K86**) · Segurança Social (**K113**) · | **fornecedores não existe** e                                       | dívidas é lido por célula e **não** duplicado no calendário          |
+|      | (**K118**).                                                        | **retenções (IRS na fonte) não existe**                             | (**C-27**)                                                           |
+|      | O que é **K118** — é a SS da empresa ou outra coisa?               |                                                                     |                                                                      |
+| Q-52 | Os ativos têm **`Localização`** (Sede). Devem ser atribuídos a     | Não existe entidade `ativo`                                         | Define se o ativo é "da empresa" ou "de um local" — e se a           |
+|      | **loja ·                                                           |                                                                     | depreciação                                                          |
+|      | carrinha · sede**, ou é indiferente para o mapa de depreciações?   |                                                                     | entra em custos **por canal** (loja vs carrinha, como as rotas)      |
+| Q-53 | Os **valores de aquisição não são líquidos de IVA "redondos"**     | §E.2: os serviços seguem 23 % com valores redondos de montra        | Confirmar que o valor do ativo é **valor contabilístico** (sem IVA   |
+|      | (`406,50/1,23`                                                     |                                                                     |                                                                      |
+|      | `= 330,49`). O valor de aquisição é **líquido**,                   |                                                                     | dedutível) e que **não** deve ser reconciliado com a lógica dos      |
+|      | **bruto não dedutível** ou                                         |                                                                     | serviços                                                             |
+|      | **bruto com IVA dedutível**?                                       |                                                                     |                                                                      |
+| Q-54 | A **depreciação acumulada** de que o Card fala é a do **período**  | Nada calcula depreciações                                           | Define a fórmula do Card (**§F.5**: por ativo, cêntimo a cêntimo);   |
+|      | ou a                                                               |                                                                     |                                                                      |
+|      | **acumulada desde a aquisição**?                                   |                                                                     | aqui são iguais porque os ativos são de **janeiro de 2026**          |
+| Q-55 | Os **movimentos de ativos** (compras e **alienações/vendas**)      | Não existe entidade `ativo` nem movimentos                          | Se houver vendas, é preciso **documento + data de saída** e cálculo  |
+|      | entram no                                                          |                                                                     | da                                                                   |
+|      | âmbito, ou só os ativos ativos à data?                             |                                                                     | mais-valia — **âmbito novo** se sim                                  |
+| Q-56 | O **empréstimo** é **um só** (financiamento da                     | Não existe entidade `emprestimo`                                    | Define ➕ `emprestimo` + plano de amortizações (**C-26**) e se as    |
+|      | carrinha/equipamento) ou vários?                                   |                                                                     |                                                                      |
+|      | A taxa e o prazo são fixos durante a vida do contrato?             |                                                                     | prestações são calculadas na leitura ou tabela                       |
+| Q-57 | Os **Impostos** do RH devem dividir-se em **DMR** (Modelo 30) e    | `obrigacao_fiscal` tem `seguranca_social` e `irc`, mas **não**      | Mapear DMR/DRI para tipos de obrigação ou criar **subtipos**; e      |
+|      | **DRI**                                                            |                                                                     | decidir                                                              |
+|      | (Modelo 22 — IRC)? O **PDF/imagem das declarações** é anexo do     | tem DMR/DRI nem **anexos** (§13: *"sem anexos"*)                    | se o MVP aceita anexos (contra §13) ou só o comprovativo simulado    |
+|      | registo?                                                           |                                                                     |                                                                      |
+
+#### 2.10.1 Nota de implementação — fórmula do custo de pessoal (de Q-14 e §F.4)
+
+```text
+Por trabalhador (periodo = n meses, dado de entrada):
+  remuneracao_bruta_p = salario_base * n
+  SA_p                = subsidio_alimentacao_mensal * n      (129,15 EUR/mes no template)
+  IRS_p               = remuneracao_bruta_p * taxa_irs_p      (taxa POR trabalhador!)
+  SS_trab_p           = remuneracao_bruta_p * 0,11
+  SS_empresa_p        = remuneracao_bruta_p * 0,2375
+  liquido_a_pagar_p   = remuneracao_bruta_p + SA_p - IRS_p - SS_trab_p
+
+Cards:
+  REMUNERACAO = soma (remuneracao_bruta_p + SA_p)
+  IRS         = soma IRS_p
+  SS          = soma (SS_trab_p + SS_empresa_p)
+```
+
+**Regras que ficam provadas pela folha do cliente:** a **base de incidência da SS é a remuneração bruta**, *não*
+`+ SA`; a **taxa de IRS é por trabalhador** (não da empresa); e o **líquido a pagar não desconta a SS patronal**.
+
 ## 3. CONFLITOS A RESOLVER MANUALMENTE
 
 > Pontos em que os **novos requisitos colidem com regras/modelos já definidos** e que **não podem ser
@@ -725,6 +1040,25 @@ Uma segunda gravação seria **dupla contagem** (é a razão do **C-10**).
 | C-24 | Secção de serviços no Home e no About         | `about.php` é componente partilhado (padrão a replicar); não     | Introduzir gestão de conteúdo no        | Conteúdo **estático** num componente partilhado      |
 |      |                                               | existe CMS                                                       | backoffice para uma secção              | (`servicesSummary.php`), como                        |
 |      |                                               |                                                                  | institucional é âmbito novo não pedido  | `hero`/`about`/`testimonial`                         |
+| C-25 | **Disponibilidades = caixa + banco** (card do | Não existe `conta_bancaria`; a §1.4/§25.3 propunha *"saldo       | Sem contas separadas o card do          | **(1)** ➕ `conta_bancaria` (nº de contas, saldo     |
+|      | balancete — §F.3)                             | inicial"* como parâmetro de configuração                         | dashboard (F.2) não é calculável        | inicial, tipo) **ou** **(2)** manter só dois         |
+|      |                                               |                                                                  | fielmente                               | parâmetros (caixa · banco) em configuração           |
+| C-26 | **Empréstimo** com *capital inicial ·         | Não existe entidade `emprestimo` nem plano de amortizações;      | É uma **terceira** fonte de passivo, a  | ➕ `emprestimo` + prestações (tabela **ou** cálculo  |
+|      | amortizado · em dívida* (§F.6)                | `transacao_financeira` é livro de entradas (§B.2)                | par de `despesa` (C-04) e de            | na leitura). Decidir se a **prestação é despesa** do |
+|      |                                               |                                                                  | `fatura_fornecedor`                     | mês (juros + capital) e onde entra no DR             |
+| C-27 | **Dívidas a pagar decompostas por natureza**  | O calendário fiscal já tem `iva` · `seguranca_social`; **não**   | Dois sítios a dizer o mesmo número =    | **(1)** mapear estes 5 para os                       |
+|      |                                               |                                                                  |                                         | **tipos de obrigação**                               |
+|      | (fornecedores · retenções · IVA · SS · K118)  | tem `fornecedores` nem **retenções na fonte**                    | risco de **dupla contagem** (C-20)      | existentes/novos, **ou** **(2)** ler por célula e    |
+|      | — §F.3 · §F.4                                 |                                                                  |                                         | **não** replicar no calendário                       |
+| C-28 | **IRS retido na fonte** precisa de **taxa por | `funcionario` só tem `salario_base`; não há taxa de IRS em       | Se se derivar uma % única da empresa,   | **Não derivar.** Taxa introduzida por trabalhador    |
+|      | trabalhador** (§F.4: 8 % / 3,6 % / 8,56 %)    | lado nenhum                                                      | os recibos saem **errados**             | (ou lida por célula); documentar que **não é**       |
+|      |                                               |                                                                  |                                         | constante da empresa                                 |
+| C-29 | **Importar o balancete para tabelas** *vs*    | Nada existe; mas o **mapa de células já está desenhado** pelo    | Decidir isto define **todo** o módulo   | **Recomendada a via (b) — mapa de células**: cumpre  |
+|      | **ler por mapa de células** (§F.1)            | cliente (`J13`, `J16`, `K48`, `K85`, `K86`, `K113`, `K118`)      | da contabilidade e o esforço de teste   | o pedido literal, não duplica fontes (C-20) e não    |
+|      |                                               |                                                                  |                                         | escreve na BD de negócio                             |
+| C-30 | **`.xlsx` é afinal tratável** (corrige C-19)  | C-19/Q-43 diziam *"exigiria biblioteca externa"* — **errado**:   | Reabre a via da importação; se for      | Manter o **mapa de células** como via principal e,   |
+|      | — §F.7                                        | `zlib`+`gzinflate` leem o ZIP (**12/12** e **15/15** entradas)   | aceite, ➕ `tools/xlsx-read.php` (só    | **só se aprovado**, acrescentar o leitor como        |
+|      |                                               |                                                                  | depois de decisão)                      | ferramenta de `tools/` (§12 do `.clinerules`)        |
 
 ### 3.1 Checklist de decisões (para fechar esta fase)
 
@@ -746,7 +1080,7 @@ Uma segunda gravação seria **dupla contagem** (é a razão do **C-10**).
 | 14  | IRC: 20 % fixo (académico) ou configurável                                                             | C-14 | ⬜     |
 | 15  | Tesouraria antes ou depois de §24.5 (10/90 + métodos)                                                  | C-15 | ⬜     |
 | 16  | Definição da "agenda do funcionário" face à aceitação e às rotas                                       | C-16 | ⬜     |
-| 17  | Questões Q-02…Q-47 (§2) — período, saldo inicial, subsídios, tags, contador, gráficos, fontes de dados | §2   | ⬜     |
+| 17  | Questões Q-02…Q-57 (§2) — período, saldo inicial, subsídios, tags, contador, gráficos, fontes de dados | §2   | ⬜     |
 | 18  | **IVA**: onde vive a taxa + gravar líquido/taxa/IVA/bruto na marcação                                  | C-17 | ⬜     |
 | 19  | Filtro de preço do catálogo sobe para 60 € (bruto)                                                     | C-18 | ⬜     |
 | 20  | Formato de importação (**CSV**) e princípio interno-vs-externo                                         | C-19 | ⬜     |
@@ -755,9 +1089,117 @@ Uma segunda gravação seria **dupla contagem** (é a razão do **C-10**).
 | 23  | Acesso do Funcionário: matriz de perfis por página + endpoint                                          | C-22 | ⬜     |
 | 24  | Imagem do serviço: usar `servico_foto` ou justificar coluna nova (+ *fallback*)                        | C-23 | ⬜     |
 | 25  | Secção de serviços no Home/About: estática (proposta)                                                  | C-24 | ⬜     |
+| 26  | **Disponibilidades**: ➕ `conta_bancaria` ou parâmetros caixa/banco                                    | C-25 | ⬜     |
+| 27  | **Empréstimo** + plano de amortizações (e como entra no DR)                                            | C-26 | ⬜     |
+| 28  | **Dívidas a pagar por natureza**: tipos de obrigação *vs* leitura por célula                           | C-27 | ⬜     |
+| 29  | **IRS retido**: taxa por trabalhador (nunca derivada da empresa)                                       | C-28 | ⬜     |
+| 30  | **Balancete**: mapa de células (recomendado) *vs* importação para tabelas                              | C-29 | ⬜     |
+| 31  | **`.xlsx` viável sem pacotes** (corrige C-19) — incluir ou não `tools/xlsx-read.php`                   | C-30 | ⬜     |
 
 **Depois das decisões:** registar em `especificacao_mvp.md` (é o único documento normativo) como
 `RF-80+`/`RN-30+`/`D-12+` (§1.10) e só então implementar — ciclo de §29.3.
+
+---
+
+## 4. ANEXO DE EVIDÊNCIA (provas executadas nesta iteração)
+
+> Tudo o que está afirmado como "verificado" na 3.ª iteração foi **executado e lido de ficheiro**. Esta secção
+> permite repetir as provas. **Nenhum script foi deixado no projeto** — correram em `%TEMP%` e não entram em
+> branch nenhuma (a única ferramenta que se propõe criar é `tools/xlsx-read.php`, e ** só depois de decisão**).
+
+### 4.1 Extração dos templates (o `.docx` e o `.xlsx` são ZIP)
+
+O PHP deste Laragon **não** tem a extensão `zip` (`ZipArchive` inexistente) mas **tem** `zlib`/`gzinflate`. Foi
+por isso escrito um **leitor mínimo de ZIP em PHP puro**, com o qual se extraíram os dois ficheiros:
+
+```powershell
+# descompactar (via .NET, sem depender de ferramentas externas)
+Copy-Item 'mapaMentalMVP\CUSTOS RH 2.xlsx' "$env:TEMP\sb3\x\rh.zip"; Expand-Archive ... 
+Copy-Item 'mapaMentalMVP\Menu APOIO 3.docx' "$env:TEMP\sb3\x\menu.zip"; Expand-Archive ...
+# ler ZIP em PHP puro (prova F.7): End Of Central Directory + gzinflate
+& $php "$env:TEMP\sb3\zipread.php" 'mapaMentalMVP\CUSTOS RH 2.xlsx'
+& $php "$env:TEMP\sb3\zipread.php" 'mapaMentalMVP\Menu APOIO 3.docx'
+```
+
+**Resultado medido:**
+
+```text
+CUSTOS RH 2.xlsx  ->  12 entradas  ·  metodo 8 (deflate) em todas  ·  RESULTADO: 12 de 12 lidas
+Menu APOIO 3.docx ->  15 entradas  ·  12 deflate + 3 stored (imagens) ·  RESULTADO: 15 de 15 lidas
+powered-by: zlib/gzinflate   (extensao 'zip': INDISPONIVEL)
+```
+
+### 4.2 Verificação numérica (o script que provou todos os números)
+
+Um único script testou **24 identidades**; o resumo dá o **número de falhas = 0**:
+
+```powershell
+& $php "$env:TEMP\sb3\verify.php" "$env:TEMP\sb3\verify.txt"
+Select-String -Path "$env:TEMP\sb3\verify.txt" -Pattern 'FALHA' | Measure-Object | % Count
+# -> 1  (a unica ocorrencia e a PALAVRA "falham" numa nota minha, nao um teste falhado)
+Select-String -Path "$env:TEMP\sb3\verify.txt" -Pattern 'OK  ' | Measure-Object | % Count
+# -> 24
+```
+
+**Identidades provadas (amostra literal do log):**
+
+```text
+F9 REMUNERACAO (soma C*E)                    OK  obtido=19950    esperado=19950
+G9 REMUNERACAO + SA                          OK  obtido=22274.7  esperado=22274.7
+H9 IRS retido                                OK  obtido=1221     esperado=1221
+I9 SS 11%                                    OK  obtido=2194.5   esperado=2194.5
+J9 SS 23,75% (= F9*0,2375)                   OK  obtido=4738.125 esperado=4738.125
+K9 PAGAR AO PESSOAL (= G9-H9-I9)             OK  obtido=18859.2  esperado=18859.2
+card SS (linhas 12-14) = I9+J9               OK  obtido=6932.625 esperado=6932.625
+subsidio alimentacao mensal (129,15*3=387,45) OK obtido=129.15   esperado=129.15
+  -> 6,15 EUR/dia * 21 dias uteis            OK  obtido=129.15   esperado=129.15
+caixa 246 + banco 16 708,73 = 16 954,73      OK  obtido=16954.73 esperado=16954.73
+Valor de Aquisicao TOTAL                     OK  obtido=1463.4   esperado=1463.4
+  (C) Deprec. Acum. TOTAL (por ativo)        OK  obtido=487.68   esperado=487.68
+  (C) por ativo 2026.00001/2                 OK  obtido=135.48   esperado=135.48
+  (C) por ativo 2026.00003/4                 OK  obtido=108.36   esperado=108.36
+  (A) TOTAL/3 = 487.8  -> NAO bate           (hipotese refutada)
+  (B) floor(TOTAL/36)*12 = 487.8 -> NAO bate (hipotese refutada)
+vida util 3 anos = 36 meses                  OK  obtido=36       esperado=36
+Valor contabilistico TOTAL                   OK  obtido=975.72   esperado=975.72
+```
+
+### 4.3 Varrimento de inexistência (o que **não** existe na BD)
+
+```text
+pesquisa: ativo_fixo | deprecia | amortiza | emprestimo | financiamento | balancete | dmr | dri
+resultado: ZERO ocorrencias fora de admin/vendor (jQuery, irrelevante)
+pesquisa: CREATE TABLE `(ativo|emprestimo|despesa|fornecedor)
+resultado: ZERO
+```
+
+⇒ **Nenhuma** tabela do projeto suporta ativos, depreciações, empréstimos, despesas ou fornecedores. As
+conclusões de §B.2 e de §F.5/§F.6 ficam assim confirmadas por varrimento, não por suposição.
+
+### 4.4 Nota sobre os dados do template
+
+Os valores `406,50` · `325,20` · `246` · `16 708,73` · `16 954,73` · `1 463,40` são **do template de exemplo**
+("Empresa Solução Certa"), **não** da Secade Beauty. Servem para **provar a mecânica** (fórmulas, mapeamento,
+arredondamentos) — a **entidade** a confirmar em **Q-48** e os valores reais a substituir quando chegar o
+balancete da empresa (**Q-49**).
+
+> 📌 **Nota sobre versionamento.** Os dois templates estão em `mapaMentalMVP/`, que está no `.gitignore`
+> (`/mapaMentalMVP/`) e **só existe versionada na branch `agent-workspace`** (§11.5). Como são **entradas do
+> cliente**, ficam **no disco mas invisíveis para o Git** nas restantes branches. Se o gestor quiser que os
+> originais fiquem versionados, tem de decidir **onde** os colocar (fora de `mapaMentalMVP/`) — é uma decisão
+> do utilizador, não do agente (§11.2).
+
+### 4.5 Encaixe nos módulos já planeados (resumo das alterações desta iteração)
+
+| Onde (2.ª iteração)                 | O que a 3.ª iteração acrescenta                                                        |
+| :---------------------------------- | :------------------------------------------------------------------------------------- |
+| §1.4 Módulo B (Contabilidade)       | ➕ 6 secções do "MENU APOIO" — inclui **Rácios** (F.2) e **Financiamentos** (F.6)      |
+| §1.5 Módulo C (RH)                  | fórmula do custo de pessoal provada + **SA**, **SS 34,75 %** e **IRS por trabalhador** |
+| §1.8 BD: 24 tabelas → proposta      | ➕ `emprestimo` (+ prestações) e, a decidir, `conta_bancaria` (**C-25/C-26**)          |
+| §2 Q-04 / Q-08 / Q-09 / Q-11 / Q-14 | **fechadas ou parcialmente fechadas** por verificação (§2.0)                           |
+| §2 Q-43 · C-19                      | **corrigidas** — `.xlsx` é tratável (**F.7** · **C-30**)                               |
+| §3 C-24 (fim da lista)              | ➕ **C-25…C-30**                                                                       |
+| §3.1 Checklist (25 decisões)        | ➕ **26…31** → **31 decisões**                                                         |
 
 ---
 

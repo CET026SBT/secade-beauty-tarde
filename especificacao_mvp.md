@@ -1909,29 +1909,36 @@ SET FOREIGN_KEY_CHECKS = 1;
 > antigos foram **eliminados**. A tabela abaixo mantém a **rastreabilidade**: onde estava cada
 > assunto e onde está agora.
 
-| Fonte (ficheiro)                     | Papel                                                                 | Destino / Estado                                                          |
-| :----------------------------------- | :-------------------------------------------------------------------- | :------------------------------------------------------------------------ |
-| **`especificacao_mvp.md`**           | **Documento-mestre (SSOT)**                                           | ✅ **Autoridade máxima** — prevalece sobre tudo                           |
-| `README.md`                          | Instalação e uso rápido (entrada do projeto)                          | ✅ **Mantido** (aponta para este documento); conteúdo técnico em §1, §17, |
-|                                      |                                                                       | §26, §27                                                                  |
-| `mapaMentalMVP/guia_teste_manual.md` | Guia de teste manual passo-a-passo                                    | ℹ️ **Mantido** — ferramenta de apoio (não normativa)                       |
-| `mapaMentalMVP/mapa_fluxo_dados.md`  | Mapa visual do fluxo de dados ponta-a-ponta                           | ℹ️ **Mantido** — ferramenta de apoio (não normativa)                       |
-| `tools/`                             | Utilitários de manutenção dev-only (encoding, `.md`, edição segura de | ℹ️ **Mantido** — ferramentas de apoio (não normativas); guia em            |
-|                                      | ficheiros)                                                            | `tools/README.md` e §18.11; **só na branch `agent-workspace`** (§18.12)   |
-| `.clinerules`                        | Regras permanentes (stack, restrições, convenções)                    | ✅ **Mantido** — §9 aponta ao mestre; inclui §11.4/§11.5 (modelo de       |
-|                                      |                                                                       | branches); **só na branch `agent-workspace`** (§18.12)                    |
-| `rectificacoes.md`                   | Esclarecimento dos conflitos PDF ↔ `.md` (11 decisões)                | 🗑️ **Eliminado** → consolidado em **§3 (D-01 a D-11 + §3.12–3.13)**       |
-| `planeamento_geral.md`               | Planeamento v3.0/3.1 (Regras de Ouro, fases, estados)                 | 🗑️ **Eliminado** → consolidado em **§2, §4–§16, §20–§22, §28**            |
-| `relatorio_implementacao.md`         | Relatório de implementação, defeitos e testes                         | 🗑️ **Eliminado** → consolidado em **§18.9, §23, §26**                     |
-| `tecnologias_projeto.md`             | Stack, inventário de BD, arquitetura, convenções                      | 🗑️ **Eliminado** → consolidado em **§1.1, §17, §18**                      |
-| `fluxo_funcionalidades.md`           | Fluxos v1 + RN01–RN12                                                 | 🗑️ **Eliminado** → **§5** (vigentes) e **§5.2** (revogadas)               |
-| `CARRINHA_SPEC.md`                   | Especificação v1 da carrinha (+ algoritmo 100 €)                      | 🗑️ **Eliminado** → **§3.1, §9, §12**                                      |
-| `plano_desenvolvimento.md`           | Cronograma de 7 dias + checklist                                      | 🗑️ **Eliminado** → **§21** (roadmap por fases + entregáveis)              |
-| `ALTERACOES_PRIORIDADES.md`          | Histórico de prioridades (v1→v2)                                      | 🗑️ **Eliminado** → **§21**                                                |
-| `relatorio_alteracoes.md`            | Registo do replaneamento v3.0                                         | 🗑️ **Eliminado** → **§3.13**                                              |
-| `duvidas_planeamento.md`             | Dúvidas e resoluções (histórico)                                      | 🗑️ **Eliminado** → **§3, §5, §22.2** (a dúvida §5.4 foi substituída pela  |
-|                                      |                                                                       | janela de 24 h em §15)                                                    |
-| `LOGIN_PROFILE_TODO.md`              | TODO de login/perfil (fechado)                                        | 🗑️ **Eliminado** → **§6, §18.6, §19.1, §22.2**                            |
+| Fonte (ficheiro)                             | Papel                                                                 | Destino / Estado                                                          |
+| :------------------------------------------- | :-------------------------------------------------------------------- | :------------------------------------------------------------------------ |
+| **`especificacao_mvp.md`**                   | **Documento-mestre (SSOT)**                                           | ✅ **Autoridade máxima** — prevalece sobre tudo                           |
+| `README.md`                                  | Instalação e uso rápido (entrada do projeto)                          | ✅ **Mantido** (aponta para este documento); conteúdo técnico em §1, §17, |
+|                                              |                                                                       | §26, §27                                                                  |
+| `mapaMentalMVP/guia_teste_manual.md`         | Guia de teste manual passo-a-passo                                    | ℹ️ **Mantido** — ferramenta de apoio (não normativa)                       |
+| `mapaMentalMVP/mapa_fluxo_dados.md`          | Mapa visual do fluxo de dados ponta-a-ponta                           | ℹ️ **Mantido** — ferramenta de apoio (não normativa)                       |
+| `mapaMentalMVP/analise_backoffice_gestor.md` | Análise funcional de fusão do backoffice do Gestor (acumula 3         | ℹ️ **Mantido** — apoio à decisão (**não normativo**); os requisitos só     |
+|                                              | iterações de requisitos do cliente)                                   | entram neste documento **depois** de decididos (§29.3)                    |
+| `mapaMentalMVP/mensagem_teams.txt`           | Resumo do backoffice e dúvidas para o grupo/Teams                     | ℹ️ **Mantido** — documento de comunicação (não normativo)                  |
+| `mapaMentalMVP/Menu APOIO 3.docx`            | **Entrada do cliente (template):** estrutura de menus do software de  | ℹ️ **Mantido** — analisado em `analise_backoffice_gestor.md` **§1.12**     |
+|                                              | contabilidade + mapa de células do balancete (`J13`…`K118`)           | (achados §F.1–§F.3)                                                       |
+| `mapaMentalMVP/CUSTOS RH 2.xlsx`             | **Entrada do cliente (template):** custo de pessoal — REMUNERAÇÃO ·   | ℹ️ **Mantido** — analisado em `analise_backoffice_gestor.md` **§F.4**      |
+|                                              | SS (11 % + 23,75 %) · IRS (taxas por trabalhador)                     |                                                                           |
+| `tools/`                                     | Utilitários de manutenção dev-only (encoding, `.md`, edição segura de | ℹ️ **Mantido** — ferramentas de apoio (não normativas); guia em            |
+|                                              | ficheiros)                                                            | `tools/README.md` e §18.11; **só na branch `agent-workspace`** (§18.12)   |
+| `.clinerules`                                | Regras permanentes (stack, restrições, convenções)                    | ✅ **Mantido** — §9 aponta ao mestre; inclui §11.4/§11.5 (modelo de       |
+|                                              |                                                                       | branches); **só na branch `agent-workspace`** (§18.12)                    |
+| `rectificacoes.md`                           | Esclarecimento dos conflitos PDF ↔ `.md` (11 decisões)                | 🗑️ **Eliminado** → consolidado em **§3 (D-01 a D-11 + §3.12–3.13)**       |
+| `planeamento_geral.md`                       | Planeamento v3.0/3.1 (Regras de Ouro, fases, estados)                 | 🗑️ **Eliminado** → consolidado em **§2, §4–§16, §20–§22, §28**            |
+| `relatorio_implementacao.md`                 | Relatório de implementação, defeitos e testes                         | 🗑️ **Eliminado** → consolidado em **§18.9, §23, §26**                     |
+| `tecnologias_projeto.md`                     | Stack, inventário de BD, arquitetura, convenções                      | 🗑️ **Eliminado** → consolidado em **§1.1, §17, §18**                      |
+| `fluxo_funcionalidades.md`                   | Fluxos v1 + RN01–RN12                                                 | 🗑️ **Eliminado** → **§5** (vigentes) e **§5.2** (revogadas)               |
+| `CARRINHA_SPEC.md`                           | Especificação v1 da carrinha (+ algoritmo 100 €)                      | 🗑️ **Eliminado** → **§3.1, §9, §12**                                      |
+| `plano_desenvolvimento.md`                   | Cronograma de 7 dias + checklist                                      | 🗑️ **Eliminado** → **§21** (roadmap por fases + entregáveis)              |
+| `ALTERACOES_PRIORIDADES.md`                  | Histórico de prioridades (v1→v2)                                      | 🗑️ **Eliminado** → **§21**                                                |
+| `relatorio_alteracoes.md`                    | Registo do replaneamento v3.0                                         | 🗑️ **Eliminado** → **§3.13**                                              |
+| `duvidas_planeamento.md`                     | Dúvidas e resoluções (histórico)                                      | 🗑️ **Eliminado** → **§3, §5, §22.2** (a dúvida §5.4 foi substituída pela  |
+|                                              |                                                                       | janela de 24 h em §15)                                                    |
+| `LOGIN_PROFILE_TODO.md`                      | TODO de login/perfil (fechado)                                        | 🗑️ **Eliminado** → **§6, §18.6, §19.1, §22.2**                            |
 
 **Regra:** este documento é a **única fonte de requisitos e regras**. Os 11 ficheiros eliminados
 **estão recuperáveis no histórico do Git**: 5 foram **arquivados num commit de documentação**
