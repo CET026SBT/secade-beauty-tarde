@@ -66,15 +66,19 @@ $txt = [System.IO.File]::ReadAllText($path, $enc)
 
 ## 2. FERRAMENTAS
 
-| Ficheiro              | Para que serve                                                                                                                    |
-| --------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| `_common.php`         | Módulo comum: I/O UTF-8 seguro, CLI, largura de texto/emoji, deteção de encoding. **Não executar directamente**                   |
-| `encoding-check.php`  | Deteta BOM, mojibake, UTF-8 inválido, **UTF-16** e fins de linha mistos. Aceita `--ignore=` (exceções conhecidas)                 |
-| `encoding-fix.php`    | **Repara** BOM e mojibake (mapa CP1252 explícito + verificação *round-trip*) e **converte UTF-16 → UTF-8**                        |
-| `md-align-tables.php` | Alinha as tabelas markdown (largura de ecrã, preserva emoji; ignora *code fences*)                                                |
-| `md-verify.php`       | Verifica encoding, code fences, referências `§NN` (com **resolução cruzada** no documento-mestre), tabelas e marcadores residuais |
-| `file-edit.php`       | `show` / `write` / `replace` / `lines` / `grep` — leitura e escrita UTF-8 **segura**                                              |
-| `health-check.php`    | Corre tudo de uma vez e dá um resumo                                                                                              |
+| Ficheiro              | Para que serve                                                                                                                                                             |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `_common.php`         | Módulo comum: I/O UTF-8 seguro, CLI, largura de texto/emoji, deteção de encoding. **Não executar directamente**                                                            |
+| `encoding-check.php`  | Deteta BOM, mojibake, UTF-8 inválido, **UTF-16** e fins de linha mistos. Aceita `--ignore=` (exceções conhecidas)                                                          |
+| `encoding-fix.php`    | **Repara** BOM e mojibake (mapa CP1252 explícito + verificação *round-trip*) e **converte UTF-16 → UTF-8**                                                                 |
+| `md-align-tables.php` | Alinha as tabelas markdown (largura de ecrã; emoji = 2 colunas; ignora *code fences*; aceita separadores com 1+ hífenes (GFM) e pipes escapados `\|`)                      |
+| `md-verify.php`       | Verifica encoding, code fences, referências `§NN` (com **resolução cruzada** entre documentos e allowlist `<!-- md-verify:allow-refs=… -->`), tabelas (pipes escapados não |
+|                       | contam) e marcadores residuais                                                                                                                                             |
+| `file-edit.php`       | `show` / `write` / `replace` / `lines` / `grep` — leitura e escrita UTF-8 **segura**                                                                                       |
+| `ascii-align.php`     | Nivela **tabelas ASCII** desenhadas à mão dentro de *code fences*: boxes `+---+` e a coluna de referência `│` dos diagramas de fluxo (`--boxes-only` limita aos boxes)     |
+| `md-wrap-tables.php`  | **Quebra o texto das células** para que nenhuma linha de tabela markdown exceda `--max` colunas (200 por omissão; `--min` = largura mínima por coluna)                     |
+| `health-check.php`    | Corre as **5** verificações de uma vez (encoding · `md-verify` · `md-align-tables` · `ascii-align` · `md-wrap-tables`, as três últimas em *dry-run* por ficheiro) e dá um  |
+|                       | resumo com `[OK]`/`[!!]`                                                                                                                                                   |
 
 **Convenções comuns**
 - Todos assumem que são corridos **a partir da raiz do projeto**.
@@ -102,9 +106,21 @@ php tools/encoding-fix.php especificacao_mvp.md --write
 php tools/encoding-fix.php . --write
 php tools/encoding-fix.php dump_legado.sql        # deteta UTF-16 e propõe conversão
 
-# Alinhar tabelas de um .md
+# --- PIPELINE .md: quebrar linhas longas -> nivelar tabelas -> nivelar ASCII ---
+# (por esta ordem: o wrap pode voltar a desalinhar, e o align fecha a formatação)
+php tools/md-wrap-tables.php especificacao_mvp.md            # dry-run (diz quantas tabelas excedem 200 colunas)
+php tools/md-wrap-tables.php especificacao_mvp.md --write
+php tools/md-wrap-tables.php relatorio.md --write --max=160 --min=10 --verbose
+
+# Alinhar tabelas markdown de um .md
 php tools/md-align-tables.php especificacao_mvp.md
 php tools/md-align-tables.php especificacao_mvp.md --write
+
+# Nivelar tabelas ASCII / diagramas dentro de code fences
+php tools/ascii-align.php mapaMentalMVP/mapa_fluxo_dados.md
+php tools/ascii-align.php mapaMentalMVP/mapa_fluxo_dados.md --write
+php tools/ascii-align.php diagrama.md --write --boxes-only    # só boxes '+---+'
+php tools/ascii-align.php diagrama.md --verbose               # diagnostico por linha
 
 # Verificar estrutura dos .md
 php tools/md-verify.php
@@ -135,6 +151,40 @@ php tools/file-edit.php lines doc.md 12 18 novo.txt --write
 - Aceita tanto `[{...}, {...}]` como `{"comment":"...", "jobs":[...]}`.
 - Se um `search` não for encontrado, o utilitário **informa-o** (não falha em silêncio).
 - Este formato evita o *escaping* problemático do PowerShell.
+
+---
+
+### 3.1 Garantias de segurança do pipeline `.md`
+
+Os três formatadores partilham a mesma promessa: **nunca alteram texto** — só mexem em *espaços*,
+no comprimento dos separadores (`-`, `+`, `│`), nos *pipes* e nas *quebras de linha*.
+
+| Ferramenta            | O que garante antes de gravar                                                                                           |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `md-align-tables.php` | Compara o texto normalizado antes/depois e **aborta** se diferir; recusa resultado não-UTF-8                            |
+| `md-wrap-tables.php`  | Compara o texto de cada coluna antes/depois (por tabela); se diferir, **mantém a tabela intacta** e assinala o problema |
+| `ascii-align.php`     | Re-emite apenas *padding* e a largura dos traços; recusa resultado não-UTF-8; ignora o que não seja box/diagrama        |
+
+**Cuidado com o `|` dentro de células.** Num `.md`, um `|` literal dentro de uma célula de tabela tem de ser
+**escapado** (`\|`) — **mesmo dentro de inline code**. Sem escape a linha ganha colunas a mais e o
+`md-verify` assinala a tabela como inconsistente. É por isso que os três formatadores contam apenas os
+*pipes* **não escapados**.
+
+**Ordem correta de execução** (o `wrap` altera larguras, logo tem de vir antes do `align`):
+
+```text
+md-wrap-tables  →  md-align-tables  →  ascii-align  →  health-check.php
+```
+
+**Validação empírica feita sobre os `.md` reais do projeto** (além das verificações internas das
+ferramentas): multiconjunto de palavras invariante (sem perda/duplicação/palavra partida) ·
+`0` linhas de tabela acima de `--max` · `0` *code spans* partidos (paridade de `` ` `` por linha) ·
+`0` tabelas com colunas inconsistentes · segunda passagem idempotente.
+
+> ⚠️ **Efeito do `md-wrap-tables`:** uma célula longa passa a ocupar **várias linhas físicas** da
+> tabela (as continuações ficam na mesma coluna). O conteúdo é idêntico e a tabela continua válida,
+> mas deixa de haver "uma linha = um registo" no ficheiro. É a troca assumida para os `.md` deste
+> projeto caberem em ecrãs estreitos.
 
 ---
 
