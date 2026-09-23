@@ -49,9 +49,9 @@ if (!$file) {
     help("php tools/md-wrap-tables.php <ficheiro.md> [--write] [--max=200] [--min=8] [--verbose]", [
         "Dry-run por omissao; use --write para gravar.",
         "Ex.: php tools/md-wrap-tables.php duvidas.md --write",
-        "--max=N : largura maxima da LINHA da tabela, de ponta a ponta (default 200).",
+        "--max=N : largura maxima da LINHA da tabela, de ponta a ponta (default 200; aceita o pragma <!-- md-wrap-tables:max=N --> do ficheiro).",
         "--min=N : largura minima de cada coluna (default 8).",
-        "Nunca altera texto -- so espacos e quebras de linha.",
+        "Nunca altera texto -- so espacos e quebras de linha. Nunca parte palavras a meio.",
     ]);
 }
 
@@ -180,14 +180,12 @@ function shrink(array $natural, array $floor, int $max, int $minCol): array
     $fl = [];
     foreach ($natural as $c => $v) $fl[$c] = max($minCol, min($v, (int) ($floor[$c] ?? 0)));
 
-    $guard = 0;
-    while (array_sum($fl) > $budget && $guard++ < 200000) {   // pisos nao cabem: relaxar
-        $ix = -1; $mx = -1;
-        foreach ($fl as $c => $v) if ($v > $mx) { $mx = $v; $ix = $c; }
-        if ($ix < 0 || $mx <= 1) break;
-        $fl[$ix] = $mx - 1;
-    }
-
+    // Pisos NAO sao relaxados. Se nao couberem no orcamento, a tabela fica mais larga
+    // do que --max e o relatorio di-lo (seccao "acima do limite mesmo com palavras
+    // intactas"). Relaxar um piso abaixo do ATOMO mais longo da coluna obrigava o
+    // wrapText a partir uma palavra ao meio ("edi"/"taveis"); o teste de integridade
+    // de texto detetava-o e a tabela ficava por formatar -- metade formatada, metade
+    // nao, que era exatamente o defeito reportado.
     $w = $natural;
     $guard = 0;
     while (array_sum($w) > $budget && $guard++ < 200000) {
@@ -315,6 +313,22 @@ $eol   = detectEol($text);
 $lines = toLines($text);
 $n     = count($lines);
 
+// Limite declarado no proprio ficheiro (excecao documentada, no seguimento do
+// pragma `encoding-check:ignore-mojibake`): <!-- md-wrap-tables:max=NNN -->
+// Uma tabela densa (muitas colunas com spans de codigo longos) pode nao caber em
+// 200 colunas SEM partir palavras; nesse caso declara-se aqui o limite real do
+// ficheiro, que passa a ser o default (o --max da linha de comandos continua a
+// sobrepor-se). O health-check respeita-o automaticamente.
+$limitSrc = 'default';
+if ($maxArg === null) {
+    if (preg_match('/md-wrap-tables:max=(\d+)/', $text, $pm)) {
+        $maxCols  = max(40, (int) $pm[1]);
+        $limitSrc = 'pragma do ficheiro';
+    }
+} else {
+    $limitSrc = '--max';
+}
+
 $out = [];
 $inCode = false;
 $i = 0;
@@ -322,6 +336,7 @@ $tables = 0; $over = 0; $done = 0; $skipped = 0;
 $maxBefore = 0; $maxAfter = 0;
 $problems = [];
 $ignored  = [];
+$dense    = [];
 
 while ($i < $n) {
     if (preg_match('/^\s*```/', $lines[$i])) {
@@ -370,6 +385,9 @@ while ($i < $n) {
             $done++;
             $maxBefore = max($maxBefore, $info['before']);
             $maxAfter  = max($maxAfter, $info['after']);
+            if (!empty($info['exceeds'])) {
+                $dense[] = "L" . ($i + 1) . " ({$info['cols']} colunas, precisa de {$info['after']} colunas)";
+            }
             if ($verbose) {
                 out(sprintf("  L%-5d %d cols, %d linhas: largura %d -> %d",
                     $i + 1, $info['cols'], $info['rows'], $info['before'], $info['after']));
@@ -386,7 +404,7 @@ while ($i < $n) {
 
 $fits = $tables - $over - $skipped;    // $over = tabelas acima do limite (inclui as quebradas)
 out("Ficheiro        : {$file}");
-out("Limite da linha : {$maxCols} colunas (min por coluna: {$minCol})");
+out("Limite da linha : {$maxCols} colunas (min por coluna: {$minCol}) [{$limitSrc}]");
 out("Tabelas         : {$tables}  (ja cabiam: {$fits} · acima do limite: {$over} · quebradas: {$done})");
 out("Tabelas a quebrar: {$over}");            // usado pelo health-check.php (dry-run)
 out("Largura maxima  : {$maxBefore} -> {$maxAfter}");
@@ -395,6 +413,12 @@ if ($ignored) {
     out("");
     out("BLOCO(S) IGNORADO(S) — nao sao tabelas markdown:");
     foreach ($ignored as $p) out("  - {$p}");
+}
+if ($dense) {
+    out("");
+    out("TABELA(S) ACIMA DO LIMITE MESMO COM PALAVRAS INTACTAS:");
+    foreach ($dense as $d) out("  - {$d}");
+    out("  (aumentar --max nesse ficheiro, ou declarar <!-- md-wrap-tables:max=NNN --> no topo)");
 }
 if ($problems) {
     out("");

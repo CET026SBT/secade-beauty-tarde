@@ -126,7 +126,7 @@ while ($i < $n) {
                 foreach ($r as $c => $v) {
                     $left  = str_starts_with($v, ':');
                     $right = str_ends_with($v, ':');
-                    $dash  = str_repeat('-', max(3, $w[$c] - ($left ? 1 : 0) - ($right ? 1 : 0)));
+                    $dash  = str_repeat('-', max(1, $w[$c] - ($left ? 1 : 0) - ($right ? 1 : 0)));
                     $cs[]  = ($left ? ':' : '') . $dash . ($right ? ':' : '');
                 }
             } else {

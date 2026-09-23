@@ -8,6 +8,9 @@
  *   3. md-align-tables em dry-run (diz se ha tabelas markdown desalinhadas)
  *   4. ascii-align     em dry-run (diz se ha tabelas ASCII/diagramas desalinhados)
  *   5. md-wrap-tables  em dry-run (diz se ha tabelas acima da largura maxima)
+ *   6. md-widths       em dry-run (diz se ha tabelas com os pipes desalinhados
+ *                      ou linhas acima do limite de colunas — verifica a uniformidade
+ *                      que os restantes utilitarios assumem)
  *
  * Uso:
  *   php tools/health-check.php            (projeto inteiro)
@@ -47,6 +50,7 @@ $steps = [
     ["md-align-tables", "md-align-tables.php", []],
     ["ascii-align",    "ascii-align.php",    []],
     ["md-wrap-tables", "md-wrap-tables.php", []],
+    ["md-widths",      "widthcheck.php",     []],
 ];
 
 $results = [];
@@ -55,13 +59,13 @@ $failures = 0;
 foreach ($steps as [$label, $script, $args]) {
     $path = $tools . "/" . $script;
 
-    if ($script === "md-align-tables.php" || $script === "ascii-align.php" || $script === "md-wrap-tables.php") {
+    if ($script === "md-align-tables.php" || $script === "ascii-align.php" || $script === "md-wrap-tables.php" || $script === "widthcheck.php") {
         // dry-run por ficheiro .md
         $mdFiles = collectFiles(getcwd(), ["md"]);
         $desaligned = [];
         foreach ($mdFiles as $f) {
             [$code, $out] = run($php, $path, [$f], true);
-            if (preg_match('/(?:Linhas alteradas|Tabelas a quebrar):\s*(\d+)/', $out, $m) && (int) $m[1] > 0) {
+            if (preg_match('/(?:Linhas alteradas|Tabelas a quebrar|Tabelas desalinhadas):\s*(\d+)/', $out, $m) && (int) $m[1] > 0) {
                 $desaligned[] = relPath(getcwd(), $f) . " ({$m[1]})";
             }
         }
