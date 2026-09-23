@@ -297,19 +297,25 @@ visuais** e nunca gatilhos automáticos. Alertas fiscais são gerados **on-deman
 > consolidação (mapa em §29.2). As citações mantêm-se para se saber **de onde vinha** cada conflito;
 > o conteúdo original continua recuperável pelo histórico do Git (`git show <revisão>:<ficheiro>`).
 
-| #   | Conflito                                                   | Fontes                                                               | Resolução                                                                                     |
-| :--- | :--------------------------------------------------------- | :------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------- |
-| 1   | Limiar automático de **100 €**                             | `fluxo_funcionalidades.md`, `CARRINHA_SPEC.md`, etc.                 | **REVOGADO** → decisão manual + 50 € visual (§3.1)                                            |
-| 2   | "Funcionário deve cobrir todas as categorias"              | `fluxo_funcionalidades.md` (RN04 antiga)                             | **REVOGADA** → categorias = filtros (§3.2)                                                    |
-| 3   | Estado `pendente_aprovacao_viabilidade`                    | `fluxo_funcionalidades.md`, `ALTERACOES_PRIORIDADES.md`              | Substituído por `pendente_aceitacao_funcionarios` / `pendente_validacao_logistica_loja` (§20) |
-| 4   | Wizard de loja com **profissional obrigatório** e imediato | `fluxo_funcionalidades.md` (Step 4)                                  | Substituído: sem passo de profissional; estado `pendente_validacao_logistica_loja` (§8)       |
-| 5   | Wizard carrinha de **7 steps** com profissional e sinal    | `CARRINHA_SPEC.md`                                                   | Wizard com morada + OTP + estrutura por pessoa; sinal dispensado (§9)                         |
-| 6   | Cronograma de **7 dias**                                   | `plano_desenvolvimento.md`, `ALTERACOES_PRIORIDADES.md`, `README.md` | Substituído por **roadmap por fases** (§21)                                                   |
-| 7   | Backoffice na pasta raiz **`admin/`**                      | `planeamento_geral.md` §2.A/§13, `relatorio_alteracoes.md`           | Implementado em **`modules/backoffice/`**; migração = trabalho futuro (§25)                   |
-| 8   | "Repositories **sem JOINs**"                               | `.clinerules`, `tecnologias_projeto.md`                              | Revisto: **JOINs N:1 de lookup permitidos** em SELECT; escrita própria (§18.1)                |
-| 9   | Rotas decididas **sem prazo-limite**                       | `duvidas_planeamento.md` §5.4                                        | **Substituído** pela janela de 24 h (§3.11)                                                   |
-| 10  | Sinal **50%**                                              | PDF inicial                                                          | **REVOGADO** → 10 % fixo na loja (§3.5)                                                       |
-| 11  | **3 carrinhas**                                            | PDF inicial                                                          | **REVOGADO** → 1 carrinha polivalente (§3.4)                                                  |
+| #   | Conflito                                                   | Fontes                                                     | Resolução                                                        |
+| :--- | :--------------------------------------------------------- | :--------------------------------------------------------- | :--------------------------------------------------------------- |
+| 1   | Limiar automático de **100 €**                             | `fluxo_funcionalidades.md`, `CARRINHA_SPEC.md`, etc.       | **REVOGADO** → decisão manual + 50 € visual (§3.1)               |
+| 2   | "Funcionário deve cobrir todas as categorias"              | `fluxo_funcionalidades.md` (RN04 antiga)                   | **REVOGADA** → categorias = filtros (§3.2)                       |
+| 3   | Estado `pendente_aprovacao_viabilidade`                    | `fluxo_funcionalidades.md`, `ALTERACOES_PRIORIDADES.md`    | Substituído por `pendente_aceitacao_funcionarios` /              |
+|     |                                                            |                                                            | `pendente_validacao_logistica_loja` (§20)                        |
+| 4   | Wizard de loja com **profissional obrigatório** e imediato | `fluxo_funcionalidades.md` (Step 4)                        | Substituído: sem passo de profissional; estado                   |
+|     |                                                            |                                                            | `pendente_validacao_logistica_loja` (§8)                         |
+| 5   | Wizard carrinha de **7 steps** com profissional e sinal    | `CARRINHA_SPEC.md`                                         | Wizard com morada + OTP + estrutura por pessoa; sinal dispensado |
+|     |                                                            |                                                            | (§9)                                                             |
+| 6   | Cronograma de **7 dias**                                   | `plano_desenvolvimento.md`, `ALTERACOES_PRIORIDADES.md`,   | Substituído por **roadmap por fases** (§21)                      |
+|     |                                                            | `README.md`                                                |                                                                  |
+| 7   | Backoffice na pasta raiz **`admin/`**                      | `planeamento_geral.md` §2.A/§13, `relatorio_alteracoes.md` | Implementado em **`modules/backoffice/`**; migração = trabalho   |
+|     |                                                            |                                                            | futuro (§25)                                                     |
+| 8   | "Repositories **sem JOINs**"                               | `.clinerules`, `tecnologias_projeto.md`                    | Revisto: **JOINs N:1 de lookup permitidos** em SELECT; escrita   |
+|     |                                                            |                                                            | própria (§18.1)                                                  |
+| 9   | Rotas decididas **sem prazo-limite**                       | `duvidas_planeamento.md` §5.4                              | **Substituído** pela janela de 24 h (§3.11)                      |
+| 10  | Sinal **50%**                                              | PDF inicial                                                | **REVOGADO** → 10 % fixo na loja (§3.5)                          |
+| 11  | **3 carrinhas**                                            | PDF inicial                                                | **REVOGADO** → 1 carrinha polivalente (§3.4)                     |
 
 ## 4. REQUISITOS FUNCIONAIS (RF)
 
@@ -436,31 +442,33 @@ Legenda de estado: ✅ implementado · 🟡 parcial · ⬜ por implementar
 
 ### 5.2 Regras **revogadas** (não implementar)
 
-| ID (antigo)   | Regra revogada                                                                                       | Substituto                                                                     |
-| :------------ | :--------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------- |
-| ~~RN04 (v1)~~ | "Funcionário deve cobrir todas as categorias necessárias"                                            | RN-04                                                                          |
-| ~~RN05 (v1)~~ | "Rentabilidade mínima de rotas: **100 €** (aprova/cancela automaticamente)"                          | RN-05                                                                          |
-| —             | Estado `pendente_aprovacao_viabilidade`                                                              | `pendente_aceitacao_funcionarios`                                              |
-| —             | Sinal de **50 %**                                                                                    | RN-03 (10 %)                                                                   |
-| —             | **3 carrinhas** dedicadas por área                                                                   | 1 carrinha polivalente                                                         |
-| —             | Passo obrigatório de **profissional** na loja                                                        | Informativo (equipa por aceitação)                                             |
-| —             | **JOINs proibidos** em repositories                                                                  | Permitido N:1 de lookup (§18.1)                                                |
-| —             | Cronograma de **7 dias**                                                                             | Roadmap por fases (§21)                                                        |
-| —             | Decisão de rota **sem prazo-limite**                                                                 | RN-24 (janela de 24 h)                                                         |
-| —             | Estados `pendente_aprovacao_viabilidade`, `aprovada_viabilidade`, `cancelada_por_rentabilidade` (v1) | `pendente_aceitacao_funcionarios` → decisão manual → `confirmado`/`cancelado`  |
-| —             | Coluna `rota_ambulante.valor_rentabilidade_calculado` (v1)                                           | `lucro_total` + `meetsReference` (indicador visual)                            |
-| —             | Marcar `cliente.telemovel_validado_otp = 1` como efeito do OTP do agendamento (v1)                   | OTP do ambulatório é **por pedido** (sessão, uso único); não altera o cadastro |
-| —             | "CRUD de Serviços" como objetivo do MVP                                                              | Catálogo é **somente leitura** no Main; gestão de catálogo fora do âmbito      |
+| ID (antigo)   | Regra revogada                                                                                  | Substituto                                                                     |
+| :------------ | :---------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------- |
+| ~~RN04 (v1)~~ | "Funcionário deve cobrir todas as categorias necessárias"                                       | RN-04                                                                          |
+| ~~RN05 (v1)~~ | "Rentabilidade mínima de rotas: **100 €** (aprova/cancela automaticamente)"                     | RN-05                                                                          |
+| —             | Estado `pendente_aprovacao_viabilidade`                                                         | `pendente_aceitacao_funcionarios`                                              |
+| —             | Sinal de **50 %**                                                                               | RN-03 (10 %)                                                                   |
+| —             | **3 carrinhas** dedicadas por área                                                              | 1 carrinha polivalente                                                         |
+| —             | Passo obrigatório de **profissional** na loja                                                   | Informativo (equipa por aceitação)                                             |
+| —             | **JOINs proibidos** em repositories                                                             | Permitido N:1 de lookup (§18.1)                                                |
+| —             | Cronograma de **7 dias**                                                                        | Roadmap por fases (§21)                                                        |
+| —             | Decisão de rota **sem prazo-limite**                                                            | RN-24 (janela de 24 h)                                                         |
+| —             | Estados `pendente_aprovacao_viabilidade`, `aprovada_viabilidade`, `cancelada_por_rentabilidade` | `pendente_aceitacao_funcionarios` → decisão manual → `confirmado`/`cancelado`  |
+|               | (v1)                                                                                            |                                                                                |
+| —             | Coluna `rota_ambulante.valor_rentabilidade_calculado` (v1)                                      | `lucro_total` + `meetsReference` (indicador visual)                            |
+| —             | Marcar `cliente.telemovel_validado_otp = 1` como efeito do OTP do agendamento (v1)              | OTP do ambulatório é **por pedido** (sessão, uso único); não altera o cadastro |
+| —             | "CRUD de Serviços" como objetivo do MVP                                                         | Catálogo é **somente leitura** no Main; gestão de catálogo fora do âmbito      |
 
 ## 6. DOMÍNIO: UTILIZADORES E PERFIS
 
-| Entidade             | Descrição                                                                       | Campos-chave                                                                                  |
-| :------------------- | :------------------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------- |
-| **`utilizador`**     | Conta base dos 3 perfis                                                         | `nome`, `email`, `password_hash` (**bcrypt**), `telemovel`, `nif`, `tipo_perfil`              |
-| **`cliente`**        | Herança de `utilizador` (1:1)                                                   | `telemovel_validado_otp`                                                                      |
-| **`funcionario`**    | Herança de `utilizador` (1:1)                                                   | `tipo_contrato` (`efetivo_contratado` / `recibo_verde`), `salario_base`, `cc`, `ativo`        |
-| **`gestor`**         | ⚠️ **Não tem tabela própria** — vive em `utilizador` com `tipo_perfil='gestor'` | —                                                                                             |
-| **`cliente_morada`** | N moradas por cliente                                                           | `designacao`, `rua`, `numero_porta`, `andar_bloco`, `codigo_postal`, `principal`, `cidade_id` |
+| Entidade             | Descrição                                                                       | Campos-chave                                                                           |
+| :------------------- | :------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------- |
+| **`utilizador`**     | Conta base dos 3 perfis                                                         | `nome`, `email`, `password_hash` (**bcrypt**), `telemovel`, `nif`, `tipo_perfil`       |
+| **`cliente`**        | Herança de `utilizador` (1:1)                                                   | `telemovel_validado_otp`                                                               |
+| **`funcionario`**    | Herança de `utilizador` (1:1)                                                   | `tipo_contrato` (`efetivo_contratado` / `recibo_verde`), `salario_base`, `cc`, `ativo` |
+| **`gestor`**         | ⚠️ **Não tem tabela própria** — vive em `utilizador` com `tipo_perfil='gestor'` | —                                                                                      |
+| **`cliente_morada`** | N moradas por cliente                                                           | `designacao`, `rua`, `numero_porta`, `andar_bloco`, `codigo_postal`, `principal`,      |
+|                      |                                                                                 | `cidade_id`                                                                            |
 
 **Perfis em uso:** `cliente`, `funcionario`, `gestor` (enum em `utilizador.tipo_perfil`).
 
@@ -839,11 +847,13 @@ método** deve ser apresentada como se fosse real (opções visíveis, confirma�
 | `matriz_deslocacao` | 9 linhas: `distancia_km`, `tempo_estimado_minutos`, `custo_estimado_combustivel`                                |
 
 ### 17.4 Agendamento (núcleo do MVP)
-| Tabela                | Notas                                                                                                                                                                                                 |
-| :-------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `agendamento`         | Cabeçalho. `local_prestacao`, `data_hora_pretendida`, `estado_reserva`, `cliente_id`, `cliente_morada_id` (NULL na loja), `valor_total`, `valor_sinal`, `sinal_pago`, `validado_logistica_loja`, etc. |
-| `agendamento_pessoa`  | Pessoas de um agendamento de ambulatório (`nome_pessoa`, `observacoes`) — **sem registos na loja**                                                                                                    |
-| `agendamento_servico` | Um registo por (agendamento, pessoa, serviço). Contém preços, durações, estado de aceitação, funcionário atribuído, e valores calculados para recibos verdes (funcionário e plataforma)               |
+| Tabela                | Notas                                                                                                                                                                       |
+| :-------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `agendamento`         | Cabeçalho. `local_prestacao`, `data_hora_pretendida`, `estado_reserva`, `cliente_id`, `cliente_morada_id` (NULL na loja), `valor_total`, `valor_sinal`, `sinal_pago`,       |
+|                       | `validado_logistica_loja`, etc.                                                                                                                                             |
+| `agendamento_pessoa`  | Pessoas de um agendamento de ambulatório (`nome_pessoa`, `observacoes`) — **sem registos na loja**                                                                          |
+| `agendamento_servico` | Um registo por (agendamento, pessoa, serviço). Contém preços, durações, estado de aceitação, funcionário atribuído, e valores calculados para recibos verdes (funcionário e |
+|                       | plataforma)                                                                                                                                                                 |
 
 > ⚠️ **`agendamento` NÃO tem `cidade_id` nem `rota_ambulante_id`.**
 > A cidade é derivada por JOIN: `agendamento → cliente_morada → cidade`.
@@ -871,14 +881,15 @@ método** deve ser apresentada como se fosse real (opções visíveis, confirma�
 | `gorjeta`              | Registos de gorjeta — **sem UI no MVP**                                                       |
 
 ### 17.7 Ficheiros SQL e ordem de importação
-| Ficheiro                         | Função                                                                                                                                                                 |
-| :------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`DataBase_v2.sql`**            | Dump **completo** (24 tabelas + dados de referência) — **1.º**                                                                                                         |
-| **`database_seed.sql`**          | Utilizadores de teste + morada — **2.º (obrigatório)**                                                                                                                 |
-| `database_migration_v2.sql`      | Migração v1→v2 (**uso único**, só em BD v1 com dados)                                                                                                                  |
-| `database_migration_v3.sql`      | Migração v2→v3 (**idempotente**): `servico.ativo`, `cliente.morada` anulável, **drop de `funcionario_categoria`**                                                      |
-| ~~`DataBase.sql`~~               | Dump v1 (21 tabelas) — ❌ não usar                                                                                                                                     |
-| ~~`DataBase_backup_pre_v2.sql`~~ | Arquivo histórico — ❌ não usar. ⚠️ Está em **UTF-16 LE** (dump legado do HeidiSQL); reconverter para UTF-8 (`iconv -f UTF-16LE -t UTF-8`) se for necessário no futuro |
+| Ficheiro                         | Função                                                                                                                                                          |
+| :------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`DataBase_v2.sql`**            | Dump **completo** (24 tabelas + dados de referência) — **1.º**                                                                                                  |
+| **`database_seed.sql`**          | Utilizadores de teste + morada — **2.º (obrigatório)**                                                                                                          |
+| `database_migration_v2.sql`      | Migração v1→v2 (**uso único**, só em BD v1 com dados)                                                                                                           |
+| `database_migration_v3.sql`      | Migração v2→v3 (**idempotente**): `servico.ativo`, `cliente.morada` anulável, **drop de `funcionario_categoria`**                                               |
+| ~~`DataBase.sql`~~               | Dump v1 (21 tabelas) — ❌ não usar                                                                                                                              |
+| ~~`DataBase_backup_pre_v2.sql`~~ | Arquivo histórico — ❌ não usar. ⚠️ Está em **UTF-16 LE** (dump legado do HeidiSQL); reconverter para UTF-8 (`iconv -f UTF-16LE -t UTF-8`) se for necessário no |
+|                                  | futuro                                                                                                                                                          |
 
 Detalhe operacional de importação em **§27**.
 
@@ -940,12 +951,14 @@ erDiagram
 ```
 
 **Tabelas sem relação (ou relação parcial) — atenção:**
-| Tabela                                                                                          | Observação                                                                                                                                           |
-| ----------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `execucao_servico`                                                                              | **Sem FK alguma** (tabela de detalhe por serviço, ainda sem consumidor)                                                                              |
-| `cidade`, `base_partida`, `categoria_profissional`, `servico`, `utilizador`, `obrigacao_fiscal` | São **referenciadas** mas não referenciam ninguém (tabelas "pai")                                                                                    |
-| `agendamento`                                                                                   | ⚠️ **não** tem FK para `cidade` nem para `rota_ambulante` — a cidade é derivada via `cliente_morada` e a ligação à rota é por **(data, cidade)**     |
-| `rota_ambulante`                                                                                | A cidade do grupo entra por `cidade_id`, mas os agendamentos que constituem a rota **não** são gravados como filhos (a rota é um agregado calculado) |
+| Tabela                                                                                          | Observação                                                                                     |
+| ----------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `execucao_servico`                                                                              | **Sem FK alguma** (tabela de detalhe por serviço, ainda sem consumidor)                        |
+| `cidade`, `base_partida`, `categoria_profissional`, `servico`, `utilizador`, `obrigacao_fiscal` | São **referenciadas** mas não referenciam ninguém (tabelas "pai")                              |
+| `agendamento`                                                                                   | ⚠️ **não** tem FK para `cidade` nem para `rota_ambulante` — a cidade é derivada via            |
+|                                                                                                 | `cliente_morada` e a ligação à rota é por **(data, cidade)**                                   |
+| `rota_ambulante`                                                                                | A cidade do grupo entra por `cidade_id`, mas os agendamentos que constituem a rota **não** são |
+|                                                                                                 | gravados como filhos (a rota é um agregado calculado)                                          |
 
 ## 18. ARQUITETURA E CONVENÇÕES
 
@@ -1116,12 +1129,14 @@ View (PHP) → JS componente → api.js → api.php (routing) → Controller →
 
 **Estrutura de branches:**
 
-| Branch                | Papel                           | Regra de integração                                                                                                                             |
-| --------------------- | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`main`**            | Qualidade / código final        | Só recebe **merge/PR a partir de `dev`** — **nunca** de outras branches. O código aqui tem de estar **100% funcional de ponta a ponta**         |
-| **`dev`**             | Desenvolvimento                 | Recebe o trabalho **terminado** das branches de contexto/tarefa (merge ou PR). Reflete o **estado de desenvolvimento mais avançado** do projeto |
-| **`agent-workspace`** | Ficheiros de trabalho do agente | Documento-mestre, `mapaMentalMVP/`, `tools/` e `.clinerules`. **Nunca é integrada** em `dev` nem em `main` (§18.12)                             |
-| **Restantes**         | Branches de contexto / tarefa   | Branches de desenvolvimento por âmbito (contexto, funcionalidade, correção) que servem de **base para definir convenções** a implementar depois |
+| Branch                | Papel                           | Regra de integração                                                                                                                      |
+| --------------------- | ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| **`main`**            | Qualidade / código final        | Só recebe **merge/PR a partir de `dev`** — **nunca** de outras branches. O código aqui tem de estar **100% funcional de ponta a ponta**  |
+| **`dev`**             | Desenvolvimento                 | Recebe o trabalho **terminado** das branches de contexto/tarefa (merge ou PR). Reflete o **estado de desenvolvimento mais avançado** do  |
+|                       |                                 | projeto                                                                                                                                  |
+| **`agent-workspace`** | Ficheiros de trabalho do agente | Documento-mestre, `mapaMentalMVP/`, `tools/` e `.clinerules`. **Nunca é integrada** em `dev` nem em `main` (§18.12)                      |
+| **Restantes**         | Branches de contexto / tarefa   | Branches de desenvolvimento por âmbito (contexto, funcionalidade, correção) que servem de **base para definir convenções** a implementar |
+|                       |                                 | depois                                                                                                                                   |
 
 ```
   branch de contexto  ──merge/PR──▶  dev  ──merge/PR──▶  main
@@ -1191,15 +1206,17 @@ fix: corrigir disponibilidade de slots ao alterar servicos
 (`New-Object System.Text.UTF8Encoding($false)` + `[System.IO.File]::ReadAllText/WriteAllText`) ·
 editor do IDE. Sempre **UTF-8 sem BOM**, preservando o fim de linha (**CRLF** neste projeto).
 
-| Ferramenta                  | Função                                                                                                            |
-| --------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `tools/health-check.php`    | Corre todas as verificações (encoding + `.md` + alinhamento) e apresenta um resumo                                |
-| `tools/encoding-check.php`  | Deteta BOM, mojibake, UTF-8 inválido e fins de linha mistos                                                       |
-| `tools/encoding-fix.php`    | Repara BOM/mojibake (*mapa CP1252* + verificação *round-trip*) e converte **UTF-16 → UTF-8**                      |
-| `tools/md-align-tables.php` | Alinha tabelas markdown (largura de ecrã; emoji = 2 colunas; ignora *code fences*)                                |
-| `tools/md-verify.php`       | Valida encoding, *code fences*, referências `§NN` (**com resolução cruzada** no §29.2) e consistência das tabelas |
-| `tools/file-edit.php`       | `show` / `write` / `replace` / `lines` / `grep` em UTF-8 seguro                                                   |
-| `tools/_common.php`         | Módulo comum (**não executar diretamente**)                                                                       |
+| Ferramenta                  | Função                                                                                                                                                       |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `tools/health-check.php`    | Corre as **5** verificações (encoding · `md-verify` · `md-align-tables` · `ascii-align` · `md-wrap-tables`, em *dry-run* por ficheiro) e apresenta um resumo |
+| `tools/encoding-check.php`  | Deteta BOM, mojibake, UTF-8 inválido e fins de linha mistos                                                                                                  |
+| `tools/encoding-fix.php`    | Repara BOM/mojibake (*mapa CP1252* + verificação *round-trip*) e converte **UTF-16 → UTF-8**                                                                 |
+| `tools/md-align-tables.php` | Alinha tabelas markdown (largura de ecrã; emoji = 2 colunas; ignora *code fences*)                                                                           |
+| `tools/md-verify.php`       | Valida encoding, *code fences*, referências `§NN` (**com resolução cruzada** no §29.2) e consistência das tabelas                                            |
+| `tools/ascii-align.php`     | Nivela **tabelas ASCII** dentro de *code fences* (boxes `+---+` e a coluna de referência `│` dos diagramas de fluxo; `--boxes-only` limita aos boxes)        |
+| `tools/md-wrap-tables.php`  | **Quebra o texto das células** para nenhuma linha de tabela markdown exceder `--max` colunas (200 por omissão); nunca altera texto                           |
+| `tools/file-edit.php`       | `show` / `write` / `replace` / `lines` / `grep` em UTF-8 seguro                                                                                              |
+| `tools/_common.php`         | Módulo comum (**não executar diretamente**)                                                                                                                  |
 
 **Convenções:** *dry-run* por omissão (gravar só com `--write`) · *exit* `0` = ok, `1` = problema ·
 execução a partir da raiz do projeto · recusam gravar UTF-8 inválido · o alinhador **aborta** se
@@ -1349,18 +1366,19 @@ Resposta de sucesso: `{"success":true, …chaves na raiz}`; erro: `{"success":fa
 ```
 
 ### 20.4 Transições permitidas
-| Origem                              | Ação                             | Destino                             | Quem        | Guarda (código / regras)                                                  |
-| :---------------------------------- | :------------------------------- | :---------------------------------- | :---------- | :------------------------------------------------------------------------ |
-| —                                   | criar (loja)                     | `pendente_validacao_logistica_loja` | cliente     | `validateBookingDate` + `validateStoreOpeningHours` + `countByDateWindow` |
-| —                                   | criar (carrinha)                 | `pendente_aceitacao_funcionarios`   | cliente     | + `OTPService::verify` + morada + pessoas                                 |
-| `pendente_aceitacao_funcionarios`   | aceitar todos                    | `totalmente_aceite_funcionarios`    | funcionário | `consolidateIfComplete` + `assertNoWindowConflict`                        |
-| `totalmente_aceite_funcionarios`    | aprovar rota                     | `confirmado`                        | **gestor**  | `decideRoute` — **manual**                                                |
-| `totalmente_aceite_funcionarios`    | recusar rota                     | **`cancelado`**                     | **gestor**  | `decideRoute` — **manual**                                                |
-| ≠ {cancelado, executado, concluido} | cancelar                         | `cancelado`                         | gestor      | `cancelBooking` — erro 409 se já estiver num estado terminal              |
-| —                                   | **cancelar**                     | `cancelado`                         | **cliente** | **⬜ a implementar** (§24.6)                                              |
-| —                                   | **auto-cancelar (24h sem rota)** | `cancelado`                         | sistema     | **⬜ a implementar** (§24.6)                                              |
-| `confirmado`                        | registar execução                | `executado`                         | gestor      | `ExecutionService::registerExecution` (idempotente)                       |
-| `executado`                         | avaliar                          | (sem mudança)                       | cliente     | Limite de 1 avaliação por agendamento                                     |
+| Origem                              | Ação                             | Destino                             | Quem        | Guarda (código / regras)                                     |
+| :---------------------------------- | :------------------------------- | :---------------------------------- | :---------- | :----------------------------------------------------------- |
+| —                                   | criar (loja)                     | `pendente_validacao_logistica_loja` | cliente     | `validateBookingDate` + `validateStoreOpeningHours` +        |
+|                                     |                                  |                                     |             | `countByDateWindow`                                          |
+| —                                   | criar (carrinha)                 | `pendente_aceitacao_funcionarios`   | cliente     | + `OTPService::verify` + morada + pessoas                    |
+| `pendente_aceitacao_funcionarios`   | aceitar todos                    | `totalmente_aceite_funcionarios`    | funcionário | `consolidateIfComplete` + `assertNoWindowConflict`           |
+| `totalmente_aceite_funcionarios`    | aprovar rota                     | `confirmado`                        | **gestor**  | `decideRoute` — **manual**                                   |
+| `totalmente_aceite_funcionarios`    | recusar rota                     | **`cancelado`**                     | **gestor**  | `decideRoute` — **manual**                                   |
+| ≠ {cancelado, executado, concluido} | cancelar                         | `cancelado`                         | gestor      | `cancelBooking` — erro 409 se já estiver num estado terminal |
+| —                                   | **cancelar**                     | `cancelado`                         | **cliente** | **⬜ a implementar** (§24.6)                                 |
+| —                                   | **auto-cancelar (24h sem rota)** | `cancelado`                         | sistema     | **⬜ a implementar** (§24.6)                                 |
+| `confirmado`                        | registar execução                | `executado`                         | gestor      | `ExecutionService::registerExecution` (idempotente)          |
+| `executado`                         | avaliar                          | (sem mudança)                       | cliente     | Limite de 1 avaliação por agendamento                        |
 
 ### 20.5 `agendamento_servico.estado_aceitacao`
 ```
@@ -1395,14 +1413,16 @@ LOJA:  criado diretamente como (( aceite )) — aceitação automática
 > O **cronograma de 7 dias** dos documentos iniciais está **revogado** — substituído por este
 > roadmap por fases, alinhado com as regras finais.
 
-| Fase                                | Âmbito                                                                                                                                                                                      | Estado                 |
-| :---------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :--------------------- |
-| **1 — Catálogo e base**             | Catálogo de serviços (filtros, modal), categorias, autenticação, registo, perfil/moradas, preloader, validators                                                                             | ✅ CONCLUÍDA           |
-| **2 — Agendamentos**                | Wizard **Loja** (5 passos) + Wizard **Carrinha** (7 passos + OTP), disponibilidade, conflitos, página de sucesso                                                                            | ✅ CONCLUÍDA           |
-| **3 — Backoffice do Funcionário**   | Aceitação individual, desfazer/trocar, consolidação, bloqueio de janela, **Simulador de Recibos Verdes**                                                                                    | ✅ CONCLUÍDA           |
-| **4 — Backoffice do Gestor**        | Agendamentos (filtros, detalhe por serviço/funcionário, execução, cancelamento), **Rotas com decisão manual** (+50 € visual), **Calendário Fiscal** + alertas, config. de recibos verdes    | ✅ CONCLUÍDA           |
-| **5 — Integração e testes**         | Fluxos end-to-end (cliente → funcionário → gestor), responsividade, notificações simuladas, **289 verificações**                                                                            | ✅ CONCLUÍDA           |
-| **6 — Requisitos adicionais (§24)** | Página de detalhes + carousel; re-avaliação dinâmica de slots; 24 h + lembrete + cancelamento pelo cliente; multicidades + alerta de custos; config. do sinal; 10/90 + métodos de pagamento | ⬜ **A INICIAR** (§24) |
+| Fase                                | Âmbito                                                                                                                               | Estado                 |
+| :---------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------- | :--------------------- |
+| **1 — Catálogo e base**             | Catálogo de serviços (filtros, modal), categorias, autenticação, registo, perfil/moradas, preloader, validators                      | ✅ CONCLUÍDA           |
+| **2 — Agendamentos**                | Wizard **Loja** (5 passos) + Wizard **Carrinha** (7 passos + OTP), disponibilidade, conflitos, página de sucesso                     | ✅ CONCLUÍDA           |
+| **3 — Backoffice do Funcionário**   | Aceitação individual, desfazer/trocar, consolidação, bloqueio de janela, **Simulador de Recibos Verdes**                             | ✅ CONCLUÍDA           |
+| **4 — Backoffice do Gestor**        | Agendamentos (filtros, detalhe por serviço/funcionário, execução, cancelamento), **Rotas com decisão manual** (+50 € visual),        | ✅ CONCLUÍDA           |
+|                                     | **Calendário Fiscal** + alertas, config. de recibos verdes                                                                           |                        |
+| **5 — Integração e testes**         | Fluxos end-to-end (cliente → funcionário → gestor), responsividade, notificações simuladas, **289 verificações**                     | ✅ CONCLUÍDA           |
+| **6 — Requisitos adicionais (§24)** | Página de detalhes + carousel; re-avaliação dinâmica de slots; 24 h + lembrete + cancelamento pelo cliente; multicidades + alerta de | ⬜ **A INICIAR** (§24) |
+|                                     | custos; config. do sinal; 10/90 + métodos de pagamento                                                                               |                        |
 
 ### 21.1 Entregáveis
 
@@ -1456,26 +1476,35 @@ pasta raiz `admin/` · **motorista dedicado / logística de condução** (explic
 Registo do que foi corrigido, para memória futura e para evitar reintrodução.
 
 ### 23.1 Defeitos críticos (impediam o MVP)
-| #   | Ficheiro                    | Defeito                                                                                   | Impacto                                                           | Correção                                 |
-| --- | --------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------- | ---------------------------------------- |
-| 1   | `OTPService`                | `validate(int,string):bool` incompatível com `BaseService::validate(array,callable):void` | **Fatal error em todos os endpoints de agendamento**              | Renomeado para `verify()`                |
-| 2   | `BookingService`            | `validateStoreOpeningHours()` comparava *epoch* com segundos-desde-meia-noite             | **100 % das marcações de loja rejeitadas**                        | Cálculo por *offset* face à meia-noite   |
-| 3   | `Session`                   | `createLoginSession()` lia chaves da BD mas recebia chaves do mapper                      | Sessão sem perfil; **JSON do login corrompido**; 403 generalizado | Leitura das chaves mapeadas + *fallback* |
-| 4   | `connection.php`            | Espaço antes de `<?php`                                                                   | `session_start()`/`header()` falhavam                             | Espaço removido                          |
-| 5   | `CustomerAddressRepository` | `SELECT cm.obs_localizacao` (coluna inexistente)                                          | Erro SQL nas moradas                                              | Coluna removida da query                 |
-| 6   | `CustomerService`           | Lia `phoneVerified` (o mapper devolve `isMobileValidated`)                                | Campo sempre `false`                                              | Chave corrigida                          |
-| 7   | `BookingService`            | `resolveServicesForPeople()` deduplicava serviços **entre pessoas**                       | Valor/duração **subestimados**                                    | Contabilização por pessoa (RN-13)        |
-| 8   | `BookingRepository`         | `countByDateWindow()` ignorava `pendente_validacao_logistica_loja`                        | **Duplo agendamento** no mesmo slot de loja                       | Estado incluído na verificação           |
-| 9   | `ServiceRepository` / BD    | `s.ativo` usado no código mas **ausente do schema**                                       | Catálogo quebrava                                                 | Coluna adicionada (migração v3)          |
-| 10  | BD `cliente.morada`         | `NOT NULL` (legado v1) vs. `CustomerRepository::create()` que não a envia                 | **Registo de clientes falhava**                                   | Coluna tornada opcional                  |
+| #   | Ficheiro                    | Defeito                                                   | Impacto                                              | Correção                                 |
+| --- | --------------------------- | --------------------------------------------------------- | ---------------------------------------------------- | ---------------------------------------- |
+| 1   | `OTPService`                | `validate(int,string):bool` incompatível com              | **Fatal error em todos os endpoints de agendamento** | Renomeado para `verify()`                |
+|     |                             | `BaseService::validate(array,callable):void`              |                                                      |                                          |
+| 2   | `BookingService`            | `validateStoreOpeningHours()` comparava *epoch* com       | **100 % das marcações de loja rejeitadas**           | Cálculo por *offset* face à meia-noite   |
+|     |                             | segundos-desde-meia-noite                                 |                                                      |                                          |
+| 3   | `Session`                   | `createLoginSession()` lia chaves da BD mas recebia       | Sessão sem perfil; **JSON do login corrompido**; 403 | Leitura das chaves mapeadas + *fallback* |
+|     |                             | chaves do mapper                                          | generalizado                                         |                                          |
+| 4   | `connection.php`            | Espaço antes de `<?php`                                   | `session_start()`/`header()` falhavam                | Espaço removido                          |
+| 5   | `CustomerAddressRepository` | `SELECT cm.obs_localizacao` (coluna inexistente)          | Erro SQL nas moradas                                 | Coluna removida da query                 |
+| 6   | `CustomerService`           | Lia `phoneVerified` (o mapper devolve                     | Campo sempre `false`                                 | Chave corrigida                          |
+|     |                             | `isMobileValidated`)                                      |                                                      |                                          |
+| 7   | `BookingService`            | `resolveServicesForPeople()` deduplicava serviços         | Valor/duração **subestimados**                       | Contabilização por pessoa (RN-13)        |
+|     |                             | **entre pessoas**                                         |                                                      |                                          |
+| 8   | `BookingRepository`         | `countByDateWindow()` ignorava                            | **Duplo agendamento** no mesmo slot de loja          | Estado incluído na verificação           |
+|     |                             | `pendente_validacao_logistica_loja`                       |                                                      |                                          |
+| 9   | `ServiceRepository` / BD    | `s.ativo` usado no código mas **ausente do schema**       | Catálogo quebrava                                    | Coluna adicionada (migração v3)          |
+| 10  | BD `cliente.morada`         | `NOT NULL` (legado v1) vs. `CustomerRepository::create()` | **Registo de clientes falhava**                      | Coluna tornada opcional                  |
+|     |                             | que não a envia                                           |                                                      |                                          |
 
 ### 23.2 Defeitos do registo de clientes
-| #   | Defeito                                                                                | Impacto                                          | Correção                                                 |
-| --- | -------------------------------------------------------------------------------------- | ------------------------------------------------ | -------------------------------------------------------- |
-| 1   | `UserService` invertia a unicidade do email (`Validator::custom()` falha com `true`)   | **Rejeitava emails novos**; aceitaria duplicados | `fn($e) => !empty($repo->find(null, $e))`                |
-| 2   | Formulário enviava `termosCondicoes`; API valida `termsAccepted`                       | Registo falhava sempre                           | Campo renomeado                                          |
-| 3   | Chaves divergentes (`nome`/`telemovel`/`morada`/…) e **faltavam** `zipCode`/`cityName` | Registo falhava sempre                           | Formulário + validators + autocomplete alinhados (§18.5) |
-| 4   | `UserRepository::create` lia `nome`/`telemovel`/`tipoPerfil`                           | Perfil caía sempre em `cliente`                  | Chaves unificadas                                        |
+| #   | Defeito                                                                      | Impacto                                          | Correção                                                 |
+| --- | ---------------------------------------------------------------------------- | ------------------------------------------------ | -------------------------------------------------------- |
+| 1   | `UserService` invertia a unicidade do email (`Validator::custom()` falha com | **Rejeitava emails novos**; aceitaria duplicados | `fn($e) => !empty($repo->find(null, $e))`                |
+|     | `true`)                                                                      |                                                  |                                                          |
+| 2   | Formulário enviava `termosCondicoes`; API valida `termsAccepted`             | Registo falhava sempre                           | Campo renomeado                                          |
+| 3   | Chaves divergentes (`nome`/`telemovel`/`morada`/…) e **faltavam**            | Registo falhava sempre                           | Formulário + validators + autocomplete alinhados (§18.5) |
+|     | `zipCode`/`cityName`                                                         |                                                  |                                                          |
+| 4   | `UserRepository::create` lia `nome`/`telemovel`/`tipoPerfil`                 | Perfil caía sempre em `cliente`                  | Chaves unificadas                                        |
 
 **Colaterais:** `customerValidators(supportedCities)` (array vs. objeto) → lista de cidades vazia ·
 `updateCitiesTooltip()` (*join* sobre objetos + tooltip sem elemento) → erro de consola ·
@@ -1691,12 +1720,13 @@ menus paralelos).
 
 ### 26.1 Suites automatizadas — **289 verificações, todas a passar**
 
-| Suíte de Testes             | Verificações | Âmbito Coberto Principal                                                                                                                                                             |
-| :-------------------------- | :----------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `tests/functional_test.php` | **105**      | Camadas Service/Repository: catálogo, disponibilidade, conflitos, OTP, decisão manual de rotas, backoffice, perfil/moradas, Fase 3/4, transações de registo e integridade relacional |
-| `tests/http_test.php`       | **119**      | Stack real (Apache + roteamento + sessões): autenticação de perfis, APIs REST, códigos de erro, fluxo end-to-end de carrinha e fluxos de registo/login                               |
-| `tests/asset_test.php`      | **65**       | Validação de assets (HTTP 200), injeção de scripts por página e contrato de nomes do formulário de registo                                                                           |
-| `tests/js_syntax_check.php` | 15 ficheiros | Verificação estrutural e de sintaxe de todos os ficheiros JavaScript do ecossistema                                                                                                  |
+| Suíte de Testes             | Verificações | Âmbito Coberto Principal                                                                                                                               |
+| :-------------------------- | :----------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `tests/functional_test.php` | **105**      | Camadas Service/Repository: catálogo, disponibilidade, conflitos, OTP, decisão manual de rotas, backoffice, perfil/moradas, Fase 3/4, transações de    |
+|                             |              | registo e integridade relacional                                                                                                                       |
+| `tests/http_test.php`       | **119**      | Stack real (Apache + roteamento + sessões): autenticação de perfis, APIs REST, códigos de erro, fluxo end-to-end de carrinha e fluxos de registo/login |
+| `tests/asset_test.php`      | **65**       | Validação de assets (HTTP 200), injeção de scripts por página e contrato de nomes do formulário de registo                                             |
+| `tests/js_syntax_check.php` | 15 ficheiros | Verificação estrutural e de sintaxe de todos os ficheiros JavaScript do ecossistema                                                                    |
 
 **Execução:**
 ```powershell
@@ -1875,25 +1905,29 @@ SET FOREIGN_KEY_CHECKS = 1;
 > antigos foram **eliminados**. A tabela abaixo mantém a **rastreabilidade**: onde estava cada
 > assunto e onde está agora.
 
-| Fonte (ficheiro)                     | Papel                                                                            | Destino / Estado                                                                                                                       |
-| :----------------------------------- | :------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------- |
-| **`especificacao_mvp.md`**           | **Documento-mestre (SSOT)**                                                      | ✅ **Autoridade máxima** — prevalece sobre tudo                                                                                        |
-| `README.md`                          | Instalação e uso rápido (entrada do projeto)                                     | ✅ **Mantido** (aponta para este documento); conteúdo técnico em §1, §17, §26, §27                                                     |
-| `mapaMentalMVP/guia_teste_manual.md` | Guia de teste manual passo-a-passo                                               | ℹ️ **Mantido** — ferramenta de apoio (não normativa)                                                                                    |
-| `mapaMentalMVP/mapa_fluxo_dados.md`  | Mapa visual do fluxo de dados ponta-a-ponta                                      | ℹ️ **Mantido** — ferramenta de apoio (não normativa)                                                                                    |
-| `tools/`                             | Utilitários de manutenção dev-only (encoding, `.md`, edição segura de ficheiros) | ℹ️ **Mantido** — ferramentas de apoio (não normativas); guia em `tools/README.md` e §18.11; **só na branch `agent-workspace`** (§18.12) |
-| `.clinerules`                        | Regras permanentes (stack, restrições, convenções)                               | ✅ **Mantido** — §9 aponta ao mestre; inclui §11.4/§11.5 (modelo de branches); **só na branch `agent-workspace`** (§18.12)             |
-| `rectificacoes.md`                   | Esclarecimento dos conflitos PDF ↔ `.md` (11 decisões)                           | 🗑️ **Eliminado** → consolidado em **§3 (D-01 a D-11 + §3.12–3.13)**                                                                    |
-| `planeamento_geral.md`               | Planeamento v3.0/3.1 (Regras de Ouro, fases, estados)                            | 🗑️ **Eliminado** → consolidado em **§2, §4–§16, §20–§22, §28**                                                                         |
-| `relatorio_implementacao.md`         | Relatório de implementação, defeitos e testes                                    | 🗑️ **Eliminado** → consolidado em **§18.9, §23, §26**                                                                                  |
-| `tecnologias_projeto.md`             | Stack, inventário de BD, arquitetura, convenções                                 | 🗑️ **Eliminado** → consolidado em **§1.1, §17, §18**                                                                                   |
-| `fluxo_funcionalidades.md`           | Fluxos v1 + RN01–RN12                                                            | 🗑️ **Eliminado** → **§5** (vigentes) e **§5.2** (revogadas)                                                                            |
-| `CARRINHA_SPEC.md`                   | Especificação v1 da carrinha (+ algoritmo 100 €)                                 | 🗑️ **Eliminado** → **§3.1, §9, §12**                                                                                                   |
-| `plano_desenvolvimento.md`           | Cronograma de 7 dias + checklist                                                 | 🗑️ **Eliminado** → **§21** (roadmap por fases + entregáveis)                                                                           |
-| `ALTERACOES_PRIORIDADES.md`          | Histórico de prioridades (v1→v2)                                                 | 🗑️ **Eliminado** → **§21**                                                                                                             |
-| `relatorio_alteracoes.md`            | Registo do replaneamento v3.0                                                    | 🗑️ **Eliminado** → **§3.13**                                                                                                           |
-| `duvidas_planeamento.md`             | Dúvidas e resoluções (histórico)                                                 | 🗑️ **Eliminado** → **§3, §5, §22.2** (a dúvida §5.4 foi substituída pela janela de 24 h em §15)                                        |
-| `LOGIN_PROFILE_TODO.md`              | TODO de login/perfil (fechado)                                                   | 🗑️ **Eliminado** → **§6, §18.6, §19.1, §22.2**                                                                                         |
+| Fonte (ficheiro)                     | Papel                                                                 | Destino / Estado                                                          |
+| :----------------------------------- | :-------------------------------------------------------------------- | :------------------------------------------------------------------------ |
+| **`especificacao_mvp.md`**           | **Documento-mestre (SSOT)**                                           | ✅ **Autoridade máxima** — prevalece sobre tudo                           |
+| `README.md`                          | Instalação e uso rápido (entrada do projeto)                          | ✅ **Mantido** (aponta para este documento); conteúdo técnico em §1, §17, |
+|                                      |                                                                       | §26, §27                                                                  |
+| `mapaMentalMVP/guia_teste_manual.md` | Guia de teste manual passo-a-passo                                    | ℹ️ **Mantido** — ferramenta de apoio (não normativa)                       |
+| `mapaMentalMVP/mapa_fluxo_dados.md`  | Mapa visual do fluxo de dados ponta-a-ponta                           | ℹ️ **Mantido** — ferramenta de apoio (não normativa)                       |
+| `tools/`                             | Utilitários de manutenção dev-only (encoding, `.md`, edição segura de | ℹ️ **Mantido** — ferramentas de apoio (não normativas); guia em            |
+|                                      | ficheiros)                                                            | `tools/README.md` e §18.11; **só na branch `agent-workspace`** (§18.12)   |
+| `.clinerules`                        | Regras permanentes (stack, restrições, convenções)                    | ✅ **Mantido** — §9 aponta ao mestre; inclui §11.4/§11.5 (modelo de       |
+|                                      |                                                                       | branches); **só na branch `agent-workspace`** (§18.12)                    |
+| `rectificacoes.md`                   | Esclarecimento dos conflitos PDF ↔ `.md` (11 decisões)                | 🗑️ **Eliminado** → consolidado em **§3 (D-01 a D-11 + §3.12–3.13)**       |
+| `planeamento_geral.md`               | Planeamento v3.0/3.1 (Regras de Ouro, fases, estados)                 | 🗑️ **Eliminado** → consolidado em **§2, §4–§16, §20–§22, §28**            |
+| `relatorio_implementacao.md`         | Relatório de implementação, defeitos e testes                         | 🗑️ **Eliminado** → consolidado em **§18.9, §23, §26**                     |
+| `tecnologias_projeto.md`             | Stack, inventário de BD, arquitetura, convenções                      | 🗑️ **Eliminado** → consolidado em **§1.1, §17, §18**                      |
+| `fluxo_funcionalidades.md`           | Fluxos v1 + RN01–RN12                                                 | 🗑️ **Eliminado** → **§5** (vigentes) e **§5.2** (revogadas)               |
+| `CARRINHA_SPEC.md`                   | Especificação v1 da carrinha (+ algoritmo 100 €)                      | 🗑️ **Eliminado** → **§3.1, §9, §12**                                      |
+| `plano_desenvolvimento.md`           | Cronograma de 7 dias + checklist                                      | 🗑️ **Eliminado** → **§21** (roadmap por fases + entregáveis)              |
+| `ALTERACOES_PRIORIDADES.md`          | Histórico de prioridades (v1→v2)                                      | 🗑️ **Eliminado** → **§21**                                                |
+| `relatorio_alteracoes.md`            | Registo do replaneamento v3.0                                         | 🗑️ **Eliminado** → **§3.13**                                              |
+| `duvidas_planeamento.md`             | Dúvidas e resoluções (histórico)                                      | 🗑️ **Eliminado** → **§3, §5, §22.2** (a dúvida §5.4 foi substituída pela  |
+|                                      |                                                                       | janela de 24 h em §15)                                                    |
+| `LOGIN_PROFILE_TODO.md`              | TODO de login/perfil (fechado)                                        | 🗑️ **Eliminado** → **§6, §18.6, §19.1, §22.2**                            |
 
 **Regra:** este documento é a **única fonte de requisitos e regras**. Os 11 ficheiros eliminados
 **estão recuperáveis no histórico do Git**: 5 foram **arquivados num commit de documentação**

@@ -6,23 +6,23 @@ Data: 21/09/2026 · Comprovar com: `guia_teste_manual.md`
 
 ## ÍNDICE
 
-| §  | Conteúdo                                                    |
-| :- | :---                                                        |
-| 1  | Legenda e convenções                                        |
-| 2  | Arquitetura em camadas (visão geral)                        |
-| 3  | Mapa hierárquico de funcionalidades                         |
-| 4  | Fluxo ponta-a-ponta: **LOJA FÍSICA** (5 passos)             |
-| 5  | Fluxo ponta-a-ponta: **CARRINHA AMBULANTE** (7 passos + OTP)|
-| 6  | Fluxo ponta-a-ponta: **ACEITAÇÃO / FASE 3**                 |
-| 7  | Fluxo ponta-a-ponta: **DECISÃO DE ROTAS / FASE 4**          |
-| 8  | Fluxo ponta-a-ponta: **CALENDÁRIO FISCAL / FASE 4**         |
-| 9  | Fluxo ponta-a-ponta: **EXECUÇÃO + FEEDBACK / FASE 2**       |
-| 10 | Máquina de estados (`estado_reserva` / `estado_rota`)       |
-| 11 | Ciclo de vida de um pedido (request)                        |
-| 12 | Mapa de tabelas por funcionalidade                          |
-| 13 | Matriz: página ↔ endpoint ↔ ficheiros                       |
-| 14 | Regras de negócio ↔ código                                  |
-| 15 | Segurança: matriz de permissões                             |
+| §   | Conteúdo                                                     |
+| :--- | :----------------------------------------------------------- |
+| 1   | Legenda e convenções                                         |
+| 2   | Arquitetura em camadas (visão geral)                         |
+| 3   | Mapa hierárquico de funcionalidades                          |
+| 4   | Fluxo ponta-a-ponta: **LOJA FÍSICA** (5 passos)              |
+| 5   | Fluxo ponta-a-ponta: **CARRINHA AMBULANTE** (7 passos + OTP) |
+| 6   | Fluxo ponta-a-ponta: **ACEITAÇÃO / FASE 3**                  |
+| 7   | Fluxo ponta-a-ponta: **DECISÃO DE ROTAS / FASE 4**           |
+| 8   | Fluxo ponta-a-ponta: **CALENDÁRIO FISCAL / FASE 4**          |
+| 9   | Fluxo ponta-a-ponta: **EXECUÇÃO + FEEDBACK / FASE 2**        |
+| 10  | Máquina de estados (`estado_reserva` / `estado_rota`)        |
+| 11  | Ciclo de vida de um pedido (request)                         |
+| 12  | Mapa de tabelas por funcionalidade                           |
+| 13  | Matriz: página ↔ endpoint ↔ ficheiros                        |
+| 14  | Regras de negócio ↔ código                                   |
+| 15  | Segurança: matriz de permissões                              |
 
 ---
 
@@ -185,10 +185,10 @@ SECADE BEAUTY — MVP (parte 1: Main)
 │       │
 │       ├── PASSO 2 — Canal
 │       │     ├── Loja Física ────────────────────────┐
-│       │     └── Carrinha Ambulante ──┐              │
+│       │     └── Carrinha Ambulante ──┐               │
 │       │         ✗ BLOQUEADO se algum serviço        │
-│       │           tiver requer_espaco_fisico = 1    │
-│       │                                             │
+│       │           tiver requer_espaco_fisico = 1     │
+│       │                                              │
 │       ├── [LOJA] PASSO 3 — Data e Hora ◀────────────┘
 │       │     GET booking-availability (slots 30 min, 09:00-19:00, Ter-Sáb)
 │       │
@@ -330,50 +330,50 @@ SECADE BEAUTY — MVP (parte 2: Backoffice) ─── /modules/backoffice
  CLIENTE          BROWSER (JS)             PHP                      MySQL
    │                 │                      │                         │
    │  /agendar       │                      │                         │
-   ├────────────────▶│                      │                        │
-   │                 │ GET booking-services ──▶ BookingController    │
+   ├────────────────▶│                      │                         │
+   │                 │ GET booking-services ──▶ BookingController     │
    │                 │ GET category-all     │   ::serviceList         │
    │                 │                      ├── ServiceRepository ──▶│ [servico]
    │                 │                      │     ::findActive        │ (ativo=1)
-   │                 │◀──── 35 serviços ────┤                        │
+   │                 │◀──── 35 serviços ────┤                         │
    │                 │                      │                         │
    │  PASSO 1        │                      │                         │
    │  marcar serviços│                      │                         │
    │  Barba + Design │                      │                         │
    │  (12,20€ / 50min)                      │                         │
-   ├────────────────▶│                      │                        │
+   ├────────────────▶│                      │                         │
    │                 │                      │                         │
    │  PASSO 2        │ ✗ se requer_espaco_fisico=1 → carrinha OFF    │
    │  "Loja Física"  │                      │                         │
-   ├────────────────▶│                      │                        │
+   ├────────────────▶│                      │                         │
    │                 │                      │                         │
    │  PASSO 3        │                      │                         │
    │  data + hora    │                      │                         │
    │  terça futura   │                      │                         │
-   ├────────────────▶│                      │                        │
+   ├────────────────▶│                      │                         │
    │                 │ GET booking-availability?date&duration&local   │
-   │                 ├─────────────────────▶│ BookingService         │
+   │                 ├─────────────────────▶│ BookingService          │
    │                 │                      │  ::findAvailability     │
    │                 │                      │  ├ 09:00-19:00 / 30min  │
    │                 │                      │  └ countByDateWindow ──▶│ [agendamento]
-   │                 │◀── slots 09:00..18:00┤                        │
-   │  clicar 10:00   │                      │                         │
-   ├────────────────▶│                      │                        │
-   │                 │                      │                         │
-   │  PASSO 4        │  Profissional: "Sem preferência" (informativo) │
-   │  PASSO 5        │  Resumo: 12,20€ | sinal 10% = 1,22€            │
-   │  CONFIRMAR      │  (Barba 4,07 + Design de Sobrancelha 8,13)     │
-   │  CONFIRMAR      │                      │                         │
-   ├────────────────▶│                      │                         │
-   │                 │ POST booking-create-store                       │
-   │                 ├─────────────────────▶│ BookingController       │
-   │                 │                      │  ::createStoreBooking    │
-   │                 │                      │ ┌── TRANSAÇÃO ─────────┐ │
-   │                 │                      │ │ validate date/time   │ │
-   │                 │                      │ │ validateBookingDate  │ │
+   │                 │◀── slots 09:00..18:00┤                           │
+   │  clicar 10:00   │                      │                           │
+   ├────────────────▶│                      │                           │
+   │                 │                      │                           │
+   │  PASSO 4        │  Profissional: "Sem preferência" (informativo)   │
+   │  PASSO 5        │  Resumo: 12,20€ | sinal 10% = 1,22€              │
+   │  CONFIRMAR      │  (Barba 4,07 + Design de Sobrancelha 8,13)       │
+   │  CONFIRMAR      │                      │                           │
+   ├────────────────▶│                      │                           │
+   │                 │ POST booking-create-store                        │
+   │                 ├─────────────────────▶│ BookingController         │
+   │                 │                      │  ::createStoreBooking     │
+   │                 │                      │ ┌── TRANSAÇÃO ─────────┐  │
+   │                 │                      │ │ validate date/time   │  │
+   │                 │                      │ │ validateBookingDate  │  │
    │                 │                      │ │ ✗ Ter-Sáb, futuro    │ │
-   │                 │                      │ │ resolveServices      │ │
-   │                 │                      │ │ validateStoreHours   │ │
+   │                 │                      │ │ resolveServices      │  │
+   │                 │                      │ │ validateStoreHours   │  │
    │                 │                      │ │ ✗ conflito janela ──▶││[agendamento]
    │                 │                      │ │                      │ │
    │                 │                      │ │ BookingRepository    │ │
@@ -386,8 +386,8 @@ SECADE BEAUTY — MVP (parte 2: Backoffice) ─── /modules/backoffice
    │                 │                      │ │  estado='aceite' ⭐   ││
    │                 │                      │ │  (AUTOMÁTICO)        │ │
    │                 │                      │ └──────────────────────┘ │
-   │                 │◀── {bookingId: N} ───┤                         │
-   │◀── /agendamento-sucesso?id=N           │                         │
+   │                 │◀── {bookingId: N} ───┤                          │
+   │◀── /agendamento-sucesso?id=N           │                          │
    │                 │                       │                         │
 ```
 
@@ -431,38 +431,38 @@ bookingWizard.js
 
 ```
  CLIENTE        BROWSER (JS)                PHP                        MySQL
-   │                │                       │                           │
-   │ PASSO 1        │  serviços sem requer_espaco_fisico                │
-   │ PASSO 2        │  "Carrinha Ambulante"                             │
-   ├───────────────▶│                       │                           │
-   │                │                       │                           │
+   │                │                       │                            │
+   │ PASSO 1        │  serviços sem requer_espaco_fisico                 │
+   │ PASSO 2        │  "Carrinha Ambulante"                              │
+   ├───────────────▶│                       │                            │
+   │                │                       │                            │
    │ PASSO 2B       │  GET customer-address-list ──▶ CustomerAddress     │
-   │ MORADA         │  GET city-supported ─────────▶ CityService        │
+   │ MORADA         │  GET city-supported ─────────▶ CityService         │
    │ + PESSOAS      │◀─ moradas (Évora) + 10 cidades ──────────────────┤
-   ├───────────────▶│                       │                           │
-   │  Pessoa 1 = "João Cliente" (pré-preenchido)                       │
-   │  Pessoa 2 = "Maria Familiar"                                      │
-   │  Pessoa 1: [Barba]           (20 min)                             │
-   │  Pessoa 2: [Barba][Design]   (20+30 min)                          │
-   │  → duração = 70 min ⭐ (soma por pessoa, NÃO deduplicada)          │
-   │                │                       │                           │
-   │ PASSO 2C       │                       │                           │
-   │ OTP            │  [Enviar Código]      │                           │
-   ├───────────────▶│ POST booking-otp-request                          │
-   │                ├──────────────────────▶│ BookingController         │
-   │                │                       │  ::otpRequest             │
-   │                │                       │   └ OTPService::request   │
-   │                │                       │       ├ random 6 dígitos  │
-   │                │                       │       └ $_SESSION['otp_   │
-   │                │                       │          ambulatorio']    │
-   │                │◀─ {otpCode:"123456"} ─┤        (expira 10 min)    │
-   │◀── "Simulação SMS: 123456" ────────────┤                           │
-   │  (grava window.bookingOtpCode)         │                           │
-   ├───────────────▶│                       │                           │
+   ├───────────────▶│                       │                            │
+   │  Pessoa 1 = "João Cliente" (pré-preenchido)                         │
+   │  Pessoa 2 = "Maria Familiar"                                        │
+   │  Pessoa 1: [Barba]           (20 min)                               │
+   │  Pessoa 2: [Barba][Design]   (20+30 min)                            │
+   │  → duração = 70 min ⭐ (soma por pessoa, NÃO deduplicada)           │
+   │                │                       │                            │
+   │ PASSO 2C       │                       │                            │
+   │ OTP            │  [Enviar Código]      │                            │
+   ├───────────────▶│ POST booking-otp-request                           │
+   │                ├──────────────────────▶│ BookingController          │
+   │                │                       │  ::otpRequest              │
+   │                │                       │   └ OTPService::request    │
+   │                │                       │       ├ random 6 dígitos   │
+   │                │                       │       └ $_SESSION['otp_    │
+   │                │                       │          ambulatorio']     │
+   │                │◀─ {otpCode:"123456"} ─┤        (expira 10 min)     │
+   │◀── "Simulação SMS: 123456" ────────────┤                            │
+   │  (grava window.bookingOtpCode)         │                            │
+   ├───────────────▶│                       │                            │
    │  ✗ validação CLIENT-SIDE primeiro      │                           │
-   │  escrever 123456 → verde               │                           │
-   │                │                       │                           │
-   │ PASSO 3        │  GET booking-availability?duration=70             │
+   │  escrever 123456 → verde               │                            │
+   │                │                       │                            │
+   │ PASSO 3        │  GET booking-availability?duration=70              │
    │ DATA+HORA      │                       │  &local=carrinha_ambulante│
    │  09:00         │                       │                           │
    ├───────────────▶│                       │                           │
@@ -597,13 +597,13 @@ FUNCIONÁRIO      BROWSER (JS)              PHP                        MySQL
    │                │                       │       ├ CategoryRepository│+[agendamento_pessoa]
    │                │                       │       └ GreenReceipt config│
    │                │◀─ 3 serviços pendentes ┤                           │
-   │                │   + 70/30 em vigor    │                           │
-   │                │                       │                           │
-   │ [Aceitar Barba │                       │                           │
-   │  (João)]       │                       │                           │
-   ├───────────────▶│ POST admin-service-accept                         │
-   │                │  {bookingServiceId, bookingId}                    │
-   │                ├──────────────────────▶│ ServiceController::accept │
+   │                │   + 70/30 em vigor    │                            │
+   │                │                       │                            │
+   │ [Aceitar Barba │                       │                            │
+   │  (João)]       │                       │                            │
+   ├───────────────▶│ POST admin-service-accept                          │
+   │                │  {bookingServiceId, bookingId}                     │
+   │                ├──────────────────────▶│ ServiceController::accept  │
    │                │                       │  └ requireProfileApi(['funcionario']) ⭐
    │                │                       │      ✗ 403 se gestor/cliente
    │                │                       │  └ ServiceAcceptance      │
@@ -636,11 +636,11 @@ FUNCIONÁRIO      BROWSER (JS)              PHP                        MySQL
 ### 6.2 Desfazer, troca e consolidação
 
 ```
-   │ [Desfazer]     │                       │                           │
-   ├───────────────▶│ POST admin-service-unaccept                       │
+   │ [Desfazer]     │                       │                            │
+   ├───────────────▶│ POST admin-service-unaccept                        │
    │                │                       │ ✗ 403 se não foi ele      │
    │                │                       │ ✗ 409 se consolidado      │
-   │                │                       │ BookingServiceRepo        │
+   │                │                       │ BookingServiceRepo         │
    │                │                       │  ::unaccept ╌╌╌╌╌╌╌╌╌╌╌╌╌▶││[agendamento_servico]
    │                │                       │   funcionario_id = NULL   │
    │                │                       │   estado = 'pendente'     │
@@ -660,14 +660,14 @@ FUNCIONÁRIO      BROWSER (JS)              PHP                        MySQL
    │                │                       │ │  'totalmente_aceite_  ││
    │                │                       │ │   funcionarios' ⭐⭐   ││
    │                │                       │ └───────────────────────┘│
-   │                │◀─ {consolidated:true} ┤                           │
-   │◀── "...Agendamento TOTALMENTE ACEITE   │                           │
-   │     (janela temporal bloqueada)"       │                           │
-   │                │                       │                           │
-   │ [Desfazer] ✗   │                       │                           │
-   ├───────────────▶│ POST admin-service-unaccept                       │
+   │                │◀─ {consolidated:true} ┤                             │
+   │◀── "...Agendamento TOTALMENTE ACEITE   │                             │
+   │     (janela temporal bloqueada)"       │                             │
+   │                │                       │                             │
+   │ [Desfazer] ✗   │                       │                            │
+   ├───────────────▶│ POST admin-service-unaccept                         │
    │                │                       │ ✗ 409 "O agendamento já    │
-   │◀── BLOQUEADO ──┤                       │   está totalmente aceite" │
+   │◀── BLOQUEADO ──┤                       │   está totalmente aceite"   │
 ```
 
 ### 6.3 Cadeia de código
@@ -792,14 +792,14 @@ GET admin-routes-list ──▶ RotaController::list
 
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
-│ 🟢 Évora · 22/09/2026 · 3 agendamentos · 5 serviços                  │
-│                                                                      │
-│    Receita .......... 48,81 €                                        │
-│    Combustível ......  3,20 €                                        │
-│    Custo fixo ....... 50,00 €                                        │
-│    Custo total ...... 53,20 €                                        │
+│ 🟢 Évora · 22/09/2026 · 3 agendamentos · 5 serviços                    │
+│                                                                        │
+│    Receita .......... 48,81 €                                          │
+│    Combustível ......  3,20 €                                          │
+│    Custo fixo ....... 50,00 €                                          │
+│    Custo total ...... 53,20 €                                          │
 │    Rentabilidade .... −4,39 €   ⚠ ABAIXO DA REFERÊNCIA (50 €)         │
-│                                                                      │
+│                                                                        │
 │    [ ✔ APROVAR ]   [ ✘ RECUSAR ]   [ Observações… ]                  │
 └──────────────────────────────────────────────────────────────────────┘
        │
@@ -811,12 +811,12 @@ GET admin-routes-list ──▶ RotaController::list
 
 ```
   GESTOR         BROWSER (JS)              PHP                        MySQL
-   │                │                       │                           │
+   │                │                       │                            │
    │ [✔ Aprovar]    │  ← MESMO com rentabilidade abaixo de 50 € ⭐⭐    │
-   ├───────────────▶│ POST admin-route-decide                          │
-   │                │  {cityId, date, decision:'aprovada', notes:''}    │
-   │                ├──────────────────────▶│ RotaController            │
-   │                │                       │  ::decideRoute            │
+   ├───────────────▶│ POST admin-route-decide                            │
+   │                │  {cityId, date, decision:'aprovada', notes:''}     │
+   │                ├──────────────────────▶│ RotaController             │
+   │                │                       │  ::decideRoute             │
    │                │                       │  └ requireProfileApi(['gestor'])
    │                │                       │  └ RotaService::decideRoute ⭐
    │                │                       │ ┌── TRANSAÇÃO ───────────┐│
@@ -838,7 +838,7 @@ GET admin-routes-list ──▶ RotaController::list
    │                │                       │ │   decidido_em = NOW()  ││
    │                │                       │ │   observacoes_decisao  ││
    │                │                       │ └────────────────────────┘│
-   │                │◀─ {decision, affected:3}                          │
+   │                │◀─ {decision, affected:3}                           │
    │◀── "Rota aprovada — 3 agendamentos confirmados"                     │
 ```
 
@@ -917,20 +917,20 @@ ANTES da decisão:
    │                │                       │ └───────────────────────┘│
    │                │◀─ obrigações + resumo ┤                           │
    │                │                       │                           │
-   │  ┌────────────────────────────────────────────────────────────┐   │
-   │  │ RESUMO                                                     │   │
-   │  │   Total ........... 8     Pendentes ...... 6               │   │
+   │  ┌────────────────────────────────────────────────────────────┐    │
+   │  │ RESUMO                                                     │    │
+   │  │   Total ........... 8     Pendentes ...... 6               │    │
    │  │   Vencem em 7d .... 3     Em atraso ....... 1               │   │
-   │  └────────────────────────────────────────────────────────────┘   │
+   │  └────────────────────────────────────────────────────────────┘    │
    │                │                       │                           │
-   │  ┌────────────────────────────────────────────────────────────┐   │
-   │  │ 🔴 IVA Trimestral · prazo 15/07/2026 · 1 234,00 €          │   │
-   │  │    Estado: pendente   ⏰ EM ATRASO há 68 dias (diário)     │   │
-   │  │    [ Marcar como pago ]                                    │   │
-   │  ├────────────────────────────────────────────────────────────┤   │
-   │  │ 🟠 Segurança Social · prazo 20/10/2026 · 380,00 €          │   │
+   │  ┌────────────────────────────────────────────────────────────┐    │
+   │  │ 🔴 IVA Trimestral · prazo 15/07/2026 · 1 234,00 €          │    │
+   │  │    Estado: pendente   ⏰ EM ATRASO há 68 dias (diário)     │     │
+   │  │    [ Marcar como pago ]                                    │    │
+   │  ├────────────────────────────────────────────────────────────┤    │
+   │  │ 🟠 Segurança Social · prazo 20/10/2026 · 380,00 €          │    │
    │  │    Estado: pendente   ⚠ faltam 3 dias  (nível '3_dias')    │   │
-   │  └────────────────────────────────────────────────────────────┘   │
+   │  └────────────────────────────────────────────────────────────┘    │
    │                │                       │                           │
    │ [Marcar pago]  │                       │                           │
    ├───────────────▶│ POST admin-fiscal-obligation-paid                 │
@@ -948,9 +948,9 @@ ANTES da decisão:
    │                │                       │ │   notas (?? null) ⚠   ││
    │                │                       │ └───────────────────────┘│
    │                │◀─ obrigação atualizada ┤                          │
-   │  ┌────────────────────────────────────────────────────────────┐   │
-   │  │ ✅ IVA Trimestral ....... PAGO em 16/07/2026               │   │
-   │  └────────────────────────────────────────────────────────────┘   │
+   │  ┌────────────────────────────────────────────────────────────┐    │
+   │  │ ✅ IVA Trimestral ....... PAGO em 16/07/2026               │    │
+   │  └────────────────────────────────────────────────────────────┘    │
 ```
 
 ### 8.2 Níveis de alerta progressivos — regra exata
@@ -1009,15 +1009,15 @@ backoffice/js/components/greenReceipts.js
        FiscalController::greenReceiptSimulate)
 
 ┌─ FiscalController (métodos) ────────────────────────────────────────────┐
-│  calendar()              → FiscalService::findCalendar()                │
-│       └── generateAlerts() + resolveAlertLevel()                        │
+│  calendar()              → FiscalService::findCalendar()                 │
+│       └── generateAlerts() + resolveAlertLevel()                         │
 │  createObligation()      → FiscalService::createObligation()     ✗ 422  │
 │  markPaid()              → FiscalService::markPaid()         ✗ 404/409  │
-│  alerts()                → FiscalAlertRepository::list()                │
-│  markAlertsRead()        → FiscalAlertRepository::markRead()            │
-│  greenReceiptConfig()    → GreenReceiptService::findActiveConfig()      │
+│  alerts()                → FiscalAlertRepository::list()                 │
+│  markAlertsRead()        → FiscalAlertRepository::markRead()             │
+│  greenReceiptConfig()    → GreenReceiptService::findActiveConfig()       │
 │  saveGreenReceiptConfig()→ GreenReceiptService::saveConfig()      ✗ 422 │
-│  greenReceiptSimulate()  → GreenReceiptService::simulate()              │
+│  greenReceiptSimulate()  → GreenReceiptService::simulate()               │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -1072,11 +1072,11 @@ Público → modules/main/js/components/testimonial.js
 
 ```
  GESTOR       CLIENTE/PÚBLICO         PHP                     MySQL
-   │                │                   │                       │
-   │ [registo de execução]              │                       │
+   │                │                   │                        │
+   │ [registo de execução]              │                        │
    ├───────────────▶│ POST admin-appointment-execute             │
-   │                ├──────────────────▶│ ExecutionService      │
-   │                │                   │  ::registerExecution  │
+   │                ├──────────────────▶│ ExecutionService       │
+   │                │                   │  ::registerExecution   │
    │                │                   │  ├ ✗ 404 / 409        │
    │                │                   │  ├ create ╌╌╌╌╌╌╌╌╌╌▶│[execucao_agendamento]
    │                │                   │  └ updateEstado ╌╌╌╌▶│[agendamento]
@@ -1086,44 +1086,44 @@ Público → modules/main/js/components/testimonial.js
    │                │ GET booking-my ──▶│ BookingService        │
    │                │                   │  ::findCustomerBookings
    │                │                   │  ├ canLeaveFeedback ⭐ │
-   │                │                   │  │   = estado ∈       │
-   │                │                   │  │   {executado,      │
-   │                │                   │  │    concluido}      │
-   │                │                   │  │   && !hasFeedback  │
+   │                │                   │  │   = estado ∈        │
+   │                │                   │  │   {executado,       │
+   │                │                   │  │    concluido}       │
+   │                │                   │  │   && !hasFeedback   │
    │                │                   │  └ hasFeedback ──────▶│[feedback_cliente]
-   │                │◀─ canLeaveFeedback=true                    │
-   │  ┌───────────────────────────────────────────────────────┐ │
-   │  │ Agendamento #12 · Carrinha · 09:00 · 16,27 €          │ │
-   │  │ Estado: ✅ executado                                  │ │
+   │                │◀─ canLeaveFeedback=true                      │
+   │  ┌───────────────────────────────────────────────────────┐    │
+   │  │ Agendamento #12 · Carrinha · 09:00 · 16,27 €          │    │
+   │  │ Estado: ✅ executado                                  │    │
    │  │ ⭐⭐⭐⭐⭐  [ Deixar avaliação ]                         │ │
-   │  └───────────────────────────────────────────────────────┘ │
-   │                │                   │                       │
-   │      [CLIENTE avalia 5★]           │                       │
-   │                │ POST feedback-create                       │
-   │                │ {bookingId, rating:5, comment:"Excelente"} │
-   │                ├──────────────────▶│ FeedbackService       │
-   │                │                   │  ::createFeedback     │
-   │                │                   │  ├ validate ✗ 422     │
-   │                │                   │  ├ dono ✗ 403         │
-   │                │                   │  ├ estado ✗ 409       │
-   │                │                   │  ├ execução ✗ 409     │
-   │                │                   │  ├ duplicado ✗ 409    │
+   │  └───────────────────────────────────────────────────────┘    │
+   │                │                   │                          │
+   │      [CLIENTE avalia 5★]           │                         │
+   │                │ POST feedback-create                         │
+   │                │ {bookingId, rating:5, comment:"Excelente"}   │
+   │                ├──────────────────▶│ FeedbackService          │
+   │                │                   │  ::createFeedback        │
+   │                │                   │  ├ validate ✗ 422       │
+   │                │                   │  ├ dono ✗ 403           │
+   │                │                   │  ├ estado ✗ 409         │
+   │                │                   │  ├ execução ✗ 409       │
+   │                │                   │  ├ duplicado ✗ 409      │
    │                │                   │  └ create ╌╌╌╌╌╌╌╌╌╌▶│[feedback_cliente]
    │                │◀─ Avaliação registada                      │
-   │                │                   │                       │
-   │      [PÚBLICO abre a HOME]         │                       │
+   │                │                   │                        │
+   │      [PÚBLICO abre a HOME]         │                        │
    │                │ GET feedback-list ▶│ FeedbackService       │
-   │                │  (SEM sessão)     │  ::findPublicFeedback │
+   │                │  (SEM sessão)     │  ::findPublicFeedback  │
    │                │                   │  ├ recent() ─────────▶│[feedback_cliente]
    │                │                   │  │  + nome cliente    │[cliente]
    │                │                   │  │  + serviço         │[utilizador]
-   │                │                   │  └ averageRating      │
-   │                │◀─ testemunho real │                       │
-   │  ┌───────────────────────────────────────────────────────┐ │
+   │                │                   │  └ averageRating        │
+   │                │◀─ testemunho real │                         │
+   │  ┌───────────────────────────────────────────────────────┐   │
    │  │ ⭐⭐⭐⭐⭐ "Excelente"                                  │ │
-   │  │ — João Cliente · Barba · 21/09/2026                   │ │
-   │  │ (restante grelha = testemunhos ESTÁTICOS)              │ │
-   │  └───────────────────────────────────────────────────────┘ │
+   │  │ — João Cliente · Barba · 21/09/2026                   │   │
+   │  │ (restante grelha = testemunhos ESTÁTICOS)              │  │
+   │  └───────────────────────────────────────────────────────┘   │
 ```
 
 ### 9.3 Regras de elegibilidade do feedback
@@ -1264,12 +1264,12 @@ Execução (registerExecution) — bloqueia se:
 
 ```
   ┌──────────────────────────────────────────────────────┐
-  │                                                      │
-  ▼                                                      │
-(( pendente )) ──[funcionário aceita]──▶ (( aceite ))    │
-  ▲                                          │           │
-  │                                          │           │
-  └────────[funcionário desfaz]──────────────┘           │
+  │                                                       │
+  ▼                                                       │
+(( pendente )) ──[funcionário aceita]──▶ (( aceite ))     │
+  ▲                                          │            │
+  │                                          │            │
+  └────────[funcionário desfaz]──────────────┘            │
                 ✗ 409 se o AGENDAMENTO estiver           │
                   'totalmente_aceite_funcionarios' ──────┘
                   (bloqueio da janela temporal)
@@ -1318,22 +1318,22 @@ URL: /secade-beauty-tarde/gestao/rotas                         (GET)
                             │
                             ▼
 ┌──────────────────────────────────────────────────────────────────────┐
-│ index.php                                                            │
-│   1. require app/config/config.php   (BASE_URL, APP_PATH, ROOT_PATH) │
-│   2. require app/utils/Session.php   (Session::init() é lazy)        │
-│   3. $path = resolve_request_path(BASE_URL)                          │
-│        ├── parse_url(REQUEST_URI, PHP_URL_PATH)                      │
-│        ├── str_replace(BASE_URL path, "")   → remove "/secade-…"     │
-│        └── trim($path, "/")                                          │
-│   4. if (is_api_request($path))                                      │
+│ index.php                                                             │
+│   1. require app/config/config.php   (BASE_URL, APP_PATH, ROOT_PATH)  │
+│   2. require app/utils/Session.php   (Session::init() é lazy)         │
+│   3. $path = resolve_request_path(BASE_URL)                           │
+│        ├── parse_url(REQUEST_URI, PHP_URL_PATH)                       │
+│        ├── str_replace(BASE_URL path, "")   → remove "/secade-…"      │
+│        └── trim($path, "/")                                           │
+│   4. if (is_api_request($path))                                       │
 │        is_api_request = ($path === "api" || isset($_GET["action"]))   │
-│        └──▶ require app/config/api.php  ── API ──▶ exit              │
-│   5. else ──▶ TABELA DE ROTAS DE PÁGINA                              │
-│        match_route_and_extract_params($path, $routes)                │
-│          ├── ":param" convertido em regex "([^/]+)"                  │
-│          ├── correspondência → $_GET["param"] = urldecode(valor)     │
-│          └── require_once $matchedFile                               │
-│   6. sem correspondência ──▶ render_404_page()  (404)                │
+│        └──▶ require app/config/api.php  ── API ──▶ exit               │
+│   5. else ──▶ TABELA DE ROTAS DE PÁGINA                               │
+│        match_route_and_extract_params($path, $routes)                 │
+│          ├── ":param" convertido em regex "([^/]+)"                   │
+│          ├── correspondência → $_GET["param"] = urldecode(valor)      │
+│          └── require_once $matchedFile                                │
+│   6. sem correspondência ──▶ render_404_page()  (404)                 │
 └──────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -1522,73 +1522,73 @@ código fora de 400–599                       400   (normalizado para 400)
 └───────────────────────────────────────────────────────────────────────────┘
 
 ┌─ CATÁLOGO ────────────────────────────────────────────────────────────────┐
-│ [categoria_profissional]  categorias de serviços                          │
-│ [servico]                 catálogo — colunas reais:                       │
-│      ├── nome                    varchar                                  │
-│      ├── descricao               text                                     │
-│      ├── categoria_id            FK [categoria_profissional]              │
-│      ├── duracao_estimada_minutos int                                     │
-│      ├── preco_base              decimal(10,2)                            │
+│ [categoria_profissional]  categorias de serviços                           │
+│ [servico]                 catálogo — colunas reais:                        │
+│      ├── nome                    varchar                                   │
+│      ├── descricao               text                                      │
+│      ├── categoria_id            FK [categoria_profissional]               │
+│      ├── duracao_estimada_minutos int                                      │
+│      ├── preco_base              decimal(10,2)                             │
 │      ├── requer_espaco_fisico    tinyint(1)  ⭐ (1 = só loja física)       │
-│      └── ativo                   tinyint(1)  (criada na migração v3)      │
-│      ▸ 35 serviços, todos ativos; apenas 1 com requer_espaco_fisico=1     │
-│ [servico_local]           onde pode ser prestado (loja/carrinha)          │
-│ [servico_foto]            galeria de imagens                              │
+│      └── ativo                   tinyint(1)  (criada na migração v3)       │
+│      ▸ 35 serviços, todos ativos; apenas 1 com requer_espaco_fisico=1      │
+│ [servico_local]           onde pode ser prestado (loja/carrinha)           │
+│ [servico_foto]            galeria de imagens                               │
 └───────────────────────────────────────────────────────────────────────────┘
 
 ┌─ GEOGRAFIA E LOGÍSTICA ───────────────────────────────────────────────────┐
-│ [cidade]                 colunas reais: id, nome, distrito                │
-│                          ⚠️ NÃO tem coluna `suportada` — a área de        │
-│                             cobertura é imposta pelos DADOS (existem      │
-│                             apenas as 10 cidades do distrito de Évora)    │
-│ [base_partida]           base de partida da carrinha                      │
+│ [cidade]                 colunas reais: id, nome, distrito                 │
+│                          ⚠️ NÃO tem coluna `suportada` — a área de         │
+│                             cobertura é imposta pelos DADOS (existem       │
+│                             apenas as 10 cidades do distrito de Évora)     │
+│ [base_partida]           base de partida da carrinha                       │
 │ [matriz_deslocacao]      base × cidade → distancia_km, valor_estimado ⭐   │
 └───────────────────────────────────────────────────────────────────────────┘
 
 ┌─ AGENDAMENTO (núcleo do MVP) ⭐⭐ ──────────────────────────────────────────┐
-│ [agendamento]            cabeçalho                                        │
-│      ├── cliente_id              FK [cliente]                             │
-│      ├── cliente_morada_id       FK [cliente_morada] (NULL na loja)       │
-│      ├── local_prestacao         enum: loja_fisica | carrinha_ambulante   │
-│      ├── data_hora_pretendida    datetime                                 │
-│      ├── estado_reserva          enum (8 valores — ver secção 10)         │
-│      ├── modo_urgencia           tinyint(1)                               │
-│      ├── valor_total             decimal(10,2)                            │
-│      ├── valor_sinal             decimal(10,2)                            │
-│      ├── sinal_pago              tinyint(1)  (simulado, fica 0)           │
-│      ├── validado_logistica_loja tinyint(1)                               │
-│      └── criado_em               timestamp                                │
-│                                                                           │
-│      ⚠️ NÃO existe cidade_id nem rota_ambulante_id nesta tabela.          │
-│         A CIDADE é derivada pelo JOIN:                                    │
-│             agendamento → cliente_morada → cidade                         │
-│         (ver BookingRepository::findAmbulatoryGroups)                     │
-│         A ligação à rota é feita por (data_rota, cidade_id) em            │
-│         [rota_ambulante] — não por FK.                                    │
-│                                                                           │
-│      ├── [agendamento_pessoa]   N pessoas (carrinha)                      │
-│      └── [agendamento_servico]  N serviços × pessoa                       │
-│              ├── agendamento_pessoa_id  FK (NULL na loja)                 │
-│              ├── servico_id             FK [servico]                      │
-│              ├── funcionario_id         FK (NULL enquanto pendente)       │
-│              ├── preco_praticado        decimal(10,2)                     │
-│              ├── duracao_minutos        int                               │
+│ [agendamento]            cabeçalho                                         │
+│      ├── cliente_id              FK [cliente]                              │
+│      ├── cliente_morada_id       FK [cliente_morada] (NULL na loja)        │
+│      ├── local_prestacao         enum: loja_fisica | carrinha_ambulante    │
+│      ├── data_hora_pretendida    datetime                                  │
+│      ├── estado_reserva          enum (8 valores — ver secção 10)          │
+│      ├── modo_urgencia           tinyint(1)                                │
+│      ├── valor_total             decimal(10,2)                             │
+│      ├── valor_sinal             decimal(10,2)                             │
+│      ├── sinal_pago              tinyint(1)  (simulado, fica 0)            │
+│      ├── validado_logistica_loja tinyint(1)                                │
+│      └── criado_em               timestamp                                 │
+│                                                                            │
+│      ⚠️ NÃO existe cidade_id nem rota_ambulante_id nesta tabela.           │
+│         A CIDADE é derivada pelo JOIN:                                     │
+│             agendamento → cliente_morada → cidade                          │
+│         (ver BookingRepository::findAmbulatoryGroups)                      │
+│         A ligação à rota é feita por (data_rota, cidade_id) em             │
+│         [rota_ambulante] — não por FK.                                     │
+│                                                                            │
+│      ├── [agendamento_pessoa]   N pessoas (carrinha)                       │
+│      └── [agendamento_servico]  N serviços × pessoa                        │
+│              ├── agendamento_pessoa_id  FK (NULL na loja)                  │
+│              ├── servico_id             FK [servico]                       │
+│              ├── funcionario_id         FK (NULL enquanto pendente)        │
+│              ├── preco_praticado        decimal(10,2)                      │
+│              ├── duracao_minutos        int                                │
 │              ├── estado_aceitacao ⭐    enum: pendente | aceite            │
-│              ├── aceito_em              datetime                          │
-│              ├── percentagem_funcionario_aplicada     decimal(5,2)        │
-│              ├── valor_recibo_verde_funcionario       decimal(10,2)       │
-│              └── valor_recibo_verde_plataforma        decimal(10,2)       │
+│              ├── aceito_em              datetime                           │
+│              ├── percentagem_funcionario_aplicada     decimal(5,2)         │
+│              ├── valor_recibo_verde_funcionario       decimal(10,2)        │
+│              └── valor_recibo_verde_plataforma        decimal(10,2)        │
 └───────────────────────────────────────────────────────────────────────────┘
 
 ┌─ OPERAÇÃO ────────────────────────────────────────────────────────────────┐
-│ [execucao_agendamento]   registo da execução real (1 por agendamento)     │
-│ [feedback_cliente]       avaliação do cliente (1 por execução) ⭐          │
+│ [execucao_agendamento]   registo da execução real (1 por agendamento)       │
+│ [feedback_cliente]       avaliação do cliente (1 por execução) ⭐           │
 │ [rota_ambulante]         decisão MANUAL da rota ⭐⭐                        │
-│      ├── estado_rota: planeada|aprovada|recusada|em_execucao|concluida    │
-│      ├── custo_estimado_combustivel, quota_parte_cliente,                 │
-│      │   lucro_servicos, lucro_total                                      │
-│      └── decidido_por, decidido_em, observacoes_decisao                   │
-│ [rota_funcionario]       funcionários atribuídos à rota                   │
+│      ├── estado_rota: planeada|aprovada|recusada|em_execucao|concluida      │
+│      ├── custo_estimado_combustivel, quota_parte_cliente,                   │
+│      │   lucro_servicos, lucro_total                                        │
+│      └── decidido_por, decidido_em, observacoes_decisao                     │
+│ [rota_funcionario]       funcionários atribuídos à rota                     │
 └───────────────────────────────────────────────────────────────────────────┘
 
 ┌─ FINANCEIRO E FISCAL ⭐ ───────────────────────────────────────────────────┐
@@ -1605,31 +1605,37 @@ código fora de 400–599                       400   (normalizado para 400)
 
 ### 13.1 Páginas públicas e do cliente
 
-| Página (rota)          | Ficheiro PHP                 | JS componente          | Endpoints                                                                                                                                                                  |
-| ---------------------- | ---------------------------- | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/` `home`             | `main/home.php`              | `testimonial.js`       | `feedback-list`                                                                                                                                                            |
-| `/sobre`               | `main/about.php`             | —                      | —                                                                                                                                                                          |
-| `/contacto`            | `main/contact.php`           | —                      | —                                                                                                                                                                          |
-| `/servicos`            | `main/serviceCategories.php` | `serviceCategories.js` | `category-all`                                                                                                                                                             |
-| `/servicos/:category`  | `main/services.php`          | `services.js`          | `booking-services`, `category-all`                                                                                                                                         |
-| `/login`               | `main/login.php`             | `login.js`             | `auth-login`                                                                                                                                                               |
-| `/registo`             | `main/customerRegister.php`  | `customerRegister.js`  | `city-supported`, `auth-register`                                                                                                                                          |
-| `/recuperar-passe`     | `main/recoverPassword.php`   | —                      | —                                                                                                                                                                          |
-| `/perfil`              | `main/profile.php`           | `profile.js`           | `customer-profile`, `customer-address-list`, `customer-address-store`, `customer-address-set-principal`, `customer-address-delete`, `city-supported`                       |
-| `/agendar`             | `main/booking.php`           | `bookingWizard.js`     | `booking-services`, `category-all`, `customer-address-list`, `city-supported`, `booking-availability`, `booking-otp-request`, `booking-create-store`, `booking-create-amb` |
-| `/agendamentos`        | `main/appointments.php`      | `appointments.js`      | `booking-my`, `feedback-my`, `feedback-create`                                                                                                                             |
-| `/agendamento-sucesso` | `main/bookingSuccess.php`    | —                      | — (usa `?id=` e `?local=`)                                                                                                                                                 |
-| 404                    | `main/404.php`               | —                      | —                                                                                                                                                                          |
+| Página (rota)          | Ficheiro PHP                 | JS componente          | Endpoints                                                                                                |
+| ---------------------- | ---------------------------- | ---------------------- | -------------------------------------------------------------------------------------------------------- |
+| `/` `home`             | `main/home.php`              | `testimonial.js`       | `feedback-list`                                                                                          |
+| `/sobre`               | `main/about.php`             | —                      | —                                                                                                        |
+| `/contacto`            | `main/contact.php`           | —                      | —                                                                                                        |
+| `/servicos`            | `main/serviceCategories.php` | `serviceCategories.js` | `category-all`                                                                                           |
+| `/servicos/:category`  | `main/services.php`          | `services.js`          | `booking-services`, `category-all`                                                                       |
+| `/login`               | `main/login.php`             | `login.js`             | `auth-login`                                                                                             |
+| `/registo`             | `main/customerRegister.php`  | `customerRegister.js`  | `city-supported`, `auth-register`                                                                        |
+| `/recuperar-passe`     | `main/recoverPassword.php`   | —                      | —                                                                                                        |
+| `/perfil`              | `main/profile.php`           | `profile.js`           | `customer-profile`, `customer-address-list`, `customer-address-store`, `customer-address-set-principal`, |
+|                        |                              |                        | `customer-address-delete`, `city-supported`                                                              |
+| `/agendar`             | `main/booking.php`           | `bookingWizard.js`     | `booking-services`, `category-all`, `customer-address-list`, `city-supported`, `booking-availability`,   |
+|                        |                              |                        | `booking-otp-request`, `booking-create-store`, `booking-create-amb`                                      |
+| `/agendamentos`        | `main/appointments.php`      | `appointments.js`      | `booking-my`, `feedback-my`, `feedback-create`                                                           |
+| `/agendamento-sucesso` | `main/bookingSuccess.php`    | —                      | — (usa `?id=` e `?local=`)                                                                               |
+| 404                    | `main/404.php`               | —                      | —                                                                                                        |
 
 ### 13.2 Páginas do backoffice
 
-| Página (rota)                    | Ficheiro PHP                   | JS componente      | Endpoints                                                                                                                                            |
-| -------------------------------- | ------------------------------ | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/gestao` `/gestao/agendamentos` | `backoffice/appointments.php`  | `appointments.js`  | `admin-appointments-list`, `admin-appointment-details`, `admin-appointment-cancel`, `admin-appointment-execute`, `city-supported`                    |
-| `/gestao/rotas` ⭐⭐             | `backoffice/routes.php`        | `routes.js`        | `admin-routes-list`, `admin-route-decide`                                                                                                            |
-| `/gestao/servicos` ⭐            | `backoffice/services.php`      | `services.js`      | `admin-service-pending-list`, `admin-service-accepted-list`, `admin-service-accept`, `admin-service-unaccept`                                        |
-| `/gestao/fiscal` ⭐              | `backoffice/fiscal.php`        | `fiscal.js`        | `admin-fiscal-calendar-list`, `admin-fiscal-obligation-create`, `admin-fiscal-obligation-paid`, `admin-fiscal-alert-list`, `admin-fiscal-alert-read` |
-| `/gestao/recibos-verdes` ⭐      | `backoffice/greenReceipts.php` | `greenReceipts.js` | `admin-green-receipt-config`, `admin-green-receipt-config-save` (+ `admin-green-receipt-simulate` disponível)                                        |
+| Página (rota)                    | Ficheiro PHP                   | JS componente      | Endpoints                                                                                         |
+| -------------------------------- | ------------------------------ | ------------------ | ------------------------------------------------------------------------------------------------- |
+| `/gestao` `/gestao/agendamentos` | `backoffice/appointments.php`  | `appointments.js`  | `admin-appointments-list`, `admin-appointment-details`, `admin-appointment-cancel`,               |
+|                                  |                                |                    | `admin-appointment-execute`, `city-supported`                                                     |
+| `/gestao/rotas` ⭐⭐             | `backoffice/routes.php`        | `routes.js`        | `admin-routes-list`, `admin-route-decide`                                                         |
+| `/gestao/servicos` ⭐            | `backoffice/services.php`      | `services.js`      | `admin-service-pending-list`, `admin-service-accepted-list`, `admin-service-accept`,              |
+|                                  |                                |                    | `admin-service-unaccept`                                                                          |
+| `/gestao/fiscal` ⭐              | `backoffice/fiscal.php`        | `fiscal.js`        | `admin-fiscal-calendar-list`, `admin-fiscal-obligation-create`, `admin-fiscal-obligation-paid`,   |
+|                                  |                                |                    | `admin-fiscal-alert-list`, `admin-fiscal-alert-read`                                              |
+| `/gestao/recibos-verdes` ⭐      | `backoffice/greenReceipts.php` | `greenReceipts.js` | `admin-green-receipt-config`, `admin-green-receipt-config-save` (+ `admin-green-receipt-simulate` |
+|                                  |                                |                    | disponível)                                                                                       |
 
 ### 13.3 Mapa de ficheiros por camada (listas reais)
 
@@ -1706,37 +1712,38 @@ TESTES (4)       tests/  functional_test.php · http_test.php ·
 
 ## 14. REGRAS DE NEGÓCIO ↔ CÓDIGO
 
-| #   | Regra de negócio                      | Constante / método                                                     | Valor                                          | Ficheiro                         |
-| --- | ------------------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------- | -------------------------------- |
-| 1   | Abertura da loja                      | `STORE_OPEN_HOUR`                                                      | `9` (09:00)                                    | `BookingService`                 |
-| 2   | Fecho da loja                         | `STORE_CLOSE_HOUR`                                                     | `19` (19:00)                                   | `BookingService`                 |
-| 3   | Grelha de horários                    | `SLOT_STEP_MINUTES`                                                    | `30`                                           | `BookingService`                 |
-| 4   | Sinal (loja)                          | `DEPOSIT_PERCENTAGE`                                                   | `10` (%)                                       | `BookingService`                 |
-| 5   | Dias permitidos                       | `validateBookingDate`                                                  | Ter(2) → Sáb(6)                                | `BookingService`                 |
-| 6   | Data futura                           | `validateBookingDate`                                                  | `strtotime < time()` → 422                     | `BookingService`                 |
-| 7   | Base de partida                       | `BASE_PARTIDA_ID`                                                      | `1` (Évora)                                    | `RotaService`                    |
-| 8   | Custo fixo operacional                | `FIXED_OPERATIONAL_COST`                                               | `50.0` €                                       | `RotaService`                    |
-| 9   | **Indicador visual** de rentabilidade | `REFERENCE_PROFITABILITY`                                              | `50.0` € ⭐ **não decide**                     | `RotaService`                    |
-| 10  | % funcionário (recibos verdes)        | `DEFAULT_EMPLOYEE_PERCENTAGE`                                          | `70.0`                                         | `GreenReceiptService`            |
-| 11  | % plataforma (recibos verdes)         | `DEFAULT_PLATFORM_PERCENTAGE`                                          | `30.0`                                         | `GreenReceiptService`            |
-| 12  | Alertas fiscais                       | `ALERT_OFFSETS`                                                        | `30, 15, 7, 3, 1` dias                         | `FiscalService`                  |
-| 13  | Alerta em atraso                      | `resolveAlertLevel`                                                    | `daysLeft < 0` → `em_atraso`                   | `FiscalService`                  |
-| 14  | OTP: nº de dígitos                    | `OTPService::request`                                                  | `6`                                            | `OTPService`                     |
-| 15  | OTP: validade                         | `OTPService::request`                                                  | `600` s (10 min)                               | `OTPService`                     |
-| 16  | OTP: uso único                        | `OTPService::verify`                                                   | consumido no sucesso                           | `OTPService`                     |
-| 17  | Feedback: 1 por agendamento           | `createFeedback` (verificação inline com `findByBooking`)              | 409                                            | `FeedbackService`                |
-| 18  | Feedback: só após execução            | `createFeedback` (verificação inline do `status`)                      | 409                                            | `FeedbackService`                |
-| 19  | Feedback: só o dono                   | `createFeedback` (comparação `customerId`)                             | 403                                            | `FeedbackService`                |
-| 19b | Feedback: execução registada          | `createFeedback` (`findByBooking` em `executionRepository`)            | 409                                            | `FeedbackService`                |
-| 20  | Área de cobertura                     | `CityService::findSupportedCities` → **todas** as linhas de `[cidade]` | 10 cidades (a cobertura é imposta pelos dados) | `CityService` / `CityRepository` |
-| 21  | Carrinha bloqueada                    | `requer_espaco_fisico = 1`                                             | serviço só na loja                             | `services.js`                    |
-| 22  | Conflito de janela                    | `countByDateWindow`                                                    | 409                                            | `BookingService`                 |
-| 23  | Consolidação                          | `consolidateIfComplete` → `countPendingByBooking === 0`                | muda o estado ⭐                               | `ServiceAcceptanceService`       |
-| 24  | Estado consolidado                    | `CONSOLIDATED_STATE`                                                   | `'totalmente_aceite_funcionarios'`             | `ServiceAcceptanceService`       |
-| 25  | Bloqueio pós-consolidação             | `unacceptService` (verifica `CONSOLIDATED_STATE`)                      | 409                                            | `ServiceAcceptanceService`       |
-| 26  | Duração total do agendamento          | `totalDurationByBooking`                                               | `SUM(duracao_minutos)`                         | `BookingServiceRepository`       |
-| 27  | Soma das % = 100                      | `saveConfig`                                                           | 422                                            | `GreenReceiptService`            |
-| 28  | Sinal dispensado (carrinha)           | `createAmbulatoryBooking`                                              | `valor_sinal = 0`                              | `BookingService`                 |
+| #   | Regra de negócio                      | Constante / método                                          | Valor                                          | Ficheiro                         |
+| --- | ------------------------------------- | ----------------------------------------------------------- | ---------------------------------------------- | -------------------------------- |
+| 1   | Abertura da loja                      | `STORE_OPEN_HOUR`                                           | `9` (09:00)                                    | `BookingService`                 |
+| 2   | Fecho da loja                         | `STORE_CLOSE_HOUR`                                          | `19` (19:00)                                   | `BookingService`                 |
+| 3   | Grelha de horários                    | `SLOT_STEP_MINUTES`                                         | `30`                                           | `BookingService`                 |
+| 4   | Sinal (loja)                          | `DEPOSIT_PERCENTAGE`                                        | `10` (%)                                       | `BookingService`                 |
+| 5   | Dias permitidos                       | `validateBookingDate`                                       | Ter(2) → Sáb(6)                                | `BookingService`                 |
+| 6   | Data futura                           | `validateBookingDate`                                       | `strtotime < time()` → 422                     | `BookingService`                 |
+| 7   | Base de partida                       | `BASE_PARTIDA_ID`                                           | `1` (Évora)                                    | `RotaService`                    |
+| 8   | Custo fixo operacional                | `FIXED_OPERATIONAL_COST`                                    | `50.0` €                                       | `RotaService`                    |
+| 9   | **Indicador visual** de rentabilidade | `REFERENCE_PROFITABILITY`                                   | `50.0` € ⭐ **não decide**                     | `RotaService`                    |
+| 10  | % funcionário (recibos verdes)        | `DEFAULT_EMPLOYEE_PERCENTAGE`                               | `70.0`                                         | `GreenReceiptService`            |
+| 11  | % plataforma (recibos verdes)         | `DEFAULT_PLATFORM_PERCENTAGE`                               | `30.0`                                         | `GreenReceiptService`            |
+| 12  | Alertas fiscais                       | `ALERT_OFFSETS`                                             | `30, 15, 7, 3, 1` dias                         | `FiscalService`                  |
+| 13  | Alerta em atraso                      | `resolveAlertLevel`                                         | `daysLeft < 0` → `em_atraso`                   | `FiscalService`                  |
+| 14  | OTP: nº de dígitos                    | `OTPService::request`                                       | `6`                                            | `OTPService`                     |
+| 15  | OTP: validade                         | `OTPService::request`                                       | `600` s (10 min)                               | `OTPService`                     |
+| 16  | OTP: uso único                        | `OTPService::verify`                                        | consumido no sucesso                           | `OTPService`                     |
+| 17  | Feedback: 1 por agendamento           | `createFeedback` (verificação inline com `findByBooking`)   | 409                                            | `FeedbackService`                |
+| 18  | Feedback: só após execução            | `createFeedback` (verificação inline do `status`)           | 409                                            | `FeedbackService`                |
+| 19  | Feedback: só o dono                   | `createFeedback` (comparação `customerId`)                  | 403                                            | `FeedbackService`                |
+| 19b | Feedback: execução registada          | `createFeedback` (`findByBooking` em `executionRepository`) | 409                                            | `FeedbackService`                |
+| 20  | Área de cobertura                     | `CityService::findSupportedCities` → **todas** as linhas de | 10 cidades (a cobertura é imposta pelos dados) | `CityService` / `CityRepository` |
+|     |                                       | `[cidade]`                                                  |                                                |                                  |
+| 21  | Carrinha bloqueada                    | `requer_espaco_fisico = 1`                                  | serviço só na loja                             | `services.js`                    |
+| 22  | Conflito de janela                    | `countByDateWindow`                                         | 409                                            | `BookingService`                 |
+| 23  | Consolidação                          | `consolidateIfComplete` → `countPendingByBooking === 0`     | muda o estado ⭐                               | `ServiceAcceptanceService`       |
+| 24  | Estado consolidado                    | `CONSOLIDATED_STATE`                                        | `'totalmente_aceite_funcionarios'`             | `ServiceAcceptanceService`       |
+| 25  | Bloqueio pós-consolidação             | `unacceptService` (verifica `CONSOLIDATED_STATE`)           | 409                                            | `ServiceAcceptanceService`       |
+| 26  | Duração total do agendamento          | `totalDurationByBooking`                                    | `SUM(duracao_minutos)`                         | `BookingServiceRepository`       |
+| 27  | Soma das % = 100                      | `saveConfig`                                                | 422                                            | `GreenReceiptService`            |
+| 28  | Sinal dispensado (carrinha)           | `createAmbulatoryBooking`                                   | `valor_sinal = 0`                              | `BookingService`                 |
 
 ### 14.1 Fórmulas explícitas
 
@@ -1795,9 +1802,9 @@ ALERTA FISCAL  (FiscalService::resolveAlertLevel)
 └────────────────────────────────────────────────────────────────────────┘
 
 ┌─ NÍVEL DE PÁGINA (HTML) ───────────────────────────────────────────────┐
-│ Session::requireLogin()                                                │
+│ Session::requireLogin()                                                 │
 │    └── !isLoggedIn()  ──▶ header("Location: {BASE_URL}/login"); exit;   │
-│                                                                        │
+│                                                                         │
 │ (o backoffice valida adicionalmente isManager()/isEmployee() e          │
 │  redireciona em vez de devolver JSON)                                   │
 └────────────────────────────────────────────────────────────────────────┘
