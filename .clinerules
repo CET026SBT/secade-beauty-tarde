@@ -9,7 +9,7 @@ Ficheiro de **operação**. Não contém produto: contém (a) restrições, conv
 
 | #   | Ler                                          | Quando                                         |
 | :-- | :------------------------------------------- | :--------------------------------------------- |
-| 1   | Este ficheiro (≈140 linhas)                  | sempre                                         |
+| 1   | Este ficheiro (≈145 linhas)                  | sempre                                         |
 | 2   | `especificacao_mvp.md` — **router** (~63 l.) | sempre: dá o mapa `§ → ficheiro`               |
 | 3   | **UM** ficheiro de `docs/spec/`              | só o domínio em causa — nunca os nove          |
 | 4   | `tests/README.md` · `tools/README.md`        | ao testar · ao usar ferramentas                |
@@ -127,6 +127,11 @@ Cada assunto tem **uma** fonte. Ao tocar num ficheiro, manter coerentes os que o
 | Documentação on-demand: regras e moldes  | `docs/README.md` · `docs/rules/` | —            | regra ou molde novo           |
 | Instalação e uso rápido                  | `README.md`                      | —            | stack, instalação, pastas     |
 | Análise, auditoria e guias (**apoio**)   | `mapaMentalMVP/*.md`             | —            | nova iteração (não normativo) |
+
+**Crescimento de um documento:** `docs/**`, o router, os `README`s ou **este** ficheiro a passar de
+**400 linhas** → **modularizar antes de acrescentar** (o pai passa a router; cortar nas fronteiras de
+`§N`). Procedimento e exceções: `docs/README.md` — DOUTRINA 6. O gate já mede (`md-verify` imprime
+`linhas=N`).
 
 **Histórico:** regras revogadas e decisões antigas **não se acumulam** — o arquivo é o **Git**
 (`git log --diff-filter=D --oneline -- "*.md"`).

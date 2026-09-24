@@ -36,6 +36,7 @@
 | 3     | **Evidência:** ao marcar gap, indicar o ficheiro/linha onde se verificou.                                                        |
 | 4     | **Uma fonte por facto.** Se já existe no `.clinerules`, `tests/README.md` ou `tools/README.md` → **apontar**, não copiar.        |
 | 5     | **Escrever seguro:** `php tools/file-edit.php replace <f> <jobs.json> --write` (evita BOM/mojibake).                             |
+| 6     | **Limiar:** se o ficheiro alvo passar de **400 linhas**, **modularizar antes de escrever** (DOUTRINA 6 de `docs/README.md`).     |
 
 ## 4. FECHAR O CICLO (mesma alteração, sempre)
 

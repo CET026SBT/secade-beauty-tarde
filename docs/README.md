@@ -14,6 +14,23 @@ documentação. Ler **apenas quando** o humano pedir documentação, mapa, relat
    → N3 `docs/` (só por pedido). Nunca carregar os três níveis por rotina.
 5. **Ficheiros de controlo são densos; o output é legível.** Estes `.md` de regras são telegráficos de
    propósito. O documento que produzem segue o molde de `docs/templates/` e passa pelo pipeline.
+6. **Limiar de 400 linhas — modularizar antes de crescer.** Um documento que passa de **400 linhas**
+   deixa de poder ser carregado de uma vez: **divide-se antes de lhe acrescentar conteúdo**. Não é
+   preciso medir à mão — o `md-verify` do gate imprime `linhas=N` por ficheiro.
+   **Âmbito:** documentos que **mantemos** (`docs/**`, `especificacao_mvp.md`, `.clinerules`, `README`s).
+   Entradas do cliente (`.docx`/`.xlsx`) e `docs/out/` (descartável) estão fora.
+   **Como pensar a divisão:**
+   - **Vários domínios no mesmo ficheiro** → cortar **por domínio** (é o que a spec fez).
+   - **Um só assunto longo** (um guia, um fluxo) → cortar **por fase/etapa**, com índice no pai.
+   **Forma obrigatória da divisão** (padrão já provado neste projeto):
+   - o ficheiro-mãe **mantém o nome** e passa a **router**: mapa `§ → ficheiro` + prevalência + ponteiros;
+   - corte **nas fronteiras de `§N`**, nunca a meio de uma secção — a numeração é a API de referência do
+     projeto (`md-verify`) e **o número vai com o conteúdo**;
+   - cada módulo declara, no cabeçalho, **a que pai pertence** e o seu âmbito (layout de `docs/spec/*.md`);
+   - **mover, nunca copiar**; o que já exista noutro sítio **aponta-se**;
+   - no **mesmo** commit: atualizar o mapa e correr o GATE.
+   **Não partir por partir:** nada de ficheiros abaixo de ~40 linhas, nem fragmentar um documento que se
+   lê em sequência por parágrafos — o corte segue a estrutura, não a aritmética.
 
 ## ÁRVORE
 
