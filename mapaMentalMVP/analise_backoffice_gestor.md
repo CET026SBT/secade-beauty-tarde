@@ -705,6 +705,8 @@ Consequências:
 |                                             | parâmetros de configuração — **C-25**                                                                                                                                  |
 | **Q-08 / C-14** — IRC 20 % fixo ou config.? | ✅ **RESOLVIDA** (§F.6): o cliente quer **editar a taxa na UI** → **configurável**, com o valor de IRC **decidido pelo gestor** (confirma **C-05**)                    |
 | **Q-43 / C-19** — `.xlsx` é tratável?       | ✅ **RESOLVIDA (e corrigida)** (§F.7): **é** tratável com `zlib` em PHP puro — **12/12** e **15/15** entradas lidas. A limitação anterior era **incorreta** → **C-30** |
+| **Q-41 / pergunta 17 (Teams)** — o          | ✅ **JÁ DECIDIDO na especificação** — **não é dúvida**: **D-11** · §15.3 · **RF-13** · §28.2/13 fixam o **lembrete das ≤ 24 h** ao cliente (sugere loja física ou      |
+| cliente recebe lembretes?                   | reagendamento); falta **implementar** (§24.6). Ficam abertos apenas: **(a)** 1 ou 2 mecanismos (**C-21**) e **(b)** onde aparece (*"e/ou"* de §24.6)                   |
 | **Q-02 … Q-30** (restantes) e **Q-31…Q-47** | ⬜ **em aberto** — seguem válidas; as novas desta iteração são **§2.10**                                                                                               |
 
 ### 2.1 Contabilidade e tesouraria
@@ -840,18 +842,20 @@ Proposta: mostrar o apurado e oferecer *"criar obrigação com este valor"* (man
 
 ### 2.8 Dúvidas novas — RH, notificações e acesso do Funcionário
 
-| ID   | Pergunta do cliente                                           | O que o código/BD diz hoje                                           | Opção / decisão necessária                                           |
-| :--- | :------------------------------------------------------------ | :------------------------------------------------------------------- | :------------------------------------------------------------------- |
-| Q-40 | Como é que os recibos verdes alimentam **indiretamente** os   | Os valores **já estão gravados** por aceitação                       | Mecanismo em §2.8.1 — **sem** novo lançamento (risco de dupla        |
-|      | passivos?                                                     | (`agendamento_servico.valor_recibo_verde_funcionario`, snapshot —    | contagem — **C-10**)                                                 |
-|      |                                                               | §11)                                                                 |                                                                      |
-| Q-41 | Os **lembretes (sininho)** devem ser enviados ao **cliente**? | O cliente **não tem** sistema de notificações; §15.3/§24.6 já        | **Separar**: notificações **internas** (backoffice) ≠ **ao cliente** |
-|      |                                                               | preveem o **lembrete das 24 h**                                      | (Main) — **C-21**                                                    |
-| Q-42 | A que terá acesso o **Funcionário** no backoffice?            | Hoje: **só** `/gestao/servicos` (aceitação); as APIs recusam o resto | Matriz concreta em **§1.7**; agregar em `/gestao/agenda` — ver       |
-|      |                                                               | com 403 (§22.2)                                                      | **C-22**                                                             |
-| Q-43 | (técnica) Um `.csv` é tratável? E `.xls`?                     | **Sem bibliotecas** (proibido instalar — `.clinerules` §3): `.csv` é | Preferir **CSV** (ou `.xlsx` previamente convertido) — ver **C-19**  |
-|      |                                                               | nativo do PHP; `.xls`/`.xlsx` é **binário** e exigiria biblioteca    |                                                                      |
-|      |                                                               | externa                                                              |                                                                      |
+| ID   | Pergunta do cliente                                                | O que o código/BD diz hoje                                           | Opção / decisão necessária                                          |
+| :--- | :----------------------------------------------------------------- | :------------------------------------------------------------------- | :------------------------------------------------------------------ |
+| Q-40 | Como é que os recibos verdes alimentam **indiretamente** os        | Os valores **já estão gravados** por aceitação                       | Mecanismo em §2.8.1 — **sem** novo lançamento (risco de dupla       |
+|      | passivos?                                                          | (`agendamento_servico.valor_recibo_verde_funcionario`, snapshot —    | contagem — **C-10**)                                                |
+|      |                                                                    | §11)                                                                 |                                                                     |
+| Q-41 | ✅ **Reformulada** — detalhe em **§2.8.2**. O *"se"* está          | O cliente **não tem** sistema de notificações no Main; §15.3 e §24.6 | ✅ **Já decidido** que **sim** — **D-11** · §15.3 · **RF-13** ·     |
+|      | **resolvido**; o que fica *aberto* é o *"como"*: (a) o sino do     | preveem o **lembrete das 24 h**, mas **sem UI**                      | §28.2/13 (estado: ⬜ por implementar). Abertos (a) e (b) → **C-21** |
+|      | backoffice e os avisos ao cliente são **1 ou 2 mecanismos**? (b) o |                                                                      |                                                                     |
+|      | lembrete aparece em `/agendamentos`, na **home** ou **nos dois**?  |                                                                      |                                                                     |
+| Q-42 | A que terá acesso o **Funcionário** no backoffice?                 | Hoje: **só** `/gestao/servicos` (aceitação); as APIs recusam o resto | Matriz concreta em **§1.7**; agregar em `/gestao/agenda` — ver      |
+|      |                                                                    | com 403 (§22.2)                                                      | **C-22**                                                            |
+| Q-43 | (técnica) Um `.csv` é tratável? E `.xls`?                          | **Sem bibliotecas** (proibido instalar — `.clinerules` §3): `.csv` é | Preferir **CSV** (ou `.xlsx` previamente convertido) — ver **C-19** |
+|      |                                                                    | nativo do PHP; `.xls`/`.xlsx` é **binário** e exigiria biblioteca    |                                                                     |
+|      |                                                                    | externa                                                              |                                                                     |
 
 #### 2.8.1 Mecanismo concreto: recibos verdes → passivos/gastos (Q-40)
 
@@ -867,6 +871,30 @@ Custo de pessoal FIXO do periodo (efetivos)
 Estes dois valores entram nos **Passivos** e nas **Despesas operacionais** (§2.7.1) — **sem** criar
 lançamento novo em `transacao_financeira`, porque a comissão **já está gravada** no serviço aceite.
 Uma segunda gravação seria **dupla contagem** (é a razão do **C-10**).
+
+#### 2.8.2 Nota de correção — o lembrete ao cliente **não é** requisito novo (Q-41)
+
+A pergunta chegou formulada como *"os lembretes devem ser enviados ao cliente?"* — e essa formulação
+**reabre uma decisão já tomada**. Verificado em `especificacao_mvp.md`:
+
+| Onde                 | O que já está decidido                                                                    |
+| :------------------- | :---------------------------------------------------------------------------------------- |
+| **§3.11 (D-11)**     | *"O sistema despoleta um **alerta/lembrete automático ao cliente**"*, quando falta ≤ 24 h |
+|                      | e o agendamento **não foi incluído em nenhuma rota**                                      |
+| **§15.3**            | Conteúdo: impossibilidade de execução + sugestão de **loja física** ou **reagendamento**; |
+|                      | notificação **simulada**                                                                  |
+| **§15.5 · §20.2**    | O lembrete faz parte do fluxo do auto-cancelamento (soft), não é um extra                 |
+| **RF-13 (§5)**       | Requisito formalmente registado                                                           |
+| **§24.6 · §28.2/13** | É **critério de aceitação** — estado: ⬜ **por implementar**                              |
+
+**Conclusão:** o *"se"* está fechado (o cliente **recebe**); o que está aberto é só:
+
+- **(a)** o sino do backoffice e os avisos ao cliente são **um ou dois mecanismos** → **C-21**;
+- **(b)** **onde** o cliente vê o lembrete — §24.6 escreve *"em `/agendamentos` (e/ou na home)"*, e o
+  *"e/ou"* **não está decidido**.
+
+A **mesma redundância** existia no ficheiro de comunicação (`mensagem_teams.txt`, **pergunta 17**, já
+presente na 2.ª iteração) — **reformulada nesta iteração** para não reabrir o que a especificação fixou.
 
 ### 2.9 Dúvidas novas — frontend desta iteração
 
@@ -1027,10 +1055,11 @@ Cards:
 |      | internos                                      |                                                                  | vendas, somá-las aos agendamentos       | **sempre** interna; ficheiros externos só trazem o   |
 |      |                                               |                                                                  | **duplica a receita**                   | que o sistema não produz (ou são puramente           |
 |      |                                               |                                                                  |                                         | informativos)                                        |
-| C-21 | Sininho também para o **cliente**             | §15.3/§24.6 já preveem o **lembrete das 24 h** ao cliente; o     | Misturar notificações internas com      | **Separar por canal/âmbito**: interno                |
-|      |                                               | backoffice tem o calendário fiscal (dados sensíveis)             | notificações ao cliente expõe dados de  | (gestor/funcionário) no backoffice; ao cliente,      |
-|      |                                               |                                                                  | gestão e duplica o mecanismo            | apenas os lembretes operacionais já previstos        |
-|      |                                               |                                                                  |                                         | (§15.3), no Main                                     |
+| C-21 | Separação **sino interno** ↔                  | O **lembrete ao cliente** das 24 h **já é requisito** (**D-11**  | O pedido                                | **Separar por canal/âmbito** (recomendado) e         |
+|      | **avisos ao cliente**                         | · §15.3 · **RF-13**), só **não está implementado**; o sino do    | *"o sino também para o cliente?"*       | **decidir onde** o cliente vê o lembrete:            |
+|      |                                               | backoffice mostra dados de gestão (fisco, fornecedores)          | **não cria requisito novo** — já está   | `/agendamentos`, **home** ou ambos (*"e/ou"* de      |
+|      |                                               |                                                                  | na especificação; o que se decide é a   | §24.6)                                               |
+|      |                                               |                                                                  | **arquitetura** e o **sítio**           |                                                      |
 | C-22 | Ocultar módulos financeiros ao Funcionário    | As **páginas** não são segregadas por perfil; só as **APIs**     | Repetição do problema de autorização,   | Aplicar a **mesma** matriz de perfis (página +       |
 |      |                                               | recusam (403) — já é o **C-09**                                  | agora com mais páginas novas            | endpoint) definida em **C-09**, com testes de 403    |
 | C-23 | ➕ campo na BD com o link da imagem do        | `servico_foto` **já existe** (`url_foto`, `destaque`,            | O pedido literal (coluna nova)          | Usar `servico_foto` (via recomendada em §E.3) **ou** |
@@ -1191,15 +1220,16 @@ balancete da empresa (**Q-49**).
 
 ### 4.5 Encaixe nos módulos já planeados (resumo das alterações desta iteração)
 
-| Onde (2.ª iteração)                 | O que a 3.ª iteração acrescenta                                                        |
-| :---------------------------------- | :------------------------------------------------------------------------------------- |
-| §1.4 Módulo B (Contabilidade)       | ➕ 6 secções do "MENU APOIO" — inclui **Rácios** (F.2) e **Financiamentos** (F.6)      |
-| §1.5 Módulo C (RH)                  | fórmula do custo de pessoal provada + **SA**, **SS 34,75 %** e **IRS por trabalhador** |
-| §1.8 BD: 24 tabelas → proposta      | ➕ `emprestimo` (+ prestações) e, a decidir, `conta_bancaria` (**C-25/C-26**)          |
-| §2 Q-04 / Q-08 / Q-09 / Q-11 / Q-14 | **fechadas ou parcialmente fechadas** por verificação (§2.0)                           |
-| §2 Q-43 · C-19                      | **corrigidas** — `.xlsx` é tratável (**F.7** · **C-30**)                               |
-| §3 C-24 (fim da lista)              | ➕ **C-25…C-30**                                                                       |
-| §3.1 Checklist (25 decisões)        | ➕ **26…31** → **31 decisões**                                                         |
+| Onde (2.ª iteração)                 | O que a 3.ª iteração acrescenta                                                                      |
+| :---------------------------------- | :--------------------------------------------------------------------------------------------------- |
+| §1.4 Módulo B (Contabilidade)       | ➕ 6 secções do "MENU APOIO" — inclui **Rácios** (F.2) e **Financiamentos** (F.6)                    |
+| §1.5 Módulo C (RH)                  | fórmula do custo de pessoal provada + **SA**, **SS 34,75 %** e **IRS por trabalhador**               |
+| §1.8 BD: 24 tabelas → proposta      | ➕ `emprestimo` (+ prestações) e, a decidir, `conta_bancaria` (**C-25/C-26**)                        |
+| §2 Q-04 / Q-08 / Q-09 / Q-11 / Q-14 | **fechadas ou parcialmente fechadas** por verificação (§2.0)                                         |
+| §2 Q-43 · C-19                      | **corrigidas** — `.xlsx` é tratável (**F.7** · **C-30**)                                             |
+| §2 **Q-41** · pergunta 17 (Teams)   | **reformuladas** — o lembrete ao cliente **já era requisito** (D-11 · §15.3 · RF-13); ver **§2.8.2** |
+| §3 C-24 (fim da lista)              | ➕ **C-25…C-30**                                                                                     |
+| §3.1 Checklist (25 decisões)        | ➕ **26…31** → **31 decisões**                                                                       |
 
 ---
 
