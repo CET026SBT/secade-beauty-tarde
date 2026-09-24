@@ -115,7 +115,7 @@ $bookingUserName = Session::user()["name"] ?? "";
                                     </div>
 
                                     <div class="d-flex justify-content-between">
-                                        <button type="button" class="btn btn-primary px-4" data-step-next>
+                                        <button type="button" class="btn btn-primary px-4 ms-auto" data-step-next>
                                             Continuar <i class="bi bi-arrow-right ms-1"></i>
                                         </button>
                                     </div>
