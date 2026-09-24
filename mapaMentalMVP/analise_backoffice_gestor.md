@@ -26,6 +26,12 @@ tratava como requisito — *"renovação de contratos"* e *"revisões da carrinh
 prova de origem: **não têm nenhum ficheiro que os exija** → **§2.5.1**; as perguntas 18 e 19 do
 `mensagem_teams.txt` foram reformuladas em conformidade.
 
+**Revisão desta iteração (auditoria de artefactos):** além da proveniência dos avisos tratada acima,
+foi feito um **varrimento de artefactos** a todo este documento. Tudo o que estava afirmado **sem
+prova** (ficheiro + linha) está identificado, com a prova e a correção, em
+**`mapaMentalMVP/auditoria_artefactos.md`** — casos **F-01…F-07**, aplicados em §1.3 · §1.7 ·
+§1.10 · §1.11 e §2.5.1.
+
 **Cruzado com:** `especificacao_mvp.md` v1.1 (§2–§5, §11–§13, §17–§19, §22, §24–§26, §28, §29), os
 **templates da 3.ª iteração** (`Menu APOIO 3.docx` · `CUSTOS RH 2.xlsx`) e o código/BD reais (`index.php`,
 `app/config/api.php`, `app/{controllers,services,repositories}`, `modules/main/`, `modules/backoffice/`,
@@ -132,18 +138,19 @@ prova de origem: **não têm nenhum ficheiro que os exija** → **§2.5.1**; as 
 
 **A.2 Sininho de notificações — reutilizar o que já existe**
 
-| Peça                                        | Já existe?                                                           | Proposta                                                              |
-| :------------------------------------------ | :------------------------------------------------------------------- | :-------------------------------------------------------------------- |
-| Persistência de alertas                     | ✅ `alerta_fiscal` (`tipo_alerta` 30/15/7/3/1/atraso, `data_alerta`, | Reutilizar como **fonte primária** do contador:                       |
-|                                             | `visualizado`, chave única)                                          | `COUNT(*) WHERE visualizado = 0`                                      |
-| API de alertas                              | ✅ `admin-fiscal-alert-list` · `admin-fiscal-alert-read` (§19.3)     | Manter e acrescentar `admin-alert-summary` (contador para a barra)    |
-| Construção dos alertas                      | ✅ `FiscalService::generateAlerts()` on-demand e idempotente (§13)   | Manter o mesmo padrão para os novos tipos de lembrete (sem CRON — P6) |
-| Local na UI                                 | ✅ `modules/backoffice/components/menuUserBo.php` +                  | O sino entra **no menu do utilizador** (barra superior), como pedido  |
-|                                             | `includes/boNavbar.php`                                              |                                                                       |
-| Lembretes a fornecedores/contratos/carrinha | ⬜ (o enum `obrigacao_fiscal.tipo` só tem                            | **Extensão de modelo necessária** → decidir entre extensão do enum ou |
-|                                             | `iva`,`irc`,`seguranca_social`,`seguros`)                            | entidade nova (conflito **C-02**)                                     |
-| "Lido" por conta                            | 🟡 `alerta_fiscal.visualizado` é **global** (não por utilizador)     | Com 2+ gestores, quem marca "lido" silencia os outros → decisão em    |
-|                                             |                                                                      | **C-03**                                                              |
+| Peça                                        | Já existe?                                                             | Proposta                                                              |
+| :------------------------------------------ | :--------------------------------------------------------------------- | :-------------------------------------------------------------------- |
+| Persistência de alertas                     | ✅ `alerta_fiscal` (`tipo_alerta` 30/15/7/3/1/atraso, `data_alerta`,   | Reutilizar como **fonte primária** do contador:                       |
+|                                             | `visualizado`, chave única)                                            | `COUNT(*) WHERE visualizado = 0`                                      |
+| API de alertas                              | ✅ `admin-fiscal-alert-list` · `admin-fiscal-alert-read` (§19.3)       | Manter e acrescentar `admin-alert-summary` (contador para a barra)    |
+| Construção dos alertas                      | ✅ `FiscalService::generateAlerts()` on-demand e idempotente (§13)     | Manter o mesmo padrão para os novos tipos de lembrete (sem CRON — P6) |
+| Local na UI                                 | ✅ `modules/backoffice/components/menuUserBo.php` +                    | O sino entra **no menu do utilizador** (barra superior), como pedido  |
+|                                             | `modules/backoffice/includes/boNavbar.php` (⚠️ corrigido — a auditoria |                                                                       |
+|                                             | de artefactos **F-03**; não existe `includes/` na raiz)                |                                                                       |
+| Lembretes a fornecedores/contratos/carrinha | ⬜ (o enum `obrigacao_fiscal.tipo` só tem                              | **Extensão de modelo necessária** → decidir entre extensão do enum ou |
+|                                             | `iva`,`irc`,`seguranca_social`,`seguros`)                              | entidade nova (conflito **C-02**)                                     |
+| "Lido" por conta                            | 🟡 `alerta_fiscal.visualizado` é **global** (não por utilizador)       | Com 2+ gestores, quem marca "lido" silencia os outros → decisão em    |
+|                                             |                                                                        | **C-03**                                                              |
 
 > 📌 **Divergência detetada (especificação ↔ BD).** §17.6 descreve `alerta_fiscal` com `mensagem` e `lido`,
 > mas a tabela real (`DataBase_v2.sql`, L549) tem **`visualizado`** e **não tem `mensagem`**. O contador do
@@ -162,18 +169,20 @@ prova de origem: **não têm nenhum ficheiro que os exija** → **§2.5.1**; as 
 
 **B.1 O que o sistema já consegue alimentar (verificado em `DataBase_v2.sql`)**
 
-| Indicador pedido               | Fonte real já existente                                                                | Nota                                                               |
-| :----------------------------- | :------------------------------------------------------------------------------------- | :----------------------------------------------------------------- |
-| Rendimentos (loja vs carrinha) | `agendamento.valor_total` + `local_prestacao` (`loja_fisica`/`carrinha_ambulante`) +   | por `data_hora_pretendida` (mês corrente), separável por canal ✅  |
-|                                | `estado_reserva`                                                                       |                                                                    |
-| Recebimentos                   | `transacao_financeira` (`sinal_inicial`, `restante_90_porcento`, `pagamento_integral`, | ⚠️ **sem UI** (§25.3) e `sinal_pago` está sempre `0` (§14.1)       |
-|                                | `quota_parte_deslocacao`)                                                              |                                                                    |
-| Custos de rota                 | `rota_ambulante.custo_estimado_combustivel`, `lucro_servicos`, `lucro_total`           | já calculados no módulo de rotas (§12.2), incl. custo fixo de 50 € |
-| Obrigações fiscais             | `obrigacao_fiscal` + `alerta_fiscal`                                                   | `valor_estimado` é **introduzido à mão** (§13)                     |
-| Prestadores (recibos verdes)   | `agendamento_servico.valor_recibo_verde_funcionario` + `config_recibo_verde`           | valor **snapshot** por aceitação (§11)                             |
-| Efetivos                       | `funcionario.salario_base`                                                             | ⚠️ subsídios / 13.º-14.º mês **não** estão modelados               |
-| Caixa por funcionário/dia      | `fecho_caixa_diario` (`total_esperado_faturas`, `total_recolhido_campo`, `diferenca`)  | ⚠️ **sem UI** (§25.3)                                              |
-| Gorjetas                       | `gorjeta`                                                                              | sem UI (§25.3)                                                     |
+| Indicador pedido               | Fonte real já existente                                                                | Nota                                                                  |
+| :----------------------------- | :------------------------------------------------------------------------------------- | :-------------------------------------------------------------------- |
+| Rendimentos (loja vs carrinha) | `agendamento.valor_total` + `local_prestacao` (`loja_fisica`/`carrinha_ambulante`) +   | por `data_hora_pretendida` (mês corrente), separável por canal ✅     |
+|                                | `estado_reserva`                                                                       |                                                                       |
+| Recebimentos                   | `transacao_financeira` (`sinal_inicial`, `restante_90_porcento`, `pagamento_integral`, | ⚠️ **sem UI** (§25.3) e `sinal_pago` está sempre `0` (§14.1)          |
+|                                | `quota_parte_deslocacao`)                                                              |                                                                       |
+| Custos de rota                 | `rota_ambulante.custo_estimado_combustivel`, `lucro_servicos`, `lucro_total`           | já calculados no módulo de rotas (§12.2). ⚠️ **F-06:** o "custo fixo" |
+|                                |                                                                                        | de 50 € do código (`RotaService` L22) **coincide** com a referência   |
+|                                |                                                                                        | visual de 50 € (L23) — decidir antes de somar "Gastos" (auditoria)    |
+| Obrigações fiscais             | `obrigacao_fiscal` + `alerta_fiscal`                                                   | `valor_estimado` é **introduzido à mão** (§13)                        |
+| Prestadores (recibos verdes)   | `agendamento_servico.valor_recibo_verde_funcionario` + `config_recibo_verde`           | valor **snapshot** por aceitação (§11)                                |
+| Efetivos                       | `funcionario.salario_base`                                                             | ⚠️ subsídios / 13.º-14.º mês **não** estão modelados                  |
+| Caixa por funcionário/dia      | `fecho_caixa_diario` (`total_esperado_faturas`, `total_recolhido_campo`, `diferenca`)  | ⚠️ **sem UI** (§25.3)                                                 |
+| Gorjetas                       | `gorjeta`                                                                              | sem UI (§25.3)                                                        |
 
 **B.2 Gap estrutural — o achado mais importante desta análise**
 
@@ -272,6 +281,10 @@ Verificação: **não existe** tabela, página, endpoint, Service, Repository ou
 
 ### 1.7 Antecipação do perfil Funcionário (e a autorização por perfil)
 
+> ⚠️ **F-04 (auditoria de artefactos):** este documento usa **três** prefixos para a mesma área —
+> `employee-*` (§1.7/§1.9) · `admin-employee-*` (§1.5/§1.9) · e o real **`admin-service-*`**
+> (§19.2, 4 endpoints). Escolher **um** antes de escrever qualquer endpoint (viola o P3).
+
 **Estado real (verificado):** as **páginas** do backoffice **não** são segregadas por perfil — o gestor abre
 `/gestao/servicos` em supervisão —, mas as **APIs** são: `admin-service-*` recusa aceitar ao gestor com **403** (§22.2).
 Ou seja, já existe autorização **por endpoint**; falta autorização **por página/menu**.
@@ -279,7 +292,9 @@ Ou seja, já existe autorização **por endpoint**; falta autorização **por p�
 **Proposta**
 
 1. **Mapa de permissões por perfil** (código/config, sem tabela nova): página → perfis; endpoint → perfis
-   (hoje cada Controller faz `requireManager()`/`requireEmployee()` — manter e passar a cobrir as páginas).
+   (o mecanismo real é **`Session::requireProfileApi([...])`** — ex.: `AdminController` L18,
+   `FiscalController` L21; ⚠️ a auditoria de artefactos **F-02** corrigiu a referência anterior a
+   `requireManager()`/`requireEmployee()`, que **não existem** no código).
 2. `boNavbar.php` e `menuUserBo.php` **filtram** as entradas pelo perfil em sessão, mas o **enforcement**
    continua **server-side** (nunca só esconder no menu) → risco apontado em **C-09**.
 3. Novas páginas e respetivo perfil:
@@ -356,6 +371,8 @@ mesma alteração) e manter as **289 verificações** atuais a passar.
 
 Por §29.3.2, novos requisitos entram como `RF-nn`, regras como `RN-nn` e decisões como `D-nn`.
 Blocos livres verificados: `RF-75+` (§4.6 termina em RF-74), `RN-30+` (§5.1 termina em RN-29), `D-12+` (§3.11 termina em D-11).
+> ⚠️ **F-05 (auditoria de artefactos):** a lista abaixo começa em **RF-80** — ou seja, **RF-75…RF-79
+> ficam sem uso nem reserva declarada**. Alinhar (começar em RF-75) ou justificar a reserva.
 
 | ID sugerido   | Tema a registar                                                                                                                                                                    |
 | :------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -437,7 +454,9 @@ filtro**) · exemplos de teste (§8.3: Barba 4,07 €) · resumo/ticket do wizar
 | `servico` **não tem** coluna de imagem                                                                                       | O campo pedido "não existe" — mas a alternativa (a tabela) já existe |
 | **Precedente de convenção:** os cards de categoria carregam a imagem por **slug do nome** → `/modules/common/img/<slug>.png` | Já há um padrão de imagens no projeto que se pode seguir             |
 | (`serviceCategories.js`)                                                                                                     |                                                                      |
-| Não existem imagens por serviço em `modules/common/img` (só 3 de categoria + 4 de equipa + 4 testemunhos)                    | 35 serviços precisam de imagens **e** de um *fallback*               |
+| Não existem imagens por serviço em `modules/common/img` (só 3 de categoria em uso num total de 7                             | 35 serviços precisam de imagens **e** de um *fallback*               |
+| `barbearia`·`cabelereiro`·`estetica`·`manicure`·`massage`·`pedicure`·`skin-care` — **F-07** — + 4 de                         |                                                                      |
+| equipa + 4 testemunhos)                                                                                                      |                                                                      |
 
 O cliente pediu *"criar um campo na base de dados com um link para a respetiva imagem"*. Há duas vias:
 
