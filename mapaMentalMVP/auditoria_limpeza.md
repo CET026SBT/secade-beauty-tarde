@@ -10,6 +10,11 @@
 notas embrionárias), seguido de leitura direta de cada zona sinalizada. Os números de linha são os
 **atuais à data de 24/09/2026** (mudam se os ficheiros forem editados).
 
+> ✅ **Âncoras re-aferidos.** Depois de escrever o relatório, todos os números de linha citados foram
+> **re-verificados por varrimento** — uma edição feita a meio da auditoria tinha deslocado um bloco
+> (B-02: era L11-17, é **L15-20**). Os restantes 22 confirmaram-se. Essa re-aferição revelou ainda
+> **um defeito factual** dentro do documento-mestre (ver B-02).
+
 **Contexto do corte:** o MVP (Fases 1–5) está concluído e validado; o desenvolvimento está na
 **Fase 6** (§24 — requisitos adicionais). Tudo o que só servia para *entregar o MVP* já cumpriu a
 função.
@@ -18,31 +23,31 @@ função.
 
 ## 1. RESUMO — 23 ACHADOS
 
-| #    | Ficheiro / secção                   | Tipo                           | Veredicto                        |
-| :--- | :---------------------------------- | :----------------------------- | :------------------------------- |
-| A-01 | `README.md` L12                     | Prazo vencido                  | 🔴 **CORTAR**                    |
-| A-02 | `README.md` L344                    | Prazo vencido                  | 🔴 **CORTAR**                    |
-| A-03 | `README.md` L191 + L346             | Blocos de "entrega"            | 🟠 **CONDENSAR**                 |
-| A-04 | `README.md` L368                    | Rodapé desatualizado           | 🔴 **CORRIGIR**                  |
-| A-05 | `especificacao_mvp.md` L1870        | Rodapé desatualizado           | 🔴 **CORRIGIR**                  |
-| A-06 | `especificacao_mvp.md` L2           | Data contraditória ao rodapé   | 🔴 **CORRIGIR**                  |
-| A-07 | `guia_teste_manual.md` L3           | Data desatualizada             | 🟡 **CORRIGIR**                  |
-| A-08 | `mapa_fluxo_dados.md` L3            | Data desatualizada             | 🟡 **CORRIGIR**                  |
-| B-01 | `especificacao_mvp.md` §23          | Histórico técnico (66 linhas)  | 🟠 **CONDENSAR**                 |
-| B-02 | `especificacao_mvp.md` L11-17       | Lista de ficheiros eliminados  | 🔴 **CORTAR** (duplica §29.2)    |
-| B-03 | `especificacao_mvp.md` L1819-1826   | Comandos `git` de recuperação  | 🔴 **CORTAR**                    |
-| B-04 | `especificacao_mvp.md` L1828-1829   | Nota sobre os `.pdf`           | 🟠 **CONDENSAR** (repetida)      |
-| B-05 | `especificacao_mvp.md` §3.13        | Conflitos internos resolvidos  | 🟠 **CONDENSAR** (duplica §5.2)  |
-| B-06 | `especificacao_mvp.md` L1777        | Data da consolidação           | 🟡 **CORTAR** (data)             |
-| B-07 | `mapa_fluxo_dados.md` §14.2         | Regras revogadas repetidas     | 🟠 **CONDENSAR**                 |
-| B-08 | `README.md` L331-333                | Nota sobre cronograma revogado | 🟡 **CORTAR**                    |
-| C-01 | `especificacao_mvp.md` §5.2         | Regras revogadas               | ⚪ **MANTER** (protegido)        |
-| D-01 | `especificacao_mvp.md` §3.12        | Nota embrionária transversal   | 🔴 **CORTAR**                    |
-| E-01 | `mapa_fluxo_dados.md` (5 sítios)    | Datas em diagramas de exemplo  | ⚪ **ACEITÁVEL**                 |
-| F-01 | `mensagem_teams.txt`                | Perguntas já respondidas       | 🟠 **PODAR**                     |
-| F-02 | `analise_backoffice_gestor.md` §2.0 | Estado das iterações           | 🟡 **MANTER** (rastreio)         |
-| F-03 | `auditoria_artefactos.md` §3        | Atestado de verificação        | ⚪ **MANTER** (evita retrabalho) |
-| G-01 | `.clinerules` (todo)                | —                              | ✅ **LIMPO**                     |
+| #    | Ficheiro / secção                   | Tipo                           | Veredicto                                   |
+| :--- | :---------------------------------- | :----------------------------- | :------------------------------------------ |
+| A-01 | `README.md` L12                     | Prazo vencido                  | 🔴 **CORTAR**                               |
+| A-02 | `README.md` L344                    | Prazo vencido                  | 🔴 **CORTAR**                               |
+| A-03 | `README.md` L191 + L346             | Blocos de "entrega"            | 🟠 **CONDENSAR**                            |
+| A-04 | `README.md` L368                    | Rodapé desatualizado           | 🔴 **CORRIGIR**                             |
+| A-05 | `especificacao_mvp.md` L1870        | Rodapé desatualizado           | 🔴 **CORRIGIR**                             |
+| A-06 | `especificacao_mvp.md` L2           | Data contraditória ao rodapé   | 🔴 **CORRIGIR**                             |
+| A-07 | `guia_teste_manual.md` L3           | Data desatualizada             | 🟡 **CORRIGIR**                             |
+| A-08 | `mapa_fluxo_dados.md` L3            | Data desatualizada             | 🟡 **CORRIGIR**                             |
+| B-01 | `especificacao_mvp.md` §23          | Histórico técnico (66 linhas)  | 🟠 **CONDENSAR**                            |
+| B-02 | `especificacao_mvp.md` L15-20       | Lista ficheiros eliminados     | 🔴 **CORTAR** (duplica §29.2 + contradição) |
+| B-03 | `especificacao_mvp.md` L1819-1826   | Comandos `git` de recuperação  | 🔴 **CORTAR**                               |
+| B-04 | `especificacao_mvp.md` L1828-1829   | Nota sobre os `.pdf`           | 🟠 **CONDENSAR** (repetida)                 |
+| B-05 | `especificacao_mvp.md` §3.13        | Conflitos internos resolvidos  | 🟠 **CONDENSAR** (duplica §5.2)             |
+| B-06 | `especificacao_mvp.md` L1777        | Data da consolidação           | 🟡 **CORTAR** (data)                        |
+| B-07 | `mapa_fluxo_dados.md` §14.2         | Regras revogadas repetidas     | 🟠 **CONDENSAR**                            |
+| B-08 | `README.md` L331-333                | Nota sobre cronograma revogado | 🟡 **CORTAR**                               |
+| C-01 | `especificacao_mvp.md` §5.2         | Regras revogadas               | ⚪ **MANTER** (protegido)                   |
+| D-01 | `especificacao_mvp.md` §3.12        | Nota embrionária transversal   | 🔴 **CORTAR**                               |
+| E-01 | `mapa_fluxo_dados.md` (5 sítios)    | Datas em diagramas de exemplo  | ⚪ **ACEITÁVEL**                            |
+| F-01 | `mensagem_teams.txt`                | Perguntas já respondidas       | 🟠 **PODAR**                                |
+| F-02 | `analise_backoffice_gestor.md` §2.0 | Estado das iterações           | 🟡 **MANTER** (rastreio)                    |
+| F-03 | `auditoria_artefactos.md` §3        | Atestado de verificação        | ⚪ **MANTER** (evita retrabalho)            |
+| G-01 | `.clinerules` (todo)                | —                              | ✅ **LIMPO**                                |
 
 ---
 
@@ -160,20 +165,26 @@ se algum regredir, o teste falha antes de chegar a produção. O texto é um seg
 **Proposta:** cortar §23.1–§23.3 na íntegra e **manter §23.4** (ou um resumo) — é a única que explica
 o *porquê* de uma decisão de schema vigente (v3 sem `funcionario_categoria`).
 
-### B-02 · `especificacao_mvp.md` L11-17 — lista de ficheiros eliminados
+### B-02 · `especificacao_mvp.md` L15-20 — lista de ficheiros eliminados
 
 ```markdown
 > **Fontes consolidadas** (ficheiros **entretanto eliminados** na consolidação documental — mapa em §29.2):
-> `planeamento_geral.md` · `rectificacoes.md` · `fluxo_funcionalidades.md` · `CARRINHA_SPEC.md` ·
+> `planeamento_geral.md` · `rectificacoes.md` (esclarecimento de conflitos
+> com os `.pdf` iniciais) · `fluxo_funcionalidades.md` · `CARRINHA_SPEC.md` ·
 > `plano_desenvolvimento.md` · `ALTERACOES_PRIORIDADES.md` · `duvidas_planeamento.md` ·
 > `relatorio_alteracoes.md` · `tecnologias_projeto.md` · `LOGIN_PROFILE_TODO.md` ·
-> `README.md` · `relatorio_implementacao.md`
+> `README.md` · `relatorio_implementacao.md`.
 ```
 
 **Porque já não é relevante:** são 13 ficheiros que **já não existem** — nenhum leitor os pode abrir.
 A lista completa **já está** em §29.2 (L1800-1811), com papel e destino de cada um. Aqui é uma
 segunda cópia, e no **topo do documento**, onde ocupa o espaço de abertura com lixo.
-**Proposta:** cortar as L12-17 e deixar uma linha: `> Fontes consolidadas — mapa em §29.2.`
+
+**🔴 Defeito adicional encontrado nesta verificação:** o bloco afirma que o **`README.md`** foi
+eliminado, mas o `README.md` **existe** (402→368 linhas, versionado em `dev`) e a §29.2 lista-o como
+`✅ **Mantido**`. É uma **contradição factual dentro do próprio documento** — mais um motivo para
+cortar o bloco (a §29.2 é a versão correta).
+**Proposta:** cortar as L15-20 e deixar uma linha: `> Fontes consolidadas — mapa em §29.2.`
 
 ### B-03 · `especificacao_mvp.md` L1819-1826 — comandos `git` para ressuscitar ficheiros
 
