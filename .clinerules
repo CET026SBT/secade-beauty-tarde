@@ -11,49 +11,49 @@ Ficheiro de **operação**. Não contém produto: contém (a) restrições, conv
 | :-- | :------------------------------------------- | :--------------------------------------------- |
 | 1   | Este ficheiro (≈146 linhas)                  | sempre                                         |
 | 2   | `especificacao_mvp.md` — **router** (~63 l.) | sempre: dá o mapa `§ → ficheiro`               |
-| 3   | **UM** ficheiro de `dev/docs/spec/`              | só o domínio em causa — nunca os nove          |
-| 4   | `dev/tests/README.md` · `dev/tools/README.md`        | ao testar · ao usar ferramentas                |
-| 5   | `dev/docs/README.md`                             | **só** quando o humano pedir documentação/mapa |
+| 3   | **UM** ficheiro de `_dev/docs/spec/`              | só o domínio em causa — nunca os nove          |
+| 4   | `_dev/tests/README.md` · `_dev/tools/README.md`        | ao testar · ao usar ferramentas                |
+| 5   | `_dev/docs/README.md`                             | **só** quando o humano pedir documentação/mapa |
 
 **Convenções de referência**
 
-- `§N` → secção da **especificação** (vive em `dev/docs/spec/`); as `§NN` são validadas entre ficheiros por
-  `dev/tools/md-verify.php`.
+- `§N` → secção da **especificação** (vive em `_dev/docs/spec/`); as `§NN` são validadas entre ficheiros por
+  `_dev/tools/md-verify.php`.
 - `rules §N` → secção **deste** ficheiro.
 - Referências na banda `§1–§5` deste ficheiro escrevem-se com o **ficheiro de destino** (evita ambiguidade).
 
-**Prevalência:** produto → especificação · operação → este ficheiro · testes → `dev/tests/README.md` ·
-ferramentas → `dev/tools/README.md`. Em conflito de **produto** prevalece a especificação; o erro **deste**
+**Prevalência:** produto → especificação · operação → este ficheiro · testes → `_dev/tests/README.md` ·
+ferramentas → `_dev/tools/README.md`. Em conflito de **produto** prevalece a especificação; o erro **deste**
 ficheiro corrige-se aqui.
 
 **Regras de trabalho**
 
 1. **Requisito primeiro** — entra na especificação e só depois no código. Como o fazer:
-   `dev/docs/rules/build_spec_on_demand.md`.
+   `_dev/docs/rules/build_spec_on_demand.md`.
 2. **Evidência, não memória** — toda a afirmação sai de ficheiro lido (caminho:linha) ou de comando executado.
 3. **Prova de origem** — requisito vindo de conversa (Teams/e-mail) e ausente do repositório é
    **perguntado**, nunca inferido.
 4. **Convenções só depois de aplicadas** — entram em `rules §2` apenas quando já existem no código;
-   propostas vivem em `dev/mapaMentalMVP/` (**não normativo**).
+   propostas vivem em `_dev/mapaMentalMVP/` (**não normativo**).
 5. **Fechar o ciclo** — concluída uma implementação da §24/§25: atualizar estado
-   (`dev/docs/spec/requirements.md` §4), gap (§24 → `dev/docs/spec/backlog.md`), critério (§28 →
-   `dev/docs/spec/delivery.md`) e testes (§26 → `dev/docs/spec/delivery.md`) na mesma alteração.
+   (`_dev/docs/spec/requirements.md` §4), gap (§24 → `_dev/docs/spec/backlog.md`), critério (§28 →
+   `_dev/docs/spec/delivery.md`) e testes (§26 → `_dev/docs/spec/delivery.md`) na mesma alteração.
 6. **Sem redundância** — conteúdo que já exista noutro ficheiro **aponta-se**, não se copia.
 
 ## 1. STACK E RESTRIÇÕES
 
 Stack fixa: PHP puro + PDO + MySQL 8.4.3 · HTML5/CSS3/JS com Bootstrap 5.0.0, jQuery 3.6.1 e as
-bibliotecas de `modules/common/lib` · Laragon local. Detalhe: `dev/docs/spec/core.md` §1.
+bibliotecas de `modules/common/lib` · Laragon local. Detalhe: `_dev/docs/spec/core.md` §1.
 
 - ❌ Instalar pacotes (Composer, npm) ou adotar frameworks externos.
 - ❌ Aceder ou alterar `/admin` na raiz — o backoffice vive em `modules/backoffice/`.
 - ❌ Alterar a estrutura da BD sem justificação registada na especificação.
 - ❌ Refatorar código existente sem planeamento aprovado.
 - ❌ Criar ou reescrever documentação **sem pedido explícito**.
-- ❌ Duplicar neste ficheiro conteúdo da especificação, de `dev/tests/README.md` ou de `dev/tools/README.md`.
+- ❌ Duplicar neste ficheiro conteúdo da especificação, de `_dev/tests/README.md` ou de `_dev/tools/README.md`.
 
 Decisões de gestão são **manuais**: nenhum indicador automático decide ou bloqueia
-(`dev/docs/spec/core.md` §3.1 · `dev/docs/spec/booking.md` §12.2 · §12.3).
+(`_dev/docs/spec/core.md` §3.1 · `_dev/docs/spec/booking.md` §12.2 · §12.3).
 
 ## 2. CONVENÇÕES DE CÓDIGO (aplicadas)
 
@@ -75,7 +75,7 @@ Decisões de gestão são **manuais**: nenhum indicador automático decide ou bl
   Service); **escrita sempre na própria tabela**.
 - **Contrato de nomes front↔API** (`§18.5`): o `name` do campo e a chave do validator espelham
   **exatamente** o que a API espera (EN camelCase). **A API dita o contrato.** Verificado por
-  `dev/tests/asset_test.php`.
+  `_dev/tests/asset_test.php`.
 - **Front-end** (`§18.7`): `form.utils.js` + validators (molde `customerRegister.js`) · `API.*` de
   `api.js` · erros por `responseJSON.message`/`.errors` · overlays com **jq-preloader** · `generalUtils`.
 - **Segurança e acesso** (`§18.6`): APIs `Session::requireLoginApi()` → **401** ·
@@ -85,13 +85,13 @@ Decisões de gestão são **manuais**: nenhum indicador automático decide ou bl
 ## 3. ESCRITA SEGURA E GATE
 
 **Escrita de ficheiros** — ❌ nunca o ciclo `Get-Content` + `Set-Content` do PowerShell 5.1 (introduz
-**BOM** e **mojibake silencioso**). Causa medida e vias corretas: `dev/tools/README.md` §1.
-✅ `php dev/tools/file-edit.php …` ou via .NET. Exigência: **UTF-8 sem BOM**, mantendo **CRLF**.
+**BOM** e **mojibake silencioso**). Causa medida e vias corretas: `_dev/tools/README.md` §1.
+✅ `php _dev/tools/file-edit.php …` ou via .NET. Exigência: **UTF-8 sem BOM**, mantendo **CRLF**.
 
 **Gate antes de concluir** — nesta ordem, todos com `--write`:
 `md-join-tables` → `md-wrap-tables` → `md-align-tables` → `ascii-align`, e depois
-`php dev/tools/health-check.php` tem de terminar em **`TUDO OK`**. Se tocar em JS:
-`php dev/tests/js_syntax_check.php`. Opções e garantias do pipeline: `dev/tools/README.md` §3.
+`php _dev/tools/health-check.php` tem de terminar em **`TUDO OK`**. Se tocar em JS:
+`php _dev/tests/js_syntax_check.php`. Opções e garantias do pipeline: `_dev/tools/README.md` §3.
 
 ## 4. GIT — UTILIZAÇÃO E COMMITS
 
@@ -99,7 +99,7 @@ Decisões de gestão são **manuais**: nenhum indicador automático decide ou bl
 | :---------------- | :---------------------------------------------------------- | :-------------------------- |
 | `main`            | Código final, 100% funcional de ponta a ponta               | apenas de `dev`             |
 | `dev`             | Desenvolvimento — estado mais avançado                      | branches de contexto/tarefa |
-| `agent-workspace` | Pasta `dev/` (docs, tools, tests, mapaMentalMVP), a spec e o `.clinerules` | — (**nunca** integrada)     |
+| `agent-workspace` | Pasta `_dev/` (docs, tools, tests, mapaMentalMVP), a spec e o `.clinerules` | — (**nunca** integrada)     |
 | restantes         | Branches de trabalho (contexto, funcionalidade, correção)   | —                           |
 
 - ❌ **Nunca** commitar em `main` nem em `dev`. ✅ O agente commita nas **branches de contexto/tarefa**.
@@ -110,9 +110,9 @@ Decisões de gestão são **manuais**: nenhum indicador automático decide ou bl
 - Ordem de integração: schema → core/infra → higiene → frontend → domínios → testes.
 - **Mensagens de commit:** título curto; **sem emoji** e **sem markdown**; bullets com `-`; dizer o que
   mudou e porquê.
-- **`agent-workspace`:** os seus caminhos — a pasta `dev/`, `especificacao_mvp.md` e `.clinerules` — estão
+- **`agent-workspace`:** os seus caminhos — a pasta `_dev/`, `especificacao_mvp.md` e `.clinerules` — estão
   no `.gitignore`; para os versionar usa-se `git add -f`, e **só** nesta branch. `README.md`, os **testes**
-  e o código de produto versionam-se normalmente em `dev`. ⚠️ **Pendente de sync:** a umbrella `dev/` só
+  e o código de produto versionam-se normalmente em `dev`. ⚠️ **Pendente de sync:** a umbrella `_dev/` só
   existe nesta branch; no `dev` os testes continuam em `tests/` até a reestruturação ser integrada.
 
 ## 5. FONTES ÚNICAS E MANUTENÇÃO
@@ -122,28 +122,29 @@ Cada assunto tem **uma** fonte. Ao tocar num ficheiro, manter coerentes os que o
 | Assunto                                  | Fonte única                      | Âncora       | Atualizar quando              |
 | :--------------------------------------- | :------------------------------- | :----------- | :---------------------------- |
 | Entrada da especificação (mapa `§`)      | `especificacao_mvp.md` (router)  | —            | muda a divisão por domínios   |
-| Requisitos, regras, decisões, dados, API | `dev/docs/spec/*.md`                 | §1–§29       | regra ou requisito novo       |
+| Requisitos, regras, decisões, dados, API | `_dev/docs/spec/*.md`                 | §1–§29       | regra ou requisito novo       |
 | Operação: restrições, convenções, Git    | `.clinerules` (**este**)         | §1 · §2 · §4 | convenção aplicada, fluxo Git |
-| Testes: suites, execução, pré-requisitos | `dev/tests/README.md`                | —            | suite nova, contagem          |
-| Ferramentas: catálogo, opções, pipeline  | `dev/tools/README.md`                | §1 · §2 · §3 | ferramenta ou opção nova      |
-| Documentação on-demand: regras e moldes  | `dev/docs/README.md` · `dev/docs/rules/` | —            | regra ou molde novo           |
+| Testes: suites, execução, pré-requisitos | `_dev/tests/README.md`                | —            | suite nova, contagem          |
+| Ferramentas: catálogo, opções, pipeline  | `_dev/tools/README.md`                | §1 · §2 · §3 | ferramenta ou opção nova      |
+| Documentação on-demand: regras e moldes  | `_dev/docs/README.md` · `_dev/docs/rules/` | —            | regra ou molde novo           |
 | Instalação e uso rápido                  | `README.md`                      | —            | stack, instalação, pastas     |
-| Análise, auditoria e guias (**apoio**)   | `dev/mapaMentalMVP/*.md`             | —            | nova iteração (não normativo) |
+| Análise, auditoria e guias (**apoio**)   | `_dev/mapaMentalMVP/*.md`             | —            | nova iteração (não normativo) |
 
-**Crescimento de um documento:** `dev/docs/**`, o router, os `README`s ou **este** ficheiro a passar de
+**Crescimento de um documento:** `_dev/docs/**`, o router, os `README`s ou **este** ficheiro a passar de
 **400 linhas** → **modularizar antes de acrescentar** (o pai passa a router; cortar nas fronteiras de
-`§N`). Procedimento e exceções: `dev/docs/README.md` — DOUTRINA 6. O gate já mede (`md-verify` imprime
+`§N`). Procedimento e exceções: `_dev/docs/README.md` — DOUTRINA 6. O gate já mede (`md-verify` imprime
 `linhas=N`).
 
 **Histórico:** regras revogadas e decisões antigas **não se acumulam** — o arquivo é o **Git**
 (`git log --diff-filter=D --oneline -- "*.md"`). Reconstruir um histórico por data, **incluindo o
-revogado**: `dev/docs/rules/build_history_on_demand.md`.
+revogado**: `_dev/docs/rules/build_history_on_demand.md`.
 
 ---
 
 **Este ficheiro não deve ser alterado sem aprovação.**
-**Versão:** 3.1 · **Data:** 24/09/2026
-**Histórico:** v3.0 → v3.1 — umbrella **`dev/`**: `docs/`, `tools/`, `tests/` e `mapaMentalMVP/` passam a
-viver em `dev/`, separando o que **não é produto** do código da aplicação. v2.0 → v3.0 — arquitetura Lean
-em três níveis: a especificação passou a **router** + `dev/docs/spec/` por domínio; fontes únicas e
-manutenção fundidas numa só tabela (§5); protocolo de leitura em §0.
+**Versão:** 3.2 · **Data:** 24/09/2026
+**Histórico:** v3.1 → v3.2 — a umbrella passa de `dev/` para **`_dev/`**: `dev` colidia com o **branch**
+homónimo e `git log dev` ficava *ambiguous argument*. v3.0 → v3.1 — umbrella criada para reunir o que
+**não é produto** (`docs/`, `tools/`, `tests/`, `mapaMentalMVP/`), separando-o do código da aplicação.
+v2.0 → v3.0 — arquitetura Lean em três níveis: a especificação passou a **router** + `_dev/docs/spec/` por
+domínio; fontes únicas e manutenção fundidas numa só tabela (§5); protocolo de leitura em §0.

@@ -33,16 +33,17 @@ nbproject/
 .phpintel/
 
 # --- AGENT / HUMAN WORKSPACE (ver .clinerules 4) ---
-# 'dev/' e a umbrella do que NAO e produto: dev/docs (especificacao por dominio + regras
-# on-demand), dev/tools (utilitarios de manutencao), dev/mapaMentalMVP (apoio nao normativo)
-# e dev/tests (testes). Na raiz ficam o documento-mestre e as regras do assistente.
+# '_dev/' e' a umbrella do que NAO e' produto: docs (especificacao por dominio + regras
+# on-demand), tools (utilitarios de manutencao), mapaMentalMVP (apoio nao normativo) e
+# tests (testes). Na raiz ficam o documento-mestre e as regras do assistente.
+# O nome leva underscore para NAO colidir com o branch 'dev' (git log dev seria ambiguo).
 # Existem APENAS na branch 'agent-workspace' e NUNCA sao versionados nas branches de produto
-# (main, dev, *), COM UMA EXCECAO: dev/tests e entregavel e versiona-se normalmente no dev.
-# Nessa branch ja estao versionados (tracked); um ficheiro tracked nao e afectado por estas
+# (main, dev, *), COM UMA EXCECAO: tests/ e' entregavel e versiona-se normalmente no dev.
+# Nessa branch ja estao versionados (tracked); um ficheiro tracked nao e' afectado por estas
 # regras. Se for preciso volta-los a versionar noutra branch, usar:
 #   git add -f <caminho>
 /.clinerules
 /especificacao_mvp.md
-/dev/docs/
-/dev/mapaMentalMVP/
-/dev/tools/
+# tudo em _dev e' ignorado, exceto os testes (entregavel)
+/_dev/*
+!/_dev/tests/
