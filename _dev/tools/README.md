@@ -5,7 +5,7 @@ servida pela web (ver `.htaccess`).
 
 > 📍 **Onde vive esta pasta.** Em **`_dev/tools/`** — a umbrella **`_dev/`** reúne o que **não é produto**
 > (docs, tools, tests, mapaMentalMVP) e existe **apenas na branch `agent-workspace`**, com os caminhos no
-> `.gitignore` (com `/especificacao_mvp.md`, `/dev/docs/`, `/dev/mapaMentalMVP/` e `/.clinerules`). Nas
+> `.gitignore` (com `/especificacao_mvp.md`, `/_dev/docs/`, `/_dev/mapaMentalMVP/` e `/.clinerules`). Nas
 > branches de produto (`main`, `dev`, …) os ficheiros ficam **no disco mas invisíveis para o Git**
 > (`git status` limpo), pelo que as ferramentas continuam utilizáveis. Para os versionar é obrigatório
 > `git add -f`. Detalhe: `.clinerules` §4.
@@ -69,6 +69,7 @@ $txt = [System.IO.File]::ReadAllText($path, $enc)
 
 | Ficheiro              | Para que serve                                                                                                                                                              |
 | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `agent-files.php`     | Mantém os ficheiros do agente no disco **noutras branches**: `status` / `install` / `exclude` / `restore`. Ver §2.1                                                         |
 | `_common.php`         | Módulo comum: I/O UTF-8 seguro, CLI, largura de texto/emoji, deteção de encoding. **Não executar directamente**                                                             |
 | `encoding-check.php`  | Deteta BOM, mojibake, UTF-8 inválido, **UTF-16** e fins de linha mistos. Aceita `--ignore=` (exceções conhecidas)                                                           |
 | `encoding-fix.php`    | **Repara** BOM e mojibake (mapa CP1252 explícito + verificação *round-trip*) e **converte UTF-16 → UTF-8**                                                                  |
@@ -87,6 +88,27 @@ $txt = [System.IO.File]::ReadAllText($path, $enc)
 | `health-check.php`    | Corre as **6** verificações de uma vez (encoding · `md-verify` · `md-align-tables` · `ascii-align` · `md-wrap-tables` · `md-widths`, as quatro últimas em *dry-run* por     |
 |                       | ficheiro) e dá um resumo                                                                                                                                                    |
 |                       | com `[OK]`/`[!!]`                                                                                                                                                           |
+
+### 2.1 `agent-files.php` — os ficheiros do agente fora do `agent-workspace`
+
+Estes ficheiros (`.clinerules`, `especificacao_mvp.md`, `_dev/**`) existem **apenas** na branch
+`agent-workspace`. Ao fazer `git checkout dev` o Git **remove-os do disco** — não existem na árvore de
+destino, e o `.gitignore` **não** protege ficheiros versionados (**medido**: depois do checkout, os três
+caminhos dão *ausente*).
+
+```bash
+php _dev/tools/agent-files.php install   # uma vez: cópia em .git/ + exclusões locais + alias
+git agent-restore                        # em QUALQUER branch: devolve-os ao disco
+php _dev/tools/agent-files.php status    # o que está no Git vs o que está no disco
+```
+
+- A cópia em `.git/agent-files.php` existe porque `_dev/` **desaparece com os ficheiros** — sem ela, o
+  restauro seria impossível exactamente quando é preciso (*chicken-and-egg*).
+- O alias vive em `.git/config`, logo sobrevive a qualquer troca de branch.
+- O `restore` **não toca no índice**: escreve só o *working tree*. Com as exclusões locais de
+  `.git/info/exclude` o `git status` fica **limpo** (verificado: `dev` limpo com os 36 ficheiros no disco).
+- É uma rede de segurança **local a este clone**, nada versionado. Noutra máquina: `install` outra vez, ou
+  simplesmente `git checkout agent-workspace`, onde os ficheiros são versionados.
 
 **Convenções comuns**
 - Todos assumem que são corridos **a partir da raiz do projeto**.

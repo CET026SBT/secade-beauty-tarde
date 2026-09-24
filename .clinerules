@@ -7,13 +7,13 @@ Ficheiro de **operação**. Não contém produto: contém (a) restrições, conv
 
 **Protocolo de leitura — não carregar o que não é preciso:**
 
-| #   | Ler                                          | Quando                                         |
-| :-- | :------------------------------------------- | :--------------------------------------------- |
-| 1   | Este ficheiro (≈146 linhas)                  | sempre                                         |
-| 2   | `especificacao_mvp.md` — **router** (~63 l.) | sempre: dá o mapa `§ → ficheiro`               |
-| 3   | **UM** ficheiro de `_dev/docs/spec/`              | só o domínio em causa — nunca os nove          |
-| 4   | `_dev/tests/README.md` · `_dev/tools/README.md`        | ao testar · ao usar ferramentas                |
-| 5   | `_dev/docs/README.md`                             | **só** quando o humano pedir documentação/mapa |
+| #   | Ler                                             | Quando                                         |
+| :-- | :---------------------------------------------- | :--------------------------------------------- |
+| 1   | Este ficheiro (≈155 linhas)                     | sempre                                         |
+| 2   | `especificacao_mvp.md` — **router** (~63 l.)    | sempre: dá o mapa `§ → ficheiro`               |
+| 3   | **UM** ficheiro de `_dev/docs/spec/`            | só o domínio em causa — nunca os nove          |
+| 4   | `_dev/tests/README.md` · `_dev/tools/README.md` | ao testar · ao usar ferramentas                |
+| 5   | `_dev/docs/README.md`                           | **só** quando o humano pedir documentação/mapa |
 
 **Convenções de referência**
 
@@ -95,12 +95,12 @@ Decisões de gestão são **manuais**: nenhum indicador automático decide ou bl
 
 ## 4. GIT — UTILIZAÇÃO E COMMITS
 
-| Branch            | Papel                                                       | Recebe merges/PR de         |
-| :---------------- | :---------------------------------------------------------- | :-------------------------- |
-| `main`            | Código final, 100% funcional de ponta a ponta               | apenas de `dev`             |
-| `dev`             | Desenvolvimento — estado mais avançado                      | branches de contexto/tarefa |
+| Branch            | Papel                                                                       | Recebe merges/PR de         |
+| :---------------- | :-------------------------------------------------------------------------- | :-------------------------- |
+| `main`            | Código final, 100% funcional de ponta a ponta                               | apenas de `dev`             |
+| `dev`             | Desenvolvimento — estado mais avançado                                      | branches de contexto/tarefa |
 | `agent-workspace` | Pasta `_dev/` (docs, tools, tests, mapaMentalMVP), a spec e o `.clinerules` | — (**nunca** integrada)     |
-| restantes         | Branches de trabalho (contexto, funcionalidade, correção)   | —                           |
+| restantes         | Branches de trabalho (contexto, funcionalidade, correção)                   | —                           |
 
 - ❌ **Nunca** commitar em `main` nem em `dev`. ✅ O agente commita nas **branches de contexto/tarefa**.
 - Integrar em `dev` — e de `dev` para `main` — é **merge/PR** e **decisão do utilizador**.
@@ -114,21 +114,26 @@ Decisões de gestão são **manuais**: nenhum indicador automático decide ou bl
   no `.gitignore`; para os versionar usa-se `git add -f`, e **só** nesta branch. `README.md`, os **testes**
   e o código de produto versionam-se normalmente em `dev`. ⚠️ **Pendente de sync:** a umbrella `_dev/` só
   existe nesta branch; no `dev` os testes continuam em `tests/` até a reestruturação ser integrada.
+- **Trocar de branch não pode perder os ficheiros do agente.** Existem **só** em `agent-workspace`: ao mudar
+  para qualquer outra branch o Git **apaga-os do disco** — o `.gitignore` **não** protege ficheiros
+  versionados (comportamento medido). Antes de sair: **commit + push**. Para os ter à mão noutra branch:
+  `git agent-restore` (instalação única: `php _dev/tools/agent-files.php install`). Detalhe:
+  `_dev/tools/README.md` §2.1.
 
 ## 5. FONTES ÚNICAS E MANUTENÇÃO
 
 Cada assunto tem **uma** fonte. Ao tocar num ficheiro, manter coerentes os que o referenciam.
 
-| Assunto                                  | Fonte única                      | Âncora       | Atualizar quando              |
-| :--------------------------------------- | :------------------------------- | :----------- | :---------------------------- |
-| Entrada da especificação (mapa `§`)      | `especificacao_mvp.md` (router)  | —            | muda a divisão por domínios   |
-| Requisitos, regras, decisões, dados, API | `_dev/docs/spec/*.md`                 | §1–§29       | regra ou requisito novo       |
-| Operação: restrições, convenções, Git    | `.clinerules` (**este**)         | §1 · §2 · §4 | convenção aplicada, fluxo Git |
-| Testes: suites, execução, pré-requisitos | `_dev/tests/README.md`                | —            | suite nova, contagem          |
-| Ferramentas: catálogo, opções, pipeline  | `_dev/tools/README.md`                | §1 · §2 · §3 | ferramenta ou opção nova      |
+| Assunto                                  | Fonte única                                | Âncora       | Atualizar quando              |
+| :--------------------------------------- | :----------------------------------------- | :----------- | :---------------------------- |
+| Entrada da especificação (mapa `§`)      | `especificacao_mvp.md` (router)            | —            | muda a divisão por domínios   |
+| Requisitos, regras, decisões, dados, API | `_dev/docs/spec/*.md`                      | §1–§29       | regra ou requisito novo       |
+| Operação: restrições, convenções, Git    | `.clinerules` (**este**)                   | §1 · §2 · §4 | convenção aplicada, fluxo Git |
+| Testes: suites, execução, pré-requisitos | `_dev/tests/README.md`                     | —            | suite nova, contagem          |
+| Ferramentas: catálogo, opções, pipeline  | `_dev/tools/README.md`                     | §1 · §2 · §3 | ferramenta ou opção nova      |
 | Documentação on-demand: regras e moldes  | `_dev/docs/README.md` · `_dev/docs/rules/` | —            | regra ou molde novo           |
-| Instalação e uso rápido                  | `README.md`                      | —            | stack, instalação, pastas     |
-| Análise, auditoria e guias (**apoio**)   | `_dev/mapaMentalMVP/*.md`             | —            | nova iteração (não normativo) |
+| Instalação e uso rápido                  | `README.md`                                | —            | stack, instalação, pastas     |
+| Análise, auditoria e guias (**apoio**)   | `_dev/mapaMentalMVP/*.md`                  | —            | nova iteração (não normativo) |
 
 **Crescimento de um documento:** `_dev/docs/**`, o router, os `README`s ou **este** ficheiro a passar de
 **400 linhas** → **modularizar antes de acrescentar** (o pai passa a router; cortar nas fronteiras de

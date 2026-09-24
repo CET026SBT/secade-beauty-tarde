@@ -1224,7 +1224,7 @@ arredondamentos) — a **entidade** a confirmar em **Q-48** e os valores reais a
 balancete da empresa (**Q-49**).
 
 > 📌 **Nota sobre versionamento.** Os dois templates estão em `_dev/mapaMentalMVP/`, que está no `.gitignore`
-> (`/dev/mapaMentalMVP/`) e **só existe versionada na branch `agent-workspace`** (§11.5). Como são **entradas do
+> (`/_dev/mapaMentalMVP/`) e **só existe versionada na branch `agent-workspace`** (§11.5). Como são **entradas do
 > cliente**, ficam **no disco mas invisíveis para o Git** nas restantes branches. Se o gestor quiser que os
 > originais fiquem versionados, tem de decidir **onde** os colocar (fora de `_dev/mapaMentalMVP/`) — é uma decisão
 > do utilizador, não do agente (§11.2).
