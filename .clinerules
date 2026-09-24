@@ -9,7 +9,7 @@ Ficheiro de **operação**. Não contém produto: contém (a) restrições, conv
 
 | #   | Ler                                          | Quando                                         |
 | :-- | :------------------------------------------- | :--------------------------------------------- |
-| 1   | Este ficheiro (≈145 linhas)                  | sempre                                         |
+| 1   | Este ficheiro (≈146 linhas)                  | sempre                                         |
 | 2   | `especificacao_mvp.md` — **router** (~63 l.) | sempre: dá o mapa `§ → ficheiro`               |
 | 3   | **UM** ficheiro de `docs/spec/`              | só o domínio em causa — nunca os nove          |
 | 4   | `tests/README.md` · `tools/README.md`        | ao testar · ao usar ferramentas                |
@@ -134,7 +134,8 @@ Cada assunto tem **uma** fonte. Ao tocar num ficheiro, manter coerentes os que o
 `linhas=N`).
 
 **Histórico:** regras revogadas e decisões antigas **não se acumulam** — o arquivo é o **Git**
-(`git log --diff-filter=D --oneline -- "*.md"`).
+(`git log --diff-filter=D --oneline -- "*.md"`). Reconstruir um histórico por data, **incluindo o
+revogado**: `docs/rules/build_history_on_demand.md`.
 
 ---
 

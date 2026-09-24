@@ -31,6 +31,9 @@ documentação. Ler **apenas quando** o humano pedir documentação, mapa, relat
    - no **mesmo** commit: atualizar o mapa e correr o GATE.
    **Não partir por partir:** nada de ficheiros abaixo de ~40 linhas, nem fragmentar um documento que se
    lê em sequência por parágrafos — o corte segue a estrutura, não a aritmética.
+7. **Histórico não se acumula — reconstrói-se.** O que foi revogado não vive em rodapés nem em anexos:
+   vive no **Git** e é **reconstruído** quando pedido (`rules/build_history_on_demand.md`). Corolário da
+   doutrina 2 — um arquivo paralelo seria redundância, e ficaria desatualizado.
 
 ## ÁRVORE
 
@@ -73,6 +76,7 @@ N3  docs/README.md                 este ficheiro — mapa e índice de regras
 | relatório de estado, auditoria, análise   | `rules/build_report_on_demand.md` (a criar)  | `docs/out/…`     |
 | mapa mental / diagrama de fluxo           | `rules/build_mindmap_on_demand.md` (a criar) | `docs/out/…`     |
 | guia de teste manual passo-a-passo        | `rules/build_test_guide_on_demand.md`        | `docs/out/…`     |
+| histórico por data (incl. o revogado)     | `rules/build_history_on_demand.md`           | `docs/out/…`     |
 | verificar integridade da documentação     | *(não é regra: correr as ferramentas)*       | —                |
 
 > Uma regra que ainda não existe **cria-se quando for pedida** — no mesmo molde da que existe. Não se
