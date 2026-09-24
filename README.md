@@ -6,8 +6,8 @@
 >
 > ⚠️ **Onde vive o documento-mestre:** `especificacao_mvp.md`, `mapaMentalMVP/`, `tools/` e
 > `.clinerules` **não são versionados nas branches de produto** (`main`, `dev` e restantes) — existem
-> apenas na branch **`agent-workspace`**, que **nunca é integrada**. Ver a secção
-> **Ramos do repositório** mais abaixo.
+> apenas na branch **`agent-workspace`**, que **nunca é integrada**. As **regras de Git** estão em
+> `.clinerules` §4; o inventário dos ramos, na secção **Ramos do repositório** mais abaixo.
 
 ## Projeto Académico | Entrega: 21/09/2026
 
@@ -69,32 +69,19 @@ tools/                     # Utilitários de manutenção dev-only (encoding, .m
 
 ## 🌿 RAMOS DO REPOSITÓRIO (BRANCHES)
 
-### Ramos principais
+> 📌 **Fonte única das regras de Git:** `.clinerules` §4 (modelo de branches, proibições de commit,
+> integração por merge/PR e a branch `agent-workspace`) — na branch `agent-workspace`. Aqui fica
+> apenas o **inventário dos ramos**, para orientação rápida.
 
-| Branch            | Papel                                                        | Recebe merges/PR de              |
-| ----------------- | ------------------------------------------------------------ | -------------------------------- |
-| `main`            | Código final de qualidade — 100 % funcional de ponta a ponta | apenas de `dev`                  |
-| `dev`             | Desenvolvimento — estado mais avançado do projeto            | branches de contexto e de tarefa |
-| `agent-workspace` | Documento-mestre, `mapaMentalMVP/`, `tools/` e `.clinerules` | — (**nunca é integrada**)        |
-| restantes         | Branches de trabalho (contexto, funcionalidade, correção)    | —                                |
+| Branch            | Papel                                                        |
+| :---------------- | :----------------------------------------------------------- |
+| `main`            | Código final de qualidade — 100 % funcional de ponta a ponta |
+| `dev`             | Desenvolvimento — estado mais avançado do projeto            |
+| `agent-workspace` | Documento-mestre, `mapaMentalMVP/`, `tools/` e `.clinerules` |
+| restantes         | Branches de trabalho (contexto, funcionalidade, correção)    |
 
-- Nunca se faz commit **direto** em `dev` nem em `main`: o trabalho entra sempre por branch e
-  merge/PR. `main` só aceita merges vindos de `dev`.
-- Mensagens de commit: resumo simples, bullets com `-`, sem emoji nem formatação markdown.
-
-### Branch `agent-workspace` (ferramentas e documentação do assistente)
-
-É a branch **exclusiva do par agente/humano**. Guarda o **documento-mestre**
-(`especificacao_mvp.md`), o **mapa de apoio a testes** (`mapaMentalMVP/`), os **utilitários de
-manutenção** (`tools/`) e as **regras do assistente** (`.clinerules`).
-
-- **Nunca é integrada** em `dev` nem em `main` (o fluxo é no sentido oposto, se necessário).
-- Esses caminhos estão listados no `.gitignore`, por isso **não aparecem nas outras branches**
-  (`git status` fica limpo mesmo com os ficheiros no disco).
-- Um ficheiro já versionado **não** é afetado pelo `.gitignore`; para o voltar a versionar noutra
-  branch usa-se `git add -f <caminho>`.
-- O `README.md`, o `tests/` e todo o código de produto **são versionados normalmente em `dev`**.
-- Se a branch for apagada, os ficheiros **continuam no disco** (apenas deixam de estar versionados).
+- A `agent-workspace` **nunca é integrada** em `dev` nem em `main`.
+- O `README.md`, o `tests/` e todo o código de produto são versionados **normalmente** em `dev`.
 
 ### Branches de contexto integradas em `dev`
 
@@ -262,26 +249,12 @@ num único ficheiro e removidos, para evitar divergência de informação e redu
 
 ## 🧪 TESTES
 
-### Suites automatizadas (`tests/`)
-```bash
-# Sintaxe dos ficheiros JavaScript (validação de estrutura, sem Node)
-php tests/js_syntax_check.php
-
-# Testes funcionais das camadas (Services/Repositories, transações, algoritmo)
-php tests/functional_test.php
-
-# Testes end-to-end HTTP (routing, sessões, APIs, backoffice) — requer Apache+MySQL ativos
-php tests/http_test.php
-
-# Assets estáticos + injeção de scripts por página (register_script) — requer Apache ativo
-php tests/asset_test.php
-```
-
-Estado atual: **105 testes funcionais + 119 testes HTTP + 65 verificações de assets + sintaxe JS — todos a passar (289 verificações)**.
-
-> Os testes HTTP incluem o **fluxo end-to-end de registo e login** (§8–§12): registo de cliente,
-> validações (email duplicado, cidade não suportada, termos), login dos 3 perfis, acesso às áreas
-> reservadas e logout. Limpam os dados que criam.
+> 📌 **Fonte única:** **`tests/README.md`** — suites, âmbito de cada uma, comandos de execução,
+> pré-requisitos (Apache e MySQL) e garantias de repetibilidade. Estado atual: **289 verificações,
+> todas a passar** (105 funcionais + 119 HTTP + 65 de assets + sintaxe JS).
+>
+> Testes **manuais** (fluxos por interface, navegação mobile, responsividade):
+> `mapaMentalMVP/guia_teste_manual.md`. Critérios de aceitação: `especificacao_mvp.md` §28.
 
 ### Manual — Criar um Cliente
 1. Aceder a http://localhost/secade-beauty-tarde/registo
@@ -337,17 +310,10 @@ Body: { "email": "teste@test.com", "password": "Test@123" }
 
 ## 🔒 RESTRIÇÕES E SIMPLIFICAÇÕES
 
-### Académicas
-✅ **Pagamentos:** Simulação (sem gateway real)  
-✅ **SMS/Email:** Log ou alert() na tela  
-✅ **OTP:** Código mostrado sem envio real  
-✅ **Rotas:** Validação manual (sem CRON)
-
-### Técnicas
-❌ **Proibido:** Instalar novos pacotes  
-❌ **Proibido:** Usar frameworks externos  
-❌ **Proibido:** Modificar pasta `/admin`  
-✅ **Obrigatório:** Prepared statements (segurança)
+> 📌 **Fonte única:** simplificações académicas e limitações em `especificacao_mvp.md` §22; restrições
+> de execução em `.clinerules` §1 (ambos na branch `agent-workspace`). Resumo: pagamentos, SMS/e-mail
+> e OTP **simulados** · rotas decididas **manualmente** (sem CRON) · **sem** pacotes ou frameworks
+> externos · **sem** tocar em `/admin` · **prepared statements** obrigatórios.
 
 ---
 

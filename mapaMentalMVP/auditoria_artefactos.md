@@ -46,7 +46,7 @@ manter e passar a cobrir as páginas"*.
 | Método real de autorização           | `Session::requireProfileApi([...])` — ex.: `AdminController.php` L18 · `FiscalController.php` L21 |
 
 **Consequência:** a proposta de *"manter o mesmo padrão"* aponta para métodos inventados. A matriz
-de permissões (§1.7) deve ser escrita sobre **`Session::requireProfileApi`**. Corrigir a redação.
+de permissões (§1.7) deve ser escrita usando **`Session::requireProfileApi`**. Corrigir a redação.
 
 ### F-03 · `includes/boNavbar.php` não existe nesse caminho
 
@@ -100,6 +100,15 @@ afirma que o 50 € é **"indicador de apoio visual, nunca gatilho automático"*
 É preciso decidir: **(a)** manter como custo operacional (é o que a spec e o código dizem hoje), ou
 **(b)** separar os dois valores para nunca mais confundir custo com referência — o risco do
 algoritmo revogado (§3.13 · linha 1). **Não decidir sem registo** (§29.3).
+
+**Resposta** este valor de 50€ deve ser somente visual! Não sei onde fomos buscar a ideia de que os 50€ seriam um
+custo adicional e concreto de operação a ser aplicado á rota, não me faz sentido! Os custos de combustivel é que 
+ainda não estão a ser calculados, acredito que na BD só tenhamos as distâncias ou tempos relacionados á deslocação
+entre cidades, mas iremos precisar de arranjar uma forma de estimar o custo de combustivel dentro da cidade (creio
+que os 50€ eram uma estimativa muito primordial como placeholder para esse custo, mas esse custo vai precisar de ser
+devidamente estimado, possivelmente usando uma API de geolocalização, a implementada no addressAutocomplete poderá ser
+util para isso, mas se a formos usar precisaremos de centralizar a implementação dela numa api dela mesma (semelhante á 
+nossa apiClient.js e api.js))
 
 ### F-07 · "3 imagens de categoria" — existem 7 ficheiros
 

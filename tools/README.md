@@ -7,7 +7,7 @@ servida pela web (ver `.htaccess`).
 > (com `/especificacao_mvp.md`, `/mapaMentalMVP/` e `/.clinerules`). Nas branches de produto
 > (`main`, `dev`, …) os ficheiros ficam **no disco mas invisíveis para o Git** (`git status` limpo),
 > pelo que as ferramentas continuam utilizáveis. Para os versionar é obrigatório `git add -f`.
-> Detalhe: `.clinerules` §11.5 e `especificacao_mvp.md` §18.12.
+> Detalhe: `.clinerules` §4 (onde vive a pasta e o modelo de branches).
 
 <!-- encoding-check:ignore-mojibake -->
 > Este ficheiro **documenta** mojibake como exemplo (na secção 1), pelo que contém
@@ -92,6 +92,10 @@ $txt = [System.IO.File]::ReadAllText($path, $enc)
 - Operações de escrita são **dry-run por omissão**; só gravam com `--write`.
 - **Exit code:** `0` = ok · `1` = problema/erro.
 - Recusam gravar se o resultado não for UTF-8 válido.
+- Incluem a **documentação viva sem extensão** — hoje `.clinerules` — sempre que `md` estiver no
+  âmbito de extensões. `collectFiles()` filtra por extensão, e sem isto o ficheiro escapava ao
+  `encoding-check` **e** ao `md-verify` (referências `§NN`, tabelas, *fences*). A lista vive na
+  constante `DOCS_SEM_EXTENSAO` de `_common.php`.
 
 ---
 
@@ -267,6 +271,8 @@ Sinta-se livre para os editar. Se mudar o comportamento:
 2. Manter as verificações de segurança antes de gravar.
 3. Atualizar este README (seções 2 e 3).
 4. Validar com `php -l` e correr `php tools/health-check.php` no projeto.
+5. Documento novo **sem extensão** (além do `.clinerules`) que deva ser verificado: acrescentar o
+   nome à constante `DOCS_SEM_EXTENSAO` em `_common.php` e registá-lo aqui na secção 2.
 
 > Nota: estes utilitários são **independentes da aplicação** — não usam `app/`, `modules/` nem a BD.
 > Podem ser corridos a qualquer momento, mesmo com o MySQL parado.

@@ -2,9 +2,12 @@
 **Documento-mestre (single source of truth)** · Versão 1.1 · 22/09/2026 · branch **`agent-workspace`**
 **Âmbito:** requisitos, decisões finais, arquitetura, base de dados, API, estados, testes e instalação.
 
-> ⚠️ **PREVALÊNCIA:** este documento **centraliza e substitui** a informação de requisitos,
-> convenções e decisões que estava dispersa pelos restantes `.md` do projeto. Em caso de
-> contradição com qualquer outro ficheiro, **vale o que está aqui**.
+> ⚠️ **PREVALÊNCIA:** este documento **centraliza e substitui** a informação de **requisitos,
+> regras de negócio, modelo de dados, API e arquitetura** que estava dispersa pelos restantes `.md`
+> do projeto. Em caso de contradição com qualquer outro ficheiro, **vale o que está aqui**.
+> O que é **operação** — convenções de código aplicadas e utilização do Git — vive no
+> `.clinerules`; as **ferramentas** em `tools/README.md`; os **testes** em `tests/README.md`.
+> Este documento **aponta** para lá em vez de duplicar (regra de manutenção: §29.3.7).
 > Os ficheiros anteriores são **registo histórico** — ver §29.2. Nesta branch (`agent-workspace`)
 > foram **eliminados**; em `dev` continuam presentes (a remoção é reversível com
 > `git checkout dev -- <ficheiro>`).
@@ -42,22 +45,27 @@
 
 ## 0. COMO USAR ESTE DOCUMENTO
 
-| Se quer…                                                         | Vá a                         |
-| :--------------------------------------------------------------- | :--------------------------- |
-| Saber **o que o sistema faz**                                    | §4 (RF) + §5 (RN)            |
-| Saber **porque uma regra é assim** (e não como os `.pdf` diziam) | §3                           |
-| Implementar um **módulo**                                        | §6–§16                       |
-| Escrever **código**                                              | §18 (convenções) + §19 (API) |
-| **Fazer commits / integrar código**                              | §18.10 (fluxo de Git)        |
-| **Perceber as branches (main / dev / agent-workspace)**          | §18.10 + §18.12              |
-| **Editar/escrever ficheiros (encoding seguro)**                  | §18.11 (`tools/`)            |
-| Perceber **estados**                                             | §20                          |
-| Saber **o que falta fazer**                                      | §24 (gap) + §25 (futuro)     |
-| **Instalar/importar**                                            | §27                          |
-| **Testar**                                                       | §26 + §28                    |
+| Se quer…                                                         | Vá a                                             |
+| :--------------------------------------------------------------- | :----------------------------------------------- |
+| Saber **o que o sistema faz**                                    | §4 (RF) + §5 (RN)                                |
+| Saber **porque uma regra é assim** (e não como os `.pdf` diziam) | §3                                               |
+| Implementar um **módulo**                                        | §6–§16                                           |
+| Escrever **código**                                              | §18 (arquitetura) + §19 (API) + `.clinerules` §2 |
+| **Fazer commits / integrar código**                              | `.clinerules` §4                                 |
+| **Perceber as branches (main / dev / agent-workspace)**          | `.clinerules` §4                                 |
+| **Editar/escrever ficheiros (encoding seguro)**                  | `tools/README.md` §1                             |
+| Perceber **estados**                                             | §20                                              |
+| Saber **o que falta fazer**                                      | §24 (gap) + §25 (futuro)                         |
+| **Instalar/importar**                                            | §27                                              |
+| **Testar**                                                       | `tests/README.md` + §28                          |
 
 **Convenção de identificadores:** `RF-nn` (requisito funcional), `RN-nn` (regra de negócio),
 `D-nn` (decisão final documentada). Referências cruzadas usam estes identificadores.
+
+> **Fonte única por assunto.** Este documento é a autoridade sobre **requisitos, regras, dados,
+> API e arquitetura**. O que é **operação** vive no `.clinerules` (convenções de código aplicadas e
+> utilização do Git), o que é **ferramenta** vive em `tools/README.md` e o que é **teste** vive em
+> `tests/README.md` — este documento **aponta** para lá em vez de repetir.
 
 ---
 
@@ -1008,28 +1016,18 @@ View (PHP) → JS componente → api.js → api.php (routing) → Controller →
 - ⚠️ **`Validator::custom()`**: a verificação falha quando o callable devolve **`true`**
   (é um predicado de erro). Ex.: unicidade de email → `fn($e) => !empty($repo->find(null, $e))`.
 
-### 18.5 Contrato de nomes front-end ↔ API (obrigatório)
-> O atributo **`name`** de cada campo de formulário (input/select/textarea) e a **chave dos validators
-> JS** devem **espelhar exatamente a chave que a API espera** — a mesma que os mappers produzem.
-> **A API dita o contrato; o front-end adapta-se.** O português fica reservado à BD.
+### 18.5 Contrato de nomes front-end ↔ API
 
-| Chave recomendada (código / EN / camelCase)                    | ❌ Chave legada a evitar (BD / PT / snake_case)              |
-| :------------------------------------------------------------- | :----------------------------------------------------------- |
-| `name`, `email`, `password`, `confirmPassword`, `phone`, `nif` | `nome`, `telemovel`                                          |
-| `street`, `doorNumber`, `floor`, `zipCode`, `cityName`         | `morada`, `numPorta`, `andarBloco`, `codigoPostal`, `cidade` |
-| `termsAccepted`, `profileType`                                 | `termosCondicoes`, `tipoPerfil`                              |
+> 🔗 **Fonte única: `.clinerules` §2** — regra, tabela de chaves corretas (EN, camelCase) versus
+> chaves legadas (PT, snake_case) e o validator que a verifica (`tests/asset_test.php`).
+> Aqui mantém-se apenas o princípio, por ser decisão de arquitetura: **a API dita o contrato; o
+> front-end adapta-se**, e o português fica reservado à BD.
 
-**Verificado por** `tests/asset_test.php` (falha se reaparecer uma chave legada no registo).
-`AddressAutocomplete` declara um mapa explícito (`static FIELD_NAMES`) com os nomes da API.
+### 18.6 Segurança e acesso por perfil
 
-### 18.6 Segurança
-- **`Session::requireLoginApi()`** → **401**; **`Session::requireProfileApi([...])`** → **403**.
-- **Páginas:** `Session::requireLogin()` + verificação de perfil com **redirect**.
-- **`requireCustomer()`** (em `BaseController`) = `requireProfileApi(['cliente'])` + devolve o id.
-- Todas as queries com **prepared statements**; passwords com `password_hash(PASSWORD_BCRYPT)`;
-  OTP comparado com `hash_equals`.
-- O cliente só acede aos **seus** registos (`findByCustomer($customerId)`); o funcionário só opera
-  **em nome próprio**; o feedback valida a propriedade do agendamento.
+> 🔗 **Regras de implementação** (401/403, `prepared statements`, *hashing* de passwords, `hash_equals`
+> no OTP): **`.clinerules` §2**. Este documento guarda o **modelo de acesso** — quem pode o quê — que
+> é regra de negócio.
 
 **Matriz de acesso por perfil (verificada em testes):**
 
@@ -1041,27 +1039,19 @@ View (PHP) → JS componente → api.js → api.php (routing) → Controller →
 | **Sem sessão**  | Só endpoints públicos (`city-supported`, `category-all`, `booking-services`, `feedback-list`, `booking-availability`, `auth-*`)                                         |
 
 ### 18.7 Front-end
-- **Formulários:** classe `Form` de `form.utils.js` + validators em `modules/common/js/validators/`.
-- **Chamadas HTTP:** `API.*` de `api.js` (sobre `ApiClient` com cache por TTL e limpeza por domínio).
-  As respostas **não** vêm aninhadas em `data` — as chaves estão na **raiz** do JSON
-  (`array_merge(["success"=>true], $responsedata)`).
-- **Erros:** `xhr.responseJSON.message` e `xhr.responseJSON.errors`.
-- **Overlays/spinners/skeletons:** **jq-preloader** (`$el.preloader(...)`).
-- **Utilitários:** `generalUtils` (`formatCurrency`, `formatDuration`, `escapeHtml`, `slugify`, …).
-- **Responsivo:** Bootstrap grid, mobile-first.
 
-### 18.8 Nomenclatura e idioma
-| Elemento          | Convenção                               | Exemplo                |
-| :---------------- | :-------------------------------------- | :--------------------- |
-| Classes           | **PascalCase**                          | `BookingService`       |
-| Métodos           | **camelCase**                           | `createStoreBooking`   |
-| Tabelas / colunas | **snake_case (PT)**                     | `agendamento_servico`  |
-| Endpoints         | **kebab-case** (`?action=dominio-acao`) | `admin-service-accept` |
-| Ficheiros JS      | **camelCase**                           | `bookingWizard.js`     |
-| Idioma            | **código EN**, **BD PT**                | —                      |
+> 🔗 **Fonte única: `.clinerules` §2** — `form.utils.js` + validators, `API.*`/`ApiClient`, forma das
+> respostas JSON, tratamento de erros, **jq-preloader** e `generalUtils`. Aqui mantém-se o essencial
+> por ser contrato entre camadas: as respostas **não** vêm aninhadas em `data` — as chaves estão na
+> **raiz** do JSON (`array_merge(["success"=>true], $responsedata)`).
 
-**Restrições técnicas:** ❌ instalar pacotes · ❌ frameworks externos · ❌ alterar `/admin` ·
-❌ alterar estrutura de BD sem justificação · ✅ PHP nativo, PDO, Bootstrap 5, jQuery, libs existentes.
+### 18.8 Nomenclatura, idioma e restrições técnicas
+
+> 🔗 **Fonte única: `.clinerules` §2** (nomenclatura e idioma) e `.clinerules` **§1** (restrições). Resumo: classes
+> em PascalCase · métodos em camelCase · tabelas e colunas em snake_case **em português** · endpoints
+> em kebab-case `admin-<dominio>-<acao>` · ficheiros JS em camelCase · **código em inglês, BD em
+> português**. Restrições: sem pacotes, sem frameworks externos, sem tocar em `/admin` e sem alterar
+> a BD sem justificação.
 
 ### 18.9 Inventário da implementação (por camada)
 
@@ -1122,139 +1112,26 @@ View (PHP) → JS componente → api.js → api.php (routing) → Controller →
 
 **Ferramentas de desenvolvimento**
 - `tools/` — utilitários de manutenção dev-only (encoding, formatação/validação de `.md`,
-  edição segura de ficheiros). **Não faz parte da aplicação** — ver §18.11 e `tools/README.md`.
-  Existe **apenas na branch `agent-workspace`** (§18.12).
+  edição segura de ficheiros). **Não faz parte da aplicação** — catálogo e utilização em
+  `tools/README.md`; onde a pasta vive está em `.clinerules` §4.
 
-### 18.10 Fluxo de Git (branches e commits)
+### 18.10 Fluxo de Git
 
-**Estrutura de branches:**
-
-| Branch                | Papel                           | Regra de integração                                                                                                                      |
-| --------------------- | ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| **`main`**            | Qualidade / código final        | Só recebe **merge/PR a partir de `dev`** — **nunca** de outras branches. O código aqui tem de estar **100% funcional de ponta a ponta**  |
-| **`dev`**             | Desenvolvimento                 | Recebe o trabalho **terminado** das branches de contexto/tarefa (merge ou PR). Reflete o **estado de desenvolvimento mais avançado** do  |
-|                       |                                 | projeto                                                                                                                                  |
-| **`agent-workspace`** | Ficheiros de trabalho do agente | Documento-mestre, `mapaMentalMVP/`, `tools/` e `.clinerules`. **Nunca é integrada** em `dev` nem em `main` (§18.12)                      |
-| **Restantes**         | Branches de contexto / tarefa   | Branches de desenvolvimento por âmbito (contexto, funcionalidade, correção) que servem de **base para definir convenções** a implementar |
-|                       |                                 | depois                                                                                                                                   |
-
-```
-  branch de contexto  ──merge/PR──▶  dev  ──merge/PR──▶  main
-   (onde o agente pode commitar)   (mais avançado)   (100% funcional)
-
-  agent-workspace  ──✖──▶  dev / main          (nunca é integrada)
-```
-
-**Branches de contexto — regra de ouro contra conflitos:** cada ficheiro pertence a **uma única**
-branch. Ficheiros transversais (`index.php`, `app/config/api.php`, `modules/main/css/style.css`,
-layout/includes, `api.js`, `apiClient.js`) ficam numa branch de infraestrutura/frontend própria, para
-que a integração em `dev` seja **sempre sem conflitos**.
-
-**Regras para o agente:**
-
-| Regra                                               | Detalhe                                                                     |
-| --------------------------------------------------- | --------------------------------------------------------------------------- |
-| ❌ **Nunca** commitar em `main`                     | Nem diretamente, nem por merge/PR                                           |
-| ❌ **Nunca** commitar em `dev`                      | Idem                                                                        |
-| ✅ Commitar nas **branches de contexto / tarefa**   | É onde o agente desenvolve e commita                                        |
-| ✅ Integrar em `dev` **quando o utilizador o pede** | Por merge/PR, depois de a branch estar concluída; a decisão é do utilizador |
-| ❌ **Integrar `agent-workspace`**                   | **Proibido** — esta branch nunca entra em `dev` nem em `main` (§18.12)      |
-
-**Convenção das mensagens de commit** — tipografia **simples**:
-
-- Descrever **resumidamente** o que foi feito.
-- **Sem emoji** e **sem formatação markdown** (sem negrito, títulos, tabelas).
-- Usar **apenas `-`** para bullet points, quando forem necessários.
-
-```
-titulo curto e simples
-
-- o que foi alterado
-- porque foi alterado
-```
-
-Exemplo:
-```
-fix: corrigir disponibilidade de slots ao alterar servicos
-
-- recalcular a lista de horas quando a selecao de servicos muda
-- revalidar a janela no servidor antes da submissao
-```
+> 🔗 **Fonte única: `.clinerules` §4** — modelo de branches (`main` / `dev` / `agent-workspace` /
+> restantes), regras do agente (nunca commitar em `main` nem em `dev`; integração sempre por
+> merge/PR e por decisão do utilizador), regra de ouro contra conflitos por branch de contexto e
+> convenção das mensagens de commit. **Não se repete aqui.**
 
 ### 18.11 Ferramentas de manutenção (`tools/`)
 
-> Pasta **dev-only** (não faz parte da aplicação; protegida por `tools/.htaccess`). Contém utilitários
-> PHP reutilizáveis para automatizar tarefas recorrentes de manutenção da documentação e do
-> *encoding*. **Editar livremente** sempre que deixarem de cumprir o objetivo. Guia completo:
-> `tools/README.md`.
->
-> 📍 Estes ficheiros existem **apenas na branch `agent-workspace`** (§18.12) e estão no `.gitignore`;
-> nas outras branches ficam no disco mas invisíveis para o Git.
-
-**⚠️ Regra obrigatória de escrita de ficheiros.** Nunca reescrever ficheiros com o ciclo
-`Get-Content` + `Set-Content` do **Windows PowerShell 5.1** — corrompe o conteúdo de forma silenciosa:
-
-| Passo                             | Efeito                                                                                                 |
-| --------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `Get-Content` **sem** `-Encoding` | Decodifica UTF-8 como **CP1252 (ANSI)** → acentos/travessões/euros ficam em **mojibake** (`—` → `â€”`) |
-| `Set-Content -Encoding UTF8`      | Grava **COM BOM** (no PS 5.1 **não existe** `utf8NoBOM`)                                               |
-
-**Medição real** (ficheiro com acentos, travessão, euro, aspas curvas e emoji):
-`346 bytes → 437 bytes` com **BOM** e **18** ocorrências de mojibake.
-
-**Vias corretas:** `php tools/file-edit.php ...` (recomendada) · via **.NET** explícita
-(`New-Object System.Text.UTF8Encoding($false)` + `[System.IO.File]::ReadAllText/WriteAllText`) ·
-editor do IDE. Sempre **UTF-8 sem BOM**, preservando o fim de linha (**CRLF** neste projeto).
-
-| Ferramenta                  | Função                                                                                                                                                                 |
-| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `tools/health-check.php`    | Corre as **6** verificações (encoding · `md-verify` · `md-align-tables` · `ascii-align` · `md-wrap-tables` · `md-widths`, as quatro últimas em *dry-run* por ficheiro) |
-|                             | e apresenta um resumo                                                                                                                                                  |
-| `tools/encoding-check.php`  | Deteta BOM, mojibake, UTF-8 inválido e fins de linha mistos                                                                                                            |
-| `tools/encoding-fix.php`    | Repara BOM/mojibake (*mapa CP1252* + verificação *round-trip*) e converte **UTF-16 → UTF-8**                                                                           |
-| `tools/md-align-tables.php` | Alinha tabelas markdown (largura de ecrã; emoji = 2 colunas; ignora *code fences*)                                                                                     |
-| `tools/md-verify.php`       | Valida encoding, *code fences*, referências `§NN` (**com resolução cruzada** no §29.2) e consistência das tabelas                                                      |
-| `tools/ascii-align.php`     | Nivela **tabelas ASCII** dentro de *code fences* (boxes `+---+` e a coluna de referência `│` dos diagramas de fluxo; `--boxes-only` limita aos boxes)                  |
-| `tools/md-wrap-tables.php`  | **Quebra o texto das células** para nenhuma linha de tabela markdown exceder `--max` colunas (200 por omissão; pragma `<!-- md-wrap-tables:max=N -->` para ficheiros   |
-|                             | densos). **Nunca parte palavras a meio**                                                                                                                               |
-| `tools/widthcheck.php`      | Verifica a **uniformidade** das tabelas: largura igual em todas as linhas do bloco, divisor presente e limite efetivo. Só lê.                                          |
-| `tools/md-join-tables.php`  | Junta blocos de tabela **partidos por uma linha em branco** (o bloco seguinte fica sem divisor e passa a ser ignorado pelos formatadores). Só lê *dry-run* por omissão |
-| `tools/file-edit.php`       | `show` / `write` / `replace` / `lines` / `grep` em UTF-8 seguro                                                                                                        |
-| `tools/_common.php`         | Módulo comum (**não executar diretamente**)                                                                                                                            |
-
-**Convenções:** *dry-run* por omissão (gravar só com `--write`) · *exit* `0` = ok, `1` = problema ·
-execução a partir da raiz do projeto · recusam gravar UTF-8 inválido · o alinhador **aborta** se
-detetar alteração de conteúdo (só mexe em espaços).
-
-**Pragma:** ficheiros que documentam mojibake como exemplo incluem `encoding-check:ignore-mojibake`,
-que suprime a deteção nesse ficheiro.
-
-**Antes de finalizar alterações à documentação:** correr `php tools/health-check.php`.
-(Exceção esperada: `DataBase_backup_pre_v2.sql` é **UTF-16 legado por natureza** e **não** deve ser
-convertido — ver §17.7. Está registado com `--ignore=` dentro do próprio `health-check.php`.)
+> 🔗 **Fonte única: `tools/README.md`** — catálogo das ferramentas, opções, convenções comuns
+> (*dry-run* por omissão, `--write`, *exit code*, execução a partir da raiz), garantias do pipeline
+> `.md`, pragmas e a ordem correta de execução. **Não se repete aqui.** Onde a pasta vive: `.clinerules` §4.
 
 ### 18.12 Branch `agent-workspace` (relação agente/humano)
 
-Branch **exclusiva do par agente/humano**. Guarda os ficheiros de trabalho que **não** pertencem ao
-produto:
-
-| Conteúdo               | Papel                                         |
-| ---------------------- | --------------------------------------------- |
-| `.clinerules`          | Regras permanentes do assistente              |
-| `especificacao_mvp.md` | Documento-mestre (fonte única de verdade)     |
-| `mapaMentalMVP/`       | Guia de teste manual + mapa de fluxo de dados |
-| `tools/`               | Utilitários de manutenção dev-only            |
-
-**Regras:**
-
-- **Nunca é integrada** em `dev` nem em `main` — o agente **não** faz merge desta branch.
-- Os caminhos acima estão no `.gitignore`, pelo que **nunca** são versionados nas outras branches:
-  o `git status` fica limpo mesmo com os ficheiros presentes no disco.
-- Um ficheiro **já versionado** não é afetado pelo `.gitignore`; para o voltar a versionar noutra
-  branch é obrigatório `git add -f <caminho>`, e isso **só** deve acontecer nesta branch.
-- O `README.md`, o `tests/` e todo o código de produto são versionados **normalmente** em `dev`.
-- Estes ficheiros **continuam no disco** nas restantes branches (apenas invisíveis para o Git), pelo
-  que as ferramentas continuam utilizáveis em qualquer branch.
+> 🔗 **Fonte única: `.clinerules` §4** — conteúdo da branch, a regra de nunca ser integrada, o
+> comportamento do `.gitignore` e o uso de `git add -f`. **Não se repete aqui.**
 
 ## 19. API / ENDPOINTS
 
@@ -1732,13 +1609,9 @@ menus paralelos).
 | `tests/asset_test.php`      | **65**       | Validação de assets (HTTP 200), injeção de scripts por página e contrato de nomes do formulário de registo                                             |
 | `tests/js_syntax_check.php` | 15 ficheiros | Verificação estrutural e de sintaxe de todos os ficheiros JavaScript do ecossistema                                                                    |
 
-**Execução:**
-```powershell
-php tests/js_syntax_check.php   # SINTAXE JS: OK
-php tests/functional_test.php   # 105 pass, 0 fail
-php tests/http_test.php         # 119 pass, 0 fail   (requer Apache + MySQL)
-php tests/asset_test.php        #  65 pass, 0 fail   (requer Apache)
-```
+**Execução:** comandos, pré-requisitos por suite (Apache e MySQL) e garantias de repetibilidade em
+**`tests/README.md`** — fonte única dos testes. Esta secção guarda o **registo de validação**
+(âmbito e contagens), que é o que a §28 cita.
 
 ### 26.2 Propriedades das suites
 - **Repetíveis:** limpam os próprios dados (agendamentos, rotas, execuções, feedbacks, fiscal,
@@ -1923,10 +1796,10 @@ SET FOREIGN_KEY_CHECKS = 1;
 |                                              | contabilidade + mapa de células do balancete (`J13`…`K118`)           | (achados §F.1–§F.3)                                                       |
 | `mapaMentalMVP/CUSTOS RH 2.xlsx`             | **Entrada do cliente (template):** custo de pessoal — REMUNERAÇÃO ·   | ℹ️ **Mantido** — analisado em `analise_backoffice_gestor.md` **§F.4**      |
 |                                              | SS (11 % + 23,75 %) · IRS (taxas por trabalhador)                     |                                                                           |
-| `tools/`                                     | Utilitários de manutenção dev-only (encoding, `.md`, edição segura de | ℹ️ **Mantido** — ferramentas de apoio (não normativas); guia em            |
-|                                              | ficheiros)                                                            | `tools/README.md` e §18.11; **só na branch `agent-workspace`** (§18.12)   |
-| `.clinerules`                                | Regras permanentes (stack, restrições, convenções)                    | ✅ **Mantido** — §9 aponta ao mestre; inclui §11.4/§11.5 (modelo de       |
-|                                              |                                                                       | branches); **só na branch `agent-workspace`** (§18.12)                    |
+| `tools/`                                     | Utilitários de manutenção dev-only (encoding, `.md`, edição segura de | ℹ️ **Mantido** — ferramentas de apoio (não normativas); catálogo em        |
+|                                              | ficheiros)                                                            | `tools/README.md`; onde a pasta vive: `.clinerules` §4                    |
+| `.clinerules`                                | Regras de **operação**: restrições, convenções aplicadas, Git         | ✅ **Mantido** — aponta ao mestre; convenções em §2 e Git em §4           |
+| `tests/README.md`                            | Suites de teste: âmbito, execução e pré-requisitos                    | ➕ **Criado** — fonte única dos testes (referido em `.clinerules` §5)     |
 | `rectificacoes.md`                           | Esclarecimento dos conflitos PDF ↔ `.md` (11 decisões)                | 🗑️ **Eliminado** → consolidado em **§3 (D-01 a D-11 + §3.12–3.13)**       |
 | `planeamento_geral.md`                       | Planeamento v3.0/3.1 (Regras de Ouro, fases, estados)                 | 🗑️ **Eliminado** → consolidado em **§2, §4–§16, §20–§22, §28**            |
 | `relatorio_implementacao.md`                 | Relatório de implementação, defeitos e testes                         | 🗑️ **Eliminado** → consolidado em **§18.9, §23, §26**                     |
@@ -1943,7 +1816,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 **Regra:** este documento é a **única fonte de requisitos e regras**. Os 11 ficheiros eliminados
 **estão recuperáveis no histórico do Git**: 5 foram **arquivados num commit de documentação**
 imediatamente antes da remoção; os outros 6 foram **eliminados apenas nesta branch**
-(`agent-workspace`, §18.12) e **continuam presentes em `dev`**, pelo que a remoção é reversível com
+(`agent-workspace`, `.clinerules` §4) e **continuam presentes em `dev`**, pelo que a remoção é reversível com
 `git checkout dev -- <ficheiro>`.
 
 ```powershell
@@ -1971,15 +1844,15 @@ esclarecidos em §3 (prevalece sempre este documento).
    como nas §24.1–§24.6.
 6. **Fecho do ciclo:** quando uma implementação da §24/§25 é concluída, atualizar
    **§4 (estado)**, **§24 (gap)**, **§28.2 (critério)** e **§26 (testes)** na mesma alteração.
-7. **Consistência com `.clinerules`:** as regras permanentes do projeto (stack, restrições,
-   convenções, contrato de nomes e **fluxo de Git (§18.10)**) devem manter-se **espelhadas** aqui
-   (§18) e no `.clinerules`.
-8. **Respeitar o fluxo de Git:** alterações de código/documentação são commitadas **apenas** nas
-   branches de contexto/tarefa; `dev` e `main` recebem **exclusivamente** merge/PR (§18.10). A branch
-   `agent-workspace` (§18.12) **nunca** é integrada e os seus ficheiros estão no `.gitignore`.
-9. **Usar escrita UTF-8 segura:** nunca reescrever ficheiros pela shell do PowerShell 5.1
-   (`Get-Content`/`Set-Content` corrompem: BOM + mojibake); usar `tools/` (§18.11) e validar com
-   `php tools/health-check.php` antes de finalizar.
+7. **Fonte única por assunto:** este documento é a **autoridade** sobre requisitos, regras, dados,
+   API e arquitetura. As **convenções de código aplicadas** e a **utilização do Git** vivem no
+   `.clinerules` (§2 e §4), as **ferramentas** em `tools/README.md` e os **testes** em
+   `tests/README.md`. **Não se duplica: aponta-se.**
+8. **Respeitar o fluxo de Git:** a especificação de branches, commits e integração está em
+   **`.clinerules` §4** — inclui a proibição de commitar em `dev`/`main`, a integração por merge/PR
+   como decisão do utilizador e a branch `agent-workspace`, que **nunca** é integrada.
+9. **Usar escrita UTF-8 segura:** a regra e as vias corretas estão em **`.clinerules` §3** e a causa
+   medida em **`tools/README.md` §1**. Antes de finalizar, correr `php tools/health-check.php`.
 
 ### 29.4 Perguntas frequentes de implementação
 
@@ -1992,8 +1865,8 @@ esclarecidos em §3 (prevalece sempre este documento).
 | Porque não há CRON?                            | Simplificação assumida; tudo é on-demand — §2.E / §22.1                              |
 | Onde está a lógica de condução da carrinha?    | **Não existe** e não deve existir — §3.8                                             |
 | Porque o backoffice não está em `admin/`?      | Instrução de não tocar em `/admin` — §3.13 / §25.3                                   |
-| Posso commitar em `dev` ou `main`?             | **Não.** Só merge/PR a partir da branch de desenvolvimento correta — §18.10          |
-| Como devem ser as mensagens de commit?         | Resumidas, tipografia simples, sem emoji/markdown, `-` para bullets — §18.10         |
+| Posso commitar em `dev` ou `main`?             | **Não.** Só merge/PR a partir da branch correta — `.clinerules` §4                   |
+| Como devem ser as mensagens de commit?         | Resumidas, tipografia simples, sem emoji/markdown, `-` para bullets — §4             |
 
 ---
 

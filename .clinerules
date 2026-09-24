@@ -1,224 +1,209 @@
-# REGRAS PERMANENTES - PROJETO SECADE BEAUTY
+# REGRAS PERMANENTES — PROJETO SECADE BEAUTY
 
-## 1. CONTEXTO ACADÉMICO
-- Projeto para avaliação académica
-- Prazo: 7 dias (14/09/2026 a 21/09/2026)
-- Objetivo: MVP funcional demonstrando competências técnicas
+## 0. ÂMBITO, FONTES E ÂNCORAS
 
-## 2. STACK TECNOLÓGICA FIXA
-- Backend: PHP puro + PDO + MySQL 8.4.3
-- Frontend: HTML5 + CSS3 + JavaScript + Bootstrap 5
-- Servidor: Laragon (local)
-- SEM frameworks externos (Laravel, React, etc.)
+Este ficheiro define **como o trabalho é executado**. **Não** é a especificação do produto: essa
+vive na `especificacao_mvp.md` (fonte única de requisitos, regras, modelo de dados e decisões).
 
-## 3. RESTRIÇÕES ABSOLUTAS
-❌ Instalar novos pacotes (Composer, npm)
-❌ Alterar estrutura de BD sem justificação
-❌ Refatorar código existente sem planeamento
-❌ Acessar ou modificar pasta /admin
+**Fonte única por assunto** — não duplicar conteúdo, apontar:
 
-## 4. PRIORIDADES MVP (ORDEM DE IMPLEMENTAÇÃO)
-1. Catálogo de Serviços (frontend + backend)
-2. Wizard de Agendamento Loja Física (5 steps completos)
-3. **Wizard de Agendamento Carrinha Ambulante (7 steps + OTP) - OBRIGATÓRIO**
-4. **Decisão de Rotas no backoffice — MANUAL e LIVRE, com 50€ apenas como indicador visual (Fase 4)**
-5. Backoffice Agendamentos (lista, filtros, cancelamento, detalhe por serviço/funcionário)
-6. Backoffice Rotas (lista, custos/lucros, aprovar/recusar)
-7. **Backoffice Funcionário: aceitação individual, desfazer/trocar, consolidação "Totalmente Aceite" + bloqueio de janela temporal**
-8. **Simulador de Recibos Verdes** (percentagens configuráveis, 70/30 por omissão)
-9. **Calendário Fiscal** (IVA, IRC, Segurança Social, Seguros) com alertas progressivos 30/15/7/3/1/atraso
-10. **Feedback do cliente** (avaliação após execução do serviço)
+| Assunto                                    | Fonte única                                  | Âncora          |
+| :----------------------------------------- | :------------------------------------------- | :-------------- |
+| Requisitos e regras de negócio             | `especificacao_mvp.md`                       | §4 · §5         |
+| Decisões finais e conflitos resolvidos     | `especificacao_mvp.md`                       | §3              |
+| Modelo de dados, API e máquina de estados  | `especificacao_mvp.md`                       | §17 · §19 · §20 |
+| Arquitetura por camadas (implementação)    | `especificacao_mvp.md`                       | §18.1–§18.4     |
+| Contrato de nomes, front-end e acesso      | `especificacao_mvp.md`                       | §18.5–§18.7     |
+| **Convenções de código (nomenclatura)**    | **este ficheiro**                            | §2              |
+| Roadmap, estado, gap e trabalho futuro     | `especificacao_mvp.md`                       | §21 · §24 · §25 |
+| Simplificações académicas e limitações     | `especificacao_mvp.md`                       | §22             |
+| Critérios de aceitação                     | `especificacao_mvp.md`                       | §28             |
+| Testes: suites, execução e pré-requisitos  | `tests/README.md`                            | —               |
+| Ferramentas: catálogo, opções e utilização | `tools/README.md`                            | §1 · §2 · §3    |
+| **Utilização do Git e commits**            | **este ficheiro**                            | §4              |
+| Guia de teste manual                       | `mapaMentalMVP/guia_teste_manual.md`         | —               |
+| Análise e auditoria (**não normativo**)    | `mapaMentalMVP/analise_backoffice_gestor.md` | —               |
+|                                            | `mapaMentalMVP/auditoria_artefactos.md`      | —               |
 
-> **NOTA (prevalência):** o *algoritmo automático de viabilidade com limiar de 100 €* (documentos v1.0, entretanto eliminados) foi **REVOGADO**. A decisão de rotas é **manual e livre** do gestor; qualquer valor monetário (ex.: 50 €) é **indicador de apoio visual**, nunca gatilho automático. A fonte única de requisitos é **`especificacao_mvp.md`** (§3.1 e §12).
+**Âncoras:** as referências usam **sempre o número da secção** (`§18.2`), **nunca** linhas. As
+referências `§NN` são validadas por `tools/md-verify.php`, que inclui **este** ficheiro — uma âncora
+partida é detetada antes de qualquer commit.
 
-## 5. SIMPLIFICAÇÕES ACEITES
-✅ Pagamentos simulados (sem gateway real)
-✅ SMS/Email via log ou alert()
-✅ OTP mostrado na tela (sem envio real)
-✅ Validação de rotas manual (sem CRON)
+**Prevalência:** em caso de conflito, prevalece a `especificacao_mvp.md`; o erro é **deste**
+ficheiro e corrige-se aqui.
 
-## 6. ESTRUTURA DE CÓDIGO
-- Controllers: Recebem requests, invocam services
-- Services: Lógica de negócio, validações, transações
-- Repositories: Queries SQL (PDO prepared statements)
-- Utils: Validator, Session, Exceptions
-- Views: PHP templates em /modules/
+**Regras de trabalho**
 
-## 7. CONVENÇÕES
-- Classes: PascalCase (AgendamentoService)
-- Métodos: camelCase (criarAgendamento)
-- Tabelas: snake_case (agendamento_servico)
-- Controllers/Services/Repositories: As classes devem reflectir fielmente o modelo na BD, mantendo uma correspondência clara entre as entidades, Services e Repositories e as respectivas tabelas.
-- Endpoints e métodos: Deve ser adoptada uma convenção o mais uniforme possível para os nomes dos endpoints e dos métodos, mantendo coerência com a implementação actual.
-- Repositories: Evitar utilizar JOIN entre tabelas, excepto se o contexto da query estiver relacionado com o seu repository.
-- Preferir a utilização de transações e tratar cada tabela através de métodos específicos na respectiva classe Repository. Os Services é que gerem as transações (ver CustomerService.createCustomer para referencia).
-- Services: Os Services devem, sempre que necessário, invocar outros Services, seguindo o fluxo já utilizado na implementação actual, nomeadamente no registo de customers desde o Controller até ao Repository.
-- Segurança: Prepared statements obrigatórios.
-- No front-end ao implementar formularios, usar o form.utils.js e criar validators na pasta validators existente se necessário, basear na implementação do customerRegister.js como molde.
-- **Contrato de nomes (front-end ↔ API):** o atributo `name` de cada campo de formulário (input, select, textarea) e a chave dos validators JS devem **refletir exatamente a chave que a API espera** — a mesma que os mappers do servidor produzem. A API dita o contrato; o front-end adapta-se. Exemplos: `name`, `email`, `phone`, `street`, `doorNumber`, `floor`, `zipCode`, `cityName`, `termsAccepted`, `profileType`. Não usar chaves em português nos formulários (`nome`, `telemovel`, `morada`, `termosCondicoes`, …) — o português fica reservado à BD. O `tests/asset_test.php` valida este contrato.
-- Usar o jq-preloader para quaisquer overlays com spinners, ou skeletons (bootstrap placeholders) e também para o spinner principal do site do modules/main.
-- Idioma do código: O código deve estar todo em inglês, à exceção da BD, que permanecerá em português.
+1. **Requisito primeiro.** Requisito, regra ou convenção nova entra na `especificacao_mvp.md`
+   (§29.3) e só depois no código.
+2. **Evidência, não memória.** Toda a afirmação sobre o sistema sai de ficheiro lido (caminho e
+   linha) ou de comando executado.
+3. **Prova de origem.** Requisito que venha de conversa (Teams, e-mail) e não exista no repositório
+   é **perguntado**, nunca inferido.
+4. **Convenções só depois de aplicadas.** Uma convenção de código entra em §2 **apenas quando já
+   está implementada**. Enquanto for proposta, vive nos documentos de análise
+   (`mapaMentalMVP/`), que **não** são normativos.
+5. **Fechar o ciclo.** Concluída uma implementação da §24/§25, atualizar **§4 (estado)**,
+   **§24 (gap)**, **§28.2 (critério)** e **§26 (testes)** na mesma alteração — §29.3.6.
 
-## 8. TESTES MÍNIMOS
-- Criar agendamento completo (cliente → confirmação)
-- Validar disponibilidade de slots
-- Cancelar agendamento (backoffice)
-- Navegação mobile (DevTools)
+## 1. STACK E RESTRIÇÕES
 
-## 9. DOCUMENTAÇÃO OBRIGATÓRIA
+Stack fixa: PHP puro + PDO + MySQL 8.4.3 · HTML5/CSS3/JS com Bootstrap 5, jQuery e as bibliotecas
+já presentes em `modules/common/lib` · Laragon local. Detalhe: especificação §1 · §18.8.
 
-> **FONTE ÚNICA DE VERDADE:** `especificacao_mvp.md` — documento-mestre que centraliza requisitos,
-> decisões, regras de negócio, modelo de dados (com diagrama), arquitetura/convenções, API, estados,
-> testes e instalação. **Qualquer requisito, regra ou convenção nova é registada primeiro aí** (§29.3)
-> e só depois refletida no código. Em caso de conflito com qualquer outro ficheiro, **prevalece**.
->
-> Os ficheiros de planeamento/relatório anteriores foram **eliminados** na consolidação para evitar
-> divergência (mapa e rastreabilidade: `especificacao_mvp.md` §29.2).
+**Restrições de execução**
 
-- **`especificacao_mvp.md`** (documento-mestre — obrigatório e mantido atualizado) — branch `agent-workspace` (§11.5)
-- `README.md` (instalação + uso rápido) — versionado em `dev`
-- `mapaMentalMVP/` (guia de teste manual + mapa de fluxo de dados) — branch `agent-workspace` (§11.5)
-- Comentários em lógica complexa
-- Diagrama de BD: `especificacao_mvp.md` §17.8 (relações + consulta SQL para regenerar)
+- ❌ Instalar pacotes (Composer, npm) ou adotar frameworks externos.
+- ❌ Aceder ou alterar a pasta `/admin` na raiz — o backoffice vive em `modules/backoffice/`.
+- ❌ Alterar a estrutura da BD sem justificação registada na especificação (§29.3).
+- ❌ Refatorar código existente sem planeamento aprovado.
+- ❌ Duplicar neste ficheiro conteúdo que já exista na especificação, no `tests/README.md` ou no
+  `tools/README.md`.
 
-## 10. CRITÉRIO DE SUCESSO
-✅ **Fluxo LOJA FÍSICA funciona 100% (seleção → confirmação)**
-✅ **Fluxo CARRINHA funciona 100% (seleção → OTP → pendente)**
-✅ **Decisão de rotas manual funcional (aprovar/recusar, com indicador de 50€)**
-✅ **Backoffice Funcionário (aceitação individual → consolidação → bloqueio de janela)**
-✅ **Simulador de Recibos Verdes (percentagens configuráveis + cálculo na aceitação)**
-✅ **Calendário Fiscal com alertas progressivos (30/15/7/3/1/atraso)**
-✅ **Feedback do cliente após execução do serviço**
-✅ **Backoffice completo (agendamentos + rotas + serviços + fiscal + recibos verdes)**
-✅ Código organizado e legível
-✅ Interface responsiva e intuitiva
-✅ Validações aplicadas (client + server) em todos os fluxos
-✅ Testes automatizados a passar (`tests/`)
+Decisões de gestão são **manuais**: nenhum indicador automático decide ou bloqueia (regra de
+negócio em §3.1 · §12.2 · §12.3).
 
-## 11. REGRAS DE GIT / REPOSITÓRIO
+## 2. CONVENÇÕES DE CÓDIGO
 
-### 11.1 Estrutura das branches
-- `main` — branch de qualidade / código final. Só recebe merge/PR a partir de `dev` (nunca de outras
-  branches). O código que vai para `main` tem de estar sempre 100% funcional de ponta a ponta.
-- `dev` — branch de desenvolvimento. É para aqui que vai o trabalho terminado das outras branches,
-  por merge ou PR. `dev` reflete o estado de desenvolvimento mais avançado do projeto.
-- Restantes branches — desenvolvimento manual e arquitetura core do projeto, com algumas
-  implementações específicas que servem de base para definir convenções a implementar depois.
+> Movidas da especificação §18 (nomenclatura, idioma, contrato de nomes, front-end), onde deixam de
+> estar repetidas. A **arquitetura por camadas** e a **matriz de acesso por perfil** continuam lá
+> (§18.1–§18.4 e §18.6): são implementação e modelo de negócio, não estilo.
 
-### 11.2 Commits (agente)
-- Nunca fazer commit diretamente para `dev` nem para `main`.
-- Pode fazer commits diretamente nas branches de desenvolvimento (as restantes).
-- A integração para `dev`, e de `dev` para `main`, é sempre por merge/PR e é decisão do utilizador.
+**Nomenclatura e idioma**
 
-### 11.3 Mensagens de commit
-- Descrever resumidamente o que foi feito em cada commit.
-- Tipografia simples: sem emoji e sem formatação de markdown (sem negrito, títulos, tabelas).
-- Usar apenas `-` para bullet points, quando forem necessários.
+| Elemento          | Convenção                               | Exemplo                |
+| :---------------- | :-------------------------------------- | :--------------------- |
+| Classes           | **PascalCase**                          | `BookingService`       |
+| Métodos           | **camelCase**                           | `createStoreBooking`   |
+| Tabelas / colunas | **snake_case (PT)**                     | `agendamento_servico`  |
+| Endpoints         | **kebab-case** (`?action=dominio-acao`) | `admin-service-accept` |
+| Ficheiros JS      | **camelCase**                           | `bookingWizard.js`     |
+| Idioma            | **código EN** · **BD PT**               | —                      |
 
-### 11.4 Modelo de branches do projeto
+- As classes refletem o **modelo da BD**: entidade ↔ Service ↔ Repository ↔ tabela.
+- Famílias de endpoints **já existentes**: `admin-` (gestor) · `admin-service-` (aceitação, do
+  funcionário) · `customer-` · `booking-` · `auth-` · públicas. **Não criar prefixos novos.**
+- Front Controller: `index.php` distingue **API** (`?action=…`) de **página** (rotas com `:param`).
+
+**Contrato de nomes front-end ↔ API (obrigatório)**
+
+O atributo `name` de cada campo de formulário (input, select, textarea) e a chave do validator em
+JS espelham **exatamente** a chave que a API espera — a mesma que os mappers produzem.
+**A API dita o contrato; o front-end adapta-se.** O português fica reservado à BD.
+
+| Chave correta (EN, camelCase)                                  | Chave legada a evitar (PT, snake_case)                       |
+| :------------------------------------------------------------- | :----------------------------------------------------------- |
+| `name`, `email`, `password`, `confirmPassword`, `phone`, `nif` | `nome`, `telemovel`                                          |
+| `street`, `doorNumber`, `floor`, `zipCode`, `cityName`         | `morada`, `numPorta`, `andarBloco`, `codigoPostal`, `cidade` |
+| `termsAccepted`, `profileType`                                 | `termosCondicoes`, `tipoPerfil`                              |
+
+Verificado por `tests/asset_test.php` (falha se reaparecer uma chave legada no registo).
+`AddressAutocomplete` declara o mapa explícito `static FIELD_NAMES`.
+
+**Segurança**
+
+- APIs: `Session::requireLoginApi()` → **401** · `Session::requireProfileApi([...])` → **403**.
+- Páginas: `Session::requireLogin()` + verificação de perfil, com **redirect**.
+- `BaseController::requireCustomer()` = `requireProfileApi(['cliente'])` + devolve o id.
+- **Prepared statements** em todas as queries · passwords com `password_hash(PASSWORD_BCRYPT)` ·
+  OTP comparado com `hash_equals`.
+- Âmbito por perfil: o cliente só acede aos **seus** registos; o funcionário opera **em nome
+  próprio**; o feedback valida a propriedade do agendamento. Matriz completa: §18.6.
+
+**Front-end**
+
+- Formulários com a classe `Form` de `form.utils.js` + validators em
+  `modules/common/js/validators/` (molde: `customerRegister.js`).
+- Chamadas HTTP por `API.*` de `api.js` (sobre `ApiClient`). As respostas **não** vêm aninhadas em
+  `data`: as chaves estão na **raiz** do JSON.
+- Erros: `xhr.responseJSON.message` e `xhr.responseJSON.errors`.
+- Overlays, spinners e skeletons: **jq-preloader** (`$el.preloader(...)`).
+- Utilitários: `generalUtils` (`formatCurrency`, `formatDuration`, `escapeHtml`, `slugify`, …).
+- Responsivo: grelha Bootstrap, *mobile-first*.
+
+## 3. ESCRITA SEGURA E VALIDAÇÃO
+
+**Escrita de ficheiros.** ❌ Nunca reescrever ficheiros pelo ciclo `Get-Content` + `Set-Content` do
+PowerShell 5.1 — introduz **BOM** e **mojibake silencioso**. Causa, medições e as vias corretas
+estão em **`tools/README.md` §1**. Exigência permanente: **UTF-8 sem BOM**, mantendo o fim de linha
+do ficheiro (**CRLF**).
+
+**Antes de finalizar alterações a `.md`.** Correr o pipeline de formatação e a verificação de saúde
+— ordem, opções e garantias em **`tools/README.md` §3** — e garantir que
+`php tools/health-check.php` termina com **`TUDO OK`**.
+
+## 4. GIT — UTILIZAÇÃO E COMMITS (fonte única)
+
+**Modelo de branches**
 
 | Branch            | Papel                                                        | Recebe merges/PR de              |
-| ----------------- | ------------------------------------------------------------ | -------------------------------- |
+| :---------------- | :----------------------------------------------------------- | :------------------------------- |
 | `main`            | Código final de qualidade, 100% funcional de ponta a ponta   | apenas de `dev`                  |
 | `dev`             | Desenvolvimento, estado mais avançado do projeto             | branches de contexto e de tarefa |
 | `agent-workspace` | Documento-mestre, `mapaMentalMVP/`, `tools/` e `.clinerules` | — (nunca é integrada)            |
 | restantes         | Branches de trabalho (contexto, funcionalidade, correção)    | —                                |
 
-- O trabalho deve ser dividido por **branches de contexto** (uma por âmbito) e integrado em `dev`
-  por merge/PR — nunca por commits diretos.
-- Para **evitar conflitos**, os ficheiros de cada branch de contexto têm de ser **disjuntos**: cada
-  ficheiro pertence a uma única branch. Ficheiros transversais (ex.: `index.php`,
-  `app/config/api.php`, `modules/main/css/style.css`) ficam numa branch de infraestrutura própria.
+- ❌ **Nunca** commitar em `main` nem em `dev`. ✅ O agente commita nas **branches de contexto /
+  tarefa**.
+- A integração em `dev` — e de `dev` para `main` — é sempre por **merge/PR** e é **decisão do
+  utilizador**.
+- O trabalho é dividido por **branches de contexto** (uma por âmbito). Para não haver conflitos, os
+  ficheiros de cada branch são **disjuntos**: cada ficheiro pertence a **uma única** branch. Os
+  transversais (`index.php`, `app/config/api.php`, `modules/main/css/style.css`, `api.js`) ficam
+  numa branch de infraestrutura própria.
 - Ordem de integração: schema → core/infra → higiene → frontend → domínios → testes.
 
-### 11.5 Branch `agent-workspace` (relação agente/humano) — NUNCA integrar
+**Mensagens de commit** — tipografia simples:
 
-- Guarda **exclusivamente** os ficheiros de trabalho do agente: `.clinerules`,
-  `especificacao_mvp.md`, `mapaMentalMVP/` e `tools/`.
-- **Nunca** é integrada em `dev` nem em `main`. Se for preciso partilhar algum destes ficheiros, o
-  fluxo é no sentido oposto (a partir desta branch), e é sempre decisão do utilizador.
-- Esses caminhos estão listados no `.gitignore`, pelo que **nunca** são versionados nas outras
-  branches — o `git status` fica limpo mesmo com os ficheiros no disco.
-- Um ficheiro já versionado **não** é afetado pelo `.gitignore`. Para o voltar a versionar usa-se
-  obrigatoriamente `git add -f <caminho>`, o que **só** deve acontecer nesta branch.
-- Os ficheiros continuam **no disco** nas outras branches (apenas invisíveis para o Git).
+- Descrever **resumidamente** o que foi feito.
+- **Sem emoji** e **sem formatação markdown** (sem negrito, títulos, tabelas).
+- Apenas `-` para bullet points, quando forem necessários.
+
+```text
+titulo curto e simples
+
+- o que foi alterado
+- porque foi alterado
+```
+
+**Branch `agent-workspace`**
+
+- Guarda **exclusivamente**: `.clinerules`, `especificacao_mvp.md`, `mapaMentalMVP/` e `tools/`.
+- **Nunca** é integrada em `dev` nem em `main`; se for preciso partilhar algum destes ficheiros, o
+  fluxo é no sentido oposto e é decisão do utilizador.
+- Esses caminhos estão no `.gitignore`: **nunca** são versionados nas outras branches (o
+  `git status` fica limpo mesmo com os ficheiros no disco).
+- Um ficheiro já versionado **não** é afetado pelo `.gitignore`; para o versionar usa-se
+  `git add -f <caminho>` — e **só** nesta branch.
 - `README.md`, `tests/` e todo o código de produto **são versionados normalmente** em `dev`.
 
-## 12. FERRAMENTAS DE MANUTENÇÃO (`tools/`)
+## 5. TESTES
 
-Pasta **dev-only** (não faz parte da aplicação; protegida por `.htaccess`). Contém utilitários PHP
-reutilizáveis para evitar retrabalho. **Editar livremente quando não cumprirem o objetivo.**
+A fonte única desta matéria é **`tests/README.md`**: lá estão as quatro suites, o que cobrem, como se
+executam, os pré-requisitos (Apache e MySQL) e as garantias de repetibilidade. **Não se repete nada
+aqui.** Guia manual de ponta a ponta: `mapaMentalMVP/guia_teste_manual.md`. Critérios de aceitação
+do MVP: §28.
 
-> 📍 Estes ficheiros existem **apenas na branch `agent-workspace`** (§11.5) e estão no `.gitignore`.
-> Nas restantes branches ficam no disco mas invisíveis para o Git.
+## 6. MANUTENÇÃO DA DOCUMENTAÇÃO
 
-### 12.1 REGRA OBRIGATÓRIA DE ESCRITA DE FICHEIROS
+Cada ficheiro tem **um papel exclusivo**. Na mesma alteração, manter coerentes os que forem tocados:
 
-❌ **NUNCA** reescrever ficheiros com o ciclo `Get-Content` + `Set-Content` do PowerShell 5.1.
-Causa **corrupção silenciosa**, confirmada experimentalmente:
-
-- `Get-Content` **sem** `-Encoding` decodifica UTF-8 como **CP1252 (ANSI)** → acentos, travessões e
-  euros entram em memória **já em mojibake** (`—` → `â€”`);
-- `Set-Content -Encoding UTF8` grava **COM BOM** (no PS 5.1 **não existe** `utf8NoBOM`).
-
-Exemplo medido: 346 bytes → **437 bytes** (BOM + 18 ocorrências de mojibake).
-
-✅ **Usar uma destas vias:**
-1. `php tools/file-edit.php <subcomando> ...` (recomendado);
-2. Em PowerShell, a via **.NET** explícita:
-   `$enc = New-Object System.Text.UTF8Encoding($false)` +
-   `[System.IO.File]::ReadAllText/WriteAllText($path, $txt, $enc)`;
-3. A ferramenta de edição do IDE.
-
-Sempre **UTF-8 sem BOM**, preservando o fim de linha do ficheiro (o projeto usa **CRLF**).
-
-### 12.2 Utilitários disponíveis
-
-| Ferramenta                  | Função                                                                 |
-| --------------------------- | ---------------------------------------------------------------------- |
-| `tools/health-check.php`    | Corre as 6 verificações (encoding + `.md` + alinhamento + larguras) e dá um resumo |
-| `tools/encoding-check.php`  | Deteta BOM, mojibake, UTF-8 inválido e fins de linha mistos            |
-| `tools/encoding-fix.php`    | Repara BOM/mojibake (com *round-trip*) e converte UTF-16 → UTF-8       |
-| `tools/md-align-tables.php` | Alinha tabelas markdown (largura de ecrã, emoji = 2)                   |
-| `tools/md-wrap-tables.php`  | Quebra células para respeitar o limite de colunas (pragma `md-wrap-tables:max=N` no topo); **nunca parte palavras** |
-| `tools/md-join-tables.php`  | Junta tabelas partidas por uma linha em branco (bloco sem divisor)     |
-| `tools/ascii-align.php`     | Nivela tabelas ASCII/boxes e diagramas dentro de *code fences*          |
-| `tools/widthcheck.php`      | Confere a uniformidade das tabelas (largura igual, divisor, limite)     |
-| `tools/md-verify.php`       | Valida code fences, referências `§NN` (com resolução cruzada), tabelas |
-| `tools/file-edit.php`       | `show` / `write` / `replace` / `lines` / `grep` em UTF-8 seguro        |
-| `tools/_common.php`         | Módulo comum (**não executar diretamente**)                            |
-
-### 12.3 Convenções dos utilitários
-
-- **Dry-run por omissão**; só gravam com `--write` explícito.
-- **Exit code:** `0` = ok · `1` = problema.
-- Assumem execução **a partir da raiz do projeto**.
-- **Recusam gravar** se o resultado não for UTF-8 válido.
-- `md-align-tables` **aborta** se detetar alteração de conteúdo (só alinha espaços).
-- `encoding-check` aceita `--ignore=<caminho>` para **exceções conhecidas** — estas passam a ser
-  listadas à parte e **não** contam como problema (ex.: `DataBase_backup_pre_v2.sql`, dump legado em
-  UTF-16). Aceita também `--ext=` (limitar extensões) e `--include-tools` (incluir a própria pasta
-  `tools/`).
-- `encoding-fix` também **converte UTF-16 → UTF-8** (ver §12.1 para a origem deste caso).
-
-### 12.4 Pragma de mojibake
-
-Ficheiros que **documentam** mojibake como exemplo (ex.: `tools/README.md`) devem incluir a linha
-`encoding-check:ignore-mojibake`, que suprime a deteção nesse ficheiro.
-
-### 12.5 Antes de finalizar alterações a documentação
-
-Correr `php tools/health-check.php` e garantir que está tudo OK. O `DataBase_backup_pre_v2.sql` é
-**UTF-16 legado por natureza** e não deve ser convertido — está já registado como exceção
-(`--ignore=`) em `tools/health-check.php`.
-
-### 12.6 Ficheiros a manter sempre atualizados
-
-`especificacao_mvp.md` (§29.3 — requisitos primeiro, código depois), `README.md` (modelo de branches
-e mapa de pastas), `.clinerules` (§11 e §12) e `tools/README.md`. Sempre que o modelo de branches,
-os utilitários ou as convenções mudarem, estes quatro ficheiros são atualizados no mesmo trabalho.
+| Ficheiro               | Papel exclusivo                                    | Atualizar quando muda                    |
+| :--------------------- | :------------------------------------------------- | :--------------------------------------- |
+| `especificacao_mvp.md` | Requisitos, regras, BD, API, estados, arquitetura  | Sempre — é a fonte única (§29.3)         |
+| `.clinerules`          | Este ficheiro: operação, convenções aplicadas, Git | Convenção aplicada, restrição, fluxo Git |
+| `tests/README.md`      | Suites de teste, execução e pré-requisitos         | Suite nova, contagem, pré-requisito      |
+| `tools/README.md`      | Catálogo, opções e convenções das ferramentas      | Ferramenta nova, opção, pragma           |
+| `README.md`            | Instalação, uso rápido e mapa de pastas            | Stack, instalação, estrutura             |
+| `mapaMentalMVP/*.md`   | Análise e auditoria (**não normativo**)            | Nova iteração de análise ou auditoria    |
 
 ---
+
 **Este ficheiro NÃO deve ser alterado sem aprovação.**
-**Versão:** 1.3 Académica | **Data:** 14/09/2026 | **Última atualização:** 22/09/2026
-(§11.4 Modelo de branches · §11.5 Branch `agent-workspace` · §12.6 Ficheiros a manter atualizados)
+**Versão:** 2.0 Académica · **Data:** 24/09/2026
+**Histórico:** v1.3 → v2.0 — deduplicação por fonte única. As convenções de código passaram da
+especificação (§18) para §2; a utilização do Git ficou centralizada em §4; as ferramentas e os testes
+passaram a referenciar `tools/README.md` e `tests/README.md`; prioridades, simplificações, estrutura
+de camadas e critérios de sucesso passaram a referências (§21 · §22 · §18 · §28), deixando de estar
+repetidos. Corrige ainda: a regra de JOIN, que estava desatualizada face à §18.2; o exemplo de método
+em português; e o prazo do cronograma de 7 dias, revogado pela §21.

@@ -106,6 +106,15 @@ function detectEol(string $text): string
     return $crlf === $lf ? "CRLF" : "MISTOS";
 }
 
+/**
+ * Documentacao viva SEM extensao, que deve ser verificada como os `.md`.
+ *
+ * Existe porque `collectFiles()` filtra por extensao: ficheiros como `.clinerules` (sem
+ * extensao) escapavam ao encoding-check e ao md-verify, apesar de serem documentacao
+ * normativa do projeto. Entram sempre que `md` estiver no ambito de extensoes.
+ */
+const DOCS_SEM_EXTENSAO = [".clinerules"];
+
 /** Ficheiros com uma extensao, recursivo, excluindo pastas irrelevantes. */
 function collectFiles(string $root, array $exts, array $exclude = []): array
 {
@@ -120,7 +129,8 @@ function collectFiles(string $root, array $exts, array $exclude = []): array
         $skip = false;
         foreach ($exclude as $re) if (preg_match($re, $p)) { $skip = true; break; }
         if ($skip) continue;
-        if ($exts && !in_array(strtolower($f->getExtension()), $exts, true)) continue;
+        $doc = in_array($f->getFilename(), DOCS_SEM_EXTENSAO, true) && in_array("md", $exts, true);
+        if (!$doc && $exts && !in_array(strtolower($f->getExtension()), $exts, true)) continue;
         $found[] = $p;
     }
     sort($found);

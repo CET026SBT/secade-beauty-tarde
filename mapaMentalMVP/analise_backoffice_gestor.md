@@ -58,7 +58,7 @@ prova** (ficheiro + linha) está identificado, com a prova e a correção, em
 | P4  | Decisões de gestão são **manuais**; nenhum indicador bloqueia ação                | §2.E · RN-05 · §12.3  |
 | P5  | Alertas na convenção `alert-info/warning/danger` e **nunca bloqueiam**            | §12.4                 |
 | P6  | Sem CRON: tudo on-demand e idempotente                                            | §22.1                 |
-| P7  | **Sem novos pacotes/frameworks** (gráficos com CSS/SVG ou libs já presentes)      | `.clinerules` §3      |
+| P7  | **Sem novos pacotes/frameworks** (gráficos com CSS/SVG ou libs já presentes)      | `.clinerules` §1      |
 | P8  | Repository: JOIN apenas N:1 de lookup; escrita na própria tabela                  | §18.2                 |
 | P9  | Contrato de nomes front-end ↔ API; validators em `validators/`                    | §18.7 · `.clinerules` |
 | P10 | Requisito novo → primeiro a especificação (`RF-nn`/`RN-nn`/`D-nn`), depois código | §29.3                 |
@@ -259,7 +259,7 @@ aquela limitação, mas convém confirmá-lo explicitamente → **C-07**.
 Verificação: **não existe** tabela, página, endpoint, Service, Repository ou JS de promoções (24 tabelas em
 `DataBase_v2.sql`; rotas em `index.php` L30-35; 37 endpoints em `app/config/api.php`).
 
-**Modelo proposto (➕ 4 tabelas — está em `.clinerules` que alterações de BD exigem justificação, ver §3)**
+**Modelo proposto (➕ 4 tabelas — está em `.clinerules` que alterações de BD exigem justificação, ver `.clinerules` §1)**
 
 | Tabela proposta        | Campos mínimos                                                                                                 | Papel no pedido                    |
 | :--------------------- | :------------------------------------------------------------------------------------------------------------- | :--------------------------------- |
@@ -504,7 +504,7 @@ ficheiro para as tabelas"*:
 |                               | apuramento                                                                         |                                           |
 
 A decisão entre as duas fica em **C-29**. Nota metodológica: a via (b) **não escreve** na BD de negócio — logo
-**não colide** com "não alterar a BD sem justificação" (`.clinerules` §3); só precisa de um **mapa** (ficheiro de
+**não colide** com "não alterar a BD sem justificação" (`.clinerules` §1); só precisa de um **mapa** (ficheiro de
 configuração ou tabela de apoio, a decidir).
 
 > ⚠️ **Correção de uma afirmação da 2.ª iteração (C-19 · Q-43).** Ficou escrito que `.xlsx` *"é binário e exigiria
@@ -684,7 +684,7 @@ existem com o balancete** e que, hoje, **nenhuma tabela do projeto alimenta**. O
 
 #### F.7 Prova de viabilidade técnica: ler `.xlsx` **sem instalar nada** (corrige C-19/Q-43)
 
-A 2.ª iteração concluiu que ler `.xlsx` exigiria biblioteca externa (proibida — `.clinerules` §3). **Fui verificar
+A 2.ª iteração concluiu que ler `.xlsx` exigiria biblioteca externa (proibida — `.clinerules` §1). **Fui verificar
 e a conclusão está errada.** Factos medidos no ambiente real:
 
 | Verificação                                         | Resultado                                                |
@@ -705,7 +705,7 @@ Consequências:
   **C-30**.
 - Deve ser criada, **se essa via for aprovada**, uma ferramenta reutilizável (ex.: `tools/xlsx-read.php`, com o
   mesmo padrão dos utilitários de `tools/` — dry-run por omissão, exit code 0/1) e registada em
-  `tools/README.md` e `.clinerules` §12.2. **Só depois da decisão** — não se implementa sem aprovação (§29.3).
+  `tools/README.md` e `tools/README.md` §2. **Só depois da decisão** — não se implementa sem aprovação (§29.3).
 - ⚠️ **Limite honesto:** um leitor próprio lê o **conteúdo** (células, valores, fórmulas), **não** a *pintura*
   visual, macros, gráficos nem formatação condicional. Para "ler as células que o cliente indicou" **chega
   perfeitamente**; para "reproduzir o balancete como no Excel" **não**.
@@ -940,7 +940,7 @@ Proposta: mostrar o apurado e oferecer *"criar obrigação com este valor"* (man
 |      | lembrete aparece em `/agendamentos`, na **home** ou **nos dois**?  |                                                                      |                                                                     |
 | Q-42 | A que terá acesso o **Funcionário** no backoffice?                 | Hoje: **só** `/gestao/servicos` (aceitação); as APIs recusam o resto | Matriz concreta em **§1.7**; agregar em `/gestao/agenda` — ver      |
 |      |                                                                    | com 403 (§22.2)                                                      | **C-22**                                                            |
-| Q-43 | (técnica) Um `.csv` é tratável? E `.xls`?                          | **Sem bibliotecas** (proibido instalar — `.clinerules` §3): `.csv` é | Preferir **CSV** (ou `.xlsx` previamente convertido) — ver **C-19** |
+| Q-43 | (técnica) Um `.csv` é tratável? E `.xls`?                          | **Sem bibliotecas** (proibido instalar — `.clinerules` §1): `.csv` é | Preferir **CSV** (ou `.xlsx` previamente convertido) — ver **C-19** |
 |      |                                                                    | nativo do PHP; `.xls`/`.xlsx` é **binário** e exigiria biblioteca    |                                                                     |
 |      |                                                                    | externa                                                              |                                                                     |
 
@@ -1135,7 +1135,7 @@ Cards:
 |      | preço com IVA                                 | serviço mais caro é 48,78 € líquido = **60,00 €** com IVA        | **deixa de alcançar** os serviços mais  | **na mesma alteração**; decidir se o filtro usa      |
 |      |                                               |                                                                  | caros (regressão silenciosa)            | bruto ou líquido                                     |
 | C-19 | KPIs/financeiro alimentados por `.csv`/`.xls` | Nada de importação existe; e **não** se podem instalar           | Prometer importação de Excel é prometer | Preferir **CSV**; e definir um princípio único:      |
-|      | do Balancete                                  | bibliotecas (`.clinerules` §3) → `.xlsx` é binário, `.csv` é     | trabalho que o stack proíbe; e dois     | **interno para o que a plataforma faz** (vendas,     |
+|      | do Balancete                                  | bibliotecas (`.clinerules` §1) → `.xlsx` é binário, `.csv` é     | trabalho que o stack proíbe; e dois     | **interno para o que a plataforma faz** (vendas,     |
 |      |                                               | nativo                                                           | donos do mesmo número geram divergência | comissões, rotas), **manual/importado** só para o    |
 |      |                                               |                                                                  |                                         | externo (rendas, utilities, seguros)                 |
 | C-20 | Importar o Balancete **e** somar aos dados    | `agendamento.valor_total` já contém as vendas                    | Se o ficheiro importado já incluir as   | Decidir o **dono de cada número**: a receita é       |

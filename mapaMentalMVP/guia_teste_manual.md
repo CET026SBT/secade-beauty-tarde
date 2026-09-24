@@ -1222,7 +1222,7 @@ Antes de reportar, confirme que não é um destes casos **intencionais** (simpli
 
 | Comportamento                                                  | Porque é intencional                                                        |
 | :------------------------------------------------------------- | :-------------------------------------------------------------------------- |
-| OTP aparece no ecrã                                            | Simulação de SMS (sem gateway), conforme `.clinerules` §5                   |
+| OTP aparece no ecrã                                            | Simulação de SMS (sem gateway), conforme a especificação §22.1              |
 | Não há pagamento real                                          | Pagamentos/sinal **simulados**; `sinal_pago` fica `0`                       |
 | Não há e-mails nem SMS                                         | Notificações simuladas (aparecem em mensagens/UI)                           |
 | Não existe botão "Validar Rotas" nem algoritmo de 100 €        | **Revogado**: a decisão é manual (Fase 4) — ver `especificacao_mvp.md` §3.1 |
