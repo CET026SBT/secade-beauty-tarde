@@ -1,6 +1,6 @@
 # MAPA DE FLUXO DE DADOS — SECADE BEAUTY MVP
 **Guia visual de funcionalidades e fluxo ponta-a-ponta**
-Data: 21/09/2026 · Comprovar com: `guia_teste_manual.md`
+Data: 24/09/2026 · Comprovar com: `guia_teste_manual.md`
 
 ---
 
@@ -766,7 +766,6 @@ Exemplo (Barba 4,07 €, 70/30):
 ║   Pode RECUSAR uma rota acima de 50 €.                                ║
 ╚═══════════════════════════════════════════════════════════════════════╝
 
-❌ REVOGADO: algoritmo automático com limiar de 100 € (v1.0 da documentação)
 ✅ PREVALECENTE: especificacao_mvp.md §3.1 — Fase 4
 ```
 
@@ -868,11 +867,8 @@ backoffice/js/components/routes.js
 | 2   | Outra cidade    | **+80,00 €** (acima) | **RECUSAR**    | ✅ `cancelado` (recusado apesar de favorável) |
 
 ```
-Se existisse um algoritmo automático (como o revogado de 100 €):
-  ✗ o cenário 1 seria RECUSADO automaticamente
-  ✗ o cenário 2 seria APROVADO automaticamente
 
-Como foi implementado (Fase 4 — manual):
+Decisão MANUAL (Fase 4) — comportamento implementado:
   ✓ ambos os cenários respeitam a VONTADE DO GESTOR
   ✓ o valor de 50 € aparece APENAS como aviso visual
 ```
@@ -1758,7 +1754,7 @@ VALOR DO AGENDAMENTO
                               dentro da mesma pessoa)
 
 RENTABILIDADE DA ROTA  (RotaService::findRouteSummaries)
-  custoTotal     = combustivel + 50,00
+  custoTotal     = combustivel + 50,00   ⚠️ (a remover — §12.2 da especificação)
   rentabilidade  = receita − custoTotal
   meetsReference = rentabilidade >= 50,00     ← SÓ INDICADOR VISUAL
 
@@ -1773,16 +1769,10 @@ ALERTA FISCAL  (FiscalService::resolveAlertLevel)
         (iteração do mais urgente para o mais largo)
 ```
 
-### 14.2 Regras revogadas (NÃO implementadas de propósito)
+### 14.2 Regras revogadas
 
-| Regra (v1.0 da documentação)                 | Estado          | Substituto                           |
-| -------------------------------------------- | --------------- | ------------------------------------ |
-| Algoritmo automático com limiar de **100 €** | ❌ **REVOGADO** | `decideRoute` — decisão **manual**   |
-| Bloqueio automático de rota não rentável     | ❌ **REVOGADO** | aviso visual `meetsReference`        |
-| `RotaService::validateRoutes()`              | ❌ removido     | —                                    |
-| `admin-validate-routes` (endpoint)           | ❌ removido     | `admin-route-decide`                 |
-| Desconto/`valor_pago_sinal`                  | ❌ removido     | `valor_sinal` simulado               |
-| CRON para validação de rotas                 | ❌ removido     | decisão manual + alertas *on-demand* |
+> Não se documentam aqui — o arquivo é o **histórico do Git**. Em caso de dúvida sobre um
+> comportamento, a autoridade é `especificacao_mvp.md` (§2 · §3 · §5).
 
 ## 15. SEGURANÇA: MATRIZ DE PERMISSÕES
 
@@ -1914,6 +1904,5 @@ NAVBAR do backoffice  ($boIsEmployee ? [...] : [...])
 ✅ Todas as constantes de negócio estão listadas na secção 14,
    prontas a confrontar com o comportamento observado nos testes manuais
 
-✅ As regras REVOGADAS estão explicitamente marcadas (secção 14.2)
-   para evitar reportar como bug algo que é intencional
+✅ Qualquer comportamento que pareça errado confronta-se com `especificacao_mvp.md` §5 — regras em vigor
 ```

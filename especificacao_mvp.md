@@ -1,5 +1,5 @@
 # SECADE BEAUTY — ESPECIFICAÇÃO ÚNICA E CENTRALIZADA
-**Documento-mestre (single source of truth)** · Versão 1.1 · 22/09/2026 · branch **`agent-workspace`**
+**Documento-mestre (single source of truth)** · Versão 2.0 · 24/09/2026 · branch **`agent-workspace`**
 **Âmbito:** requisitos, decisões finais, arquitetura, base de dados, API, estados, testes e instalação.
 
 > ⚠️ **PREVALÊNCIA:** este documento **centraliza e substitui** a informação de **requisitos,
@@ -8,56 +8,52 @@
 > O que é **operação** — convenções de código aplicadas e utilização do Git — vive no
 > `.clinerules`; as **ferramentas** em `tools/README.md`; os **testes** em `tests/README.md`.
 > Este documento **aponta** para lá em vez de duplicar (regra de manutenção: §29.3.7).
-> Os ficheiros anteriores são **registo histórico** — ver §29.2. Nesta branch (`agent-workspace`)
-> foram **eliminados**; em `dev` continuam presentes (a remoção é reversível com
-> `git checkout dev -- <ficheiro>`).
+> Os ficheiros de planeamento anteriores foram **eliminados**: o arquivo é o **histórico do Git** —
+> mapa documental em §29.2. *(Em `dev` continuam presentes: reversível com `git checkout dev -- <ficheiro>`.)*
 
-> **Fontes consolidadas** (ficheiros **entretanto eliminados** na consolidação documental — mapa em §29.2):
-> `planeamento_geral.md` · `rectificacoes.md` (esclarecimento de conflitos
-> com os `.pdf` iniciais) · `fluxo_funcionalidades.md` · `CARRINHA_SPEC.md` ·
-> `plano_desenvolvimento.md` · `ALTERACOES_PRIORIDADES.md` · `duvidas_planeamento.md` ·
-> `relatorio_alteracoes.md` · `tecnologias_projeto.md` · `LOGIN_PROFILE_TODO.md` ·
-> `README.md` · `relatorio_implementacao.md`.
+> **Fonte única por assunto.** Este documento é a autoridade sobre requisitos, regras, dados, API e
+> arquitetura; as convenções aplicadas e o Git vivem no `.clinerules`; os testes em `tests/README.md`
+> e as ferramentas em `tools/README.md`. Mapa completo e histórico: §29.2.
 
 ---
 
 ## ÍNDICE
 
-| §   | Secção                            | §   | Secção                                    |
-| :-- | :-------------------------------- | :-- | :---------------------------------------- |
-| 1   | Visão geral, contexto e stack     | 16  | Feedback do cliente                       |
-| 2   | Regras de Ouro (prevalência)      | 17  | Modelo de dados                           |
-| 3   | Conflitos e decisões finais       | 18  | Arquitetura e convenções                  |
-| 4   | Requisitos funcionais (RF)        | 19  | API / endpoints                           |
-| 5   | Regras de negócio (RN)            | 20  | Máquina de estados                        |
-| 6   | Domínio: utilizadores e perfis    | 21  | Roadmap por fases e estado                |
-| 7   | Catálogo de serviços e categorias | 22  | Simplificações e limitações               |
-| 8   | Agendamento — Loja Física         | 23  | Defeitos corrigidos (histórico)           |
-| 9   | Agendamento — Carrinha Ambulante  | 24  | **Requisitos novos / gap analysis**       |
-| 10  | Dinâmica dos funcionários         | 25  | Trabalho futuro priorizado                |
-| 11  | Simulador de Recibos Verdes       | 26  | Testes e validação                        |
-| 12  | Módulo do Gestor — Rotas          | 27  | Instalação e importação da BD             |
-| 13  | Calendário Fiscal                 | 28  | Critérios de aceitação                    |
-| 14  | Pagamentos, sinal e recibos       | 29  | Anexos (glossário, histórico, manutenção) |
-| 15  | Cancelamentos e janela de 24h     |     |                                           |
+| §   | Secção                            | §   | Secção                                          |
+| :-- | :-------------------------------- | :-- | :---------------------------------------------- |
+| 1   | Visão geral, contexto e stack     | 15  | Cancelamentos e janela de 24h                   |
+| 2   | Regras de Ouro e prevalência      | 16  | Feedback do cliente                             |
+| 3   | Decisões finais (D-01…D-11)       | 17  | Modelo de dados                                 |
+| 4   | Requisitos funcionais (RF)        | 18  | Arquitetura e convenções                        |
+| 5   | Regras de negócio (RN)            | 19  | API / endpoints                                 |
+| 6   | Domínio: utilizadores e perfis    | 20  | Máquina de estados                              |
+| 7   | Catálogo de serviços e categorias | 21  | Roadmap por fases e estado                      |
+| 8   | Agendamento — Loja Física         | 22  | Simplificações e limitações                     |
+| 9   | Agendamento — Carrinha Ambulante  | 23  | Defeitos históricos (só ponteiro)               |
+| 10  | Dinâmica dos funcionários         | 24  | Requisitos novos / gap analysis                 |
+| 11  | Simulador de Recibos Verdes       | 25  | Trabalho futuro priorizado                      |
+| 12  | Módulo do Gestor — Rotas          | 26  | Testes e validação                              |
+| 13  | Calendário Fiscal                 | 27  | Instalação e importação da BD                   |
+| 14  | Pagamentos, sinal e recibos       | 28  | Critérios de aceitação                          |
+|     |                                   | 29  | Anexos (glossário, mapa documental, manutenção) |
 
 ---
 
 ## 0. COMO USAR ESTE DOCUMENTO
 
-| Se quer…                                                         | Vá a                                             |
-| :--------------------------------------------------------------- | :----------------------------------------------- |
-| Saber **o que o sistema faz**                                    | §4 (RF) + §5 (RN)                                |
-| Saber **porque uma regra é assim** (e não como os `.pdf` diziam) | §3                                               |
-| Implementar um **módulo**                                        | §6–§16                                           |
-| Escrever **código**                                              | §18 (arquitetura) + §19 (API) + `.clinerules` §2 |
-| **Fazer commits / integrar código**                              | `.clinerules` §4                                 |
-| **Perceber as branches (main / dev / agent-workspace)**          | `.clinerules` §4                                 |
-| **Editar/escrever ficheiros (encoding seguro)**                  | `tools/README.md` §1                             |
-| Perceber **estados**                                             | §20                                              |
-| Saber **o que falta fazer**                                      | §24 (gap) + §25 (futuro)                         |
-| **Instalar/importar**                                            | §27                                              |
-| **Testar**                                                       | `tests/README.md` + §28                          |
+| Se quer…                                                | Vá a                                             |
+| :------------------------------------------------------ | :----------------------------------------------- |
+| Saber **o que o sistema faz**                           | §4 (RF) + §5 (RN)                                |
+| Saber **que decisão foi tomada e porquê**               | §3                                               |
+| Implementar um **módulo**                               | §6–§16                                           |
+| Escrever **código**                                     | §18 (arquitetura) + §19 (API) + `.clinerules` §2 |
+| **Fazer commits / integrar código**                     | `.clinerules` §4                                 |
+| **Perceber as branches (main / dev / agent-workspace)** | `.clinerules` §4                                 |
+| **Editar/escrever ficheiros (encoding seguro)**         | `tools/README.md` §1                             |
+| Perceber **estados**                                    | §20                                              |
+| Saber **o que falta fazer**                             | §24 (gap) + §25 (futuro)                         |
+| **Instalar/importar**                                   | §27                                              |
+| **Testar**                                              | `tests/README.md` + §28                          |
 
 **Convenção de identificadores:** `RF-nn` (requisito funcional), `RN-nn` (regra de negócio),
 `D-nn` (decisão final documentada). Referências cruzadas usam estes identificadores.
@@ -98,232 +94,118 @@ num backoffice único.
 
 **Base URL local:** `http://localhost/secade-beauty-tarde`
 
-## 2. REGRAS DE OURO (PREVALÊNCIA ABSOLUTA)
+## 2. REGRAS DE OURO E PREVALÊNCIA
+
+### 2.0 Fluxo das regras — o que prevalece sobre o quê
+
+| #   | Camada                                         | Papel                                                                             | Fonte          |
+| :-- | :--------------------------------------------- | :-------------------------------------------------------------------------------- | :------------- |
+| 1   | Regras de operação                             | Como o trabalho é executado (restrições, convenções **aplicadas**, Git)           | `.clinerules`  |
+| 2   | **Regras de Ouro (§2.A–§2.E)**                 | Invariantes de produto — nenhuma decisão as contraria                             | este documento |
+| 3   | **Decisões finais (§3 · D-01…D-11)**           | Resolvem cada conflito de fontes; prevalecem sobre as fontes originais            | este documento |
+| 4   | **Regras de negócio (§5 · RN-01…RN-29)**       | Regra operativa e testável; **no detalhe, a RN vence a §2** (a §2 dá o princípio) | este documento |
+| 5   | Requisitos e módulos (§4 · §6–§16 · §19 · §20) | O que o sistema faz e como; **conforma-se** às camadas 2–4                        | este documento |
+| 6   | Gap, futuro e critérios (§24 · §25 · §28)      | O que falta, por que ordem, e como se aceita                                      | este documento |
+| 7   | Manutenção (§29.3)                             | Meta-regras deste documento                                                       | este documento |
+
+**Em conflito:** prevalece a camada de **número menor**; dentro da mesma camada, a regra **mais
+específica**. Quem deteta a colisão corrige-a na mesma alteração (§29.3.7).
+
+**Fora da hierarquia (não normativos):** `mapaMentalMVP/*` (análise, auditorias e guias) e `README.md`
+(instalação). O `tests/README.md` é a autoridade sobre **como testar** e o `tools/README.md` sobre o
+**comportamento das ferramentas**. Em qualquer conflito de **produto**, prevalece **este documento**.
 
 ### A. Separação Main vs. Backoffice
-- **Main** (`modules/main/`): exclusivo para **clientes**. Catálogo, perfil, agendamentos, feedback.
-  **Nenhum fluxo do Main expõe** dados de gestão, funcionários, rotas, fiscalidade ou recibos verdes.
-- **Backoffice** (implementado em `modules/backoffice/`): área restrita por perfil —
-  **gestor** (agendamentos, rotas, fiscal, config. de recibos verdes) e
-  **funcionário** (aceitação de serviços). O cliente **não tem acesso**.
+`modules/main/` é **exclusivo de clientes**; o backoffice (`modules/backoffice/`) é restrito por
+perfil (**gestor** · **funcionário**) e o cliente **não tem acesso**. Nenhum fluxo do Main expõe
+dados de gestão, equipa, rotas, fiscalidade ou recibos verdes. Matriz de acesso: §18.6.
 
-### B. Dois canais de agendamento com regras distintas
-
-| Aspeto               | **Loja Física**                          | **Carrinha Ambulante**                        |
-| :------------------- | :--------------------------------------- | :-------------------------------------------- |
-| Espaço físico        | Exige (`requer_espaco_fisico=1` só aqui) | Não                                           |
-| Morada               | ❌ Não pede                              | ✅ Obrigatória (define a cidade/rota)         |
-| Estrutura por pessoa | ❌ Não                                   | ✅ Obrigatória (Pessoa 1..N)                  |
-| OTP                  | ❌ Não                                   | ✅ Simulado, 6 dígitos                        |
-| Aceitação            | **Automática** na criação                | **Manual** por funcionário, serviço a serviço |
-| Estado inicial       | `pendente_validacao_logistica_loja`      | `pendente_aceitacao_funcionarios`             |
-| Sinal                | **10%** (simulado)                       | **Dispensado** na 1.ª marcação                |
-| Horário              | Ter–Sáb 09:00–19:00                      | Flexível (ver D-nn §3.9)                      |
+### B. Dois canais com regras distintas
+**Loja** exige espaço físico, não pede morada nem OTP, os serviços são aceites **automaticamente** na
+criação e há sinal de 10 %. **Carrinha** exige morada (que define a cidade/rota) e **estrutura por
+pessoa**, usa OTP, a aceitação é **manual serviço a serviço** e a 1.ª marcação é **isenta de sinal**.
+Detalhe operativo: §8 · §9 e RN-01 · RN-02 · RN-03 · RN-14 · RN-16.
 
 ### C. Categorias são apenas filtros visuais
-Cabeleireiro, Barbearia e Estética funcionam **estritamente como agrupadores visuais/filtros**
-(no Main para o cliente, no backoffice para o funcionário). **Nunca** condicionam quem pode
-executar o quê — qualquer funcionário aceita qualquer serviço.
+Nunca condicionam quem executa o quê — qualquer funcionário aceita qualquer serviço (RN-04).
 
-### D. A equipa é atribuída por aceitação, não por alocação automática
-Não há motorista dedicado nem controlo logístico de condução. A carrinha é transporte; uma vez
-estacionada na morada, os serviços são executados **polivalentemente** por qualquer funcionário
-presente (§3.8).
+### D. A equipa é atribuída por aceitação, não por alocação
+Sem motorista dedicado e sem controlo logístico de condução; **nada disso deve ser implementado**
+(D-08 · §22.3).
 
 ### E. Decisões de gestão são manuais
-A decisão de rotas é **manual e livre** do gestor. Valores de referência (50 €) são **indicadores
-visuais** e nunca gatilhos automáticos. Alertas fiscais são gerados **on-demand** (sem CRON).
+Aprovar ou recusar uma rota é **inteiramente do gestor**; o valor de referência é **apenas visual** e
+nunca bloqueia. Alertas fiscais gerados *on-demand*, sem CRON (D-01 · RN-05 · §12.3).
 
----
+## 3. DECISÕES FINAIS (D-01 … D-11)
 
-## 3. CONFLITOS E DECISÕES FINAIS
-
-> Esta secção consolida os **esclarecimentos de retificações** (ficheiro eliminado — §29.2): os conflitos entre os **`.pdf` iniciais**
-> (de contabilidade/operação) e os `.md` de planeamento, mais os conflitos **internos** entre
-> `.md`. Regra geral aplicada: **prevalece o `.md`** (planeamento v3.0 + esclarecimentos),
-> com as nuances operacionais abaixo.
+> Decisões de produto que resolveram os conflitos entre fontes de planeamento. **As fontes originais
+> estão revogadas** e não se acumulam aqui — o histórico está no Git (§29.2). Cada decisão aponta as
+> regras operativas (§5) e o estado; o que falta está no gap (§24).
 
 ### 3.1 — D-01 · Decisão de rotas e limiar financeiro
-- **Conflito:** o PDF definia validação **obrigatória** de viabilidade com **cancelamento
-  automático** quando os limiares mínimos não fossem atingidos. Os `.md` revogaram esse algoritmo.
-- **Decisão final:** a decisão de aprovar ou recusar é **inteiramente do gestor**.
-  O valor de referência (**50 €**) serve **apenas** de apoio visual/alerta. **Sem bloqueio automático.**
-- **Implementação:** `RotaService::decideRoute()` + `REFERENCE_PROFITABILITY = 50.0`
-  (devolvido como `meetsReference`). O antigo `validateRoutes()` e o endpoint
-  `admin-validate-routes` foram **removidos**.
+**Decisão:** aprovar ou recusar é **inteiramente do gestor**; o valor de referência serve **apenas** de
+apoio visual, **sem bloqueio automático**.
+**Regras:** RN-05 · RN-10 · RN-18 · RN-19 · **Estado:** ✅ (`RotaService::decideRoute`).
 
 ### 3.2 — D-02 · Funcionários ↔ categorias profissionais
-- **Conflito:** o PDF indicava alocação dinâmica **estritamente baseada nas categorias** dos
-  serviços agendados. Os `.md` eliminaram a relação N:N.
-- **Decisão final:** categorias são **apenas filtros e agrupadores visuais**; os profissionais
-  têm **total liberdade** para aceitar qualquer serviço.
-- **Implementação:** tabela `funcionario_categoria` **removida** (schema com **24 tabelas**).
-  `funcionario` guarda apenas `tipo_contrato`, `salario_base`, `cc`, `ativo`.
+**Decisão:** categorias são **apenas filtros e agrupadores visuais**; qualquer profissional aceita
+qualquer serviço.
+**Regras:** RN-04 · **Estado:** ✅ — tabela `funcionario_categoria` **removida** (schema com 24 tabelas).
 
 ### 3.3 — D-03 · Política salarial vs. recibos verdes
-- **Conflito:** o PDF referia **salários fixos** para todos os funcionários, sem cálculo
-  automático de comissões. Os `.md` integram um **Simulador de Recibos Verdes** (70/30).
-- **Decisão final:** prevalece o `.md`, **com esta nuance operacional**:
-  - Funcionários com **contrato fixo** atuam **predominantemente na loja física**.
-  - Funcionários a **recibo verde** atuam na vertente **ambulante** e estão sujeitos ao
-    simulador de aceitação por serviço.
-- **Estado:** o simulador está implementado (§11); a **regra de encaminhamento por
-  `tipo_contrato`** (loja vs. ambulatório) e a sua expressão na UI **estão por implementar**
-  (§24.3).
+**Decisão:** efetivos atuam **predominantemente na loja**; recibos verdes na vertente **ambulante**,
+sujeitos ao simulador por serviço.
+**Regras:** RN-09 · RN-22 · **Estado:** 🟡 simulador ✅ (§11); encaminhamento por `tipo_contrato` na UI
+⬜ (§24.3).
 
 ### 3.4 — D-04 · Estrutura da frota móvel
-- **Conflito:** o PDF sugeria **3 carrinhas** (uma por área: cabeleireiro, barbearia, estética).
-- **Decisão final:** **uma única carrinha polivalente**, para otimizar o investimento inicial,
-  transportando a equipa independentemente das especialidades originais.
-- **Implementação:** `base_partida` única (base 1 = Évora) + `matriz_deslocacao` base→cidade.
+**Decisão:** **uma única carrinha polivalente**, que transporta a equipa independentemente das
+especialidades originais.
+**Estado:** ✅ — `base_partida` única (Évora) + `matriz_deslocacao` base→cidade.
 
 ### 3.5 — D-05 · Percentagem do sinal de reserva
-- **Conflito:** o PDF mencionava **10% ou 50%** de sinal prévio.
-- **Decisão final:** **10% exclusivamente na loja física**, com **gestão e configuração
-  centralizadas no backoffice**; a **1.ª marcação em ambulatório é isenta**
-  (para mitigar barreiras de entrada de novos clientes).
-- **Estado:** os 10% estão implementados como **constante de código** (`DEPOSIT_PERCENTAGE = 10`)
-  — a **configuração no backoffice está por implementar** (§24.5 / §24.6).
+**Decisão:** **10 % exclusivamente na loja**, configurável no backoffice; a **1.ª marcação em
+ambulatório é isenta**.
+**Regras:** RN-03 · **Estado:** 🟡 os 10 % existem como constante de código; a configuração no
+backoffice ⬜ (§24.5).
 
 ### 3.6 — D-06 · Interface e apresentação do catálogo
-- **Conflito/dúvida:** existia referência a uma framework visual externa (**AdminLTE**) e dúvidas
-  sobre a forma de exibição do catálogo.
-- **Decisão final:**
-  - **Ignorar completamente a menção ao AdminLTE.**
-  - A informação dos serviços é apresentada em **cards**.
-  - Obrigatoriamente uma **página de detalhes dedicada por serviço** (não apenas um modal),
-    encimada por um **carousel de imagens** do procedimento/resultados, com **descrição detalhada**
-    e **estimativa padrão do tempo de execução** (ex.: *Corte de Cabelo: 45 min*).
-- **Estado:** existe **apenas um modal** de detalhes na página do catálogo; a página dedicada com
-  carousel **está por implementar** (§24.2). A tabela `servico_foto` já existe (sem conteúdo/UI).
+**Decisão:** ignorar o AdminLTE; serviços em **cards** e **página de detalhes dedicada por serviço**
+(não apenas um modal), encimada por **carousel** de imagens, com descrição e tempo estimado.
+**Estado:** 🟡 existe só o modal; a página dedicada ⬜ (§24.2). `servico_foto` existe, sem conteúdo.
 
 ### 3.7 — D-07 · Escolha da hora e dinâmica de tempos
-- **Conflito/dúvida:** o cliente escolhe uma **hora exata** de uma lista, ou uma **janela ampla**
-  (blocos de 2 horas)?
-- **Decisão final:**
-  - O cliente escolhe a **hora inicial a partir de uma lista de horas disponíveis**, gerada com
-    base nos **agendamentos consolidados** dessa cidade (aplica-se ao **ambulatório**;
-    **irrelevante** para a loja física, onde a cidade não é preenchida nem relevante).
-  - O **tempo estimado é re-avaliado dinamicamente** sempre que o cliente adiciona ou descarta
-    serviços durante o preenchimento do formulário — usando/reaproveitando a **validação de
-    disponibilidade server-side** já existente.
-  - Garante-se **estruturalmente** que a escolha da hora ocorre **estritamente após a seleção dos
-    serviços** (passo seguinte do formulário), para evitar colisões temporais.
-- **Estado:** a ordem (serviços → canal → data/hora) **já está garantida** e a validação
-  server-side **existe na submissão** (409 em conflito). Porém, **alterar serviços depois de
-  escolher a data não recarrega a lista de slots** (`loadSlots()` só corre no `change` de
-  `#bookingDate`) → **a melhorar** (§24.1).
+**Decisão:** o cliente escolhe a **hora inicial** de uma lista de horas disponíveis; o tempo estimado
+é **re-avaliado** a cada alteração de serviços; a ordem *serviços → canal → data/hora* é garantida
+estruturalmente.
+**Estado:** 🟡 ordem ✅ e validação server-side ✅ (409); **alterar serviços não recarrega os slots**
+⬜ (§24.1).
 
 ### 3.8 — D-08 · Logística de condução e papel dos funcionários
-- **Conflito/dúvida:** os funcionários acumulavam funções de motorista? Existia controlo logístico
-  de condução?
-- **Decisão final:**
-  - **Não existe conceito de motorista dedicado** nem qualquer lógica de controlo de condução na
-    plataforma. **Não deve ser implementado nada a esse respeito.**
-  - A carrinha funciona estritamente como **meio de transporte**; uma vez estacionada na morada do
-    cliente, os serviços são executados **de forma polivalente por qualquer funcionário presente**,
-    independentemente de especialidades restritas.
-- **Estado:** conforme — **nada a fazer**.
+**Decisão:** **não existe** motorista dedicado nem controlo de condução, e **nada disso deve ser
+implementado**. A carrinha é transporte; os serviços são executados polivalentemente por quem estiver
+presente.
+**Estado:** ✅ conforme — nada a fazer (§22.3).
 
 ### 3.9 — D-09 · Flexibilidade horária e rotas multicidades
-- **Conflito/dúvida:** como gerir horários rígidos face a rotas complexas ou extensas?
-- **Decisão final:**
-  - **Horários da carrinha são tendencialmente flexíveis** — não coincidem necessariamente com os
-    da loja. A flexibilidade é tratada como **exceção**: se o término de um agendamento exceder
-    ligeiramente o limite padrão do fim do dia (**19:00**), o sistema deve **permitir**.
-  - **Rotas multicidades são permitidas** (ex.: *Évora → Arraiolos → Évora*), mas **não são a
-    norma**, desde que os agendamentos estejam **cronologicamente ordenados** e o sistema valide
-    na BD se existe **espaçamento de tempo suficiente** para a deslocação física segura entre
-    cidades. A listagem de agendamentos do gestor deve permitir **incluir agendamentos de outras
-    cidades num grupo**, desde que os intervalos de tempo não colidam com os já selecionados
-    (verificar em BD se já existe informação de deslocação utilizável — `matriz_deslocacao`).
-  - **Alerta de custos:** como as deslocações multicidades aumentam significativamente os custos de
-    combustível (**igualmente divididos entre os clientes no pagamento final**), o backoffice
-    apresenta um **alerta padronizado de custos e viabilidade** junto ao indicador de referência
-    dos 50 €. A **zona de alertas das listagens do backoffice deve ser padronizada/convencionada**
-    e definida neste documento (§12.4).
-- **Estado:** **por implementar** — o horário é hoje **bloqueado** a 19:00 em ambos os canais
-  (`validateStoreOpeningHours`), o agrupamento é **fixo** por dia+cidade, e não existe alerta de
-  custos nem convenção de alertas (§24.4).
+**Decisão:** horários da carrinha tendencialmente flexíveis, com o fim **após as 19:00 permitido como
+exceção**; **multicidades permitidas** se os agendamentos estiverem cronologicamente ordenados e
+houver **espaçamento validado** para a deslocação; **alerta padronizado de custos** junto ao indicador
+de referência (§12.4).
+**Regras:** RN-27 · RN-28 · **Estado:** ⬜ por implementar (§24.4).
 
-### 3.10 — D-10 · Pagamentos, sinal (10/90), simulação e falhas de internet
-- **Conflito/dúvida:** regras de divisão de pagamentos, falhas de rede no terreno e emissão de
-  recibos.
-- **Decisão final:**
-  - Mantém-se a política de **sinal de 10%** no agendamento, com **configuração generalizada numa
-    secção dedicada do backoffice**.
-  - Os restantes **90% são cobrados no término do serviço** (implementar o que faltar).
-  - No MVP **todos** os pagamentos e opções (**Dinheiro, Multibanco, MB Way**) são **simulados de
-    forma realista** (*dummy*) — sem processo oficial. É desejável **simular a escolha do método de
-    pagamento** de forma realista, com as opções fornecidas.
-  - Em **falhas de internet no terreno**, o pagamento é simulado com **restrição a numerário**.
-  - A **emissão de recibos manuais** é tratada como **possível implementação futura**
-    (a alinhar com as restantes melhorias) — **avaliar primeiro se já está tratada** no MVP.
-- **Estado:** só o **sinal de 10%** está implementado (simulado, sem escolha de método).
-  **Faltam:** cobrança dos 90 %, escolha simulada do método, cenário de falha de internet e
-  configuração do sinal no backoffice (§24.5).
+### 3.10 — D-10 · Pagamentos, sinal (10/90) e falhas de internet
+**Decisão:** sinal de 10 % **configurável no backoffice**; **90 % cobrados no término**; todos os
+métodos (**Dinheiro · Multibanco · MB Way**) **simulados de forma realista**; em **falha de internet**
+no terreno, apenas **numerário**; recibo manual como trabalho futuro.
+**Regras:** RN-23 · RN-29 · **Estado:** 🟡 só o sinal está implementado; o resto ⬜ (§24.5).
 
-### 3.11 — D-11 · Cancelamentos, janela de 24 horas e notificações
-- **Conflito/dúvida:** como tratar cancelamentos de última hora, penalizações e o destino de
-  agendamentos não incluídos em rotas?
-- **Decisão final:**
-  - **Nenhum gestor pode criar rotas com agendamentos a menos de 24 horas** da execução.
-    Esses agendamentos devem ser **automaticamente descartados/cancelados** da rota.
-  - Se um agendamento **atingir a marca das 24 horas sem ter sido incluído numa rota**, é
-    **automaticamente descartado/cancelado** das **listagens ativas** (não aparece na aceitação
-    por funcionários nem na inclusão em rotas), mas é **retido na base de dados** por motivos de
-    retenção de informação (para algoritmos e simuladores futuros).
-  - O sistema despoleta um **alerta/lembrete automático ao cliente**, informando da
-    impossibilidade de execução e sugerindo alternativas *user-friendly* (deslocação à **loja
-    física** ou **reagendamento**). O lembrete é gerado quando falta **≤ 24 h** e o agendamento
-    **não foi incluído em nenhuma rota**.
-  - O cliente **pode cancelar o seu agendamento pela plataforma**. Se o fizer **após** estar
-    associado a uma rota (respeitando a antecedência), **não recebe qualquer penalização
-    financeira**.
-- **Estado:** **por implementar integralmente** — a regra das 24 h não existe, o
-  auto-cancelamento não existe, o lembrete não existe e o **cliente não tem forma de cancelar**
-  (só existe `admin-appointment-cancel`, restrito a gestor) → §24.6.
-- **Nota de coerência:** este ponto **substitui** a resolução antiga registada nas dúvidas de planeamento
-  §5.4 ("a rota decide-se em qualquer momento, sem prazo-limite"), que passa a ter o limite
-  operacional das 24 h.
-
-### 3.12 — Reforços transversais (dos esclarecimentos de retificações)
-- **AdminLTE:** ignorar (reforço de D-06).
-- **Módulos abrangentes do dashboard:** definir bem neste documento, mas **partir do que já existe**
-  nos `.md` e no MVP implementado; **adaptar o backoffice** para seguir a **mesma estrutura** dos
-  menus já existentes e tratar o resto como **implementações futuras** (§25).
-  **Nota:** qualquer implementação futura **sobre Fornecedores deve ser priorizada.**
-- **Configuração do sinal:** deve existir uma **secção no backoffice** para configurar o sinal
-  inicialmente cobrado aos clientes — **verificar se já existe secção apropriada e, se possível,
-  generalizar uma secção existente** em vez de criar uma nova (§24.5).
-- **Cancelamento pelo cliente:** confirmar se existe; **deve existir** (§3.11 / §24.6).
-- **Catálogo multimédia:** os serviços são mostrados em cards; pretende-se **página de detalhes**
-  com **carousel** por cima da informação (reforço de D-06 / §24.2).
-
-### 3.13 — Conflitos internos entre `.md` (resolvidos nesta consolidação)
-> **Nota de rastreabilidade:** os ficheiros citados na coluna *Fontes* foram **eliminados** nesta
-> consolidação (mapa em §29.2). As citações mantêm-se para se saber **de onde vinha** cada conflito;
-> o conteúdo original continua recuperável pelo histórico do Git (`git show <revisão>:<ficheiro>`).
-
-| #   | Conflito                                                   | Fontes                                                     | Resolução                                                        |
-| :-- | :--------------------------------------------------------- | :--------------------------------------------------------- | :--------------------------------------------------------------- |
-| 1   | Limiar automático de **100 €**                             | `fluxo_funcionalidades.md`, `CARRINHA_SPEC.md`, etc.       | **REVOGADO** → decisão manual + 50 € visual (§3.1)               |
-| 2   | "Funcionário deve cobrir todas as categorias"              | `fluxo_funcionalidades.md` (RN04 antiga)                   | **REVOGADA** → categorias = filtros (§3.2)                       |
-| 3   | Estado `pendente_aprovacao_viabilidade`                    | `fluxo_funcionalidades.md`, `ALTERACOES_PRIORIDADES.md`    | Substituído por `pendente_aceitacao_funcionarios` /              |
-|     |                                                            |                                                            | `pendente_validacao_logistica_loja` (§20)                        |
-| 4   | Wizard de loja com **profissional obrigatório** e imediato | `fluxo_funcionalidades.md` (Step 4)                        | Substituído: sem passo de profissional; estado                   |
-|     |                                                            |                                                            | `pendente_validacao_logistica_loja` (§8)                         |
-| 5   | Wizard carrinha de **7 steps** com profissional e sinal    | `CARRINHA_SPEC.md`                                         | Wizard com morada + OTP + estrutura por pessoa; sinal dispensado |
-|     |                                                            |                                                            | (§9)                                                             |
-| 6   | Cronograma de **7 dias**                                   | `plano_desenvolvimento.md`, `ALTERACOES_PRIORIDADES.md`,   | Substituído por **roadmap por fases** (§21)                      |
-|     |                                                            | `README.md`                                                |                                                                  |
-| 7   | Backoffice na pasta raiz **`admin/`**                      | `planeamento_geral.md` §2.A/§13, `relatorio_alteracoes.md` | Implementado em **`modules/backoffice/`**; migração = trabalho   |
-|     |                                                            |                                                            | futuro (§25)                                                     |
-| 8   | "Repositories **sem JOINs**"                               | `.clinerules`, `tecnologias_projeto.md`                    | Revisto: **JOINs N:1 de lookup permitidos** em SELECT; escrita   |
-|     |                                                            |                                                            | própria (§18.1)                                                  |
-| 9   | Rotas decididas **sem prazo-limite**                       | `duvidas_planeamento.md` §5.4                              | **Substituído** pela janela de 24 h (§3.11)                      |
-| 10  | Sinal **50%**                                              | PDF inicial                                                | **REVOGADO** → 10 % fixo na loja (§3.5)                          |
-| 11  | **3 carrinhas**                                            | PDF inicial                                                | **REVOGADO** → 1 carrinha polivalente (§3.4)                     |
+### 3.11 — D-11 · Cancelamentos, janela de 24 h e notificações
+**Decisão:** não se criam rotas com agendamentos a **menos de 24 h**; aos 24 h sem rota, o agendamento
+é **auto-cancelado** das listagens mas **retido na BD**; o cliente recebe **lembrete** (≤ 24 h) a
+sugerir loja física ou reagendamento; o cliente **pode cancelar** sem penalização financeira.
+**Regras:** RN-24 · RN-25 · RN-26 · **Estado:** ⬜ **por implementar integralmente** (§24.6 · §15).
 
 ## 4. REQUISITOS FUNCIONAIS (RF)
 
@@ -414,7 +296,7 @@ Legenda de estado: ✅ implementado · 🟡 parcial · ⬜ por implementar
 
 ## 5. REGRAS DE NEGÓCIO (RN)
 
-### 5.1 Regras vigentes
+### 5.1 Regras
 
 | ID    | Regra                                                                                                 | Onde é aplicada                                            |
 | :---- | :---------------------------------------------------------------------------------------------------- | :--------------------------------------------------------- |
@@ -447,25 +329,6 @@ Legenda de estado: ✅ implementado · 🟡 parcial · ⬜ por implementar
 | RN-27 | **Multicidades** permitido com validação de **espaçamento temporal** entre cidades (a implementar)    | §24.4                                                      |
 | RN-28 | Carrinha: **flexibilidade horária como exceção** (fim > 19:00 permitido) (a implementar)              | §24.4                                                      |
 | RN-29 | Em pagamento com **falha de internet**, apenas **numerário** (a implementar)                          | §24.5                                                      |
-
-### 5.2 Regras **revogadas** (não implementar)
-
-| ID (antigo)   | Regra revogada                                                                                  | Substituto                                                                     |
-| :------------ | :---------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------- |
-| ~~RN04 (v1)~~ | "Funcionário deve cobrir todas as categorias necessárias"                                       | RN-04                                                                          |
-| ~~RN05 (v1)~~ | "Rentabilidade mínima de rotas: **100 €** (aprova/cancela automaticamente)"                     | RN-05                                                                          |
-| —             | Estado `pendente_aprovacao_viabilidade`                                                         | `pendente_aceitacao_funcionarios`                                              |
-| —             | Sinal de **50 %**                                                                               | RN-03 (10 %)                                                                   |
-| —             | **3 carrinhas** dedicadas por área                                                              | 1 carrinha polivalente                                                         |
-| —             | Passo obrigatório de **profissional** na loja                                                   | Informativo (equipa por aceitação)                                             |
-| —             | **JOINs proibidos** em repositories                                                             | Permitido N:1 de lookup (§18.1)                                                |
-| —             | Cronograma de **7 dias**                                                                        | Roadmap por fases (§21)                                                        |
-| —             | Decisão de rota **sem prazo-limite**                                                            | RN-24 (janela de 24 h)                                                         |
-| —             | Estados `pendente_aprovacao_viabilidade`, `aprovada_viabilidade`, `cancelada_por_rentabilidade` | `pendente_aceitacao_funcionarios` → decisão manual → `confirmado`/`cancelado`  |
-|               | (v1)                                                                                            |                                                                                |
-| —             | Coluna `rota_ambulante.valor_rentabilidade_calculado` (v1)                                      | `lucro_total` + `meetsReference` (indicador visual)                            |
-| —             | Marcar `cliente.telemovel_validado_otp = 1` como efeito do OTP do agendamento (v1)              | OTP do ambulatório é **por pedido** (sessão, uso único); não altera o cadastro |
-| —             | "CRUD de Serviços" como objetivo do MVP                                                         | Catálogo é **somente leitura** no Main; gestão de catálogo fora do âmbito      |
 
 ## 6. DOMÍNIO: UTILIZADORES E PERFIS
 
@@ -682,12 +545,17 @@ Exemplo de referência (usado nos testes):
 | :-------------------------- | :------------------------------------------------------------------------------- |
 | **Receita prevista**        | `SUM(agendamento.valor_total)` dos agendamentos do grupo                         |
 | **Custo de combustível**    | `matriz_deslocacao.custo_estimado_combustivel` (base 1 = Évora)                  |
-| **Custo fixo operacional**  | **50 €** (`FIXED_OPERATIONAL_COST`)                                              |
+| **Custo fixo operacional**  | **50 €** (`FIXED_OPERATIONAL_COST`) — ⚠️ **a remover** (nota abaixo)             |
 | **Custo total**             | combustível + 50 €                                                               |
 | **Lucro/rentabilidade**     | receita − custo total                                                            |
 | **Quota-parte do cliente**  | `rota_ambulante.quota_parte_cliente` — 0 € (sem regra definida; **não** cobrada) |
 | **Indicador de referência** | `meetsReference = rentabilidade ≥ 50 €` → **apenas visual**                      |
 
+
+⚠️ **Divergência a resolver (RN-05 vs. código):** o valor de **50 €** é **apenas o indicador visual de
+referência** — **não** é um custo da operação. Hoje o `RotaService` **soma-o** ao custo total
+(`FIXED_OPERATIONAL_COST`, L80 · L163 · L210), o que **contradiz RN-05** — alinhar em §25.3. O
+**custo de combustível é calculado** (`getFuelCost` ← `matriz_deslocacao`).
 ### 12.3 Decisão manual (núcleo do módulo)
 - **Aprovar** → agendamentos do grupo passam a **`confirmado`**; rota gravada com
   `estado_rota='aprovada'`.
@@ -834,7 +702,7 @@ método** deve ser apresentada como se fosse real (opções visíveis, confirma�
 | `cliente`                   | 1:1 com `utilizador`; `telemovel_validado_otp`                       |
 | `funcionario`               | 1:1 com `utilizador`; `tipo_contrato`, `salario_base`, `cc`, `ativo` |
 | `cliente_morada`            | N por cliente; `principal` (1 = principal)                           |
-| ~~`funcionario_categoria`~~ | ⚠️ **REMOVIDA** (v3.0) — ver §3.2 e §23.4                            |
+| ~~`funcionario_categoria`~~ | ⚠️ **REMOVIDA** (v3.0) — ver §3.2                                    |
 
 > ⚠️ **Não existe tabela `gestor`** — o gestor vive em `utilizador` com `tipo_perfil='gestor'`
 > (`ManagerRepository` consulta `utilizador`).
@@ -1349,72 +1217,11 @@ LOJA:  criado diretamente como (( aceite )) — aceitação automática
 OTP real por SMS · gateway de pagamento real · CRON automático · app móvel nativa ·
 pasta raiz `admin/` · **motorista dedicado / logística de condução** (explicitamente excluído — D-08).
 
-## 23. DEFEITOS CORRIGIDOS (HISTÓRICO TÉCNICO)
+## 23. DEFEITOS HISTÓRICOS
 
-Registo do que foi corrigido, para memória futura e para evitar reintrodução.
-
-### 23.1 Defeitos críticos (impediam o MVP)
-| #   | Ficheiro                    | Defeito                                                   | Impacto                                              | Correção                                 |
-| --- | --------------------------- | --------------------------------------------------------- | ---------------------------------------------------- | ---------------------------------------- |
-| 1   | `OTPService`                | `validate(int,string):bool` incompatível com              | **Fatal error em todos os endpoints de agendamento** | Renomeado para `verify()`                |
-|     |                             | `BaseService::validate(array,callable):void`              |                                                      |                                          |
-| 2   | `BookingService`            | `validateStoreOpeningHours()` comparava *epoch* com       | **100 % das marcações de loja rejeitadas**           | Cálculo por *offset* face à meia-noite   |
-|     |                             | segundos-desde-meia-noite                                 |                                                      |                                          |
-| 3   | `Session`                   | `createLoginSession()` lia chaves da BD mas recebia       | Sessão sem perfil; **JSON do login corrompido**; 403 | Leitura das chaves mapeadas + *fallback* |
-|     |                             | chaves do mapper                                          | generalizado                                         |                                          |
-| 4   | `connection.php`            | Espaço antes de `<?php`                                   | `session_start()`/`header()` falhavam                | Espaço removido                          |
-| 5   | `CustomerAddressRepository` | `SELECT cm.obs_localizacao` (coluna inexistente)          | Erro SQL nas moradas                                 | Coluna removida da query                 |
-| 6   | `CustomerService`           | Lia `phoneVerified` (o mapper devolve                     | Campo sempre `false`                                 | Chave corrigida                          |
-|     |                             | `isMobileValidated`)                                      |                                                      |                                          |
-| 7   | `BookingService`            | `resolveServicesForPeople()` deduplicava serviços         | Valor/duração **subestimados**                       | Contabilização por pessoa (RN-13)        |
-|     |                             | **entre pessoas**                                         |                                                      |                                          |
-| 8   | `BookingRepository`         | `countByDateWindow()` ignorava                            | **Duplo agendamento** no mesmo slot de loja          | Estado incluído na verificação           |
-|     |                             | `pendente_validacao_logistica_loja`                       |                                                      |                                          |
-| 9   | `ServiceRepository` / BD    | `s.ativo` usado no código mas **ausente do schema**       | Catálogo quebrava                                    | Coluna adicionada (migração v3)          |
-| 10  | BD `cliente.morada`         | `NOT NULL` (legado v1) vs. `CustomerRepository::create()` | **Registo de clientes falhava**                      | Coluna tornada opcional                  |
-|     |                             | que não a envia                                           |                                                      |                                          |
-
-### 23.2 Defeitos do registo de clientes
-| #   | Defeito                                                                      | Impacto                                          | Correção                                                 |
-| --- | ---------------------------------------------------------------------------- | ------------------------------------------------ | -------------------------------------------------------- |
-| 1   | `UserService` invertia a unicidade do email (`Validator::custom()` falha com | **Rejeitava emails novos**; aceitaria duplicados | `fn($e) => !empty($repo->find(null, $e))`                |
-|     | `true`)                                                                      |                                                  |                                                          |
-| 2   | Formulário enviava `termosCondicoes`; API valida `termsAccepted`             | Registo falhava sempre                           | Campo renomeado                                          |
-| 3   | Chaves divergentes (`nome`/`telemovel`/`morada`/…) e **faltavam**            | Registo falhava sempre                           | Formulário + validators + autocomplete alinhados (§18.5) |
-|     | `zipCode`/`cityName`                                                         |                                                  |                                                          |
-| 4   | `UserRepository::create` lia `nome`/`telemovel`/`tipoPerfil`                 | Perfil caía sempre em `cliente`                  | Chaves unificadas                                        |
-
-**Colaterais:** `customerValidators(supportedCities)` (array vs. objeto) → lista de cidades vazia ·
-`updateCitiesTooltip()` (*join* sobre objetos + tooltip sem elemento) → erro de consola ·
-1.ª morada gravada com `principal = 0` → agora **principal** · chave `streetRaw` removida.
-
-### 23.3 Outros defeitos corrigidos
-- **`$params = []` duplicado** em `findAmbulatoryGroups` → erro PDO por placeholders sem bind.
-- **`resolveAlertLevel`** iterava os limiares por ordem descendente → 7 dias reportava `30_dias`
-  (passou a iterar do mais urgente para o mais largo — §13).
-- **`BaseMapper::cast()`** omite chaves `NULL` → `Undefined array key "notes"` no `markAsPaid`
-  (corrigido com `?? null` — §18.3).
-- **`BaseRepository`** ganhou `fetchRaw`/`fetchAllRaw` para agregações (§18.2).
-- **`BookingMapper`** passou a mapear os campos enriquecidos da listagem de backoffice.
-
-### 23.4 Remoção da relação funcionário ↔ categoria (v3.0)
-A tabela `funcionario_categoria` foi **removida** por não ter consumidor:
-
-| Verificação de Dependências              | Resultado da Auditoria Estrutural                                                        |
-| :--------------------------------------- | :--------------------------------------------------------------------------------------- |
-| Alguma query **lê** a tabela?            | ❌ Nenhuma (verificou-se apenas escrita órfã isolada em `EmployeeService`)               |
-| O filtro do backoffice usa a relação?    | ❌ O sistema utiliza diretamente o campo global `categoria_profissional`                 |
-| A filtragem de pendentes usa a relação?  | ❌ A lógica de pendentes apoia-se em `servico.categoria_id`                              |
-| Alguma chave estrangeira (FK) aponta?    | ❌ Nenhuma (trata-se de uma tabela folha sem dependências ativas)                        |
-| A relação **restringe** a aceitação?     | ❌ Não — e o planeamento v3.0 **proíbe** (categorias são filtros visuais)                |
-| O caminho de escrita tem interface (UI)? | ❌ Nenhum ecrã envia `profileType`=`funcionario`/`gestor`; não há página de funcionários |
-
-**Alterações:** removida de `DataBase_v2.sql` e `database_seed.sql`; `DROP` no **passo 3** da
-migração v3 (idempotente); removidos `createCategory()`/`deleteCategories()` de `EmployeeRepository`
-e o ciclo sobre `categories` em `EmployeeService`; removida a dependência inerte de
-`EmployeeRepository` em `ServiceAcceptanceService`.
-
----
+> O registo detalhado dos defeitos corrigidos (v1→v3) **não se acumula aqui** — está no **histórico do
+> Git** (§29.2). O que continua a valer na estrutura: a tabela `funcionario_categoria` foi **removida**
+> na v3.0 (D-02 · §17).
 
 ## 24. REQUISITOS NOVOS / GAP ANALYSIS
 
@@ -1573,6 +1380,8 @@ seguindo a **estrutura de menus** existente (§25.5).
 - **UI para `transacao_financeira`, `fecho_caixa_diario` e `gorjeta`** (existem na BD, sem UI).
 - **Notificações** (SMS/e-mail) reais ou persistidas, em vez de simuladas.
 - **Recibo manual** (se não existir) — a alinhar com as restantes melhorias.
+- **Alinhar `RotaService` com RN-05:** o 50 € é **indicador visual de referência**, não custo — remover
+  `FIXED_OPERATIONAL_COST` da soma do custo total e ajustar os testes afetados.
 
 ### 25.4 Prioridade 4 — Nice-to-have
 - Dashboard com estatísticas consolidadas (ocupação, receita, rotas, alertas).
@@ -1772,61 +1581,31 @@ SET FOREIGN_KEY_CHECKS = 1;
 | **jq-preloader**           | Biblioteca interna responsável por gerir overlays, spinners e *skeletons* de carregamento visual                   |
 | **Gate de contrato**       | Verificação estrita de que os atributos `name` dos formulários coincidem com os contratos da API (§18.5)           |
 
-### 29.2 Mapa documental — fontes e consolidação
+### 29.2 Mapa documental
 
-> **Consolidação documental (21/09/2026).** Para eliminar redundância e o risco de divergência, toda
-> a informação de requisitos foi reunida neste documento e os ficheiros de planeamento/relatório
-> antigos foram **eliminados**. A tabela abaixo mantém a **rastreabilidade**: onde estava cada
-> assunto e onde está agora.
+| Ficheiro                                     | Papel                                                    | Autoridade                           |
+| :------------------------------------------- | :------------------------------------------------------- | :----------------------------------- |
+| **`especificacao_mvp.md`**                   | Requisitos, regras, dados, API, arquitetura              | ✅ **máxima** — prevalece sobre tudo |
+| `.clinerules`                                | Operação: restrições, convenções **aplicadas**, Git      | normativo (operação)                 |
+| `tests/README.md`                            | Suites de teste, execução e pré-requisitos               | normativo (testes)                   |
+| `tools/README.md`                            | Catálogo e comportamento das ferramentas                 | normativo (ferramentas)              |
+| `README.md`                                  | Instalação e uso rápido                                  | apoio                                |
+| `mapaMentalMVP/guia_teste_manual.md`         | Guia de teste manual passo-a-passo                       | apoio (não normativo)                |
+| `mapaMentalMVP/mapa_fluxo_dados.md`          | Mapa visual do fluxo de dados ponta-a-ponta              | apoio (não normativo)                |
+| `mapaMentalMVP/analise_backoffice_gestor.md` | Análise do backoffice do gestor (requisitos do cliente)  | apoio (não normativo)                |
+| `mapaMentalMVP/auditoria_artefactos.md`      | Auditoria de afirmações sem prova                        | apoio (não normativo)                |
+| `mapaMentalMVP/auditoria_limpeza.md`         | Auditoria de obsoletos, prazos e redundância             | apoio (não normativo)                |
+| `mapaMentalMVP/mensagem_teams.txt`           | Comunicação e dúvidas para o grupo/Teams                 | apoio (não normativo)                |
+| `mapaMentalMVP/Menu APOIO 3.docx`            | Entrada do cliente (*template*) — menus de contabilidade | apoio (não normativo)                |
+| `mapaMentalMVP/CUSTOS RH 2.xlsx`             | Entrada do cliente (*template*) — custo de pessoal       | apoio (não normativo)                |
 
-| Fonte (ficheiro)                             | Papel                                                                 | Destino / Estado                                                          |
-| :------------------------------------------- | :-------------------------------------------------------------------- | :------------------------------------------------------------------------ |
-| **`especificacao_mvp.md`**                   | **Documento-mestre (SSOT)**                                           | ✅ **Autoridade máxima** — prevalece sobre tudo                           |
-| `README.md`                                  | Instalação e uso rápido (entrada do projeto)                          | ✅ **Mantido** (aponta para este documento); conteúdo técnico em §1, §17, |
-|                                              |                                                                       | §26, §27                                                                  |
-| `mapaMentalMVP/guia_teste_manual.md`         | Guia de teste manual passo-a-passo                                    | ℹ️ **Mantido** — ferramenta de apoio (não normativa)                       |
-| `mapaMentalMVP/mapa_fluxo_dados.md`          | Mapa visual do fluxo de dados ponta-a-ponta                           | ℹ️ **Mantido** — ferramenta de apoio (não normativa)                       |
-| `mapaMentalMVP/analise_backoffice_gestor.md` | Análise funcional de fusão do backoffice do Gestor (acumula 3         | ℹ️ **Mantido** — apoio à decisão (**não normativo**); os requisitos só     |
-|                                              | iterações de requisitos do cliente)                                   | entram neste documento **depois** de decididos (§29.3)                    |
-| `mapaMentalMVP/mensagem_teams.txt`           | Resumo do backoffice e dúvidas para o grupo/Teams                     | ℹ️ **Mantido** — documento de comunicação (não normativo)                  |
-| `mapaMentalMVP/Menu APOIO 3.docx`            | **Entrada do cliente (template):** estrutura de menus do software de  | ℹ️ **Mantido** — analisado em `analise_backoffice_gestor.md` **§1.12**     |
-|                                              | contabilidade + mapa de células do balancete (`J13`…`K118`)           | (achados §F.1–§F.3)                                                       |
-| `mapaMentalMVP/CUSTOS RH 2.xlsx`             | **Entrada do cliente (template):** custo de pessoal — REMUNERAÇÃO ·   | ℹ️ **Mantido** — analisado em `analise_backoffice_gestor.md` **§F.4**      |
-|                                              | SS (11 % + 23,75 %) · IRS (taxas por trabalhador)                     |                                                                           |
-| `tools/`                                     | Utilitários de manutenção dev-only (encoding, `.md`, edição segura de | ℹ️ **Mantido** — ferramentas de apoio (não normativas); catálogo em        |
-|                                              | ficheiros)                                                            | `tools/README.md`; onde a pasta vive: `.clinerules` §4                    |
-| `.clinerules`                                | Regras de **operação**: restrições, convenções aplicadas, Git         | ✅ **Mantido** — aponta ao mestre; convenções em §2 e Git em §4           |
-| `tests/README.md`                            | Suites de teste: âmbito, execução e pré-requisitos                    | ➕ **Criado** — fonte única dos testes (referido em `.clinerules` §5)     |
-| `rectificacoes.md`                           | Esclarecimento dos conflitos PDF ↔ `.md` (11 decisões)                | 🗑️ **Eliminado** → consolidado em **§3 (D-01 a D-11 + §3.12–3.13)**       |
-| `planeamento_geral.md`                       | Planeamento v3.0/3.1 (Regras de Ouro, fases, estados)                 | 🗑️ **Eliminado** → consolidado em **§2, §4–§16, §20–§22, §28**            |
-| `relatorio_implementacao.md`                 | Relatório de implementação, defeitos e testes                         | 🗑️ **Eliminado** → consolidado em **§18.9, §23, §26**                     |
-| `tecnologias_projeto.md`                     | Stack, inventário de BD, arquitetura, convenções                      | 🗑️ **Eliminado** → consolidado em **§1.1, §17, §18**                      |
-| `fluxo_funcionalidades.md`                   | Fluxos v1 + RN01–RN12                                                 | 🗑️ **Eliminado** → **§5** (vigentes) e **§5.2** (revogadas)               |
-| `CARRINHA_SPEC.md`                           | Especificação v1 da carrinha (+ algoritmo 100 €)                      | 🗑️ **Eliminado** → **§3.1, §9, §12**                                      |
-| `plano_desenvolvimento.md`                   | Cronograma de 7 dias + checklist                                      | 🗑️ **Eliminado** → **§21** (roadmap por fases + entregáveis)              |
-| `ALTERACOES_PRIORIDADES.md`                  | Histórico de prioridades (v1→v2)                                      | 🗑️ **Eliminado** → **§21**                                                |
-| `relatorio_alteracoes.md`                    | Registo do replaneamento v3.0                                         | 🗑️ **Eliminado** → **§3.13**                                              |
-| `duvidas_planeamento.md`                     | Dúvidas e resoluções (histórico)                                      | 🗑️ **Eliminado** → **§3, §5, §22.2** (a dúvida §5.4 foi substituída pela  |
-|                                              |                                                                       | janela de 24 h em §15)                                                    |
-| `LOGIN_PROFILE_TODO.md`                      | TODO de login/perfil (fechado)                                        | 🗑️ **Eliminado** → **§6, §18.6, §19.1, §22.2**                            |
-
-**Regra:** este documento é a **única fonte de requisitos e regras**. Os 11 ficheiros eliminados
-**estão recuperáveis no histórico do Git**: 5 foram **arquivados num commit de documentação**
-imediatamente antes da remoção; os outros 6 foram **eliminados apenas nesta branch**
-(`agent-workspace`, `.clinerules` §4) e **continuam presentes em `dev`**, pelo que a remoção é reversível com
-`git checkout dev -- <ficheiro>`.
+**Histórico — regras revogadas e decisões antigas:** os `.pdf` iniciais e os `.md` de planeamento
+anteriores foram **eliminados** e **não se acumulam aqui**. O arquivo é o **histórico do Git**:
 
 ```powershell
-git show HEAD:<ficheiro>          # ver o conteúdo original
-git checkout HEAD -- <ficheiro>   # restaurar o ficheiro
-# depois de a remoção ser commitada, usar a revisão anterior:
-git log --oneline --diff-filter=D -- "*.md"   # localizar a revisão
-git show <revisão>^:<ficheiro>                # ver
-git checkout <revisão>^ -- <ficheiro>         # restaurar
+git log --diff-filter=D --oneline -- "*.md"   # localizar a remoção
+git show <revisão>^:<ficheiro>                # ver o conteúdo original
 ```
-
-**Documentos `.pdf` iniciais:** **não** são fonte de requisitos; os pontos em conflito estão
-esclarecidos em §3 (prevalece sempre este documento).
 
 ### 29.3 Regras de manutenção deste documento
 
@@ -1835,8 +1614,8 @@ esclarecidos em §3 (prevalece sempre este documento).
 2. **Numerar antes de implementar:** novos requisitos entram como `RF-nn`; novas regras como `RN-nn`;
    decisões como `D-nn` (com a respetiva entrada em §3).
 3. **Estado sempre explícito:** usar ✅ / 🟡 / ⬜ — nunca deixar um requisito sem estado.
-4. **Nada é removido em silêncio:** regras revogadas são movidas para §5.2 (com o substituto),
-   para preservar o histórico de decisões.
+4. **Regras revogadas não se acumulam aqui:** o arquivo é o **histórico do Git** (§29.2);
+   uma regra que deixe de valer é **substituída**, e a substituição é descrita na mensagem de commit.
 5. **Evidência obrigatória:** ao marcar um gap, indicar **onde** foi verificado (ficheiro/linha) —
    como nas §24.1–§24.6.
 6. **Fecho do ciclo:** quando uma implementação da §24/§25 é concluída, atualizar
@@ -1861,12 +1640,12 @@ esclarecidos em §3 (prevalece sempre este documento).
 | Porque o feedback é público?                   | Simplificação académica assumida (sem moderação) — §16                               |
 | Porque não há CRON?                            | Simplificação assumida; tudo é on-demand — §2.E / §22.1                              |
 | Onde está a lógica de condução da carrinha?    | **Não existe** e não deve existir — §3.8                                             |
-| Porque o backoffice não está em `admin/`?      | Instrução de não tocar em `/admin` — §3.13 / §25.3                                   |
+| Porque o backoffice não está em `admin/`?      | Instrução de não tocar em `/admin` — `.clinerules` §1 · §25.3                        |
 | Posso commitar em `dev` ou `main`?             | **Não.** Só merge/PR a partir da branch correta — `.clinerules` §4                   |
 | Como devem ser as mensagens de commit?         | Resumidas, tipografia simples, sem emoji/markdown, `-` para bullets — §4             |
 
 ---
 
-**Versão:** 1.1 · **Data:** 21/09/2026 · **Estado:** ✅ MVP implementado e validado (289 verificações) ·
-⬜ Fase 6 (requisitos adicionais — §24) por iniciar
-**Prevalência:** este documento é a **única** fonte de requisitos. Os `.pdf` iniciais e os `.md` de planeamento anteriores estão **revogados** (ver §3 e §29.2)
+**Versão:** 2.0 · **Data:** 24/09/2026 · **Estado:** ✅ Fases 1-5 concluídas e validadas (289 verificações) ·
+⬜ Fase 6 (requisitos adicionais — §24) em curso
+**Prevalência:** este documento é a **única** fonte de requisitos. As fontes anteriores estão revogadas — arquivo no Git (§29.2)

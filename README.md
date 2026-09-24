@@ -9,7 +9,7 @@
 > apenas na branch **`agent-workspace`**, que **nunca é integrada**. As **regras de Git** estão em
 > `.clinerules` §4; o inventário dos ramos, na secção **Ramos do repositório** mais abaixo.
 
-## Projeto Académico | Entrega: 21/09/2026
+## Projeto Académico · CET026 · Turma Tarde
 
 ---
 
@@ -188,7 +188,7 @@ Criadas por `database_seed.sql`:
 - [x] Gestão de sessões e de perfis (cliente / funcionário / gestor)
 - [x] API REST básica (padrão `?action=dominio-acao`)
 
-### ✅ MVP Completo (entrega)
+### ✅ Implementado (Fases 1-5)
 - [x] **Catálogo de serviços** — `/servicos` e `/servicos/<categoria>`, filtros (categoria, preço, duração, pesquisa), modal de detalhes e badge "Apenas Loja"
 - [x] **Wizard de Agendamento LOJA FÍSICA** (5 passos: canal → serviços → data/hora → profissional → resumo) com slots de 30 min e sinal de 10% simulado
 - [x] **Wizard de Agendamento CARRINHA AMBULANTE** (7 passos: canal → serviços/pessoas → morada → OTP → data/hora → sinal → resumo)
@@ -328,9 +328,7 @@ Body: { "email": "teste@test.com", "password": "Test@123" }
 
 ## 📅 ROADMAP POR FASES
 
-> O cronograma de 7 dias do planeamento inicial foi **revogado** (continha o algoritmo automático de
-> 100 €, entretanto substituído por decisão manual). Detalhe em `especificacao_mvp.md` §21
-> (branch `agent-workspace`).
+> Estado e âmbito de cada fase: `especificacao_mvp.md` §21 (branch `agent-workspace`).
 
 | Fase | Âmbito                                                                                 | Estado       |
 | ---- | -------------------------------------------------------------------------------------- | ------------ |
@@ -340,14 +338,6 @@ Body: { "email": "teste@test.com", "password": "Test@123" }
 | 4    | Backoffice do Gestor (agendamentos, rotas **manuais**, fiscal, config. recibos verdes) | ✅           |
 | 5    | Integração e testes (289 verificações)                                                 | ✅           |
 | 6    | Requisitos adicionais (ver §24 do documento-mestre)                                    | ⬜ a iniciar |
-
-**Data de entrega:** 21/09/2026
-
-### 🎯 Funcionalidades OBRIGATÓRIAS para Entrega
-- ✅ Agendamento Loja Física (100%)
-- ✅ **Agendamento Carrinha Ambulante (100%)**
-- ✅ **Decisão de rotas — MANUAL** (50 € como indicador visual; o algoritmo automático foi revogado)
-- ✅ **Backoffice completo (Agendamentos + Rotas + Serviços + Fiscal + Recibos Verdes)**
 
 ---
 
@@ -365,4 +355,4 @@ Projeto académico - Todos os direitos reservados © 2026
 
 ---
 
-**Versão:** 2.0 | **Data:** 21/09/2026 | **Status:** 🟢 MVP COMPLETO E TESTADO
+**Versão:** 2.1 | **Data:** 24/09/2026 | **Status:** 🟢 Fases 1-5 concluídas · Fase 6 em curso

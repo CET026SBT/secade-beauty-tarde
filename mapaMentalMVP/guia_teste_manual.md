@@ -1,6 +1,6 @@
 # GUIA DE TESTE MANUAL — MVP SECADE BEAUTY
 **Objetivo:** percorrer manualmente **todos** os fluxos da aplicação, de ponta a ponta.
-**Data:** 21/09/2026 · **Versão do guia:** 1.0
+**Data:** 24/09/2026 · **Versão do guia:** 1.1
 
 ---
 
@@ -125,7 +125,7 @@ $mysql = 'C:\laragon\bin\mysql\mysql-8.4.3-winx64\bin\mysql.exe'
 >
 > ✅ A v3 também **remove a tabela `funcionario_categoria`** (passo 3) — a relação N:N entre
 > funcionários e categorias foi eliminada por não ter consumidor (as categorias são apenas filtros
-> visuais). Detalhe em `especificacao_mvp.md` §23. Se restaurar o `DataBase.sql` (v1) ou o
+> visuais). Detalhe em `especificacao_mvp.md` §3.2 (D-02). Se restaurar o `DataBase.sql` (v1) ou o
 > `DataBase_backup_pre_v2.sql`, correr a v3 remove-a de novo.
 
 ### 2.6 Notas
