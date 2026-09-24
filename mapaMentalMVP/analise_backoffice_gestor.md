@@ -21,16 +21,9 @@ REMUNERAÇÃO / SS / IRS). São **modelos**, não dados reais — as versões co
 **balancete** a importar. Cruzamento e achados em **§1.12 (Módulo F)**; dúvidas novas em **§2.10**;
 conflitos novos em **C-25…C-30**; prova de verificação em **§4**.
 
-**Revisão desta iteração (auditoria de proveniência):** os dois avisos não fiscais que este documento
-tratava como requisito — *"renovação de contratos"* e *"revisões da carrinha"* — foram submetidos a
-prova de origem: **não têm nenhum ficheiro que os exija** → **§2.5.1**; as perguntas 18 e 19 do
-`mensagem_teams.txt` foram reformuladas em conformidade.
-
-**Revisão desta iteração (auditoria de artefactos):** além da proveniência dos avisos tratada acima,
-foi feito um **varrimento de artefactos** a todo este documento. Tudo o que estava afirmado **sem
-prova** (ficheiro + linha) está identificado, com a prova e a correção, em
-**`mapaMentalMVP/auditoria_artefactos.md`** — casos **F-01…F-07**, aplicados em §1.3 · §1.7 ·
-§1.10 · §1.11 e §2.5.1.
+**Revisão desta iteração (auditoria de artefactos):** foi feito um **varrimento de artefactos** a todo
+este documento. O que estava afirmado **sem prova** (ficheiro + linha) está identificado, com a prova
+e a correção, em **`mapaMentalMVP/auditoria_artefactos.md`** — casos **F-01…F-07**.
 
 **Cruzado com:** `especificacao_mvp.md` v1.1 (§2–§5, §11–§13, §17–§19, §22, §24–§26, §28, §29), os
 **templates da 3.ª iteração** (`Menu APOIO 3.docx` · `CUSTOS RH 2.xlsx`) e o código/BD reais (`index.php`,
@@ -72,8 +65,8 @@ prova** (ficheiro + linha) está identificado, com a prova e a correção, em
 | Sininho (contador, lista, marcar | barra superior                       | `admin-alert-summary` ·              | AlertService + FiscalService          | `alerta_fiscal.visualizado` ✚ + origem extensível ➕ | 🟡     |
 | lido)                            |                                      | `admin-alert-list` ·                 |                                       |                                                       |        |
 |                                  |                                      | `admin-alert-read`                   |                                       |                                                       |        |
-| Lembretes:                       | barra superior                       | idem (tipos novos)                   | AlertService + SupplierService        | ➕ `notificacao` **ou** extensão de                   | ⬜     |
-| fornecedores/contratos/carrinha  |                                      |                                      |                                       | `obrigacao_fiscal`                                    |        |
+| Lembretes: fornecedores          | barra superior                       | idem (tipos novos)                   | AlertService + SupplierService        | ➕ `notificacao` **ou** extensão de                   | ⬜     |
+|                                  |                                      |                                      |                                       | `obrigacao_fiscal`                                    |        |
 | Ativos e Passivos + margem       | `/gestao/contabilidade`              | `admin-accounting-balance`           | AccountingService +                   | ✚ agendamento/rota_ambulante/agendamento_servico; ➕ | ⬜     |
 | global                           |                                      |                                      | AccountingRepository                  | despesas                                              |        |
 | Demonstração de Resultados       | `/gestao/contabilidade`              | `admin-accounting-income-statement`  | AccountingService + JS de barras      | idem                                                  | ⬜     |
@@ -99,8 +92,8 @@ prova** (ficheiro + linha) está identificado, com a prova e a correção, em
 | Matriz de impacto (serviços)     | `/gestao/promocoes`                  | `admin-promotion-service-*`          | PromotionService                      | ➕ `promocao_servico` (N:N)                           | ⬜     |
 | Aplicação ao agendamento (2      | `/agendar` (wizard)                  | `booking-promotion-*`                | BookingService +                      | ✚ `agendamento_servico.preco_praticado` + ➕ canal   | ⬜     |
 | canais)                          |                                      |                                      | PromotionService                      |                                                       |        |
-| Funcionário: agenda própria      | `/gestao/agenda`                     | `employee-agenda-list`               | BookingService ✚ + RBAC              | ✚ (dados existem)                                    | ⬜     |
-| Funcionário: comissões           | `/gestao/agenda`                     | `employee-commission-list`           | GreenReceiptService ✚                | ✚ (dados existem em `agendamento_servico`)           | 🟡     |
+| Funcionário: agenda própria      | `/gestao/agenda`                     | `admin-employee-agenda-list`         | BookingService ✚ + RBAC              | ✚ (dados existem)                                    | ⬜     |
+| Funcionário: comissões           | `/gestao/agenda`                     | `admin-employee-commission-list`     | GreenReceiptService ✚                | ✚ (dados existem em `agendamento_servico`)           | 🟡     |
 | individuais                      |                                      |                                      |                                       |                                                       |        |
 | Funcionário: promoções só de     | `/gestao/promocoes`                  | `admin-promotion-list` (perfil       | PromotionService + RBAC               | ➕                                                    | ⬜     |
 | leitura                          |                                      | autorizado)                          |                                       |                                                       |        |
@@ -138,19 +131,19 @@ prova** (ficheiro + linha) está identificado, com a prova e a correção, em
 
 **A.2 Sininho de notificações — reutilizar o que já existe**
 
-| Peça                                        | Já existe?                                                             | Proposta                                                              |
-| :------------------------------------------ | :--------------------------------------------------------------------- | :-------------------------------------------------------------------- |
-| Persistência de alertas                     | ✅ `alerta_fiscal` (`tipo_alerta` 30/15/7/3/1/atraso, `data_alerta`,   | Reutilizar como **fonte primária** do contador:                       |
-|                                             | `visualizado`, chave única)                                            | `COUNT(*) WHERE visualizado = 0`                                      |
-| API de alertas                              | ✅ `admin-fiscal-alert-list` · `admin-fiscal-alert-read` (§19.3)       | Manter e acrescentar `admin-alert-summary` (contador para a barra)    |
-| Construção dos alertas                      | ✅ `FiscalService::generateAlerts()` on-demand e idempotente (§13)     | Manter o mesmo padrão para os novos tipos de lembrete (sem CRON — P6) |
-| Local na UI                                 | ✅ `modules/backoffice/components/menuUserBo.php` +                    | O sino entra **no menu do utilizador** (barra superior), como pedido  |
-|                                             | `modules/backoffice/includes/boNavbar.php` (⚠️ corrigido — a auditoria |                                                                       |
-|                                             | de artefactos **F-03**; não existe `includes/` na raiz)                |                                                                       |
-| Lembretes a fornecedores/contratos/carrinha | ⬜ (o enum `obrigacao_fiscal.tipo` só tem                              | **Extensão de modelo necessária** → decidir entre extensão do enum ou |
-|                                             | `iva`,`irc`,`seguranca_social`,`seguros`)                              | entidade nova (conflito **C-02**)                                     |
-| "Lido" por conta                            | 🟡 `alerta_fiscal.visualizado` é **global** (não por utilizador)       | Com 2+ gestores, quem marca "lido" silencia os outros → decisão em    |
-|                                             |                                                                        | **C-03**                                                              |
+| Peça                     | Já existe?                                                             | Proposta                                                              |
+| :----------------------- | :--------------------------------------------------------------------- | :-------------------------------------------------------------------- |
+| Persistência de alertas  | ✅ `alerta_fiscal` (`tipo_alerta` 30/15/7/3/1/atraso, `data_alerta`,   | Reutilizar como **fonte primária** do contador:                       |
+|                          | `visualizado`, chave única)                                            | `COUNT(*) WHERE visualizado = 0`                                      |
+| API de alertas           | ✅ `admin-fiscal-alert-list` · `admin-fiscal-alert-read` (§19.3)       | Manter e acrescentar `admin-alert-summary` (contador para a barra)    |
+| Construção dos alertas   | ✅ `FiscalService::generateAlerts()` on-demand e idempotente (§13)     | Manter o mesmo padrão para os novos tipos de lembrete (sem CRON — P6) |
+| Local na UI              | ✅ `modules/backoffice/components/menuUserBo.php` +                    | O sino entra **no menu do utilizador** (barra superior), como pedido  |
+|                          | `modules/backoffice/includes/boNavbar.php` (⚠️ corrigido — a auditoria |                                                                       |
+|                          | de artefactos **F-03**; não existe `includes/` na raiz)                |                                                                       |
+| Lembretes a fornecedores | ⬜ (o enum `obrigacao_fiscal.tipo` só tem                              | **Extensão de modelo necessária** → decidir entre extensão do enum ou |
+|                          | `iva`,`irc`,`seguranca_social`,`seguros`)                              | entidade nova (conflito **C-02**)                                     |
+| "Lido" por conta         | 🟡 `alerta_fiscal.visualizado` é **global** (não por utilizador)       | Com 2+ gestores, quem marca "lido" silencia os outros → decisão em    |
+|                          |                                                                        | **C-03**                                                              |
 
 > 📌 **Divergência detetada (especificação ↔ BD).** §17.6 descreve `alerta_fiscal` com `mensagem` e `lido`,
 > mas a tabela real (`DataBase_v2.sql`, L549) tem **`visualizado`** e **não tem `mensagem`**. O contador do
@@ -169,20 +162,19 @@ prova** (ficheiro + linha) está identificado, com a prova e a correção, em
 
 **B.1 O que o sistema já consegue alimentar (verificado em `DataBase_v2.sql`)**
 
-| Indicador pedido               | Fonte real já existente                                                                | Nota                                                                  |
-| :----------------------------- | :------------------------------------------------------------------------------------- | :-------------------------------------------------------------------- |
-| Rendimentos (loja vs carrinha) | `agendamento.valor_total` + `local_prestacao` (`loja_fisica`/`carrinha_ambulante`) +   | por `data_hora_pretendida` (mês corrente), separável por canal ✅     |
-|                                | `estado_reserva`                                                                       |                                                                       |
-| Recebimentos                   | `transacao_financeira` (`sinal_inicial`, `restante_90_porcento`, `pagamento_integral`, | ⚠️ **sem UI** (§25.3) e `sinal_pago` está sempre `0` (§14.1)          |
-|                                | `quota_parte_deslocacao`)                                                              |                                                                       |
-| Custos de rota                 | `rota_ambulante.custo_estimado_combustivel`, `lucro_servicos`, `lucro_total`           | já calculados no módulo de rotas (§12.2). ⚠️ **F-06:** o "custo fixo" |
-|                                |                                                                                        | de 50 € do código (`RotaService` L22) **coincide** com a referência   |
-|                                |                                                                                        | visual de 50 € (L23) — decidir antes de somar "Gastos" (auditoria)    |
-| Obrigações fiscais             | `obrigacao_fiscal` + `alerta_fiscal`                                                   | `valor_estimado` é **introduzido à mão** (§13)                        |
-| Prestadores (recibos verdes)   | `agendamento_servico.valor_recibo_verde_funcionario` + `config_recibo_verde`           | valor **snapshot** por aceitação (§11)                                |
-| Efetivos                       | `funcionario.salario_base`                                                             | ⚠️ subsídios / 13.º-14.º mês **não** estão modelados                  |
-| Caixa por funcionário/dia      | `fecho_caixa_diario` (`total_esperado_faturas`, `total_recolhido_campo`, `diferenca`)  | ⚠️ **sem UI** (§25.3)                                                 |
-| Gorjetas                       | `gorjeta`                                                                              | sem UI (§25.3)                                                        |
+| Indicador pedido               | Fonte real já existente                                                                | Nota                                                                 |
+| :----------------------------- | :------------------------------------------------------------------------------------- | :------------------------------------------------------------------- |
+| Rendimentos (loja vs carrinha) | `agendamento.valor_total` + `local_prestacao` (`loja_fisica`/`carrinha_ambulante`) +   | por `data_hora_pretendida` (mês corrente), separável por canal ✅    |
+|                                | `estado_reserva`                                                                       |                                                                      |
+| Recebimentos                   | `transacao_financeira` (`sinal_inicial`, `restante_90_porcento`, `pagamento_integral`, | ⚠️ **sem UI** (§25.3) e `sinal_pago` está sempre `0` (§14.1)         |
+|                                | `quota_parte_deslocacao`)                                                              |                                                                      |
+| Custos de rota                 | `rota_ambulante.custo_estimado_combustivel`, `lucro_servicos`, `lucro_total`           | já calculados no módulo de rotas (§12.2): **receita − combustível**. |
+|                                |                                                                                        | **Não existe** custo fixo por rota (o valor de 50 € é só indicador). |
+| Obrigações fiscais             | `obrigacao_fiscal` + `alerta_fiscal`                                                   | `valor_estimado` é **introduzido à mão** (§13)                       |
+| Prestadores (recibos verdes)   | `agendamento_servico.valor_recibo_verde_funcionario` + `config_recibo_verde`           | valor **snapshot** por aceitação (§11)                               |
+| Efetivos                       | `funcionario.salario_base`                                                             | ⚠️ subsídios / 13.º-14.º mês **não** estão modelados                 |
+| Caixa por funcionário/dia      | `fecho_caixa_diario` (`total_esperado_faturas`, `total_recolhido_campo`, `diferenca`)  | ⚠️ **sem UI** (§25.3)                                                |
+| Gorjetas                       | `gorjeta`                                                                              | sem UI (§25.3)                                                       |
 
 **B.2 Gap estrutural — o achado mais importante desta análise**
 
@@ -281,9 +273,9 @@ Verificação: **não existe** tabela, página, endpoint, Service, Repository ou
 
 ### 1.7 Antecipação do perfil Funcionário (e a autorização por perfil)
 
-> ⚠️ **F-04 (auditoria de artefactos):** este documento usa **três** prefixos para a mesma área —
-> `employee-*` (§1.7/§1.9) · `admin-employee-*` (§1.5/§1.9) · e o real **`admin-service-*`**
-> (§19.2, 4 endpoints). Escolher **um** antes de escrever qualquer endpoint (viola o P3).
+> **Convenção de endpoints (resolvida):** **uma só** família `admin-*` — `admin-employee-*` para a
+> equipa e para a área própria do funcionário (`admin-employee-agenda-list`,
+> `admin-employee-commission-list`); e `admin-service-*` (já existente) para a aceitação.
 
 **Estado real (verificado):** as **páginas** do backoffice **não** são segregadas por perfil — o gestor abre
 `/gestao/servicos` em supervisão —, mas as **APIs** são: `admin-service-*` recusa aceitar ao gestor com **403** (§22.2).
@@ -312,10 +304,10 @@ Ou seja, já existe autorização **por endpoint**; falta autorização **por p�
 
 - **Sininho operacional:** novas marcações atribuídas à sua agenda e alterações/recusa de rota (§1.3, âmbito filtrado).
 - **Promoções em leitura:** para saber que descontos estão ativos ao aplicar um serviço.
-- **A minha agenda:** hoje só existe a lista de aceitação — `employee-agenda-list` (dados já existem em
+- **A minha agenda:** hoje só existe a lista de aceitação — `admin-employee-agenda-list` (dados já existem em
   `agendamento_servico.funcionario_id`).
 - **Comissões / recibos verdes individuais:** Σ `valor_recibo_verde_funcionario` por período + histórico por serviço;
-  **os dados já estão gravados** (§11) → `employee-commission-list` (reutiliza `GreenReceiptService` ✚).
+  **os dados já estão gravados** (§11) → `admin-employee-commission-list` (reutiliza `GreenReceiptService` ✚).
 
 ### 1.8 Mapa de encaixe (páginas e tabelas)
 
@@ -371,19 +363,17 @@ mesma alteração) e manter as **289 verificações** atuais a passar.
 
 Por §29.3.2, novos requisitos entram como `RF-nn`, regras como `RN-nn` e decisões como `D-nn`.
 Blocos livres verificados: `RF-75+` (§4.6 termina em RF-74), `RN-30+` (§5.1 termina em RN-29), `D-12+` (§3.11 termina em D-11).
-> ⚠️ **F-05 (auditoria de artefactos):** a lista abaixo começa em **RF-80** — ou seja, **RF-75…RF-79
-> ficam sem uso nem reserva declarada**. Alinhar (começar em RF-75) ou justificar a reserva.
 
-| ID sugerido   | Tema a registar                                                                                                                                                                    |
-| :------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| RF-80..RF-84  | Painel do gestor: KPIs de gastos/rendimentos, dívidas a fornecedores, sininho com contador                                                                                         |
-| RF-85..RF-88  | Contabilidade: ativos/passivos, DR, simulador fiscal (RAI + IRC), tesouraria e IVA                                                                                                 |
-| RF-89..RF-90  | RH: listagem com filtro de vínculo; criar/editar/desativar perfil                                                                                                                  |
-| RF-91..RF-95  | Promoções: campanhas com datas, tags sazonais, matriz de impacto, aplicação nos 2 canais                                                                                           |
-| RF-96..RF-98  | Área do funcionário: agenda própria, comissões individuais, promoções em leitura                                                                                                   |
-| RF-99..RF-102 | Frontend: secção resumida de serviços no Home/About · **preços com IVA incluído** · **imagem por serviço nos cards** · IVA apurado para apuramento                                 |
-| RN-30..RN-35  | Regras de cálculo: resultado mensal, IRC (0 se RAI ≤ 0), comissões como passivo, desconto no `preco_praticado`, efeito no sinal, critério de período                               |
-| D-12..D-16    | Decisões a fixar em §3: modelo de despesas/passivos · modelo de notificações · autorização por página · **origem dos dados (interno vs ficheiros)** · **regime de IVA dos preços** |
+| ID sugerido  | Tema a registar                                                                                                                                                                    |
+| :----------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| RF-75..RF-79 | Painel do gestor: KPIs de gastos/rendimentos, dívidas a fornecedores, sininho com contador                                                                                         |
+| RF-80..RF-83 | Contabilidade: ativos/passivos, DR, simulador fiscal (RAI + IRC), tesouraria e IVA                                                                                                 |
+| RF-84..RF-85 | RH: listagem com filtro de vínculo; criar/editar/desativar perfil                                                                                                                  |
+| RF-86..RF-90 | Promoções: campanhas com datas, tags sazonais, matriz de impacto, aplicação nos 2 canais                                                                                           |
+| RF-91..RF-93 | Área do funcionário: agenda própria, comissões individuais, promoções em leitura                                                                                                   |
+| RF-94..RF-97 | Frontend: secção resumida de serviços no Home/About · **preços com IVA incluído** · **imagem por serviço nos cards** · IVA apurado para apuramento                                 |
+| RN-30..RN-35 | Regras de cálculo: resultado mensal, IRC (0 se RAI ≤ 0), comissões como passivo, desconto no `preco_praticado`, efeito no sinal, critério de período                               |
+| D-12..D-16   | Decisões a fixar em §3: modelo de despesas/passivos · modelo de notificações · autorização por página · **origem dos dados (interno vs ficheiros)** · **regime de IVA dos preços** |
 
 ### 1.11 Módulo E — Frontend e catálogo (requisitos da 2.ª iteração)
 
@@ -731,9 +721,6 @@ Consequências:
 | **Q-43 / C-19** — `.xlsx` é tratável?       | ✅ **RESOLVIDA (e corrigida)** (§F.7): **é** tratável com `zlib` em PHP puro — **12/12** e **15/15** entradas lidas. A limitação anterior era **incorreta** → **C-30** |
 | **Q-41 / pergunta 17 (Teams)** — o          | ✅ **JÁ DECIDIDO na especificação** — **não é dúvida**: **D-11** · §15.3 · **RF-13** · §28.2/13 fixam o **lembrete das ≤ 24 h** ao cliente (sugere loja física ou      |
 | cliente recebe lembretes?                   | reagendamento); falta **implementar** (§24.6). Ficam abertos apenas: **(a)** 1 ou 2 mecanismos (**C-21**) e **(b)** onde aparece (*"e/ou"* de §24.6)                   |
-| **Q-21 / Q-22 (Teams 18/19)** — avisos de   | ⬜ **origem não provada** (§2.5.1): **nenhum ficheiro** do projeto os exige — a ocorrência mais                                                                        |
-| *"contratos"* e *"carrinha"*                | antiga é a 1.ª iteração desta análise. Passam a **pergunta de confirmação** ao cliente. A parte                                                                        |
-|                                             | verificável (*"não existe entidade veículo"* — §3.4/D-04 · §3.8) mantém-se                                                                                             |
 | **Q-02 … Q-30** (restantes) e **Q-31…Q-47** | ⬜ **em aberto** — seguem válidas; as novas desta iteração são **§2.10**                                                                                               |
 
 ### 2.1 Contabilidade e tesouraria
@@ -794,75 +781,11 @@ Consequências:
 
 ### 2.5 Notificações (sininho)
 
-> ⚠️ **Q-21 / Q-22:** a proveniência destes dois avisos foi auditada e **não tem prova documental** →
-> **§2.5.1**. As perguntas mantêm-se, mas **reformuladas como confirmação**, não como requisito.
-
-| ID   | Dúvida                                                                                                  | Impacto / opções                                                              |
-| :--- | :------------------------------------------------------------------------------------------------------ | :---------------------------------------------------------------------------- |
-| Q-21 | ⚠️ *"Renovação de contratos"* — **origem não provada** (§2.5.1): **existe** este aviso? Se sim, é sobre | Muda a origem do dado (funcionario, fornecedor, instalações) e **condiciona a |
-|      | contratos **de trabalho**, **de fornecimento** ou **de aluguer**?                                       | própria existência do requisito**                                             |
-| Q-22 | ⚠️ *"Revisões da carrinha"* — **origem não provada** (§2.5.1). O que é facto: **não existe entidade     | Decisão de modelo — **só se o aviso for confirmado**; cruza com §3.8          |
-|      | veículo** na BD (1 carrinha polivalente — §3.4/D-04). ➕ `veiculo`+`manutencao_veiculo` ou tratar como  | (logística de condução é **fora de escopo**)                                  |
-|      | obrigação/despesa periódica?                                                                            |                                                                               |
-| Q-23 | O contador de alertas é **por utilizador** ou **global**? (`alerta_fiscal.visualizado` é global)        | Com 2+ gestores, o "lido" de um silencia o outro → **C-03**                   |
-| Q-26 | Os lembretes mantêm-se **on-demand** (sem CRON — §22.1)?                                                | Confirmação de que o projeto continua sem CRON; independente de quais sejam   |
-|      |                                                                                                         | os avisos (§2.5.1)                                                            |
-| Q-27 | O sino agrega **tudo** num contador ou separa por origem (fiscal · fornecedores · operacional)?         | Muda o componente do topo (`menuUserBo.php`) e a UX do gestor                 |
-
-#### 2.5.1 Nota de correção — proveniência de *"renovação de contratos"* e *"revisões da carrinha"*
-
-**Auditoria executada (23/09/2026):** os dois avisos **não fiscais** que este documento tratava como
-requisito — *"renovação de contratos"* (**Q-21**) e *"revisões da carrinha"* (**Q-22**/**Q-26**) —
-foram submetidos a prova de origem. **Resultado: nenhum ficheiro do projeto os exige.** A ocorrência
-mais antiga é a **minha própria introdução** na 1.ª iteração desta análise.
-
-| Verificação (executada na raiz do projeto)                       | Resultado                                                                          |
-| :--------------------------------------------------------------- | :--------------------------------------------------------------------------------- |
-| `git log --all -S 'Renovação de contratos' --oneline`            | **2** commits: `1fa89e3` (1.ª iteração **desta análise**) · `b848ab8` (3.ª)        |
-| `git log --all -S 'Revisões da carrinha' --oneline`              | **1** commit: `1fa89e3` (1.ª iteração desta análise)                               |
-| `git log --all -i -S 'renova' --oneline`                         | **4**: os três acima + `4884f61` (*"Saio sempre renovada!"*, depoimento do site em |
-|                                                                  | `components/testimonial.php` — sem relação com o tema)                             |
-| `git grep -i -E 'renova\|revis(ão\|oes\|ões)' 7568031 -- '*.md'` | nos documentos de planeamento **arquivados antes da remoção** existe apenas        |
-|                                                                  | *"revisão de convenções"* e *"Revisão da secção 13.1"* — **nada** de contratos nem |
-|                                                                  | de carrinha                                                                        |
-| Leitura direta (sem qualquer ocorrência)                         | `especificacao_mvp.md` · `DataBase_v2.sql` · `DataBase_v3.sql` · `README.md` ·     |
-|                                                                  | `guia_teste_manual.md` · `mapa_fluxo_dados.md` · `Menu APOIO 3.docx` ·             |
-|                                                                  | `CUSTOS RH 2.xlsx`                                                                 |
-
-**Onde os dois avisos aparecem hoje** — sempre **dentro deste par de ficheiros**, nunca antes de `1fa89e3`:
-
-| Onde (secção)                      | Forma                                           | Estatuto depois desta auditoria                                           |
-| :--------------------------------- | :---------------------------------------------- | :------------------------------------------------------------------------ |
-| §1.2 Quadro-resumo                 | *"fornecedores/contratos/carrinha"*             | ⬜ **hipótese**, não requisito                                            |
-| §1.3 Sininho (A.2)                 | *"Lembretes a fornecedores/contratos/carrinha"* | ⬜ **hipótese**, não requisito                                            |
-| §2.5 **Q-21**                      | *"Renovação de contratos"*                      | ⬜ **hipótese** — **reformulada**                                         |
-| §2.5 **Q-22**                      | *"Revisões da carrinha"* · ➕ `veiculo` +       | 🟡 **válida** apenas na parte verificável                                 |
-|                                    | `manutencao_veiculo`                            | (*"não existe entidade veículo"*)                                         |
-| §2.5 **Q-26**                      | *"revisão da carrinha a 30 dias"*               | ⬜ **exemplo ilustrativo** — removido da                                  |
-|                                    |                                                 | pergunta                                                                  |
-| §1.4 B.2 · Teams Q-10              | *"seguros nem manutenção da carrinha"*          | ✅ afirmação de **ausência** de dados na BD (verificável) — é **exemplo** |
-|                                    |                                                 | de despesa, não requisito de aviso                                        |
-| §3 **C-02** · §3.1 checklist (2)   | lembrete de contratos/carrinha                  | ⬜ mantém-se — é o **conflito** a decidir                                 |
-| Teams §3 perguntas **18** e **19** | idem                                            | **reformuladas** nesta revisão                                            |
-
-**O que se mantém firme (independente da proveniência):**
-
-- **Não existe entidade veículo.** `veiculo` / `manutencao_veiculo` (ou equivalente) **não existem** em
-  `DataBase_v2.sql`/`DataBase_v3.sql`; §3.4 (**D-04**) fixa **uma única carrinha polivalente** e §3.8
-  (**D-08**) coloca a **logística de condução fora de escopo**. A parte factual de **Q-22** não depende
-  de o aviso existir.
-- **O calendário fiscal é fiscal.** §13 define os tipos como IVA, IRC, Segurança Social e Seguros —
-  confirmado na BD: `obrigacao_fiscal.tipo` = `enum('iva','irc','seguranca_social','seguros')`
-  (`DataBase_v3.sql` L394 · `DataBase_v2.sql` L528). Um **seguro** é obrigação periódica **com prazo**;
-  uma **revisão** não é. Nada aqui autoriza alargar o enum → **C-02** (recomendação ➕ `notificacao`
-  genérica continua em aberto).
-- **Sem CRON.** §22.1 mantém tudo *on-demand* — verdadeiro **independentemente** de quais sejam os
-  avisos (**Q-26**).
-
-**Conclusão.** A partir desta revisão, *"renovação de contratos"* e *"revisões da carrinha"*
-**deixam de ser afirmados como requisitos** e passam a **pergunta de confirmação** ao cliente
-(`mensagem_teams.txt`, perguntas **18** e **19**). Se o cliente os confirmar, a origem do dado e o
-modelo decidem-se em **C-02**; se não os confirmar, **saem do âmbito sem custo**.
+| ID   | Dúvida                                                                                           | Impacto / opções                                              |
+| :--- | :----------------------------------------------------------------------------------------------- | :------------------------------------------------------------ |
+| Q-23 | O contador de alertas é **por utilizador** ou **global**? (`alerta_fiscal.visualizado` é global) | Com 2+ gestores, o "lido" de um silencia o outro → **C-03**   |
+| Q-26 | Os lembretes mantêm-se **on-demand** (sem CRON — §22.1)?                                         | Confirmação de que o projeto continua sem CRON                |
+| Q-27 | O sino agrega **tudo** num contador ou separa por origem (fiscal · fornecedores · operacional)?  | Muda o componente do topo (`menuUserBo.php`) e a UX do gestor |
 
 ### 2.6 Transversais (UX, técnica e prazo)
 
@@ -882,21 +805,21 @@ modelo decidem-se em **C-02**; se não os confirmar, **saem do âmbito sem custo
 > existe** em nenhuma tabela. Proposta de princípio: **fonte interna para o que a plataforma faz, entrada
 > manual/importada para o que vem de fora** — nunca duplicar (ver **C-20**).
 
-| ID   | Pergunta do cliente                                       | O que o código/BD diz hoje                                                            | Opção / decisão necessária                                  |
-| :--- | :-------------------------------------------------------- | :------------------------------------------------------------------------------------ | :---------------------------------------------------------- |
-| Q-31 | Os KPIs vêm dos `.csv`/`.xls` do Balancete ou de serviços | Rendimentos **existem** (`agendamento.valor_total` + `local_prestacao`, por canal);   | **Interno como fonte primária** + registo/importação manual |
-|      | internos da plataforma?                                   | custos de rota **existem** (`rota_ambulante`); despesas externas **não existem**      | só para despesas externas (**C-19**)                        |
-| Q-32 | O que são "entradas brutas"? De onde vêm (banco ou        | Ambíguo: pode ser **receita faturada** (serviços) ou **entradas de caixa** (banco)    | Proposta:                                                   |
-|      | serviços)?                                                |                                                                                       | **receita bruta = Σ serviços prestados, COM IVA**, antes de |
-|      |                                                           |                                                                                       | deduzir custos — distinta de *recebimento*                  |
-| Q-33 | O lucro das vendas efetuadas vem da plataforma ou de      | A receita e o custo de rota são **100 % internos**; nada de vendas vem de ficheiros   | **Interno**, sem exceção (evita divergência)                |
-|      | ficheiros externos?                                       |                                                                                       |                                                             |
-| Q-34 | O que é a "margem de lucro" e como se calcula?            | Não existe cálculo hoje                                                               | Proposta em §2.7.1 (fórmula explícita e auditável)          |
-| Q-35 | De onde derivam internamente as despesas operacionais?    | Internamente só:                                                                      | Interno o que existe + **entrada manual** para o resto      |
-|      | Incluem CSV/XLS?                                          | **combustível + custo fixo 50 €/rota + comissões de recibos verdes + salários base**. | (formulário primeiro; CSV como conveniência)                |
-|      |                                                           | Rendas, consumíveis, eletricidade, seguros, manutenção: **nada**                      |                                                             |
-| Q-36 | As obrigações fiscais são as definidas na página Fiscal?  | ✅ Sim — `obrigacao_fiscal` (§13), `tipo` ∈ {iva, irc, seguranca_social, seguros},    | Confirmar: o **IVA apurado** (calculado) **não** substitui  |
-|      |                                                           | valor **manual**                                                                      | a obrigação manual (§2.7.2)                                 |
+| ID   | Pergunta do cliente                                       | O que o código/BD diz hoje                                                          | Opção / decisão necessária                                  |
+| :--- | :-------------------------------------------------------- | :---------------------------------------------------------------------------------- | :---------------------------------------------------------- |
+| Q-31 | Os KPIs vêm dos `.csv`/`.xls` do Balancete ou de serviços | Rendimentos **existem** (`agendamento.valor_total` + `local_prestacao`, por canal); | **Interno como fonte primária** + registo/importação manual |
+|      | internos da plataforma?                                   | custos de rota **existem** (`rota_ambulante`); despesas externas **não existem**    | só para despesas externas (**C-19**)                        |
+| Q-32 | O que são "entradas brutas"? De onde vêm (banco ou        | Ambíguo: pode ser **receita faturada** (serviços) ou **entradas de caixa** (banco)  | Proposta:                                                   |
+|      | serviços)?                                                |                                                                                     | **receita bruta = Σ serviços prestados, COM IVA**, antes de |
+|      |                                                           |                                                                                     | deduzir custos — distinta de *recebimento*                  |
+| Q-33 | O lucro das vendas efetuadas vem da plataforma ou de      | A receita e o custo de rota são **100 % internos**; nada de vendas vem de ficheiros | **Interno**, sem exceção (evita divergência)                |
+|      | ficheiros externos?                                       |                                                                                     |                                                             |
+| Q-34 | O que é a "margem de lucro" e como se calcula?            | Não existe cálculo hoje                                                             | Proposta em §2.7.1 (fórmula explícita e auditável)          |
+| Q-35 | De onde derivam internamente as despesas operacionais?    | Internamente só:                                                                    | Interno o que existe + **entrada manual** para o resto      |
+|      | Incluem CSV/XLS?                                          | **combustível das rotas + comissões de recibos verdes + salários base**.            | (formulário primeiro; CSV como conveniência)                |
+|      |                                                           | Rendas, consumíveis, eletricidade, seguros, manutenção: **nada**                    |                                                             |
+| Q-36 | As obrigações fiscais são as definidas na página Fiscal?  | ✅ Sim — `obrigacao_fiscal` (§13), `tipo` ∈ {iva, irc, seguranca_social, seguros},  | Confirmar: o **IVA apurado** (calculado) **não** substitui  |
+|      |                                                           | valor **manual**                                                                    | a obrigação manual (§2.7.2)                                 |
 
 #### 2.7.1 Proposta de definição da margem de lucro (Q-34)
 
@@ -904,7 +827,6 @@ modelo decidem-se em **C-02**; se não os confirmar, **saem do âmbito sem custo
 Receita bruta (periodo)  = SOMA agendamento.valor_total  [so estados executado/concluido]
 Custos variaveis         = comissoes de recibos verdes (valor_recibo_verde_funcionario)
                          + combustivel das rotas (rota_ambulante.custo_estimado_combustivel)
-                         + custo fixo operacional das rotas (n x 50 EUR)
 Margem bruta             = Receita bruta - Custos variaveis
 Margem de lucro          = Margem bruta / Receita bruta x 100
 Despesas operacionais    = custos variaveis + custos fixos externos (registados manualmente)
@@ -1067,8 +989,8 @@ Cards:
 |      |                                               | `modules/backoffice/appointments.php`)                           |                                         | `/gestao/agendamentos` mantém a lista                |
 |      |                                               |                                                                  |                                         | (rota já existe). Alternativa: painel                |
 |      |                                               |                                                                  |                                         | em `/gestao/painel`                                  |
-| C-02 | Lembretes de fornecedores, contratos e        | `obrigacao_fiscal.tipo` ∈                                        | Alargar o enum mistura encargos fiscais | Recomendação: ➕ `notificacao` genérica              |
-|      | revisões da carrinha                          | {`iva`,`irc`,`seguranca_social`,`seguros`} + `alerta_fiscal`;    | com não fiscais; criar entidade nova    | (com `origem`) alimentada pelo mesmo                 |
+| C-02 | Lembretes de **fornecedores** (não fiscais)   | `obrigacao_fiscal.tipo` ∈                                        | Alargar o enum mistura encargos fiscais | Recomendação: ➕ `notificacao` genérica              |
+|      |                                               | {`iva`,`irc`,`seguranca_social`,`seguros`} + `alerta_fiscal`;    | com não fiscais; criar entidade nova    | (com `origem`) alimentada pelo mesmo                 |
 |      |                                               | §13 define o calendário como **fiscal**                          | duplica mecanismos                      | padrão on-demand, e o                                |
 |      |                                               |                                                                  |                                         | **calendário fiscal fica fiscal** (§13               |
 |      |                                               |                                                                  |                                         | intacto). Contador = `alerta_fiscal` +               |
@@ -1181,8 +1103,7 @@ Cards:
 | #   | Decisão                                                                                                | ID   | Estado |
 | :-- | :----------------------------------------------------------------------------------------------------- | :--- | :----- |
 | 1   | `/gestao` passa a painel e a lista fica em `/gestao/agendamentos`                                      | C-01 | ⬜     |
-| 2   | Modelo de lembretes (entidade genérica vs extensão do calendário fiscal) — ⚠️ *"revisões da carrinha"* | C-02 | ⬜     |
-|     | e *"renovação de contratos"* **sem origem provada** (§2.5.1): decidir **só se o cliente as confirmar** |      |        |
+| 2   | Modelo de lembretes (entidade genérica vs extensão do calendário fiscal)                               | C-02 | ⬜     |
 | 3   | Lido dos alertas: global ou por utilizador                                                             | C-03 | ⬜     |
 | 4   | **Modelo de despesas**: criar `despesa` (+ fornecedor/fatura) ou alargar `transacao_financeira`        | C-04 | ⬜     |
 | 5   | Simulador fiscal não escreve no calendário fiscal                                                      | C-05 | ⬜     |
@@ -1214,7 +1135,7 @@ Cards:
 | 31  | **`.xlsx` viável sem pacotes** (corrige C-19) — incluir ou não `tools/xlsx-read.php`                   | C-30 | ⬜     |
 
 **Depois das decisões:** registar em `especificacao_mvp.md` (é o único documento normativo) como
-`RF-80+`/`RN-30+`/`D-12+` (§1.10) e só então implementar — ciclo de §29.3.
+`RF-75+`/`RN-30+`/`D-12+` (§1.10) e só então implementar — ciclo de §29.3.
 
 ---
 
@@ -1316,8 +1237,6 @@ balancete da empresa (**Q-49**).
 | §2 Q-04 / Q-08 / Q-09 / Q-11 / Q-14 | **fechadas ou parcialmente fechadas** por verificação (§2.0)                                         |
 | §2 Q-43 · C-19                      | **corrigidas** — `.xlsx` é tratável (**F.7** · **C-30**)                                             |
 | §2 **Q-41** · pergunta 17 (Teams)   | **reformuladas** — o lembrete ao cliente **já era requisito** (D-11 · §15.3 · RF-13); ver **§2.8.2** |
-| §2 **Q-21/Q-22** · perguntas 18/19  | **auditadas e reformuladas** — proveniência **sem prova documental**; passam a confirmação           |
-| (Teams)                             | ao cliente; mapa de ocorrências em **§2.5.1**                                                        |
 | §3 C-24 (fim da lista)              | ➕ **C-25…C-30**                                                                                     |
 | §3.1 Checklist (25 decisões)        | ➕ **26…31** → **31 decisões**                                                                       |
 

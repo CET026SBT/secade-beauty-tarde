@@ -1,7 +1,6 @@
 const boRoutes = (() => {
     const state = {
         routes: [],
-        fixedCost: 50,
         referenceProfitability: 50
     };
 
@@ -12,7 +11,7 @@ const boRoutes = (() => {
             this.$body.empty();
 
             if (routes.length === 0) {
-                this.$body.html(`<tr><td colspan="9" class="text-center text-muted py-5">
+                this.$body.html(`<tr><td colspan="8" class="text-center text-muted py-5">
                     <i class="bi bi-signpost fs-3 d-block mb-2"></i>Não existem rotas para os filtros selecionados.
                 </td></tr>`);
                 return;
@@ -57,7 +56,6 @@ const boRoutes = (() => {
             </td>
             <td class="text-end">${generalUtils.formatCurrency(route.revenue)}</td>
             <td class="text-end">${generalUtils.formatCurrency(route.fuelCost)}</td>
-            <td class="text-end">${generalUtils.formatCurrency(route.totalCost)}</td>
             <td class="text-end ${profitClass}">${generalUtils.formatCurrency(route.profitability)}${referenceIcon}</td>
             <td class="text-center">${boUtils.routeStatusBadge(route.status)}</td>
             <td class="text-end">${actions}</td>
@@ -77,7 +75,6 @@ const boRoutes = (() => {
             const response = await promise;
 
             state.routes = response?.routes || [];
-            state.fixedCost = Number(response?.fixedCost || 50);
             state.referenceProfitability = Number(response?.referenceProfitability || 50);
 
             tableUI.render(state.routes);
@@ -113,7 +110,7 @@ const boRoutes = (() => {
                 .html(`<i class="bi bi-clipboard-check me-1"></i>${generalUtils.escapeHtml(response?.message || "Decisão registada.")}
                     <span class="d-block small mt-1">
                         Receita ${generalUtils.formatCurrency(response?.revenue)} ·
-                        Custo total ${generalUtils.formatCurrency(response?.totalCost)} ·
+                        Combustível ${generalUtils.formatCurrency(response?.fuelCost)} ·
                         Rentabilidade <strong>${generalUtils.formatCurrency(response?.profitability)}</strong>
                         ${response?.meetsReference
                             ? '<span class="badge bg-success ms-2">acima da referência</span>'

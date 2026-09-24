@@ -272,7 +272,7 @@ SECADE BEAUTY — MVP (parte 2: Backoffice) ─── /modules/backoffice
 │
 ├── 8. GESTOR: ROTAS (FASE 4) ⭐⭐
 │   └── /gestao/rotas   (🅰 gestor)
-│       ├── Lista por dia+cidade: receita, combustível, custo total,
+│       ├── Lista por dia+cidade: receita, combustível,
 │       │   rentabilidade, estado, decisão
 │       │     GET admin-routes-list ──▶ RotaService::findRouteSummaries
 │       │       ├── BookingRepository::findAmbulatoryGroups (AGREGAÇÃO)
@@ -782,8 +782,7 @@ GET admin-routes-list ──▶ RotaController::list
         ├── RotaRepository::getFuelCost()      ──▶ [matriz_deslocacao]
         │     ⟶ valor_estimado (custo de combustível)
         └── por cada grupo:
-              custoTotal     = combustivel + 50.00
-              rentabilidade  = receita − custoTotal
+              rentabilidade  = receita − combustivel
               meetsReference = rentabilidade >= 50.00   ← só indicador
 ```
 
@@ -795,14 +794,12 @@ GET admin-routes-list ──▶ RotaController::list
 │                                                                        │
 │    Receita .......... 48,81 €                                          │
 │    Combustível ......  3,20 €                                          │
-│    Custo fixo ....... 50,00 €                                          │
-│    Custo total ...... 53,20 €                                          │
-│    Rentabilidade .... −4,39 €   ⚠ ABAIXO DA REFERÊNCIA (50 €)         │
+│    Rentabilidade .... 45,61 €   ⚠ ABAIXO DA REFERÊNCIA (50 €)         │
 │                                                                        │
 │    [ ✔ APROVAR ]   [ ✘ RECUSAR ]   [ Observações… ]                  │
 └──────────────────────────────────────────────────────────────────────┘
        │
-       └── ⭐ O gestor PODE aprovar mesmo com −4,39 €
+       └── ⭐ O gestor PODE aprovar mesmo com 45,61 €
              (a decisão é livre; o aviso é apenas informativo)
 ```
 
@@ -863,7 +860,7 @@ backoffice/js/components/routes.js
 
 | #   | Cenário         | Rentabilidade        | Ação do gestor | Resultado obtido                              |
 | --- | --------------- | -------------------- | -------------- | --------------------------------------------- |
-| 1   | Évora, 3 agend. | **−4,39 €** (abaixo) | **APROVAR**    | ✅ `confirmado` (aprovado apesar do aviso)    |
+| 1   | Évora, 3 agend. | **45,61 €** (abaixo) | **APROVAR**    | ✅ `confirmado` (aprovado apesar do aviso)    |
 | 2   | Outra cidade    | **+80,00 €** (acima) | **RECUSAR**    | ✅ `cancelado` (recusado apesar de favorável) |
 
 ```
@@ -1289,7 +1286,7 @@ ENUM real de `estado_rota`:
 | `custo_estimado_combustivel` | decimal  | `create`                    | de `[matriz_deslocacao].valor_estimado`      |
 | `quota_parte_cliente`        | decimal  | `create`                    | **0.00** (sem regra definida)                |
 | `lucro_servicos`             | decimal  | `create`                    | receita dos serviços                         |
-| `lucro_total`                | decimal  | `create`                    | receita − (combustível + 50 €)               |
+| `lucro_total`                | decimal  | `create`                    | receita − combustível                        |
 | `decidido_por`               | int FK   | `create`/`updateDecision`   | `utilizador.id` do gestor                    |
 | `decidido_em`                | datetime | `create`/`updateDecision`   | `NOW()`                                      |
 | `observacoes_decisao`        | text     | `create`/`updateDecision`   | notas livres do gestor                       |
@@ -1717,29 +1714,28 @@ TESTES (4)       tests/  functional_test.php · http_test.php ·
 | 5   | Dias permitidos                       | `validateBookingDate`                                       | Ter(2) → Sáb(6)                                | `BookingService`                 |
 | 6   | Data futura                           | `validateBookingDate`                                       | `strtotime < time()` → 422                     | `BookingService`                 |
 | 7   | Base de partida                       | `BASE_PARTIDA_ID`                                           | `1` (Évora)                                    | `RotaService`                    |
-| 8   | Custo fixo operacional                | `FIXED_OPERATIONAL_COST`                                    | `50.0` €                                       | `RotaService`                    |
-| 9   | **Indicador visual** de rentabilidade | `REFERENCE_PROFITABILITY`                                   | `50.0` € ⭐ **não decide**                     | `RotaService`                    |
-| 10  | % funcionário (recibos verdes)        | `DEFAULT_EMPLOYEE_PERCENTAGE`                               | `70.0`                                         | `GreenReceiptService`            |
-| 11  | % plataforma (recibos verdes)         | `DEFAULT_PLATFORM_PERCENTAGE`                               | `30.0`                                         | `GreenReceiptService`            |
-| 12  | Alertas fiscais                       | `ALERT_OFFSETS`                                             | `30, 15, 7, 3, 1` dias                         | `FiscalService`                  |
-| 13  | Alerta em atraso                      | `resolveAlertLevel`                                         | `daysLeft < 0` → `em_atraso`                   | `FiscalService`                  |
-| 14  | OTP: nº de dígitos                    | `OTPService::request`                                       | `6`                                            | `OTPService`                     |
-| 15  | OTP: validade                         | `OTPService::request`                                       | `600` s (10 min)                               | `OTPService`                     |
-| 16  | OTP: uso único                        | `OTPService::verify`                                        | consumido no sucesso                           | `OTPService`                     |
-| 17  | Feedback: 1 por agendamento           | `createFeedback` (verificação inline com `findByBooking`)   | 409                                            | `FeedbackService`                |
-| 18  | Feedback: só após execução            | `createFeedback` (verificação inline do `status`)           | 409                                            | `FeedbackService`                |
-| 19  | Feedback: só o dono                   | `createFeedback` (comparação `customerId`)                  | 403                                            | `FeedbackService`                |
-| 19b | Feedback: execução registada          | `createFeedback` (`findByBooking` em `executionRepository`) | 409                                            | `FeedbackService`                |
-| 20  | Área de cobertura                     | `CityService::findSupportedCities` → **todas** as linhas de | 10 cidades (a cobertura é imposta pelos dados) | `CityService` / `CityRepository` |
+| 8   | **Indicador visual** de rentabilidade | `REFERENCE_PROFITABILITY`                                   | `50.0` € ⭐ **não decide**                     | `RotaService`                    |
+| 9   | % funcionário (recibos verdes)        | `DEFAULT_EMPLOYEE_PERCENTAGE`                               | `70.0`                                         | `GreenReceiptService`            |
+| 10  | % plataforma (recibos verdes)         | `DEFAULT_PLATFORM_PERCENTAGE`                               | `30.0`                                         | `GreenReceiptService`            |
+| 11  | Alertas fiscais                       | `ALERT_OFFSETS`                                             | `30, 15, 7, 3, 1` dias                         | `FiscalService`                  |
+| 12  | Alerta em atraso                      | `resolveAlertLevel`                                         | `daysLeft < 0` → `em_atraso`                   | `FiscalService`                  |
+| 13  | OTP: nº de dígitos                    | `OTPService::request`                                       | `6`                                            | `OTPService`                     |
+| 14  | OTP: validade                         | `OTPService::request`                                       | `600` s (10 min)                               | `OTPService`                     |
+| 15  | OTP: uso único                        | `OTPService::verify`                                        | consumido no sucesso                           | `OTPService`                     |
+| 16  | Feedback: 1 por agendamento           | `createFeedback` (verificação inline com `findByBooking`)   | 409                                            | `FeedbackService`                |
+| 17  | Feedback: só após execução            | `createFeedback` (verificação inline do `status`)           | 409                                            | `FeedbackService`                |
+| 18  | Feedback: só o dono                   | `createFeedback` (comparação `customerId`)                  | 403                                            | `FeedbackService`                |
+| 18b | Feedback: execução registada          | `createFeedback` (`findByBooking` em `executionRepository`) | 409                                            | `FeedbackService`                |
+| 19  | Área de cobertura                     | `CityService::findSupportedCities` → **todas** as linhas de | 10 cidades (a cobertura é imposta pelos dados) | `CityService` / `CityRepository` |
 |     |                                       | `[cidade]`                                                  |                                                |                                  |
-| 21  | Carrinha bloqueada                    | `requer_espaco_fisico = 1`                                  | serviço só na loja                             | `services.js`                    |
-| 22  | Conflito de janela                    | `countByDateWindow`                                         | 409                                            | `BookingService`                 |
-| 23  | Consolidação                          | `consolidateIfComplete` → `countPendingByBooking === 0`     | muda o estado ⭐                               | `ServiceAcceptanceService`       |
-| 24  | Estado consolidado                    | `CONSOLIDATED_STATE`                                        | `'totalmente_aceite_funcionarios'`             | `ServiceAcceptanceService`       |
-| 25  | Bloqueio pós-consolidação             | `unacceptService` (verifica `CONSOLIDATED_STATE`)           | 409                                            | `ServiceAcceptanceService`       |
-| 26  | Duração total do agendamento          | `totalDurationByBooking`                                    | `SUM(duracao_minutos)`                         | `BookingServiceRepository`       |
-| 27  | Soma das % = 100                      | `saveConfig`                                                | 422                                            | `GreenReceiptService`            |
-| 28  | Sinal dispensado (carrinha)           | `createAmbulatoryBooking`                                   | `valor_sinal = 0`                              | `BookingService`                 |
+| 20  | Carrinha bloqueada                    | `requer_espaco_fisico = 1`                                  | serviço só na loja                             | `services.js`                    |
+| 21  | Conflito de janela                    | `countByDateWindow`                                         | 409                                            | `BookingService`                 |
+| 22  | Consolidação                          | `consolidateIfComplete` → `countPendingByBooking === 0`     | muda o estado ⭐                               | `ServiceAcceptanceService`       |
+| 23  | Estado consolidado                    | `CONSOLIDATED_STATE`                                        | `'totalmente_aceite_funcionarios'`             | `ServiceAcceptanceService`       |
+| 24  | Bloqueio pós-consolidação             | `unacceptService` (verifica `CONSOLIDATED_STATE`)           | 409                                            | `ServiceAcceptanceService`       |
+| 25  | Duração total do agendamento          | `totalDurationByBooking`                                    | `SUM(duracao_minutos)`                         | `BookingServiceRepository`       |
+| 26  | Soma das % = 100                      | `saveConfig`                                                | 422                                            | `GreenReceiptService`            |
+| 27  | Sinal dispensado (carrinha)           | `createAmbulatoryBooking`                                   | `valor_sinal = 0`                              | `BookingService`                 |
 
 ### 14.1 Fórmulas explícitas
 
@@ -1754,8 +1750,7 @@ VALOR DO AGENDAMENTO
                               dentro da mesma pessoa)
 
 RENTABILIDADE DA ROTA  (RotaService::findRouteSummaries)
-  custoTotal     = combustivel + 50,00   ⚠️ (a remover — §12.2 da especificação)
-  rentabilidade  = receita − custoTotal
+  rentabilidade  = receita − combustivel
   meetsReference = rentabilidade >= 50,00     ← SÓ INDICADOR VISUAL
 
 RECIBOS VERDES  (ServiceAcceptanceService::acceptService)

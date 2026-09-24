@@ -541,21 +541,14 @@ Exemplo de referência (usado nos testes):
 
 ### 12.2 Indicadores por grupo (rota)
 
-| Indicador                   | Origem / fórmula                                                                 |
-| :-------------------------- | :------------------------------------------------------------------------------- |
-| **Receita prevista**        | `SUM(agendamento.valor_total)` dos agendamentos do grupo                         |
-| **Custo de combustível**    | `matriz_deslocacao.custo_estimado_combustivel` (base 1 = Évora)                  |
-| **Custo fixo operacional**  | **50 €** (`FIXED_OPERATIONAL_COST`) — ⚠️ **a remover** (nota abaixo)             |
-| **Custo total**             | combustível + 50 €                                                               |
-| **Lucro/rentabilidade**     | receita − custo total                                                            |
-| **Quota-parte do cliente**  | `rota_ambulante.quota_parte_cliente` — 0 € (sem regra definida; **não** cobrada) |
-| **Indicador de referência** | `meetsReference = rentabilidade ≥ 50 €` → **apenas visual**                      |
+| Indicador                   | Origem / fórmula                                                                            |
+| :-------------------------- | :------------------------------------------------------------------------------------------ |
+| **Receita prevista**        | `SUM(agendamento.valor_total)` dos agendamentos do grupo                                    |
+| **Custo de combustível**    | `matriz_deslocacao.custo_estimado_combustivel` (base 1 = Évora) — **o único custo da rota** |
+| **Lucro/rentabilidade**     | receita − combustível                                                                       |
+| **Quota-parte do cliente**  | `rota_ambulante.quota_parte_cliente` — 0 € (sem regra definida; **não** cobrada)            |
+| **Indicador de referência** | `meetsReference = rentabilidade ≥ 50 €` → **apenas visual** (RN-05)                         |
 
-
-⚠️ **Divergência a resolver (RN-05 vs. código):** o valor de **50 €** é **apenas o indicador visual de
-referência** — **não** é um custo da operação. Hoje o `RotaService` **soma-o** ao custo total
-(`FIXED_OPERATIONAL_COST`, L80 · L163 · L210), o que **contradiz RN-05** — alinhar em §25.3. O
-**custo de combustível é calculado** (`getFuelCost` ← `matriz_deslocacao`).
 ### 12.3 Decisão manual (núcleo do módulo)
 - **Aprovar** → agendamentos do grupo passam a **`confirmado`**; rota gravada com
   `estado_rota='aprovada'`.
@@ -1380,8 +1373,11 @@ seguindo a **estrutura de menus** existente (§25.5).
 - **UI para `transacao_financeira`, `fecho_caixa_diario` e `gorjeta`** (existem na BD, sem UI).
 - **Notificações** (SMS/e-mail) reais ou persistidas, em vez de simuladas.
 - **Recibo manual** (se não existir) — a alinhar com as restantes melhorias.
-- **Alinhar `RotaService` com RN-05:** o 50 € é **indicador visual de referência**, não custo — remover
-  `FIXED_OPERATIONAL_COST` da soma do custo total e ajustar os testes afetados.
+- **Estimar o custo de deslocação intra-cidade:** a `matriz_deslocacao` só cobre o percurso
+  **base → cidade**; o combustível **dentro da cidade** **não está modelado**. Era esse o papel
+  provisório que os 50 € fixos desempenhavam (removidos em 24/09/2026). Avaliar uma estimativa real
+  — eventualmente com serviço de geolocalização, o que exigiria centralizar o do `AddressAutocomplete`
+  numa utilidade própria (padrão `apiClient.js`/`api.js`).
 
 ### 25.4 Prioridade 4 — Nice-to-have
 - Dashboard com estatísticas consolidadas (ocupação, receita, rotas, alertas).
@@ -1594,7 +1590,6 @@ SET FOREIGN_KEY_CHECKS = 1;
 | `mapaMentalMVP/mapa_fluxo_dados.md`          | Mapa visual do fluxo de dados ponta-a-ponta              | apoio (não normativo)                |
 | `mapaMentalMVP/analise_backoffice_gestor.md` | Análise do backoffice do gestor (requisitos do cliente)  | apoio (não normativo)                |
 | `mapaMentalMVP/auditoria_artefactos.md`      | Auditoria de afirmações sem prova                        | apoio (não normativo)                |
-| `mapaMentalMVP/auditoria_limpeza.md`         | Auditoria de obsoletos, prazos e redundância             | apoio (não normativo)                |
 | `mapaMentalMVP/mensagem_teams.txt`           | Comunicação e dúvidas para o grupo/Teams                 | apoio (não normativo)                |
 | `mapaMentalMVP/Menu APOIO 3.docx`            | Entrada do cliente (*template*) — menus de contabilidade | apoio (não normativo)                |
 | `mapaMentalMVP/CUSTOS RH 2.xlsx`             | Entrada do cliente (*template*) — custo de pessoal       | apoio (não normativo)                |

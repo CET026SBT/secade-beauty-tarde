@@ -821,7 +821,7 @@ WHERE a.local_prestacao = 'carrinha_ambulante'
 
 ### I1 — Abrir as rotas
 - **Ação:** menu **Rotas** (`/gestao/rotas`)
-- **Esperado:** data **pré-preenchida com D+1**; tabela com Data, Cidade (+distrito), Agendamentos (total + *N aceite(s)*), **Receita**, **Combustível**, **Custo total**, **Rentabilidade**, **Estado** e **Decisão**
+- **Esperado:** data **pré-preenchida com D+1**; tabela com Data, Cidade (+distrito), Agendamentos (total + *N aceite(s)*), **Receita**, **Combustível**, **Rentabilidade**, **Estado** e **Decisão**
 - 🅰 `GET ?action=admin-routes-list`
 - [ ] OK
 
@@ -836,7 +836,7 @@ WHERE a.local_prestacao = 'carrinha_ambulante'
 - **Esperado:**
   - ✅ ícone **verde** se ≥ 50 € → tooltip *"Rentabilidade igual ou acima da referência de 50 €"*
   - ⚠️ ícone **amarelo** se < 50 € → tooltip *"Abaixo da referência de 50 € (apenas indicador visual)"*
-- ⚠️ Confirme a conta: `Rentabilidade = Receita − (Combustível + 50 €)`
+- ⚠️ Confirme a conta: `Rentabilidade = Receita − Combustível`
 - [ ] OK
 
 ### I4 — APROVAR uma rota ABAIXO da referência ⭐ (prova de que é manual)

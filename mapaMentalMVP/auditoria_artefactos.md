@@ -18,14 +18,19 @@ nesta lista itens cuja prova foi **lida** (ficheiro + linha) e que **não** se c
 
 | #    | Artefacto                                   | Onde foi afirmado                | Gravidade                 |
 | :--- | :------------------------------------------ | :------------------------------- | :------------------------ |
-| F-01 | *"Renovação de contratos"* e                | §1.2 · §1.3 · §2.5 · Teams 18/19 | ✅ **corrigido** (§2.5.1) |
+| F-01 | *"Renovação de contratos"* e                | §1.2 · §1.3 · §2.5 · Teams 18/19 | ✅ **removido**           |
 |      | *"revisões da carrinha"*                    |                                  |                           |
-| F-02 | `requireManager()` / `requireEmployee()`    | §1.7 ponto 1                     | 🔴 método inexistente     |
-| F-03 | `includes/boNavbar.php`                     | §1.3 (A.2)                       | 🔴 caminho inexistente    |
-| F-04 | Prefixos `employee-*` vs `admin-employee-*` | §1.7 · §1.9 · §1.10              | 🟠 viola o próprio P3     |
-| F-05 | Bloco *"RF-75+"* mas IDs a começar em RF-80 | §1.10                            | 🟡 incoerência interna    |
-| F-06 | *"50 €"* com **dois significados**          | §1.4 (B.1) · §12.2 da spec       | 🟠 decisão necessária     |
-| F-07 | *"só 3 de categoria"* (imagens)             | §1.11 (E.3) · Q-45               | 🟡 número inexato         |
+| F-02 | `requireManager()` / `requireEmployee()`    | §1.7 ponto 1                     | ✅ corrigido              |
+| F-03 | `includes/boNavbar.php`                     | §1.3 (A.2)                       | ✅ corrigido              |
+| F-04 | Prefixos `employee-*` vs `admin-employee-*` | §1.7 · §1.9 · §1.10              | ✅ corrigido (1 família)  |
+| F-05 | Bloco *"RF-75+"* mas IDs a começar em RF-80 | §1.10                            | ✅ corrigido (RF-75…)     |
+| F-06 | *"50 €"* com **dois significados**          | §1.4 (B.1) · §12.2 da spec       | ✅ resolvido (custo fora) |
+| F-07 | *"só 3 de categoria"* (imagens)             | §1.11 (E.3) · Q-45               | ✅ corrigido              |
+
+> **Estado (24/09/2026): os 7 achados estão encerrados.** F-01 foi **removido** do planeamento (não
+> reformulado): a proveniência não existia e o tema não faz sentido. F-06 foi resolvido por decisão do
+> gestor — a regra do *custo fixo* de 50 € foi **eliminada do código e de todos os ficheiros**; o 50 €
+> ficou só como indicador visual.
 
 ---
 
@@ -58,6 +63,8 @@ pasta `includes/` na raiz do projeto. O ficheiro real é
 **`modules/backoffice/includes/boNavbar.php`**.
 
 **Consequência:** corrigir o caminho.
+
+**Resolução (24/09/2026):** resposta corrigida para `modules/backoffice/includes/boNavbar.php`.
 
 ### F-04 · Três prefixos diferentes para a mesma área (Funcionário)
 
@@ -109,6 +116,17 @@ que os 50€ eram uma estimativa muito primordial como placeholder para esse cus
 devidamente estimado, possivelmente usando uma API de geolocalização, a implementada no addressAutocomplete poderá ser
 util para isso, mas se a formos usar precisaremos de centralizar a implementação dela numa api dela mesma (semelhante á 
 nossa apiClient.js e api.js))
+
+**Resolução (24/09/2026): regra removida.** O **custo fixo de 50 €** foi eliminado do código
+(`FIXED_OPERATIONAL_COST` removido de `RotaService`) e de **todos** os ficheiros: agora
+`rentabilidade = receita − combustível`, sem qualquer custo fixo. O valor de **50 €** subsiste
+**apenas** como `REFERENCE_PROFITABILITY` — indicador visual, que nunca decide.
+**Verificação:** 105 testes funcionais continuam a passar; medição direta — Arraiolos **−2,68 €**
+(abaixo) · Estremoz **184,97 €** (acima).
+
+⚠️ **Gap legítimo que fica aberto** (deste mesmo esclarecimento): a `matriz_deslocacao` cobre o
+percurso **base → cidade**; o **custo intra-cidade** continua **por estimar** — era exatamente esse o
+papel provisório que os 50 € desempenhavam. Registado em `especificacao_mvp.md` **§25.3**.
 
 ### F-07 · "3 imagens de categoria" — existem 7 ficheiros
 
@@ -184,5 +202,5 @@ os 35 serviços), mas o número está errado — e já foi usado para argumentar
 ---
 
 **Ficheiro:** `mapaMentalMVP/auditoria_artefactos.md` · **branch:** `agent-workspace` ·
-**Complemento:** **§2.5.1** de `analise_backoffice_gestor.md` (caso F-01) ·
+**Estado:** os **7 achados encerrados** (ver §1) ·
 **Nota:** documento de apoio à decisão, **não normativo**; a autoridade é `especificacao_mvp.md`.
