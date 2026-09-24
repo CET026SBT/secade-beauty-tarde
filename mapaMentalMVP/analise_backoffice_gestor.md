@@ -21,6 +21,11 @@ REMUNERAÇÃO / SS / IRS). São **modelos**, não dados reais — as versões co
 **balancete** a importar. Cruzamento e achados em **§1.12 (Módulo F)**; dúvidas novas em **§2.10**;
 conflitos novos em **C-25…C-30**; prova de verificação em **§4**.
 
+**Revisão desta iteração (auditoria de proveniência):** os dois avisos não fiscais que este documento
+tratava como requisito — *"renovação de contratos"* e *"revisões da carrinha"* — foram submetidos a
+prova de origem: **não têm nenhum ficheiro que os exija** → **§2.5.1**; as perguntas 18 e 19 do
+`mensagem_teams.txt` foram reformuladas em conformidade.
+
 **Cruzado com:** `especificacao_mvp.md` v1.1 (§2–§5, §11–§13, §17–§19, §22, §24–§26, §28, §29), os
 **templates da 3.ª iteração** (`Menu APOIO 3.docx` · `CUSTOS RH 2.xlsx`) e o código/BD reais (`index.php`,
 `app/config/api.php`, `app/{controllers,services,repositories}`, `modules/main/`, `modules/backoffice/`,
@@ -707,6 +712,9 @@ Consequências:
 | **Q-43 / C-19** — `.xlsx` é tratável?       | ✅ **RESOLVIDA (e corrigida)** (§F.7): **é** tratável com `zlib` em PHP puro — **12/12** e **15/15** entradas lidas. A limitação anterior era **incorreta** → **C-30** |
 | **Q-41 / pergunta 17 (Teams)** — o          | ✅ **JÁ DECIDIDO na especificação** — **não é dúvida**: **D-11** · §15.3 · **RF-13** · §28.2/13 fixam o **lembrete das ≤ 24 h** ao cliente (sugere loja física ou      |
 | cliente recebe lembretes?                   | reagendamento); falta **implementar** (§24.6). Ficam abertos apenas: **(a)** 1 ou 2 mecanismos (**C-21**) e **(b)** onde aparece (*"e/ou"* de §24.6)                   |
+| **Q-21 / Q-22 (Teams 18/19)** — avisos de   | ⬜ **origem não provada** (§2.5.1): **nenhum ficheiro** do projeto os exige — a ocorrência mais                                                                        |
+| *"contratos"* e *"carrinha"*                | antiga é a 1.ª iteração desta análise. Passam a **pergunta de confirmação** ao cliente. A parte                                                                        |
+|                                             | verificável (*"não existe entidade veículo"* — §3.4/D-04 · §3.8) mantém-se                                                                                             |
 | **Q-02 … Q-30** (restantes) e **Q-31…Q-47** | ⬜ **em aberto** — seguem válidas; as novas desta iteração são **§2.10**                                                                                               |
 
 ### 2.1 Contabilidade e tesouraria
@@ -767,15 +775,75 @@ Consequências:
 
 ### 2.5 Notificações (sininho)
 
-| ID   | Dúvida                                                                                                   | Impacto / opções                                                               |
-| :--- | :------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------- |
-| Q-21 | *"Renovação de contratos"* refere-se a contratos **de trabalho**, **de fornecimento** ou **de aluguer**? | Muda a origem do dado (funcionario, fornecedor, instalações)                   |
-| Q-22 | *"Revisões da carrinha"*: **não existe entidade veículo** na BD (1 carrinha polivalente — §3.4/D-04). ➕ | Decisão de modelo; cruza com §3.8 (logística de condução é **fora de escopo**) |
-|      | `veiculo`+`manutencao_veiculo` ou tratar como obrigação/despesa periódica?                               |                                                                                |
-| Q-23 | O contador de alertas é **por utilizador** ou **global**? (`alerta_fiscal.visualizado` é global)         | Com 2+ gestores, o "lido" de um silencia o outro → **C-03**                    |
-| Q-26 | Os lembretes mantêm-se **on-demand** (sem CRON — §22.1)? Nesse caso, "revisão da carrinha a 30 dias" só  | Confirmação de que o projeto continua sem CRON                                 |
-|      | aparece quando o gestor abre o backoffice                                                                |                                                                                |
-| Q-27 | O sino agrega **tudo** num contador ou separa por origem (fiscal · fornecedores · operacional)?          | Muda o componente do topo (`menuUserBo.php`) e a UX do gestor                  |
+> ⚠️ **Q-21 / Q-22:** a proveniência destes dois avisos foi auditada e **não tem prova documental** →
+> **§2.5.1**. As perguntas mantêm-se, mas **reformuladas como confirmação**, não como requisito.
+
+| ID   | Dúvida                                                                                                  | Impacto / opções                                                              |
+| :--- | :------------------------------------------------------------------------------------------------------ | :---------------------------------------------------------------------------- |
+| Q-21 | ⚠️ *"Renovação de contratos"* — **origem não provada** (§2.5.1): **existe** este aviso? Se sim, é sobre | Muda a origem do dado (funcionario, fornecedor, instalações) e **condiciona a |
+|      | contratos **de trabalho**, **de fornecimento** ou **de aluguer**?                                       | própria existência do requisito**                                             |
+| Q-22 | ⚠️ *"Revisões da carrinha"* — **origem não provada** (§2.5.1). O que é facto: **não existe entidade     | Decisão de modelo — **só se o aviso for confirmado**; cruza com §3.8          |
+|      | veículo** na BD (1 carrinha polivalente — §3.4/D-04). ➕ `veiculo`+`manutencao_veiculo` ou tratar como  | (logística de condução é **fora de escopo**)                                  |
+|      | obrigação/despesa periódica?                                                                            |                                                                               |
+| Q-23 | O contador de alertas é **por utilizador** ou **global**? (`alerta_fiscal.visualizado` é global)        | Com 2+ gestores, o "lido" de um silencia o outro → **C-03**                   |
+| Q-26 | Os lembretes mantêm-se **on-demand** (sem CRON — §22.1)?                                                | Confirmação de que o projeto continua sem CRON; independente de quais sejam   |
+|      |                                                                                                         | os avisos (§2.5.1)                                                            |
+| Q-27 | O sino agrega **tudo** num contador ou separa por origem (fiscal · fornecedores · operacional)?         | Muda o componente do topo (`menuUserBo.php`) e a UX do gestor                 |
+
+#### 2.5.1 Nota de correção — proveniência de *"renovação de contratos"* e *"revisões da carrinha"*
+
+**Auditoria executada (23/09/2026):** os dois avisos **não fiscais** que este documento tratava como
+requisito — *"renovação de contratos"* (**Q-21**) e *"revisões da carrinha"* (**Q-22**/**Q-26**) —
+foram submetidos a prova de origem. **Resultado: nenhum ficheiro do projeto os exige.** A ocorrência
+mais antiga é a **minha própria introdução** na 1.ª iteração desta análise.
+
+| Verificação (executada na raiz do projeto)                       | Resultado                                                                          |
+| :--------------------------------------------------------------- | :--------------------------------------------------------------------------------- |
+| `git log --all -S 'Renovação de contratos' --oneline`            | **2** commits: `1fa89e3` (1.ª iteração **desta análise**) · `b848ab8` (3.ª)        |
+| `git log --all -S 'Revisões da carrinha' --oneline`              | **1** commit: `1fa89e3` (1.ª iteração desta análise)                               |
+| `git log --all -i -S 'renova' --oneline`                         | **4**: os três acima + `4884f61` (*"Saio sempre renovada!"*, depoimento do site em |
+|                                                                  | `components/testimonial.php` — sem relação com o tema)                             |
+| `git grep -i -E 'renova\|revis(ão\|oes\|ões)' 7568031 -- '*.md'` | nos documentos de planeamento **arquivados antes da remoção** existe apenas        |
+|                                                                  | *"revisão de convenções"* e *"Revisão da secção 13.1"* — **nada** de contratos nem |
+|                                                                  | de carrinha                                                                        |
+| Leitura direta (sem qualquer ocorrência)                         | `especificacao_mvp.md` · `DataBase_v2.sql` · `DataBase_v3.sql` · `README.md` ·     |
+|                                                                  | `guia_teste_manual.md` · `mapa_fluxo_dados.md` · `Menu APOIO 3.docx` ·             |
+|                                                                  | `CUSTOS RH 2.xlsx`                                                                 |
+
+**Onde os dois avisos aparecem hoje** — sempre **dentro deste par de ficheiros**, nunca antes de `1fa89e3`:
+
+| Onde (secção)                      | Forma                                           | Estatuto depois desta auditoria                                           |
+| :--------------------------------- | :---------------------------------------------- | :------------------------------------------------------------------------ |
+| §1.2 Quadro-resumo                 | *"fornecedores/contratos/carrinha"*             | ⬜ **hipótese**, não requisito                                            |
+| §1.3 Sininho (A.2)                 | *"Lembretes a fornecedores/contratos/carrinha"* | ⬜ **hipótese**, não requisito                                            |
+| §2.5 **Q-21**                      | *"Renovação de contratos"*                      | ⬜ **hipótese** — **reformulada**                                         |
+| §2.5 **Q-22**                      | *"Revisões da carrinha"* · ➕ `veiculo` +       | 🟡 **válida** apenas na parte verificável                                 |
+|                                    | `manutencao_veiculo`                            | (*"não existe entidade veículo"*)                                         |
+| §2.5 **Q-26**                      | *"revisão da carrinha a 30 dias"*               | ⬜ **exemplo ilustrativo** — removido da                                  |
+|                                    |                                                 | pergunta                                                                  |
+| §1.4 B.2 · Teams Q-10              | *"seguros nem manutenção da carrinha"*          | ✅ afirmação de **ausência** de dados na BD (verificável) — é **exemplo** |
+|                                    |                                                 | de despesa, não requisito de aviso                                        |
+| §3 **C-02** · §3.1 checklist (2)   | lembrete de contratos/carrinha                  | ⬜ mantém-se — é o **conflito** a decidir                                 |
+| Teams §3 perguntas **18** e **19** | idem                                            | **reformuladas** nesta revisão                                            |
+
+**O que se mantém firme (independente da proveniência):**
+
+- **Não existe entidade veículo.** `veiculo` / `manutencao_veiculo` (ou equivalente) **não existem** em
+  `DataBase_v2.sql`/`DataBase_v3.sql`; §3.4 (**D-04**) fixa **uma única carrinha polivalente** e §3.8
+  (**D-08**) coloca a **logística de condução fora de escopo**. A parte factual de **Q-22** não depende
+  de o aviso existir.
+- **O calendário fiscal é fiscal.** §13 define os tipos como IVA, IRC, Segurança Social e Seguros —
+  confirmado na BD: `obrigacao_fiscal.tipo` = `enum('iva','irc','seguranca_social','seguros')`
+  (`DataBase_v3.sql` L394 · `DataBase_v2.sql` L528). Um **seguro** é obrigação periódica **com prazo**;
+  uma **revisão** não é. Nada aqui autoriza alargar o enum → **C-02** (recomendação ➕ `notificacao`
+  genérica continua em aberto).
+- **Sem CRON.** §22.1 mantém tudo *on-demand* — verdadeiro **independentemente** de quais sejam os
+  avisos (**Q-26**).
+
+**Conclusão.** A partir desta revisão, *"renovação de contratos"* e *"revisões da carrinha"*
+**deixam de ser afirmados como requisitos** e passam a **pergunta de confirmação** ao cliente
+(`mensagem_teams.txt`, perguntas **18** e **19**). Se o cliente os confirmar, a origem do dado e o
+modelo decidem-se em **C-02**; se não os confirmar, **saem do âmbito sem custo**.
 
 ### 2.6 Transversais (UX, técnica e prazo)
 
@@ -1094,7 +1162,8 @@ Cards:
 | #   | Decisão                                                                                                | ID   | Estado |
 | :-- | :----------------------------------------------------------------------------------------------------- | :--- | :----- |
 | 1   | `/gestao` passa a painel e a lista fica em `/gestao/agendamentos`                                      | C-01 | ⬜     |
-| 2   | Modelo de lembretes (entidade genérica vs extensão do calendário fiscal) + veículo/manutenção          | C-02 | ⬜     |
+| 2   | Modelo de lembretes (entidade genérica vs extensão do calendário fiscal) — ⚠️ *"revisões da carrinha"* | C-02 | ⬜     |
+|     | e *"renovação de contratos"* **sem origem provada** (§2.5.1): decidir **só se o cliente as confirmar** |      |        |
 | 3   | Lido dos alertas: global ou por utilizador                                                             | C-03 | ⬜     |
 | 4   | **Modelo de despesas**: criar `despesa` (+ fornecedor/fatura) ou alargar `transacao_financeira`        | C-04 | ⬜     |
 | 5   | Simulador fiscal não escreve no calendário fiscal                                                      | C-05 | ⬜     |
@@ -1228,6 +1297,8 @@ balancete da empresa (**Q-49**).
 | §2 Q-04 / Q-08 / Q-09 / Q-11 / Q-14 | **fechadas ou parcialmente fechadas** por verificação (§2.0)                                         |
 | §2 Q-43 · C-19                      | **corrigidas** — `.xlsx` é tratável (**F.7** · **C-30**)                                             |
 | §2 **Q-41** · pergunta 17 (Teams)   | **reformuladas** — o lembrete ao cliente **já era requisito** (D-11 · §15.3 · RF-13); ver **§2.8.2** |
+| §2 **Q-21/Q-22** · perguntas 18/19  | **auditadas e reformuladas** — proveniência **sem prova documental**; passam a confirmação           |
+| (Teams)                             | ao cliente; mapa de ocorrências em **§2.5.1**                                                        |
 | §3 C-24 (fim da lista)              | ➕ **C-25…C-30**                                                                                     |
 | §3.1 Checklist (25 decisões)        | ➕ **26…31** → **31 decisões**                                                                       |
 
