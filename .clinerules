@@ -10,7 +10,7 @@ Ficheiro de **operação**. Não contém produto: contém (a) restrições, conv
 | #   | Ler                                          | Quando                                         |
 | :-- | :------------------------------------------- | :--------------------------------------------- |
 | 1   | Este ficheiro (≈140 linhas)                  | sempre                                         |
-| 2   | `especificacao_mvp.md` — **router** (~67 l.) | sempre: dá o mapa `§ → ficheiro`               |
+| 2   | `especificacao_mvp.md` — **router** (~63 l.) | sempre: dá o mapa `§ → ficheiro`               |
 | 3   | **UM** ficheiro de `docs/spec/`              | só o domínio em causa — nunca os nove          |
 | 4   | `tests/README.md` · `tools/README.md`        | ao testar · ao usar ferramentas                |
 | 5   | `docs/README.md`                             | **só** quando o humano pedir documentação/mapa |

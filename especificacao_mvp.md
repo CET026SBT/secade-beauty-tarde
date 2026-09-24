@@ -1,7 +1,3 @@
-# SECADE BEAUTY — ESPECIFICAÇÃO ÚNICA E CENTRALIZADA
-**Documento-mestre (single source of truth)** · Versão 2.0 · 24/09/2026 · branch **`agent-workspace`**
-**Âmbito:** requisitos, decisões finais, arquitetura, base de dados, API, estados, testes e instalação.
-
 # SECADE BEAUTY — ESPECIFICAÇÃO (ROUTER)
 **Documento-mestre (fonte única)** · Versão 3.0 · 24/09/2026 · branch **`agent-workspace`**
 **Âmbito:** requisitos, decisões, regras, dados, API e entrega. O detalhe está **dividido por domínio** em `docs/spec/`.
