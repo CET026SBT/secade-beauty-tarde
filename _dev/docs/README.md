@@ -75,7 +75,7 @@ N2  especificacao_mvp.md            ROUTER: mapa §→ficheiro + prevalência + 
 | O humano pede…                            | Regra                                        | Saída                 |
 | :---------------------------------------- | :------------------------------------------- | :-------------------- |
 | atualizar / criar secção da especificação | `rules/build_spec_on_demand.md`              | `_dev/docs/spec/*.md` |
-| relatório de estado, auditoria, análise   | `rules/build_report_on_demand.md` (a criar)  | `_dev/docs/out/…`     |
+| relatório de estado, auditoria, análise   | `rules/build_report_on_demand.md`            | `_dev/docs/out/…`     |
 | mapa mental / diagrama de fluxo           | `rules/build_mindmap_on_demand.md` (a criar) | `_dev/docs/out/…`     |
 | guia de teste manual passo-a-passo        | `rules/build_test_guide_on_demand.md`        | `_dev/docs/out/…`     |
 | histórico por data (incl. o revogado)     | `rules/build_history_on_demand.md`           | `_dev/docs/out/…`     |
