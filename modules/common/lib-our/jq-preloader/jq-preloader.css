@@ -1,0 +1,44 @@
+#jq-preloader-templates {
+    display: none;
+}
+
+[preloader-overlay] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1050;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+[preloader-skeleton]:not(.jq-preloader-instance),
+[preloader-overlay]:not(.jq-preloader-instance) {
+    display: none !important;
+}
+
+.jq-preloader-container {
+    position: relative !important;
+}
+
+.jq-preloader-container.jq-preloader-defer > *:not(.jq-preloader-instance, .jq-preloader-existing) {
+    display: none !important;
+}
+
+.jq-preloader-container.jq-preloader-fade > .jq-preloader-instance {
+    opacity: 1;
+    transition: opacity var(--jq-preloader-fade-duration, 0.4s) ease-in-out;
+}
+
+.jq-preloader-container.jq-preloader-fade.jq-preloader-fading-out > .jq-preloader-instance {
+    opacity: 0;
+}
+
+@starting-style {
+    .jq-preloader-container.jq-preloader-fade > .jq-preloader-instance:not(.jq-preloader-was-instantiated) {
+        opacity: 0;
+    }
+}

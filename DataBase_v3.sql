@@ -28,42 +28,127 @@ CREATE TABLE IF NOT EXISTS `agendamento` (
   `cliente_morada_id` int DEFAULT NULL,
   `local_prestacao` enum('loja_fisica','carrinha_ambulante') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `data_hora_pretendida` datetime NOT NULL,
-  `estado_reserva` enum('pendente_aprovacao_viabilidade','confirmado','cancelado') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'pendente_aprovacao_viabilidade',
+  `estado_reserva` enum('pendente_aceitacao_funcionarios','pendente_validacao_logistica_loja','totalmente_aceite_funcionarios','confirmado','recusado','cancelado','executado','concluido') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'pendente_aceitacao_funcionarios',
   `modo_urgencia` tinyint(1) DEFAULT '0',
   `valor_total` decimal(10,2) NOT NULL,
   `sinal_pago` tinyint(1) DEFAULT '0',
   `valor_sinal` decimal(10,2) DEFAULT '0.00',
+  `validado_logistica_loja` tinyint(1) DEFAULT '0',
   `criado_em` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `fk_agendamento_cliente` (`cliente_id`),
   KEY `fk_agendamento_morada` (`cliente_morada_id`),
   CONSTRAINT `fk_agendamento_cliente` FOREIGN KEY (`cliente_id`) REFERENCES `cliente` (`id`) ON DELETE RESTRICT,
   CONSTRAINT `fk_agendamento_morada` FOREIGN KEY (`cliente_morada_id`) REFERENCES `cliente_morada` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=218 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Dumping data for table secade_beauty.agendamento: ~0 rows (approximately)
 DELETE FROM `agendamento`;
+INSERT INTO `agendamento` (`id`, `cliente_id`, `cliente_morada_id`, `local_prestacao`, `data_hora_pretendida`, `estado_reserva`, `modo_urgencia`, `valor_total`, `sinal_pago`, `valor_sinal`, `validado_logistica_loja`, `criado_em`) VALUES
+	(190, 53, 75, 'carrinha_ambulante', '2026-09-24 09:00:00', 'totalmente_aceite_funcionarios', 0, 32.52, 0, 0.00, 0, '2026-09-22 13:37:26'),
+	(191, 53, NULL, 'loja_fisica', '2026-09-23 09:00:00', 'pendente_validacao_logistica_loja', 0, 28.46, 0, 2.85, 0, '2026-09-22 13:40:10'),
+	(210, 3, NULL, 'loja_fisica', '2026-09-23 10:00:00', 'pendente_validacao_logistica_loja', 0, 16.27, 0, 1.63, 0, '2026-09-22 14:33:27'),
+	(211, 3, 1, 'carrinha_ambulante', '2026-09-23 09:00:00', 'pendente_aceitacao_funcionarios', 0, 16.27, 0, 0.00, 0, '2026-09-22 14:33:27'),
+	(212, 3, NULL, 'carrinha_ambulante', '2026-09-29 10:00:00', 'confirmado', 0, 4.07, 0, 0.00, 0, '2026-09-22 14:33:27'),
+	(213, 3, 98, 'carrinha_ambulante', '2026-09-29 09:00:00', 'cancelado', 0, 199.20, 0, 0.00, 0, '2026-09-22 14:33:27'),
+	(214, 3, NULL, 'loja_fisica', '2026-09-23 16:00:00', 'cancelado', 0, 12.20, 0, 1.22, 0, '2026-09-22 14:33:27'),
+	(215, 3, 99, 'carrinha_ambulante', '2026-10-01 09:00:00', 'executado', 0, 12.20, 0, 0.00, 0, '2026-09-22 14:33:27'),
+	(216, 3, NULL, 'loja_fisica', '2026-09-23 17:00:00', 'pendente_validacao_logistica_loja', 0, 40.65, 0, 4.07, 0, '2026-09-22 14:33:27'),
+	(217, 3, 99, 'carrinha_ambulante', '2026-10-06 10:00:00', 'pendente_aceitacao_funcionarios', 0, 12.20, 0, 0.00, 0, '2026-09-22 14:33:27');
+
+-- Dumping structure for table secade_beauty.agendamento_pessoa
+DROP TABLE IF EXISTS `agendamento_pessoa`;
+CREATE TABLE IF NOT EXISTS `agendamento_pessoa` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `agendamento_id` int NOT NULL,
+  `nome_pessoa` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `observacoes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  PRIMARY KEY (`id`),
+  KEY `fk_agend_pessoa_agendamento` (`agendamento_id`),
+  CONSTRAINT `fk_agend_pessoa_agendamento` FOREIGN KEY (`agendamento_id`) REFERENCES `agendamento` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=171 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Dumping data for table secade_beauty.agendamento_pessoa: ~0 rows (approximately)
+DELETE FROM `agendamento_pessoa`;
+INSERT INTO `agendamento_pessoa` (`id`, `agendamento_id`, `nome_pessoa`, `observacoes`) VALUES
+	(148, 190, 'Daniel Branco', NULL),
+	(164, 211, 'João Cliente', NULL),
+	(165, 211, 'Maria Familiar', NULL),
+	(166, 212, 'João Cliente', NULL),
+	(167, 213, 'João Cliente', NULL),
+	(168, 215, 'João Cliente', NULL),
+	(169, 215, 'Maria Familiar', NULL),
+	(170, 217, 'João Cliente', NULL);
 
 -- Dumping structure for table secade_beauty.agendamento_servico
 DROP TABLE IF EXISTS `agendamento_servico`;
 CREATE TABLE IF NOT EXISTS `agendamento_servico` (
   `id` int NOT NULL AUTO_INCREMENT,
   `agendamento_id` int NOT NULL,
+  `agendamento_pessoa_id` int DEFAULT NULL,
   `servico_id` int NOT NULL,
   `funcionario_id` int DEFAULT NULL,
   `preco_praticado` decimal(10,2) NOT NULL,
   `duracao_minutos` int NOT NULL,
+  `estado_aceitacao` enum('pendente','aceite') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'aceite',
+  `aceito_em` datetime DEFAULT NULL,
+  `percentagem_funcionario_aplicada` decimal(5,2) DEFAULT NULL,
+  `valor_recibo_verde_funcionario` decimal(10,2) DEFAULT NULL,
+  `valor_recibo_verde_plataforma` decimal(10,2) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_agend_serv_agendamento` (`agendamento_id`),
+  KEY `fk_agend_serv_pessoa` (`agendamento_pessoa_id`),
   KEY `fk_agend_serv_servico` (`servico_id`),
   KEY `fk_agend_serv_funcionario` (`funcionario_id`),
   CONSTRAINT `fk_agend_serv_agendamento` FOREIGN KEY (`agendamento_id`) REFERENCES `agendamento` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_agend_serv_funcionario` FOREIGN KEY (`funcionario_id`) REFERENCES `funcionario` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_agend_serv_pessoa` FOREIGN KEY (`agendamento_pessoa_id`) REFERENCES `agendamento_pessoa` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_agend_serv_servico` FOREIGN KEY (`servico_id`) REFERENCES `servico` (`id`) ON DELETE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=453 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Dumping data for table secade_beauty.agendamento_servico: ~0 rows (approximately)
 DELETE FROM `agendamento_servico`;
+INSERT INTO `agendamento_servico` (`id`, `agendamento_id`, `agendamento_pessoa_id`, `servico_id`, `funcionario_id`, `preco_praticado`, `duracao_minutos`, `estado_aceitacao`, `aceito_em`, `percentagem_funcionario_aplicada`, `valor_recibo_verde_funcionario`, `valor_recibo_verde_plataforma`) VALUES
+	(394, 190, 148, 1, 2, 32.52, 240, 'aceite', '2026-09-22 15:06:33', 70.00, 22.76, 9.76),
+	(395, 191, NULL, 4, NULL, 28.46, 150, 'aceite', NULL, NULL, NULL, NULL),
+	(435, 210, NULL, 28, NULL, 12.20, 30, 'aceite', NULL, NULL, NULL, NULL),
+	(436, 210, NULL, 29, NULL, 4.07, 20, 'aceite', NULL, NULL, NULL, NULL),
+	(437, 211, 164, 29, NULL, 4.07, 20, 'pendente', NULL, NULL, NULL, NULL),
+	(438, 211, 165, 29, NULL, 4.07, 20, 'pendente', NULL, NULL, NULL, NULL),
+	(439, 211, 165, 35, NULL, 8.13, 30, 'pendente', NULL, NULL, NULL, NULL),
+	(440, 212, 166, 29, NULL, 4.07, 20, 'pendente', NULL, NULL, NULL, NULL),
+	(441, 213, 167, 20, NULL, 36.59, 60, 'pendente', NULL, NULL, NULL, NULL),
+	(442, 213, 167, 18, NULL, 24.39, 60, 'pendente', NULL, NULL, NULL, NULL),
+	(443, 213, 167, 23, NULL, 28.46, 60, 'pendente', NULL, NULL, NULL, NULL),
+	(444, 213, 167, 21, NULL, 16.26, 60, 'pendente', NULL, NULL, NULL, NULL),
+	(445, 213, 167, 9, NULL, 24.39, 60, 'pendente', NULL, NULL, NULL, NULL),
+	(446, 213, 167, 2, NULL, 48.78, 180, 'pendente', NULL, NULL, NULL, NULL),
+	(447, 213, 167, 27, NULL, 20.33, 60, 'pendente', NULL, NULL, NULL, NULL),
+	(448, 214, NULL, 33, NULL, 12.20, 45, 'aceite', NULL, NULL, NULL, NULL),
+	(449, 215, 168, 29, 2, 4.07, 20, 'aceite', '2026-09-22 15:33:27', 70.00, 2.85, 1.22),
+	(450, 215, 169, 35, 2, 8.13, 30, 'aceite', '2026-09-22 15:33:27', 70.00, 5.69, 2.44),
+	(451, 216, NULL, 30, NULL, 40.65, 120, 'aceite', NULL, NULL, NULL, NULL),
+	(452, 217, 170, 33, NULL, 12.20, 45, 'pendente', NULL, NULL, NULL, NULL);
+
+-- Dumping structure for table secade_beauty.alerta_fiscal
+DROP TABLE IF EXISTS `alerta_fiscal`;
+CREATE TABLE IF NOT EXISTS `alerta_fiscal` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `obrigacao_fiscal_id` int NOT NULL,
+  `tipo_alerta` enum('30_dias','15_dias','7_dias','3_dias','1_dia','em_atraso') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `data_alerta` date NOT NULL,
+  `visualizado` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_alerta_obrigacao_tipo` (`obrigacao_fiscal_id`,`tipo_alerta`,`data_alerta`),
+  CONSTRAINT `fk_alerta_obrigacao` FOREIGN KEY (`obrigacao_fiscal_id`) REFERENCES `obrigacao_fiscal` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=438 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Dumping data for table secade_beauty.alerta_fiscal: ~0 rows (approximately)
+DELETE FROM `alerta_fiscal`;
+INSERT INTO `alerta_fiscal` (`id`, `obrigacao_fiscal_id`, `tipo_alerta`, `data_alerta`, `visualizado`) VALUES
+	(420, 84, '7_dias', '2026-09-22', 1),
+	(421, 85, 'em_atraso', '2026-09-22', 1),
+	(425, 86, '30_dias', '2026-09-22', 1);
 
 -- Dumping structure for table secade_beauty.base_partida
 DROP TABLE IF EXISTS `base_partida`;
@@ -106,7 +191,7 @@ CREATE TABLE IF NOT EXISTS `cidade` (
   UNIQUE KEY `nome` (`nome`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table secade_beauty.cidade: ~10 rows (approximately)
+-- Dumping data for table secade_beauty.cidade: ~5 rows (approximately)
 DELETE FROM `cidade`;
 INSERT INTO `cidade` (`id`, `nome`, `distrito`) VALUES
 	(1, 'Arraiolos', 'Évora'),
@@ -131,7 +216,11 @@ CREATE TABLE IF NOT EXISTS `cliente` (
 
 -- Dumping data for table secade_beauty.cliente: ~0 rows (approximately)
 DELETE FROM `cliente`;
+INSERT INTO `cliente` (`id`, `telemovel_validado_otp`) VALUES
+	(3, 1),
+	(53, 0);
 
+-- Dumping structure for table secade_beauty.cliente_morada
 DROP TABLE IF EXISTS `cliente_morada`;
 CREATE TABLE IF NOT EXISTS `cliente_morada` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -148,10 +237,32 @@ CREATE TABLE IF NOT EXISTS `cliente_morada` (
   KEY `fk_cliente_morada_cidade` (`cidade_id`),
   CONSTRAINT `fk_cliente_morada_cidade` FOREIGN KEY (`cidade_id`) REFERENCES `cidade` (`id`) ON DELETE RESTRICT,
   CONSTRAINT `fk_cliente_morada_cliente` FOREIGN KEY (`cliente_id`) REFERENCES `cliente` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=UTF8MB4_UNICODE_CI;
+) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Dumping data for table secade_beauty.cliente_morada: ~0 rows (approximately)
 DELETE FROM `cliente_morada`;
+INSERT INTO `cliente_morada` (`id`, `cliente_id`, `cidade_id`, `designacao`, `rua`, `numero_porta`, `andar_bloco`, `codigo_postal`, `principal`) VALUES
+	(1, 3, 10, 'Casa', 'Rua de Aviz', '10', '1º Esq', '7000-123', 0),
+	(75, 53, 10, 'Casa', 'Rua Frei Carlos, 7000-737, Évora', '4', '2Esq', '7000-737', 1),
+	(98, 3, 7, 'Casa', 'Rua Teste Rica', '2', NULL, '7000-200', 1),
+	(99, 3, 10, 'Casa', 'Rua Aceitacao', '5', NULL, '7000-300', 0);
+
+-- Dumping structure for table secade_beauty.config_recibo_verde
+DROP TABLE IF EXISTS `config_recibo_verde`;
+CREATE TABLE IF NOT EXISTS `config_recibo_verde` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `percentagem_funcionario` decimal(5,2) NOT NULL DEFAULT '70.00',
+  `percentagem_plataforma` decimal(5,2) NOT NULL DEFAULT '30.00',
+  `data_vigencia` date NOT NULL,
+  `configurado_por` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_config_rv_utilizador` (`configurado_por`),
+  CONSTRAINT `fk_config_rv_utilizador` FOREIGN KEY (`configurado_por`) REFERENCES `utilizador` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `ck_config_rv_soma` CHECK (((`percentagem_funcionario` + `percentagem_plataforma`) = 100))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Dumping data for table secade_beauty.config_recibo_verde: ~0 rows (approximately)
+DELETE FROM `config_recibo_verde`;
 
 -- Dumping structure for table secade_beauty.execucao_agendamento
 DROP TABLE IF EXISTS `execucao_agendamento`;
@@ -168,10 +279,12 @@ CREATE TABLE IF NOT EXISTS `execucao_agendamento` (
   KEY `fk_exec_rota` (`rota_id`),
   CONSTRAINT `fk_exec_agendamento` FOREIGN KEY (`agendamento_id`) REFERENCES `agendamento` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_exec_rota` FOREIGN KEY (`rota_id`) REFERENCES `rota_ambulante` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Dumping data for table secade_beauty.execucao_agendamento: ~0 rows (approximately)
 DELETE FROM `execucao_agendamento`;
+INSERT INTO `execucao_agendamento` (`id`, `agendamento_id`, `rota_id`, `data_hora_inicio_real`, `data_hora_fim_real`, `estado_execucao`, `observacoes_tecnico`) VALUES
+	(21, 215, NULL, '2026-09-22 15:33:27', '2026-09-22 15:33:27', 'concluido', NULL);
 
 -- Dumping structure for table secade_beauty.fecho_caixa_diario
 DROP TABLE IF EXISTS `fecho_caixa_diario`;
@@ -203,10 +316,12 @@ CREATE TABLE IF NOT EXISTS `feedback_cliente` (
   UNIQUE KEY `execucao_agendamento_id` (`execucao_agendamento_id`),
   CONSTRAINT `fk_feedback_execucao` FOREIGN KEY (`execucao_agendamento_id`) REFERENCES `execucao_agendamento` (`id`) ON DELETE CASCADE,
   CONSTRAINT `feedback_cliente_chk_1` CHECK ((`classificacao_estrelas` between 1 and 5))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Dumping data for table secade_beauty.feedback_cliente: ~0 rows (approximately)
 DELETE FROM `feedback_cliente`;
+INSERT INTO `feedback_cliente` (`id`, `execucao_agendamento_id`, `classificacao_estrelas`, `comentario`, `data_feedback`) VALUES
+	(21, 21, 5, 'Serviço excelente (teste).', '2026-09-22 14:33:27');
 
 -- Dumping structure for table secade_beauty.funcionario
 DROP TABLE IF EXISTS `funcionario`;
@@ -222,20 +337,8 @@ CREATE TABLE IF NOT EXISTS `funcionario` (
 
 -- Dumping data for table secade_beauty.funcionario: ~0 rows (approximately)
 DELETE FROM `funcionario`;
-
--- Dumping structure for table secade_beauty.funcionario_categoria
-DROP TABLE IF EXISTS `funcionario_categoria`;
-CREATE TABLE IF NOT EXISTS `funcionario_categoria` (
-  `funcionario_id` int NOT NULL,
-  `categoria_id` int NOT NULL,
-  PRIMARY KEY (`funcionario_id`,`categoria_id`),
-  KEY `fk_func_cat_categoria` (`categoria_id`),
-  CONSTRAINT `fk_func_cat_categoria` FOREIGN KEY (`categoria_id`) REFERENCES `categoria_profissional` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_func_cat_funcionario` FOREIGN KEY (`funcionario_id`) REFERENCES `funcionario` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Dumping data for table secade_beauty.funcionario_categoria: ~0 rows (approximately)
-DELETE FROM `funcionario_categoria`;
+INSERT INTO `funcionario` (`id`, `tipo_contrato`, `salario_base`, `cc`, `ativo`) VALUES
+	(2, 'recibo_verde', 900.00, '999999990Z7R', 1);
 
 -- Dumping structure for table secade_beauty.gorjeta
 DROP TABLE IF EXISTS `gorjeta`;
@@ -284,6 +387,31 @@ INSERT INTO `matriz_deslocacao` (`id`, `base_partida_id`, `cidade_id`, `distanci
 	(8, 1, 8, 115.00, 85, 17.24),
 	(9, 1, 9, 110.00, 90, 16.42);
 
+-- Dumping structure for table secade_beauty.obrigacao_fiscal
+DROP TABLE IF EXISTS `obrigacao_fiscal`;
+CREATE TABLE IF NOT EXISTS `obrigacao_fiscal` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `tipo` enum('iva','irc','seguranca_social','seguros') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `designacao` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `periodicidade` enum('mensal','trimestral','anual') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `valor_estimado` decimal(12,2) DEFAULT '0.00',
+  `data_prazo` date NOT NULL,
+  `estado` enum('pendente','pago') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'pendente',
+  `data_pagamento` date DEFAULT NULL,
+  `observacoes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `criado_em` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_obrigacao_prazo` (`data_prazo`),
+  KEY `idx_obrigacao_estado` (`estado`)
+) ENGINE=InnoDB AUTO_INCREMENT=87 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Dumping data for table secade_beauty.obrigacao_fiscal: ~0 rows (approximately)
+DELETE FROM `obrigacao_fiscal`;
+INSERT INTO `obrigacao_fiscal` (`id`, `tipo`, `designacao`, `periodicidade`, `valor_estimado`, `data_prazo`, `estado`, `data_pagamento`, `observacoes`, `criado_em`) VALUES
+	(84, 'iva', 'IVA Trimestral (teste)', 'trimestral', 1234.56, '2026-09-29', 'pago', '2026-09-22', NULL, '2026-09-22 14:33:27'),
+	(85, 'seguranca_social', 'SS em atraso (teste)', 'mensal', 350.00, '2026-09-17', 'pendente', NULL, NULL, '2026-09-22 14:33:27'),
+	(86, 'irc', 'IRC 30 dias (teste)', 'anual', 5000.00, '2026-10-22', 'pendente', NULL, NULL, '2026-09-22 14:33:27');
+
 -- Dumping structure for table secade_beauty.rota_ambulante
 DROP TABLE IF EXISTS `rota_ambulante`;
 CREATE TABLE IF NOT EXISTS `rota_ambulante` (
@@ -291,18 +419,28 @@ CREATE TABLE IF NOT EXISTS `rota_ambulante` (
   `data_rota` date NOT NULL,
   `base_partida_id` int NOT NULL,
   `cidade_id` int NOT NULL,
-  `estado_rota` enum('planeada','aprovada_viabilidade','cancelada_por_rentabilidade','em_execucao','concluida') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'planeada',
+  `estado_rota` enum('planeada','aprovada','recusada','em_execucao','concluida') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'planeada',
   `custo_estimado_combustivel` decimal(10,2) DEFAULT '0.00',
-  `valor_rentabilidade_calculado` decimal(10,2) DEFAULT '0.00',
+  `quota_parte_cliente` decimal(10,2) DEFAULT '0.00',
+  `lucro_servicos` decimal(10,2) DEFAULT '0.00',
+  `lucro_total` decimal(10,2) DEFAULT '0.00',
+  `decidido_por` int DEFAULT NULL,
+  `decidido_em` datetime DEFAULT NULL,
+  `observacoes_decisao` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`id`),
   KEY `fk_rota_base` (`base_partida_id`),
   KEY `fk_rota_cidade` (`cidade_id`),
+  KEY `fk_rota_decidido_por` (`decidido_por`),
   CONSTRAINT `fk_rota_base` FOREIGN KEY (`base_partida_id`) REFERENCES `base_partida` (`id`) ON DELETE RESTRICT,
-  CONSTRAINT `fk_rota_cidade` FOREIGN KEY (`cidade_id`) REFERENCES `cidade` (`id`) ON DELETE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  CONSTRAINT `fk_rota_cidade` FOREIGN KEY (`cidade_id`) REFERENCES `cidade` (`id`) ON DELETE RESTRICT,
+  CONSTRAINT `fk_rota_decidido_por` FOREIGN KEY (`decidido_por`) REFERENCES `utilizador` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Dumping data for table secade_beauty.rota_ambulante: ~0 rows (approximately)
 DELETE FROM `rota_ambulante`;
+INSERT INTO `rota_ambulante` (`id`, `data_rota`, `base_partida_id`, `cidade_id`, `estado_rota`, `custo_estimado_combustivel`, `quota_parte_cliente`, `lucro_servicos`, `lucro_total`, `decidido_por`, `decidido_em`, `observacoes_decisao`) VALUES
+	(63, '2026-09-29', 1, 1, 'aprovada', 6.75, 0.00, 4.07, -52.68, 3, '2026-09-22 15:33:27', 'Decisão manual de teste: aprovada apesar da referência.'),
+	(64, '2026-09-29', 1, 7, 'recusada', 14.23, 0.00, 199.20, 134.97, 3, '2026-09-22 15:33:27', 'Decisão manual: rota recusada (rentabilidade 134.97 EUR).');
 
 -- Dumping structure for table secade_beauty.rota_funcionario
 DROP TABLE IF EXISTS `rota_funcionario`;
@@ -334,44 +472,44 @@ CREATE TABLE IF NOT EXISTS `servico` (
   CONSTRAINT `fk_servico_categoria` FOREIGN KEY (`categoria_id`) REFERENCES `categoria_profissional` (`id`) ON DELETE RESTRICT
 ) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table secade_beauty.servico: ~35 rows (approximately)
+-- Dumping data for table secade_beauty.servico: ~0 rows (approximately)
 DELETE FROM `servico`;
-INSERT INTO `servico` (`id`, `nome`, `descricao`, `categoria_id`, `duracao_estimada_minutos`, `preco_base`, `requer_espaco_fisico`) VALUES
-	(1, 'Box Braids', 'Serviço de tranças Box Braids.', 1, 240, 32.52, 0),
-	(2, 'Cordelete', 'Serviço de tranças Cordelete.', 1, 180, 48.78, 0),
-	(3, 'Demão', 'Serviço de tranças Demão.', 1, 180, 36.59, 0),
-	(4, 'Tranças Nagô', 'Serviço de tranças Nagô.', 1, 150, 28.46, 0),
-	(5, 'Retro Braids', 'Serviço de tranças Retro Braids.', 1, 240, 48.78, 0),
-	(6, 'Dreads Look', 'Aplicação de Dreads Look.', 1, 240, 44.72, 0),
-	(7, 'Trança Twist', 'Serviço de trança Twist.', 1, 210, 40.65, 0),
-	(8, 'Box Braid Crochet Hair', 'Aplicação de Box Braids com Crochet Hair.', 1, 180, 36.59, 0),
-	(9, 'Trança Boxeadora', 'Serviço de trança Boxeadora.', 1, 60, 24.39, 0),
-	(10, 'Trança Butterfly', 'Serviço de trança Butterfly.', 1, 240, 45.52, 0),
-	(11, 'Trança Fulani', 'Serviço de trança Fulani.', 1, 210, 36.59, 0),
-	(12, 'French Curl', 'Serviço de tranças French Curl.', 1, 240, 48.78, 0),
-	(13, 'Faux Locs', 'Aplicação de Faux Locs.', 1, 300, 47.15, 0),
-	(14, 'Gypsy Braids', 'Serviço de Gypsy Braids.', 1, 300, 48.78, 0),
-	(15, 'Bohemian Braids', 'Serviço de Bohemian Braids.', 1, 300, 45.53, 0),
-	(16, 'Tranças Pipocas', 'Serviço de tranças Pipocas.', 1, 180, 40.65, 0),
-	(17, 'Rabo de Cavalo (Ponytail)', 'Penteado rabo de cavalo.', 1, 60, 20.33, 0),
-	(18, 'Coque (Bun)', 'Penteado coque.', 1, 60, 24.39, 0),
-	(19, 'Trança Francesa', 'Penteado com trança francesa.', 1, 45, 13.82, 0),
-	(20, 'Half Bun (Meio Coque)', 'Penteado meio coque.', 1, 60, 36.59, 0),
-	(21, 'Beach Waves', 'Penteado Beach Waves.', 1, 60, 16.26, 0),
-	(22, 'Cabelo Liso com Franja', 'Alisamento e finalização com franja.', 1, 90, 32.52, 0),
-	(23, 'Coque Messy', 'Penteado coque messy.', 1, 60, 28.46, 0),
-	(24, 'Trança Espinha de Peixe', 'Penteado trança espinha de peixe.', 1, 60, 16.26, 0),
-	(25, 'Cabelo Preso Lateral', 'Penteado preso lateral.', 1, 60, 36.59, 0),
-	(26, 'Cabelo Solto com Ondas', 'Penteado cabelo solto com ondas.', 1, 90, 40.65, 0),
-	(27, 'Coque Baixo Elegante', 'Penteado coque baixo elegante.', 1, 60, 20.33, 0),
-	(28, 'Corte de Cabelo', 'Corte de cabelo masculino.', 2, 30, 12.20, 0),
-	(29, 'Barba', 'Aparar e modelar barba.', 2, 20, 4.07, 0),
-	(30, 'Maquilhagem para Noivas', 'Maquilhagem profissional para noivas.', 3, 120, 40.65, 0),
-	(31, 'Maquilhagem para Festa', 'Maquilhagem profissional para festas.', 3, 90, 28.46, 0),
-	(32, 'Maquilhagem Simples', 'Maquilhagem simples.', 3, 45, 16.26, 0),
-	(33, 'Manicure', 'Serviço de manicure.', 3, 45, 12.20, 0),
-	(34, 'Limpeza Facial', 'Limpeza facial.', 3, 60, 24.39, 1),
-	(35, 'Design de Sobrancelha com Linha', 'Design de sobrancelhas com linha.', 3, 30, 8.13, 0);
+INSERT INTO `servico` (`id`, `nome`, `descricao`, `categoria_id`, `duracao_estimada_minutos`, `preco_base`, `requer_espaco_fisico`, `ativo`) VALUES
+	(1, 'Box Braids', 'Serviço de tranças Box Braids.', 1, 240, 32.52, 0, 1),
+	(2, 'Cordelete', 'Serviço de tranças Cordelete.', 1, 180, 48.78, 0, 1),
+	(3, 'Demão', 'Serviço de tranças Demão.', 1, 180, 36.59, 0, 1),
+	(4, 'Tranças Nagô', 'Serviço de tranças Nagô.', 1, 150, 28.46, 0, 1),
+	(5, 'Retro Braids', 'Serviço de tranças Retro Braids.', 1, 240, 48.78, 0, 1),
+	(6, 'Dreads Look', 'Aplicação de Dreads Look.', 1, 240, 44.72, 0, 1),
+	(7, 'Trança Twist', 'Serviço de trança Twist.', 1, 210, 40.65, 0, 1),
+	(8, 'Box Braid Crochet Hair', 'Aplicação de Box Braids com Crochet Hair.', 1, 180, 36.59, 0, 1),
+	(9, 'Trança Boxeadora', 'Serviço de trança Boxeadora.', 1, 60, 24.39, 0, 1),
+	(10, 'Trança Butterfly', 'Serviço de trança Butterfly.', 1, 240, 45.52, 0, 1),
+	(11, 'Trança Fulani', 'Serviço de trança Fulani.', 1, 210, 36.59, 0, 1),
+	(12, 'French Curl', 'Serviço de tranças French Curl.', 1, 240, 48.78, 0, 1),
+	(13, 'Faux Locs', 'Aplicação de Faux Locs.', 1, 300, 47.15, 0, 1),
+	(14, 'Gypsy Braids', 'Serviço de Gypsy Braids.', 1, 300, 48.78, 0, 1),
+	(15, 'Bohemian Braids', 'Serviço de Bohemian Braids.', 1, 300, 45.53, 0, 1),
+	(16, 'Tranças Pipocas', 'Serviço de tranças Pipocas.', 1, 180, 40.65, 0, 1),
+	(17, 'Rabo de Cavalo (Ponytail)', 'Penteado rabo de cavalo.', 1, 60, 20.33, 0, 1),
+	(18, 'Coque (Bun)', 'Penteado coque.', 1, 60, 24.39, 0, 1),
+	(19, 'Trança Francesa', 'Penteado com trança francesa.', 1, 45, 13.82, 0, 1),
+	(20, 'Half Bun (Meio Coque)', 'Penteado meio coque.', 1, 60, 36.59, 0, 1),
+	(21, 'Beach Waves', 'Penteado Beach Waves.', 1, 60, 16.26, 0, 1),
+	(22, 'Cabelo Liso com Franja', 'Alisamento e finalização com franja.', 1, 90, 32.52, 0, 1),
+	(23, 'Coque Messy', 'Penteado coque messy.', 1, 60, 28.46, 0, 1),
+	(24, 'Trança Espinha de Peixe', 'Penteado trança espinha de peixe.', 1, 60, 16.26, 0, 1),
+	(25, 'Cabelo Preso Lateral', 'Penteado preso lateral.', 1, 60, 36.59, 0, 1),
+	(26, 'Cabelo Solto com Ondas', 'Penteado cabelo solto com ondas.', 1, 90, 40.65, 0, 1),
+	(27, 'Coque Baixo Elegante', 'Penteado coque baixo elegante.', 1, 60, 20.33, 0, 1),
+	(28, 'Corte de Cabelo', 'Corte de cabelo masculino.', 2, 30, 12.20, 0, 1),
+	(29, 'Barba', 'Aparar e modelar barba.', 2, 20, 4.07, 0, 1),
+	(30, 'Maquilhagem para Noivas', 'Maquilhagem profissional para noivas.', 3, 120, 40.65, 0, 1),
+	(31, 'Maquilhagem para Festa', 'Maquilhagem profissional para festas.', 3, 90, 28.46, 0, 1),
+	(32, 'Maquilhagem Simples', 'Maquilhagem simples.', 3, 45, 16.26, 0, 1),
+	(33, 'Manicure', 'Serviço de manicure.', 3, 45, 12.20, 0, 1),
+	(34, 'Limpeza Facial', 'Limpeza facial.', 3, 60, 24.39, 1, 1),
+	(35, 'Design de Sobrancelha com Linha', 'Design de sobrancelhas com linha.', 3, 30, 8.13, 0, 1);
 
 -- Dumping structure for table secade_beauty.servico_foto
 DROP TABLE IF EXISTS `servico_foto`;
@@ -413,7 +551,7 @@ CREATE TABLE IF NOT EXISTS `transacao_financeira` (
   `agendamento_id` int NOT NULL,
   `funcionario_id` int NOT NULL,
   `metodo_pagamento` enum('numerario_dinheiro','mb_way','multibanco_pos') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `tipo_transacao` enum('sinal_inicial','restante_90_porcento','pagamento_integral') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tipo_transacao` enum('sinal_inicial','restante_90_porcento','pagamento_integral','quota_parte_deslocacao') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `valor` decimal(10,2) NOT NULL,
   `estado_offline` tinyint(1) DEFAULT '0',
   `recibo_manual_numero` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -441,10 +579,15 @@ CREATE TABLE IF NOT EXISTS `utilizador` (
   `criado_em` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=74 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table secade_beauty.utilizador: ~0 rows (approximately)
+-- Dumping data for table secade_beauty.utilizador: ~4 rows (approximately)
 DELETE FROM `utilizador`;
+INSERT INTO `utilizador` (`id`, `nome`, `email`, `password_hash`, `telemovel`, `nif`, `tipo_perfil`, `criado_em`) VALUES
+	(1, 'Gestor Secade', 'gestor@secade.pt', '$2y$10$DX3o9mDbE2M00tUg21KO1OOtvl7SGpPvhNZ4SFnYBXHNetwcdt0F6', '+351911111111', '123456789', 'gestor', '2026-09-21 21:27:40'),
+	(2, 'Ana Técnica', 'funcionario@secade.pt', '$2y$10$D22wXVD90rZoILW3X3QalOTr1mb3dSz8IxR5eIbulvc0jN0Eitvta', '+351922222222', '298765438', 'funcionario', '2026-09-21 21:27:40'),
+	(3, 'João Cliente', 'cliente@teste.pt', '$2y$10$NRQDxzU490d8RvpmHVmLb.6AnC74Pds1ozKySPI85.1801rGGDWSS', '+351933333333', '345678915', 'cliente', '2026-09-21 21:27:40'),
+	(53, 'Daniel Branco', 'hb.daniel@gmail.com', '$2y$10$g95ZP3MI6AsHPIoPuvddk.VEoEKqUONmvT/XVLkPTQoIs8raP4YVu', '923456789', NULL, 'cliente', '2026-09-22 11:59:11');
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
