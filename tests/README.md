@@ -1,7 +1,8 @@
 # TESTES — SUITES AUTOMATIZADAS
 
 **Fonte única** sobre as suites de teste do projeto: o que cobrem, como se executam e que
-pré-requisitos têm. Referenciado pelo `.clinerules` §5 e pela especificação §26.
+pré-requisitos têm. Referido no `.clinerules` §0 (protocolo de leitura) e §5 (fontes únicas) e na
+especificação §26.
 
 | Suite                 | Verificações | Pré-requisitos     | Âmbito                                                                                                                                   |
 | :-------------------- | :----------- | :----------------- | :--------------------------------------------------------------------------------------------------------------------------------------- |

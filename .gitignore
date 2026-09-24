@@ -32,14 +32,16 @@ error_log
 nbproject/
 .phpintel/
 
-# --- AGENT / HUMAN WORKSPACE (ver .clinerules 11.5) ---
-# Ficheiros e pastas de trabalho do agente: documento-mestre, mapa de apoio a testes,
-# utilitarios de manutencao e regras do assistente. Existem APENAS na branch
-# 'agent-workspace' e NUNCA sao versionados nas branches de produto (main, dev, *).
-# Nessa branch ja estao versionados (tracked); um ficheiro tracked nao e afectado
-# por estas regras. Se for preciso volta-los a versionar noutra branch, usar:
+# --- AGENT / HUMAN WORKSPACE (ver .clinerules 4) ---
+# Ficheiros e pastas de trabalho do agente: documento-mestre e modulos da especificacao,
+# regras de documentacao on-demand, mapa de apoio a testes, utilitarios de manutencao e
+# regras do assistente. Existem APENAS na branch 'agent-workspace' e NUNCA sao versionados
+# nas branches de produto (main, dev, *). Nessa branch ja estao versionados (tracked); um
+# ficheiro tracked nao e afectado por estas regras. Se for preciso volta-los a versionar
+# noutra branch, usar:
 #   git add -f <caminho>
 /.clinerules
 /especificacao_mvp.md
+/docs/
 /mapaMentalMVP/
 /tools/

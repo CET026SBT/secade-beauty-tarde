@@ -1,209 +1,140 @@
-# REGRAS PERMANENTES — PROJETO SECADE BEAUTY
+# REGRAS PERMANENTES — SECADE BEAUTY
 
-## 0. ÂMBITO, FONTES E ÂNCORAS
+## 0. LEITURA — como usar este ficheiro
 
-Este ficheiro define **como o trabalho é executado**. **Não** é a especificação do produto: essa
-vive na `especificacao_mvp.md` (fonte única de requisitos, regras, modelo de dados e decisões).
+Ficheiro de **operação**. Não contém produto: contém (a) restrições, convenções **já aplicadas** e Git, e
+(b) **ponteiros** para a fonte única de cada assunto (tabela §5).
 
-**Fonte única por assunto** — não duplicar conteúdo, apontar:
+**Protocolo de leitura — não carregar o que não é preciso:**
 
-| Assunto                                    | Fonte única                                  | Âncora          |
-| :----------------------------------------- | :------------------------------------------- | :-------------- |
-| Requisitos e regras de negócio             | `especificacao_mvp.md`                       | §4 · §5         |
-| Decisões finais e conflitos resolvidos     | `especificacao_mvp.md`                       | §3              |
-| Modelo de dados, API e máquina de estados  | `especificacao_mvp.md`                       | §17 · §19 · §20 |
-| Arquitetura por camadas (implementação)    | `especificacao_mvp.md`                       | §18.1–§18.4     |
-| Contrato de nomes, front-end e acesso      | `especificacao_mvp.md`                       | §18.5–§18.7     |
-| **Convenções de código (nomenclatura)**    | **este ficheiro**                            | §2              |
-| Roadmap, estado, gap e trabalho futuro     | `especificacao_mvp.md`                       | §21 · §24 · §25 |
-| Simplificações académicas e limitações     | `especificacao_mvp.md`                       | §22             |
-| Critérios de aceitação                     | `especificacao_mvp.md`                       | §28             |
-| Testes: suites, execução e pré-requisitos  | `tests/README.md`                            | —               |
-| Ferramentas: catálogo, opções e utilização | `tools/README.md`                            | §1 · §2 · §3    |
-| **Utilização do Git e commits**            | **este ficheiro**                            | §4              |
-| Guia de teste manual                       | `mapaMentalMVP/guia_teste_manual.md`         | —               |
-| Análise e auditoria (**não normativo**)    | `mapaMentalMVP/analise_backoffice_gestor.md` | —               |
-|                                            | `mapaMentalMVP/auditoria_artefactos.md`      | —               |
+| #   | Ler                                          | Quando                                         |
+| :-- | :------------------------------------------- | :--------------------------------------------- |
+| 1   | Este ficheiro (≈140 linhas)                  | sempre                                         |
+| 2   | `especificacao_mvp.md` — **router** (~67 l.) | sempre: dá o mapa `§ → ficheiro`               |
+| 3   | **UM** ficheiro de `docs/spec/`              | só o domínio em causa — nunca os nove          |
+| 4   | `tests/README.md` · `tools/README.md`        | ao testar · ao usar ferramentas                |
+| 5   | `docs/README.md`                             | **só** quando o humano pedir documentação/mapa |
 
-**Âncoras:** as referências usam **sempre o número da secção** (`§18.2`), **nunca** linhas. As
-referências `§NN` são validadas por `tools/md-verify.php`, que inclui **este** ficheiro — uma âncora
-partida é detetada antes de qualquer commit.
+**Convenções de referência**
 
-**Prevalência:** em caso de conflito, prevalece a `especificacao_mvp.md`; o erro é **deste**
-ficheiro e corrige-se aqui.
+- `§N` → secção da **especificação** (vive em `docs/spec/`); as `§NN` são validadas entre ficheiros por
+  `tools/md-verify.php`.
+- `rules §N` → secção **deste** ficheiro.
+- Referências na banda `§1–§5` deste ficheiro escrevem-se com o **ficheiro de destino** (evita ambiguidade).
+
+**Prevalência:** produto → especificação · operação → este ficheiro · testes → `tests/README.md` ·
+ferramentas → `tools/README.md`. Em conflito de **produto** prevalece a especificação; o erro **deste**
+ficheiro corrige-se aqui.
 
 **Regras de trabalho**
 
-1. **Requisito primeiro.** Requisito, regra ou convenção nova entra na `especificacao_mvp.md`
-   (§29.3) e só depois no código.
-2. **Evidência, não memória.** Toda a afirmação sobre o sistema sai de ficheiro lido (caminho e
-   linha) ou de comando executado.
-3. **Prova de origem.** Requisito que venha de conversa (Teams, e-mail) e não exista no repositório
-   é **perguntado**, nunca inferido.
-4. **Convenções só depois de aplicadas.** Uma convenção de código entra em §2 **apenas quando já
-   está implementada**. Enquanto for proposta, vive nos documentos de análise
-   (`mapaMentalMVP/`), que **não** são normativos.
-5. **Fechar o ciclo.** Concluída uma implementação da §24/§25, atualizar **§4 (estado)**,
-   **§24 (gap)**, **§28.2 (critério)** e **§26 (testes)** na mesma alteração — §29.3.6.
+1. **Requisito primeiro** — entra na especificação e só depois no código. Como o fazer:
+   `docs/rules/build_spec_on_demand.md`.
+2. **Evidência, não memória** — toda a afirmação sai de ficheiro lido (caminho:linha) ou de comando executado.
+3. **Prova de origem** — requisito vindo de conversa (Teams/e-mail) e ausente do repositório é
+   **perguntado**, nunca inferido.
+4. **Convenções só depois de aplicadas** — entram em `rules §2` apenas quando já existem no código;
+   propostas vivem em `mapaMentalMVP/` (**não normativo**).
+5. **Fechar o ciclo** — concluída uma implementação da §24/§25: atualizar estado
+   (`docs/spec/requirements.md` §4), gap (§24 → `docs/spec/backlog.md`), critério (§28 →
+   `docs/spec/delivery.md`) e testes (§26 → `docs/spec/delivery.md`) na mesma alteração.
+6. **Sem redundância** — conteúdo que já exista noutro ficheiro **aponta-se**, não se copia.
 
 ## 1. STACK E RESTRIÇÕES
 
-Stack fixa: PHP puro + PDO + MySQL 8.4.3 · HTML5/CSS3/JS com Bootstrap 5, jQuery e as bibliotecas
-já presentes em `modules/common/lib` · Laragon local. Detalhe: especificação §1 · §18.8.
-
-**Restrições de execução**
+Stack fixa: PHP puro + PDO + MySQL 8.4.3 · HTML5/CSS3/JS com Bootstrap 5.0.0, jQuery 3.6.1 e as
+bibliotecas de `modules/common/lib` · Laragon local. Detalhe: `docs/spec/core.md` §1.
 
 - ❌ Instalar pacotes (Composer, npm) ou adotar frameworks externos.
-- ❌ Aceder ou alterar a pasta `/admin` na raiz — o backoffice vive em `modules/backoffice/`.
-- ❌ Alterar a estrutura da BD sem justificação registada na especificação (§29.3).
+- ❌ Aceder ou alterar `/admin` na raiz — o backoffice vive em `modules/backoffice/`.
+- ❌ Alterar a estrutura da BD sem justificação registada na especificação.
 - ❌ Refatorar código existente sem planeamento aprovado.
-- ❌ Duplicar neste ficheiro conteúdo que já exista na especificação, no `tests/README.md` ou no
-  `tools/README.md`.
+- ❌ Criar ou reescrever documentação **sem pedido explícito**.
+- ❌ Duplicar neste ficheiro conteúdo da especificação, de `tests/README.md` ou de `tools/README.md`.
 
-Decisões de gestão são **manuais**: nenhum indicador automático decide ou bloqueia (regra de
-negócio em §3.1 · §12.2 · §12.3).
+Decisões de gestão são **manuais**: nenhum indicador automático decide ou bloqueia
+(`docs/spec/core.md` §3.1 · `docs/spec/booking.md` §12.2 · §12.3).
 
-## 2. CONVENÇÕES DE CÓDIGO
+## 2. CONVENÇÕES DE CÓDIGO (aplicadas)
 
-> Movidas da especificação §18 (nomenclatura, idioma, contrato de nomes, front-end), onde deixam de
-> estar repetidas. A **arquitetura por camadas** e a **matriz de acesso por perfil** continuam lá
-> (§18.1–§18.4 e §18.6): são implementação e modelo de negócio, não estilo.
+| Elemento          | Convenção                         | Exemplo                |
+| :---------------- | :-------------------------------- | :--------------------- |
+| Classes           | PascalCase                        | `BookingService`       |
+| Métodos           | camelCase                         | `createStoreBooking`   |
+| Tabelas / colunas | snake_case (**PT**)               | `agendamento_servico`  |
+| Endpoints         | kebab-case `?action=dominio-acao` | `admin-service-accept` |
+| Ficheiros JS      | camelCase                         | `bookingWizard.js`     |
+| Idioma            | **código EN** · **BD PT**         | —                      |
 
-**Nomenclatura e idioma**
+- Classes refletem o modelo da BD: entidade ↔ Service ↔ Repository ↔ tabela.
+- **Endpoints — famílias existentes:** `admin-` (gestor) · `admin-service-` (aceitação, funcionário) ·
+  `customer-` · `booking-` · `auth-` · públicas. **Não criar prefixos novos.**
+- **Camadas** (`§18.1–§18.4`): Controller autoriza e delega · Service valida, orquestra e gere
+  transações · Repository SQL com prepared statements · Mapper traduz BD→EN.
+- **JOINs** (`§18.2`): permitidos em SELECT **N:1 de lookup**; proibidos para coleções filhas (1:N →
+  Service); **escrita sempre na própria tabela**.
+- **Contrato de nomes front↔API** (`§18.5`): o `name` do campo e a chave do validator espelham
+  **exatamente** o que a API espera (EN camelCase). **A API dita o contrato.** Verificado por
+  `tests/asset_test.php`.
+- **Front-end** (`§18.7`): `form.utils.js` + validators (molde `customerRegister.js`) · `API.*` de
+  `api.js` · erros por `responseJSON.message`/`.errors` · overlays com **jq-preloader** · `generalUtils`.
+- **Segurança e acesso** (`§18.6`): APIs `Session::requireLoginApi()` → **401** ·
+  `Session::requireProfileApi([...])` → **403** · páginas com `Session::requireLogin()` + perfil e
+  redirect · `BaseController::requireCustomer()` · prepared statements sempre ·
+  `password_hash(PASSWORD_BCRYPT)` · OTP com `hash_equals`.
+## 3. ESCRITA SEGURA E GATE
 
-| Elemento          | Convenção                               | Exemplo                |
-| :---------------- | :-------------------------------------- | :--------------------- |
-| Classes           | **PascalCase**                          | `BookingService`       |
-| Métodos           | **camelCase**                           | `createStoreBooking`   |
-| Tabelas / colunas | **snake_case (PT)**                     | `agendamento_servico`  |
-| Endpoints         | **kebab-case** (`?action=dominio-acao`) | `admin-service-accept` |
-| Ficheiros JS      | **camelCase**                           | `bookingWizard.js`     |
-| Idioma            | **código EN** · **BD PT**               | —                      |
+**Escrita de ficheiros** — ❌ nunca o ciclo `Get-Content` + `Set-Content` do PowerShell 5.1 (introduz
+**BOM** e **mojibake silencioso**). Causa medida e vias corretas: `tools/README.md` §1.
+✅ `php tools/file-edit.php …` ou via .NET. Exigência: **UTF-8 sem BOM**, mantendo **CRLF**.
 
-- As classes refletem o **modelo da BD**: entidade ↔ Service ↔ Repository ↔ tabela.
-- Famílias de endpoints **já existentes**: `admin-` (gestor) · `admin-service-` (aceitação, do
-  funcionário) · `customer-` · `booking-` · `auth-` · públicas. **Não criar prefixos novos.**
-- Front Controller: `index.php` distingue **API** (`?action=…`) de **página** (rotas com `:param`).
+**Gate antes de concluir** — nesta ordem, todos com `--write`:
+`md-join-tables` → `md-wrap-tables` → `md-align-tables` → `ascii-align`, e depois
+`php tools/health-check.php` tem de terminar em **`TUDO OK`**. Se tocar em JS:
+`php tests/js_syntax_check.php`. Opções e garantias do pipeline: `tools/README.md` §3.
 
-**Contrato de nomes front-end ↔ API (obrigatório)**
+## 4. GIT — UTILIZAÇÃO E COMMITS
 
-O atributo `name` de cada campo de formulário (input, select, textarea) e a chave do validator em
-JS espelham **exatamente** a chave que a API espera — a mesma que os mappers produzem.
-**A API dita o contrato; o front-end adapta-se.** O português fica reservado à BD.
+| Branch            | Papel                                                       | Recebe merges/PR de         |
+| :---------------- | :---------------------------------------------------------- | :-------------------------- |
+| `main`            | Código final, 100% funcional de ponta a ponta               | apenas de `dev`             |
+| `dev`             | Desenvolvimento — estado mais avançado                      | branches de contexto/tarefa |
+| `agent-workspace` | Documentação do par agente/humano (spec, `docs/`, `tools/`) | — (**nunca** integrada)     |
+| restantes         | Branches de trabalho (contexto, funcionalidade, correção)   | —                           |
 
-| Chave correta (EN, camelCase)                                  | Chave legada a evitar (PT, snake_case)                       |
-| :------------------------------------------------------------- | :----------------------------------------------------------- |
-| `name`, `email`, `password`, `confirmPassword`, `phone`, `nif` | `nome`, `telemovel`                                          |
-| `street`, `doorNumber`, `floor`, `zipCode`, `cityName`         | `morada`, `numPorta`, `andarBloco`, `codigoPostal`, `cidade` |
-| `termsAccepted`, `profileType`                                 | `termosCondicoes`, `tipoPerfil`                              |
-
-Verificado por `tests/asset_test.php` (falha se reaparecer uma chave legada no registo).
-`AddressAutocomplete` declara o mapa explícito `static FIELD_NAMES`.
-
-**Segurança**
-
-- APIs: `Session::requireLoginApi()` → **401** · `Session::requireProfileApi([...])` → **403**.
-- Páginas: `Session::requireLogin()` + verificação de perfil, com **redirect**.
-- `BaseController::requireCustomer()` = `requireProfileApi(['cliente'])` + devolve o id.
-- **Prepared statements** em todas as queries · passwords com `password_hash(PASSWORD_BCRYPT)` ·
-  OTP comparado com `hash_equals`.
-- Âmbito por perfil: o cliente só acede aos **seus** registos; o funcionário opera **em nome
-  próprio**; o feedback valida a propriedade do agendamento. Matriz completa: §18.6.
-
-**Front-end**
-
-- Formulários com a classe `Form` de `form.utils.js` + validators em
-  `modules/common/js/validators/` (molde: `customerRegister.js`).
-- Chamadas HTTP por `API.*` de `api.js` (sobre `ApiClient`). As respostas **não** vêm aninhadas em
-  `data`: as chaves estão na **raiz** do JSON.
-- Erros: `xhr.responseJSON.message` e `xhr.responseJSON.errors`.
-- Overlays, spinners e skeletons: **jq-preloader** (`$el.preloader(...)`).
-- Utilitários: `generalUtils` (`formatCurrency`, `formatDuration`, `escapeHtml`, `slugify`, …).
-- Responsivo: grelha Bootstrap, *mobile-first*.
-
-## 3. ESCRITA SEGURA E VALIDAÇÃO
-
-**Escrita de ficheiros.** ❌ Nunca reescrever ficheiros pelo ciclo `Get-Content` + `Set-Content` do
-PowerShell 5.1 — introduz **BOM** e **mojibake silencioso**. Causa, medições e as vias corretas
-estão em **`tools/README.md` §1**. Exigência permanente: **UTF-8 sem BOM**, mantendo o fim de linha
-do ficheiro (**CRLF**).
-
-**Antes de finalizar alterações a `.md`.** Correr o pipeline de formatação e a verificação de saúde
-— ordem, opções e garantias em **`tools/README.md` §3** — e garantir que
-`php tools/health-check.php` termina com **`TUDO OK`**.
-
-## 4. GIT — UTILIZAÇÃO E COMMITS (fonte única)
-
-**Modelo de branches**
-
-| Branch            | Papel                                                        | Recebe merges/PR de              |
-| :---------------- | :----------------------------------------------------------- | :------------------------------- |
-| `main`            | Código final de qualidade, 100% funcional de ponta a ponta   | apenas de `dev`                  |
-| `dev`             | Desenvolvimento, estado mais avançado do projeto             | branches de contexto e de tarefa |
-| `agent-workspace` | Documento-mestre, `mapaMentalMVP/`, `tools/` e `.clinerules` | — (nunca é integrada)            |
-| restantes         | Branches de trabalho (contexto, funcionalidade, correção)    | —                                |
-
-- ❌ **Nunca** commitar em `main` nem em `dev`. ✅ O agente commita nas **branches de contexto /
-  tarefa**.
-- A integração em `dev` — e de `dev` para `main` — é sempre por **merge/PR** e é **decisão do
-  utilizador**.
-- O trabalho é dividido por **branches de contexto** (uma por âmbito). Para não haver conflitos, os
-  ficheiros de cada branch são **disjuntos**: cada ficheiro pertence a **uma única** branch. Os
-  transversais (`index.php`, `app/config/api.php`, `modules/main/css/style.css`, `api.js`) ficam
-  numa branch de infraestrutura própria.
+- ❌ **Nunca** commitar em `main` nem em `dev`. ✅ O agente commita nas **branches de contexto/tarefa**.
+- Integrar em `dev` — e de `dev` para `main` — é **merge/PR** e **decisão do utilizador**.
+- Os ficheiros de cada branch de contexto são **disjuntos** (um ficheiro pertence a uma só branch); os
+  transversais (`index.php`, `app/config/api.php`, `api.js`, `modules/main/css/style.css`) ficam numa
+  branch de infraestrutura própria.
 - Ordem de integração: schema → core/infra → higiene → frontend → domínios → testes.
+- **Mensagens de commit:** título curto; **sem emoji** e **sem markdown**; bullets com `-`; dizer o que
+  mudou e porquê.
+- **`agent-workspace`:** os seus caminhos estão no `.gitignore`; para os versionar usa-se `git add -f` — e
+  **só** nesta branch. `README.md`, `tests/` e código de produto versionam-se normalmente em `dev`.
 
-**Mensagens de commit** — tipografia simples:
+## 5. FONTES ÚNICAS E MANUTENÇÃO
 
-- Descrever **resumidamente** o que foi feito.
-- **Sem emoji** e **sem formatação markdown** (sem negrito, títulos, tabelas).
-- Apenas `-` para bullet points, quando forem necessários.
+Cada assunto tem **uma** fonte. Ao tocar num ficheiro, manter coerentes os que o referenciam.
 
-```text
-titulo curto e simples
+| Assunto                                  | Fonte única                      | Âncora       | Atualizar quando              |
+| :--------------------------------------- | :------------------------------- | :----------- | :---------------------------- |
+| Entrada da especificação (mapa `§`)      | `especificacao_mvp.md` (router)  | —            | muda a divisão por domínios   |
+| Requisitos, regras, decisões, dados, API | `docs/spec/*.md`                 | §1–§29       | regra ou requisito novo       |
+| Operação: restrições, convenções, Git    | `.clinerules` (**este**)         | §1 · §2 · §4 | convenção aplicada, fluxo Git |
+| Testes: suites, execução, pré-requisitos | `tests/README.md`                | —            | suite nova, contagem          |
+| Ferramentas: catálogo, opções, pipeline  | `tools/README.md`                | §1 · §2 · §3 | ferramenta ou opção nova      |
+| Documentação on-demand: regras e moldes  | `docs/README.md` · `docs/rules/` | —            | regra ou molde novo           |
+| Instalação e uso rápido                  | `README.md`                      | —            | stack, instalação, pastas     |
+| Análise, auditoria e guias (**apoio**)   | `mapaMentalMVP/*.md`             | —            | nova iteração (não normativo) |
 
-- o que foi alterado
-- porque foi alterado
-```
-
-**Branch `agent-workspace`**
-
-- Guarda **exclusivamente**: `.clinerules`, `especificacao_mvp.md`, `mapaMentalMVP/` e `tools/`.
-- **Nunca** é integrada em `dev` nem em `main`; se for preciso partilhar algum destes ficheiros, o
-  fluxo é no sentido oposto e é decisão do utilizador.
-- Esses caminhos estão no `.gitignore`: **nunca** são versionados nas outras branches (o
-  `git status` fica limpo mesmo com os ficheiros no disco).
-- Um ficheiro já versionado **não** é afetado pelo `.gitignore`; para o versionar usa-se
-  `git add -f <caminho>` — e **só** nesta branch.
-- `README.md`, `tests/` e todo o código de produto **são versionados normalmente** em `dev`.
-
-## 5. TESTES
-
-A fonte única desta matéria é **`tests/README.md`**: lá estão as quatro suites, o que cobrem, como se
-executam, os pré-requisitos (Apache e MySQL) e as garantias de repetibilidade. **Não se repete nada
-aqui.** Guia manual de ponta a ponta: `mapaMentalMVP/guia_teste_manual.md`. Critérios de aceitação
-do MVP: §28.
-
-## 6. MANUTENÇÃO DA DOCUMENTAÇÃO
-
-Cada ficheiro tem **um papel exclusivo**. Na mesma alteração, manter coerentes os que forem tocados:
-
-| Ficheiro               | Papel exclusivo                                    | Atualizar quando muda                    |
-| :--------------------- | :------------------------------------------------- | :--------------------------------------- |
-| `especificacao_mvp.md` | Requisitos, regras, BD, API, estados, arquitetura  | Sempre — é a fonte única (§29.3)         |
-| `.clinerules`          | Este ficheiro: operação, convenções aplicadas, Git | Convenção aplicada, restrição, fluxo Git |
-| `tests/README.md`      | Suites de teste, execução e pré-requisitos         | Suite nova, contagem, pré-requisito      |
-| `tools/README.md`      | Catálogo, opções e convenções das ferramentas      | Ferramenta nova, opção, pragma           |
-| `README.md`            | Instalação, uso rápido e mapa de pastas            | Stack, instalação, estrutura             |
-| `mapaMentalMVP/*.md`   | Análise e auditoria (**não normativo**)            | Nova iteração de análise ou auditoria    |
+**Histórico:** regras revogadas e decisões antigas **não se acumulam** — o arquivo é o **Git**
+(`git log --diff-filter=D --oneline -- "*.md"`).
 
 ---
 
-**Este ficheiro NÃO deve ser alterado sem aprovação.**
-**Versão:** 2.0 Académica · **Data:** 24/09/2026
-**Histórico:** v1.3 → v2.0 — deduplicação por fonte única. As convenções de código passaram da
-especificação (§18) para §2; a utilização do Git ficou centralizada em §4; as ferramentas e os testes
-passaram a referenciar `tools/README.md` e `tests/README.md`; prioridades, simplificações, estrutura
-de camadas e critérios de sucesso passaram a referências (§21 · §22 · §18 · §28), deixando de estar
-repetidos. Corrige ainda: a regra de JOIN, que estava desatualizada face à §18.2; o exemplo de método
-em português; e o prazo do cronograma de 7 dias, revogado pela §21.
+**Este ficheiro não deve ser alterado sem aprovação.**
+**Versão:** 3.0 · **Data:** 24/09/2026
+**Histórico:** v2.0 → v3.0 — arquitetura Lean em três níveis: a especificação passou a **router** (67
+linhas) + `docs/spec/` por domínio; fontes únicas e manutenção fundidas numa só tabela (§5); protocolo de
+leitura em §0; `docs/` (regras e moldes) entra como nível **on-demand**.
