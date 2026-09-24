@@ -38,8 +38,8 @@ ou `1` (existe falha).
 
 ## Fora do âmbito destas suites
 
-- **Testes manuais** (fluxos completos por interface, navegação mobile, responsividade):
-  `mapaMentalMVP/guia_teste_manual.md`.
+- **Testes manuais** (fluxos completos por interface, navegação mobile, responsividade): o guia é
+  **gerado sob demanda** (`docs/rules/`) — não é ficheiro mantido.
 - **Critérios de aceitação do MVP** (o que tem de estar concluído, por fase): `especificacao_mvp.md`
   §28.
 - **Cobertura em falta** (funcionalidades da §24 por implementar): `especificacao_mvp.md` §26.4.

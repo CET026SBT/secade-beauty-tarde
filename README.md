@@ -60,7 +60,8 @@ secade-beauty-tarde/
 
 [existe apenas na branch agent-workspace — ver "Ramos do repositório"]
 especificacao_mvp.md       # Documento-mestre (fonte única de verdade)
-mapaMentalMVP/             # Apoio a testes: guia manual + mapa de fluxo de dados
+docs/                      # Especificação por domínio + regras/moldes on-demand
+mapaMentalMVP/             # Apoio não normativo: análise, auditoria, mensagem Teams
 tools/                     # Utilitários de manutenção dev-only (encoding, .md)
 .clinerules                # Regras permanentes do assistente
 ```
@@ -240,8 +241,9 @@ num único ficheiro e removidos, para evitar divergência de informação e redu
    finais, regras de negócio, modelo de dados (com diagrama de relações), arquitetura e convenções,
    API, máquina de estados, testes e instalação. **Prevalece** em caso de conflito.
 2. **`README.md`** — este ficheiro: instalação e uso rápido.
-3. **`mapaMentalMVP/`** — apoio aos testes: `guia_teste_manual.md` (guia passo-a-passo) e
-   `mapa_fluxo_dados.md` (mapa visual do fluxo de dados ponta-a-ponta).
+3. **`docs/`** — documentação **on-demand**: `docs/README.md` (mapa e regras), `docs/spec/`
+   (especificação por domínio), `docs/rules/` + `docs/templates/` (guias, mapas e relatórios
+   gerados **só quando pedidos**).
 4. **`.clinerules`** — regras permanentes do projeto.
 5. **`tools/`** — utilitários de manutenção (encoding seguro, formatação/validação dos `.md`); guia próprio em `tools/README.md`.
 
@@ -254,7 +256,7 @@ num único ficheiro e removidos, para evitar divergência de informação e redu
 > todas a passar** (105 funcionais + 119 HTTP + 65 de assets + sintaxe JS).
 >
 > Testes **manuais** (fluxos por interface, navegação mobile, responsividade):
-> `mapaMentalMVP/guia_teste_manual.md`. Critérios de aceitação: `especificacao_mvp.md` §28.
+> guia de teste manual **gerado sob demanda** (`docs/rules/`). Critérios de aceitação: `especificacao_mvp.md` §28.
 
 ### Manual — Criar um Cliente
 1. Aceder a http://localhost/secade-beauty-tarde/registo
@@ -344,8 +346,9 @@ Body: { "email": "teste@test.com", "password": "Test@123" }
 ## 📞 SUPORTE
 
 Para questões sobre o projeto, consultar o **documento-mestre** `especificacao_mvp.md`
-(índice no §0 e anexos no §29). Para testar manualmente, usar `mapaMentalMVP/guia_teste_manual.md`.
-Ambos residem na branch **`agent-workspace`** (nunca integrada em `dev`/`main`).
+(mapa em §0 e anexos em §29). Documentação de apoio — guia de teste manual, mapas de fluxo e
+relatórios — é **gerada sob demanda** por `docs/rules/` (`docs/README.md`).
+Reside na branch **`agent-workspace`** (nunca integrada em `dev`/`main`).
 
 ---
 

@@ -35,13 +35,14 @@
 
 | Ficheiro                                     | Papel                                                    | Autoridade                           |
 | :------------------------------------------- | :------------------------------------------------------- | :----------------------------------- |
-| **`especificacao_mvp.md`**                   | Requisitos, regras, dados, API, arquitetura              | ✅ **máxima** — prevalece sobre tudo |
+| **`especificacao_mvp.md`**                   | **Router**: mapa `§ → ficheiro`, prevalência, fontes     | ✅ **máxima** — prevalece sobre tudo |
+| **`docs/spec/*.md`**                         | Especificação por domínio (§1–§29) — **o conteúdo**      | ✅ **máxima** — prevalece sobre tudo |
+| `docs/README.md`                             | Regras e mapa da documentação **on-demand**              | normativo (documentação)             |
+| `docs/rules/` · `docs/templates/`            | Receitas e moldes para gerar documentos sob demanda      | apoio                                |
 | `.clinerules`                                | Operação: restrições, convenções **aplicadas**, Git      | normativo (operação)                 |
 | `tests/README.md`                            | Suites de teste, execução e pré-requisitos               | normativo (testes)                   |
 | `tools/README.md`                            | Catálogo e comportamento das ferramentas                 | normativo (ferramentas)              |
 | `README.md`                                  | Instalação e uso rápido                                  | apoio                                |
-| `mapaMentalMVP/guia_teste_manual.md`         | Guia de teste manual passo-a-passo                       | apoio (não normativo)                |
-| `mapaMentalMVP/mapa_fluxo_dados.md`          | Mapa visual do fluxo de dados ponta-a-ponta              | apoio (não normativo)                |
 | `mapaMentalMVP/analise_backoffice_gestor.md` | Análise do backoffice do gestor (requisitos do cliente)  | apoio (não normativo)                |
 | `mapaMentalMVP/auditoria_artefactos.md`      | Auditoria de afirmações sem prova                        | apoio (não normativo)                |
 | `mapaMentalMVP/mensagem_teams.txt`           | Comunicação e dúvidas para o grupo/Teams                 | apoio (não normativo)                |
@@ -55,6 +56,9 @@ anteriores foram **eliminados** e **não se acumulam aqui**. O arquivo é o **hi
 git log --diff-filter=D --oneline -- "*.md"   # localizar a remoção
 git show <revisão>^:<ficheiro>                # ver o conteúdo original
 ```
+
+> **Guias de teste manual e mapas de fluxo** já **não** são ficheiros mantidos: **geram-se sob demanda**
+> a partir de `docs/rules/` + `docs/templates/` (ver `docs/README.md`).
 
 ### 29.3 Regras de manutenção deste documento
 

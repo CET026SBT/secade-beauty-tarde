@@ -25,8 +25,8 @@
 
 1. **Código-fonte completo** (`app/`, `modules/`, `index.php`, assets)
 2. **Base de dados**: `DataBase_v2.sql` + `database_seed.sql` (+ migrações `v2`/`v3`) — ordem em §27
-3. **Documentação**: `especificacao_mvp.md` (mestre) + `README.md` + `mapaMentalMVP/`
-   (guia de teste manual e mapa de fluxo de dados)
+3. **Documentação**: `especificacao_mvp.md` (mestre) + `docs/spec/` (por domínio) + `README.md`
+   + `docs/` (regras e moldes on-demand)
 4. **Diagrama de BD**: §17.8 (relações + consulta SQL para regenerar)
 5. **Testes automatizados** em `tests/` — 289 verificações (§26)
 

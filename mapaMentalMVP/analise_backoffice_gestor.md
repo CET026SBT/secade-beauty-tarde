@@ -907,16 +907,17 @@ presente na 2.ª iteração) — **reformulada nesta iteração** para não reab
 
 ### 2.9 Dúvidas novas — frontend desta iteração
 
-| ID   | Pergunta                                                            | O que o código/BD diz hoje                                         | Opção / decisão necessária                                           |
-| :--- | :------------------------------------------------------------------ | :----------------------------------------------------------------- | :------------------------------------------------------------------- |
-| Q-44 | A secção de serviços no Home/About é **estática** ou gerida no      | `hero`, `about` e `testimonial` são **componentes estáticos**; não | **Estática** (proposta), como o About — evita um módulo de CMS fora  |
-|      | backoffice?                                                         | existe CMS                                                         | do âmbito                                                            |
-| Q-45 | Quem fornece as **imagens dos serviços** e em que formato/dimensão? | Não existe nenhuma imagem de serviço; as de categoria são `.png`   | A definir com o cliente: formato (`.jpg`/`.png`), dimensão e quem    |
-|      |                                                                     | carregadas por *slug*                                              | carrega                                                              |
-| Q-46 | A taxa de IVA é **uniforme (23 %)** ou                              | Não há taxa em lado nenhum; a aritmética aponta para 23 % em       | Confirmar com o grupo de contabilidade (há serviços com taxas        |
-|      | **varia por serviço/categoria**?                                    | **todos** os 35 serviços                                           | diferentes em Portugal)                                              |
-| Q-47 | Os **preços de montra** (redondos) devem substituir os atuais na    | A BD tem os líquidos (4,07 €); a montra implica 5,00 € com IVA     | Decidir com **C-17**; a proposta é manter o líquido na BD e gravar o |
-|      | BD?                                                                 |                                                                    | bruto na marcação                                                    |
+| ID   | Pergunta                                                            | O que o código/BD diz hoje                                           | Opção / decisão necessária                                           |
+| :--- | :------------------------------------------------------------------ | :------------------------------------------------------------------- | :------------------------------------------------------------------- |
+| Q-44 | A secção de serviços no Home/About é **estática** ou gerida no      | `hero`, `about` e `testimonial` são **componentes estáticos**; não   | **Estática** (proposta), como o About — evita um módulo de CMS fora  |
+|      | backoffice?                                                         | existe CMS                                                           | do âmbito                                                            |
+| Q-45 | Quem fornece as **imagens dos serviços** e em que formato/dimensão? | Não existe nenhuma imagem de serviço. As **3** categorias em uso são | A definir com o cliente: formato (`.jpg`/`.png`), dimensão e quem    |
+|      |                                                                     | `.png`                                                               |                                                                      |
+|      |                                                                     | carregadas por *slug* (7 ficheiros no total — **F-07**)              | carrega                                                              |
+| Q-46 | A taxa de IVA é **uniforme (23 %)** ou                              | Não há taxa em lado nenhum; a aritmética aponta para 23 % em         | Confirmar com o grupo de contabilidade (há serviços com taxas        |
+|      | **varia por serviço/categoria**?                                    | **todos** os 35 serviços                                             | diferentes em Portugal)                                              |
+| Q-47 | Os **preços de montra** (redondos) devem substituir os atuais na    | A BD tem os líquidos (4,07 €); a montra implica 5,00 € com IVA       | Decidir com **C-17**; a proposta é manter o líquido na BD e gravar o |
+|      | BD?                                                                 |                                                                      | bruto na marcação                                                    |
 
 ### 2.10 Dúvidas novas — templates "MENU APOIO" e custo de pessoal (3.ª iteração)
 

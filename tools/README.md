@@ -136,8 +136,8 @@ php tools/md-join-tables.php doc.md
 php tools/md-join-tables.php doc.md --write
 
 # Nivelar tabelas ASCII / diagramas dentro de code fences
-php tools/ascii-align.php mapaMentalMVP/mapa_fluxo_dados.md
-php tools/ascii-align.php mapaMentalMVP/mapa_fluxo_dados.md --write
+php tools/ascii-align.php docs/spec/booking.md
+php tools/ascii-align.php docs/spec/booking.md --write
 php tools/ascii-align.php diagrama.md --write --boxes-only    # só boxes '+---+'
 php tools/ascii-align.php diagrama.md --verbose               # diagnostico por linha
 

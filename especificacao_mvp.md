@@ -42,19 +42,19 @@ as secções do próprio `.clinerules` escrevem-se `rules §N`.
 
 ## FONTE ÚNICA POR ASSUNTO
 
-| Assunto                                 | Fonte                                | Âncora          |
-| :-------------------------------------- | :----------------------------------- | :-------------- |
-| Requisitos e regras de negócio          | especificação                        | §4 · §5         |
-| Decisões finais e conflitos resolvidos  | especificação                        | §3              |
-| Dados, API e máquina de estados         | especificação                        | §17 · §19 · §20 |
-| Arquitetura por camadas                 | especificação                        | §18.1–§18.4     |
-| Convenções de código **aplicadas**      | `.clinerules`                        | §2              |
-| Git e commits                           | `.clinerules`                        | §4              |
-| Ferramentas: uso e catálogo             | `tools/README.md`                    | §1 · §2 · §3    |
-| Testes: suites e execução               | `tests/README.md`                    | —               |
-| Regras de documentação on-demand        | `docs/README.md` · `docs/rules/`     | —               |
-| Guia de teste manual                    | `mapaMentalMVP/guia_teste_manual.md` | —               |
-| Análise e auditoria (**não normativo**) | `mapaMentalMVP/*.md`                 | —               |
+| Assunto                                 | Fonte                             | Âncora          |
+| :-------------------------------------- | :-------------------------------- | :-------------- |
+| Requisitos e regras de negócio          | especificação                     | §4 · §5         |
+| Decisões finais e conflitos resolvidos  | especificação                     | §3              |
+| Dados, API e máquina de estados         | especificação                     | §17 · §19 · §20 |
+| Arquitetura por camadas                 | especificação                     | §18.1–§18.4     |
+| Convenções de código **aplicadas**      | `.clinerules`                     | §2              |
+| Git e commits                           | `.clinerules`                     | §4              |
+| Ferramentas: uso e catálogo             | `tools/README.md`                 | §1 · §2 · §3    |
+| Testes: suites e execução               | `tests/README.md`                 | —               |
+| Regras de documentação on-demand        | `docs/README.md` · `docs/rules/`  | —               |
+| Guias e mapas de apoio (sob demanda)    | `docs/rules/` · `docs/templates/` | —               |
+| Análise e auditoria (**não normativo**) | `mapaMentalMVP/*.md`              | —               |
 
 ## HISTÓRICO
 

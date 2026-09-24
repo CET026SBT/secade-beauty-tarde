@@ -30,8 +30,8 @@ N3  docs/README.md                 este ficheiro — mapa e índice de regras
     README.md                      instalação e uso (público do repositório)
     tests/README.md                suites, execução, pré-requisitos        [normativo: testes]
     tools/README.md                catálogo e comportamento das ferramentas [normativo: ferramentas]
-    mapaMentalMVP/                 apoio NÃO normativo: guia manual, mapa de fluxo,
-                                   análise do backoffice, auditoria, templates do cliente
+    mapaMentalMVP/                 apoio NÃO normativo: análise do backoffice, auditoria,
+                                   mensagem Teams e templates do cliente (.docx/.xlsx)
 ```
 
 ## N2 — DOMÍNIOS DA ESPECIFICAÇÃO
@@ -55,6 +55,7 @@ N3  docs/README.md                 este ficheiro — mapa e índice de regras
 | atualizar / criar secção da especificação | `rules/build_spec_on_demand.md`              | `docs/spec/*.md` |
 | relatório de estado, auditoria, análise   | `rules/build_report_on_demand.md` (a criar)  | `docs/out/…`     |
 | mapa mental / diagrama de fluxo           | `rules/build_mindmap_on_demand.md` (a criar) | `docs/out/…`     |
+| guia de teste manual passo-a-passo        | `rules/build_test_guide_on_demand.md`        | `docs/out/…`     |
 | verificar integridade da documentação     | *(não é regra: correr as ferramentas)*       | —                |
 
 > Uma regra que ainda não existe **cria-se quando for pedida** — no mesmo molde da que existe. Não se
