@@ -1,0 +1,15 @@
+# PROTECAO: nada aqui serve a web — e' a umbrella de desenvolvimento.
+# A pasta dev/ existe so na branch agent-workspace e nao e' produto.
+
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+</IfModule>
+
+# Garantir que nada e' servido como texto caso o handler falhe
+<FilesMatch "\.(php|md|json|txt|sql|docx|xlsx)$">
+    SetHandler none
+</FilesMatch>

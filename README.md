@@ -4,9 +4,10 @@
 > **`especificacao_mvp.md`** — que **prevalece** sobre os restantes `.md`.
 > Este README mantém-se como guia de **instalação e uso rápido**. Mapa documental: §29.2 do documento-mestre.
 >
-> ⚠️ **Onde vive o documento-mestre:** `especificacao_mvp.md`, `mapaMentalMVP/`, `tools/` e
-> `.clinerules` **não são versionados nas branches de produto** (`main`, `dev` e restantes) — existem
-> apenas na branch **`agent-workspace`**, que **nunca é integrada**. As **regras de Git** estão em
+> ⚠️ **Onde vive o documento-mestre:** `especificacao_mvp.md`, `.clinerules` e a pasta **`dev/`**
+> (docs, tools, tests, mapaMentalMVP) **não são versionados nas branches de produto** (`main`, `dev` e
+> restantes) — existem apenas na branch **`agent-workspace`**, que **nunca é integrada**. Exceção:
+> `dev/tests/`, que é entregável e se versiona no `dev`. As **regras de Git** estão em
 > `.clinerules` §4; o inventário dos ramos, na secção **Ramos do repositório** mais abaixo.
 
 ## Projeto Académico · CET026 · Turma Tarde
@@ -48,7 +49,6 @@ secade-beauty-tarde/
 │   ├── main/             # Páginas públicas (clientes)
 │   └── backoffice/       # Área de gestão (gestor)
 ├── README.md              # Este ficheiro (instalação + uso)
-├── tests/                 # Testes automatizados (CLI + HTTP)
 ├── index.php              # Front Controller
 ├── DataBase_v2.sql        # Schema ATUAL (v2+): 24 tabelas + dados de referência
 ├── database_seed.sql      # Dados de demonstração/teste (utilizadores + morada)
@@ -58,12 +58,15 @@ secade-beauty-tarde/
 ├── DataBase_backup_pre_v2.sql # [arquivo] cópia do estado antes da v2
 └── .htaccess              # Rewrite rules
 
-[existe apenas na branch agent-workspace — ver "Ramos do repositório"]
-especificacao_mvp.md       # Documento-mestre (fonte única de verdade)
-docs/                      # Especificação por domínio + regras/moldes on-demand
-mapaMentalMVP/             # Apoio não normativo: análise, auditoria, mensagem Teams
-tools/                     # Utilitários de manutenção dev-only (encoding, .md)
+[na branch agent-workspace — ver "Ramos do repositório"]
+especificacao_mvp.md       # Documento-mestre (router: mapa § -> ficheiro)
 .clinerules                # Regras permanentes do assistente
+
+dev/                       # Umbrella do que NÃO é produto (dev/tests versiona-se no dev)
+├── docs/                  #   Especificação por domínio + regras/moldes on-demand
+├── tools/                 #   Utilitários de manutenção dev-only (encoding, .md)
+├── tests/                 #   Testes automatizados (CLI + HTTP)
+└── mapaMentalMVP/         #   Apoio não normativo: análise, auditoria, mensagem Teams
 ```
 
 ---
@@ -74,15 +77,16 @@ tools/                     # Utilitários de manutenção dev-only (encoding, .m
 > integração por merge/PR e a branch `agent-workspace`) — na branch `agent-workspace`. Aqui fica
 > apenas o **inventário dos ramos**, para orientação rápida.
 
-| Branch            | Papel                                                        |
-| :---------------- | :----------------------------------------------------------- |
-| `main`            | Código final de qualidade — 100 % funcional de ponta a ponta |
-| `dev`             | Desenvolvimento — estado mais avançado do projeto            |
-| `agent-workspace` | Documento-mestre, `mapaMentalMVP/`, `tools/` e `.clinerules` |
-| restantes         | Branches de trabalho (contexto, funcionalidade, correção)    |
+| Branch            | Papel                                                                |
+| :---------------- | :------------------------------------------------------------------- |
+| `main`            | Código final de qualidade — 100 % funcional de ponta a ponta         |
+| `dev`             | Desenvolvimento — estado mais avançado do projeto                    |
+| `agent-workspace` | Documento-mestre, `dev/mapaMentalMVP/`, `dev/tools/` e `.clinerules` |
+| restantes         | Branches de trabalho (contexto, funcionalidade, correção)            |
 
 - A `agent-workspace` **nunca é integrada** em `dev` nem em `main`.
-- O `README.md`, o `tests/` e todo o código de produto são versionados **normalmente** em `dev`.
+- O `README.md`, os testes (`dev/tests/` depois de a reestruturação ser integrada) e todo o código de
+  produto são versionados **normalmente** em `dev`.
 
 ### Branches de contexto integradas em `dev`
 
@@ -241,22 +245,22 @@ num único ficheiro e removidos, para evitar divergência de informação e redu
    finais, regras de negócio, modelo de dados (com diagrama de relações), arquitetura e convenções,
    API, máquina de estados, testes e instalação. **Prevalece** em caso de conflito.
 2. **`README.md`** — este ficheiro: instalação e uso rápido.
-3. **`docs/`** — documentação **on-demand**: `docs/README.md` (mapa e regras), `docs/spec/`
-   (especificação por domínio), `docs/rules/` + `docs/templates/` (guias, mapas e relatórios
+3. **`dev/docs/`** — documentação **on-demand**: `dev/docs/README.md` (mapa e regras), `dev/docs/spec/`
+   (especificação por domínio), `dev/docs/rules/` + `dev/docs/templates/` (guias, mapas e relatórios
    gerados **só quando pedidos**).
 4. **`.clinerules`** — regras permanentes do projeto.
-5. **`tools/`** — utilitários de manutenção (encoding seguro, formatação/validação dos `.md`); guia próprio em `tools/README.md`.
+5. **`dev/tools/`** — utilitários de manutenção (encoding seguro, formatação/validação dos `.md`); guia próprio em `dev/tools/README.md`.
 
 ---
 
 ## 🧪 TESTES
 
-> 📌 **Fonte única:** **`tests/README.md`** — suites, âmbito de cada uma, comandos de execução,
+> 📌 **Fonte única:** **`dev/tests/README.md`** — suites, âmbito de cada uma, comandos de execução,
 > pré-requisitos (Apache e MySQL) e garantias de repetibilidade. Estado atual: **289 verificações,
 > todas a passar** (105 funcionais + 119 HTTP + 65 de assets + sintaxe JS).
 >
 > Testes **manuais** (fluxos por interface, navegação mobile, responsividade):
-> guia de teste manual **gerado sob demanda** (`docs/rules/`). Critérios de aceitação: `especificacao_mvp.md` §28.
+> guia de teste manual **gerado sob demanda** (`dev/docs/rules/`). Critérios de aceitação: `especificacao_mvp.md` §28.
 
 ### Manual — Criar um Cliente
 1. Aceder a http://localhost/secade-beauty-tarde/registo
@@ -347,7 +351,7 @@ Body: { "email": "teste@test.com", "password": "Test@123" }
 
 Para questões sobre o projeto, consultar o **documento-mestre** `especificacao_mvp.md`
 (mapa em §0 e anexos em §29). Documentação de apoio — guia de teste manual, mapas de fluxo e
-relatórios — é **gerada sob demanda** por `docs/rules/` (`docs/README.md`).
+relatórios — é **gerada sob demanda** por `dev/docs/rules/` (`dev/docs/README.md`).
 Reside na branch **`agent-workspace`** (nunca integrada em `dev`/`main`).
 
 ---
