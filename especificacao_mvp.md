@@ -1047,11 +1047,8 @@ View (PHP) → JS componente → api.js → api.php (routing) → Controller →
 
 ### 18.8 Nomenclatura, idioma e restrições técnicas
 
-> 🔗 **Fonte única: `.clinerules` §2** (nomenclatura e idioma) e `.clinerules` **§1** (restrições). Resumo: classes
-> em PascalCase · métodos em camelCase · tabelas e colunas em snake_case **em português** · endpoints
-> em kebab-case `admin-<dominio>-<acao>` · ficheiros JS em camelCase · **código em inglês, BD em
-> português**. Restrições: sem pacotes, sem frameworks externos, sem tocar em `/admin` e sem alterar
-> a BD sem justificação.
+> 🔗 **Fonte única: `.clinerules` §2** (nomenclatura e idioma) e **`.clinerules` §1** (restrições de
+> execução). As tabelas e a lista de restrições **não se repetem aqui** — ver lá.
 
 ### 18.9 Inventário da implementação (por camada)
 
