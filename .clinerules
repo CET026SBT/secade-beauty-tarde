@@ -78,10 +78,12 @@ Decisões de gestão são **manuais**: nenhum indicador automático decide ou bl
   `_dev/tests/asset_test.php`.
 - **Front-end** (`§18.7`): `form.utils.js` + validators (molde `customerRegister.js`) · `API.*` de
   `api.js` · erros por `responseJSON.message`/`.errors` · overlays com **jq-preloader** · `generalUtils`.
-- **Segurança e acesso** (`§18.6`): APIs `Session::requireLoginApi()` → **401** ·
-  `Session::requireProfileApi([...])` → **403** · páginas com `Session::requireLogin()` + perfil e
-  redirect · `BaseController::requireCustomer()` · prepared statements sempre ·
-  `password_hash(PASSWORD_BCRYPT)` · OTP com `hash_equals`.
+- **Segurança e acesso** (`§18.6`): via **única**, um método por camada —
+  APIs `BaseController::requireProfile([...])` (delega em `Session::requireProfileApi()` → **401/403**) ·
+  páginas `Session::requireProfile([...])` (**redirect**) · perfis pontuais
+  `Session::isManager()`/`isEmployee()`/`isCustomer()` · id em sessão `Session::userId()`.
+  **Não criar guardas por perfil** (existiu um `requireEmployee()` local no
+  `ServiceController` e um bloco `requireLogin() + if (!isX())` repetido em cada página).
 ## 3. ESCRITA SEGURA E GATE
 
 **Escrita de ficheiros** — ❌ nunca o ciclo `Get-Content` + `Set-Content` do PowerShell 5.1 (introduz

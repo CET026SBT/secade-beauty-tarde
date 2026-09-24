@@ -38,9 +38,7 @@ class AuthService extends BaseService {
             return $this->customerService->createCustomer($data);
         }
 
-        if (!Session::isLoggedIn() || !Session::isManager()) {
-            throw new Exception("Não tem permissões para criar um registo com este tipo de perfil.", 403);
-        }
+        Session::requireProfileApi(["gestor"]);
 
         if ($profileType === "funcionario") {
             return $this->employeeService->createEmployee($data);

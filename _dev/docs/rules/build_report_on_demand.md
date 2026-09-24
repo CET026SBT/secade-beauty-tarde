@@ -35,6 +35,16 @@
    uma secção órfã no fim do ficheiro. → usar `old_text` como **âncora** de conteúdo, não `insert_line`.
 4. **Ficheiros do cliente são binários** (`.docx`/`.xlsx`): não são citáveis linha a linha.
 5. **Não tocar em `admin/`** (instrução permanente) nem em `_dev/mapaMentalMVP/*` (apoio não normativo).
+6. **Varrer com contexto multi-linha.** Um padrão de linha única
+   (`throw new Exception\(.*,\s*\d{3}\s*\)`) deu **3 falsos positivos** numa auditoria: as exceções
+   escrevem o código na **linha seguinte**. → `Select-String -Context 0,3`, ou padrão sobre o bloco.
+   Um falso positivo num relatório custa uma conclusão errada.
+7. **Confirmar o número de ficheiros de um teste antes de confiar no verde.** O `js_syntax_check` tem
+   **lista fixa**: deu `OK` sem validar 2 ficheiros novos. → contar as linhas `PASS` e comparar com o
+   esperado, ou verificar se os ficheiros criados aparecem na saída.
+8. **Verificar o uso efectivo, não a existência.** Um método pode existir e nunca ser chamado
+   (`findManager`, `findByIdAndBooking`): varrer `Nome->metodo`/`Nome::metodo` antes de contar com ele.
+   O mesmo para chaves de resposta: `booking.people` era produzido e **ninguém** o lia.
 
 ## 4. ESTRUTURA OBRIGATÓRIA (do molde)
 

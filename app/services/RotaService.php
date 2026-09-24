@@ -58,7 +58,7 @@ class RotaService extends BaseService {
             throw new Exception("Decisão inválida. Use 'aprovada' ou 'recusada'.", 422);
         }
 
-        $managerId = Session::user()["id"] ?? null;
+        $managerId = Session::userId();
 
         return $this->executeTransactional(function() use ($cityId, $date, $decision, $notes, $managerId) {
             $bookings = $this->bookingRepository->findDecidableByCityAndDate($date, $cityId);
