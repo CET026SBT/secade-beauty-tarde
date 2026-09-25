@@ -18,22 +18,22 @@ class BookingController extends BaseController {
     }
 
     public function otpRequest(): array {
-        $customerId = $this->requireCustomer();
-        return $this->bookingService->requestOtp($customerId);
+        Session::requireProfileApi(["cliente"]);
+        return $this->bookingService->requestOtp(Session::userId());
     }
 
     public function createStoreBooking(): array {
-        $customerId = $this->requireCustomer();
-        return $this->bookingService->createStoreBooking($customerId, $this->getRequestData());
+        Session::requireProfileApi(["cliente"]);
+        return $this->bookingService->createStoreBooking(Session::userId(), $this->getRequestData());
     }
 
     public function createAmbulatoryBooking(): array {
-        $customerId = $this->requireCustomer();
-        return $this->bookingService->createAmbulatoryBooking($customerId, $this->getRequestData());
+        Session::requireProfileApi(["cliente"]);
+        return $this->bookingService->createAmbulatoryBooking(Session::userId(), $this->getRequestData());
     }
 
     public function myBookings(): array {
-        $customerId = $this->requireCustomer();
-        return $this->bookingService->findCustomerBookings($customerId);
+        Session::requireProfileApi(["cliente"]);
+        return $this->bookingService->findCustomerBookings(Session::userId());
     }
 }

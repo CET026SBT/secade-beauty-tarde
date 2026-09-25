@@ -7,6 +7,15 @@ class Session {
         }
     }
 
+    /**
+     * Garante a sessão iniciada, para quem guarda estado PRÓPRIO em sessão (ex.: o OTP do
+     * `OTPService`, dono da sua chave). O utilizador autenticado tem os acessores acima;
+     * isto não é uma API genérica de chaves de sessão.
+     */
+    public static function start(): void {
+        self::init();
+    }
+
     public static function createLoginSession(array $user): void {
         self::init();
         $_SESSION["user_id"] = $user["id"];
@@ -91,26 +100,6 @@ class Session {
         if (!in_array(self::getUserProfile(), $profiles, true)) {
             throw new Exception("Sem permissões para esta operação.", 403);
         }
-    }
-
-    /**
-     * Acesso genérico a chaves de sessão fora do utilizador autenticado (ex.: OTP).
-     * Existe para nenhum consumidor tocar em `$_SESSION` directamente — o bootstrap
-     * da sessão e o contrato de nomes das chaves ficam só aqui.
-     */
-    public static function get(string $key, mixed $default = null): mixed {
-        self::init();
-        return $_SESSION[$key] ?? $default;
-    }
-
-    public static function set(string $key, mixed $value): void {
-        self::init();
-        $_SESSION[$key] = $value;
-    }
-
-    public static function forget(string $key): void {
-        self::init();
-        unset($_SESSION[$key]);
     }
 
     public static function destroy() {
