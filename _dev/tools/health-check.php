@@ -65,12 +65,20 @@ foreach ($steps as [$label, $script, $args]) {
         $desaligned = [];
         foreach ($mdFiles as $f) {
             [$code, $out] = run($php, $path, [$f], true);
-            if (preg_match('/(?:Linhas alteradas|Tabelas a quebrar|Tabelas desalinhadas):\s*(\d+)/', $out, $m) && (int) $m[1] > 0) {
+            $hasSummary = preg_match('/(?:Linhas alteradas|Tabelas a quebrar|Tabelas desalinhadas):\s*(\d+)/', $out, $m);
+
+            // Sem a linha de resumo o utilitario NAO correu: crash (ex.: um `require` com
+            // caminho absoluto partido pelo move da umbrella) ou ficheiro ilegivel. Antes
+            // isto passava como "tudo nivelado", porque nao casava a expressao — foi assim
+            // que o `widthcheck` esteve morto sem dar sinal.
+            if (!$hasSummary) {
+                $desaligned[] = relPath(getcwd(), $f) . " (sem resumo, exit {$code})";
+            } elseif ((int) $m[1] > 0) {
                 $desaligned[] = relPath(getcwd(), $f) . " ({$m[1]})";
             }
         }
         $ok = !$desaligned;
-        $results[] = [$label, $ok, $desaligned ? "por nivelar/quebrar: " . implode(", ", $desaligned)
+        $results[] = [$label, $ok, $desaligned ? "ficheiros com problema: " . implode(", ", $desaligned)
                                              : "tudo nivelado"];
         if (!$ok) $failures++;
         continue;

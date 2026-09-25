@@ -213,7 +213,7 @@ coluna** (`max(1, largura − marcadores)`). Um piso fixo de 3 caracteres (`:---
 largura 3 dá uma célula com 4 — o `align` alargava a linha e as duas ferramentas ficavam em
 desacordo (cada uma «corrigia» a outra). Está alinhado com a passagem final do `md-wrap-tables`.
 
-**As três armadilhas de formatação (encontradas e corrigidas na v1.4)**
+**Armadilhas encontradas e corrigidas** (as três primeiras na v1.4; a última no move da umbrella)
 
 | Armadilha                                | Sintoma                                                                     | Resolução                                                                 |
 | ---------------------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
@@ -227,6 +227,9 @@ desacordo (cada uma «corrigia» a outra). Está alinhado com a passagem final d
 | Pisos de coluna relaxados pelo `shrink`  | Coluna mais estreita que o átomo mais longo → a palavra era                 | Os pisos **nunca** são relaxados: a tabela fica mais larga e o relatório  |
 |                                          | **partida ao meio**                                                         | di-lo                                                                     |
 |                                          | (`edi`/`táveis`) → o guard detetava e a tabela ficava **meio formatada**    |                                                                           |
+| `require` com caminho **absoluto**       | O utilitário **não corre** (não há ficheiro a incluir) e o `health-check`   | Usar `require __DIR__ . "/_common.php"`, como os outros nove; o           |
+|                                          | **reportava «tudo nivelado» na mesma** — um crash não casava a expressão    | `health-check` passou a marcar «sem resumo, exit N» quando o utilitário   |
+|                                          | de resumo → o `widthcheck` esteve morto em silêncio após o move da umbrella | não produz o seu resumo, para um crash não voltar a passar por verde      |
 
 **Tabelas que não cabem sem partir palavras.** Uma tabela densa (muitas colunas com *spans* de
 código longos) pode exigir mais do que 200 colunas com as palavras intactas. O `md-wrap-tables`

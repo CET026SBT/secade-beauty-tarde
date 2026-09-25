@@ -6,7 +6,7 @@
  *
  * Uso: php widthcheck.php <ficheiro.md> [limite]
  */
-require 'C:/laragon/www/secade-beauty-tarde/tools/_common.php';
+require __DIR__ . "/_common.php";
 
 $file  = $argv[1] ?? 'especificacao_mvp.md';
 $lines = toLines(readText($file));

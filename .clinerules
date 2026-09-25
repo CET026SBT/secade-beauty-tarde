@@ -9,7 +9,7 @@ Ficheiro de **operação**. Não contém produto: contém (a) restrições, conv
 
 | #   | Ler                                             | Quando                                         |
 | :-- | :---------------------------------------------- | :--------------------------------------------- |
-| 1   | Este ficheiro (≈173 linhas)                     | sempre                                         |
+| 1   | Este ficheiro (≈175 linhas)                     | sempre                                         |
 | 2   | `especificacao_mvp.md` — **router** (~63 l.)    | sempre: dá o mapa `§ → ficheiro`               |
 | 3   | **UM** ficheiro de `_dev/docs/spec/`            | só o domínio em causa — nunca os nove          |
 | 4   | `_dev/tests/README.md` · `_dev/tools/README.md` | ao testar · ao usar ferramentas                |
@@ -78,12 +78,14 @@ Decisões de gestão são **manuais**: nenhum indicador automático decide ou bl
   `_dev/tests/asset_test.php`.
 - **Front-end** (`§18.7`): `form.utils.js` + validators (molde `customerRegister.js`) · `API.*` de
   `api.js` · erros por `responseJSON.message`/`.errors` · overlays com **jq-preloader** · `generalUtils`.
-- **Segurança e acesso** (`§18.6`): via **única**, um método por camada —
-  APIs `BaseController::requireProfile([...])` (delega em `Session::requireProfileApi()` → **401/403**) ·
-  páginas `Session::requireProfile([...])` (**redirect**) · perfis pontuais
-  `Session::isManager()`/`isEmployee()`/`isCustomer()` · id em sessão `Session::userId()`.
-  **Não criar guardas por perfil** (existiu um `requireEmployee()` local no
-  `ServiceController` e um bloco `requireLogin() + if (!isX())` repetido em cada página).
+- **Segurança e acesso** (`§18.6`): a autorização sai **sempre do `Session`**, chamado directamente
+  pelo controller — APIs `Session::requireProfileApi([...])` (**401/403**) · páginas
+  `Session::requireProfile([...])` (**redirect**) · perfis pontuais `Session::isManager()`/
+  `isEmployee()`/`isCustomer()` · id em sessão `Session::userId()`. **Não criar guardas por perfil nem
+  camadas de conveniência sobre o `Session`** (existiu um `requireEmployee()` local no
+  `ServiceController`, um `BaseController::requireCustomer()`/`requireProfile()` — que nada tinha que ver
+  com o transporte do pedido, o único assunto desse ficheiro — e um bloco `requireLogin() + if (!isX())`
+  repetido em cada página).
 ## 3. ESCRITA SEGURA E GATE
 
 **Escrita de ficheiros** — ❌ nunca o ciclo `Get-Content` + `Set-Content` do PowerShell 5.1 (introduz
@@ -161,8 +163,11 @@ revogado**: `_dev/docs/rules/build_history_on_demand.md`.
 ---
 
 **Este ficheiro não deve ser alterado sem aprovação.**
-**Versão:** 3.3 · **Data:** 25/09/2026
-**Histórico:** v3.2 → v3.3 — §4 passa de *"integrar é decisão do utilizador"* para **fluxo delegado**: cada
+**Versão:** 3.4 · **Data:** 25/09/2026
+**Histórico:** v3.3 → v3.4 — §2 corrige a via de autorização: o `BaseController` perde o
+`requireCustomer()`/`requireProfile()` (não são assunto do transporte do pedido) e o `Session` perde o
+acesso genérico `get/set/forget` (um só consumidor); quem autoriza chama o `Session` directamente.
+v3.2 → v3.3 — §4 passa de *"integrar é decisão do utilizador"* para **fluxo delegado**: cada
 pedido fecha o ciclo `fetch` → `merge origin/dev` → alterar → branch de contexto (a partir do `dev`, só
 caminhos de produto) → commit → push → merge em `dev` → push, salvo ordem explícita em contrário; merge
 `dev`→`main` a pedido. A proibição de commitar em `dev`/`main` mantém-se, agora com o merge como via única.

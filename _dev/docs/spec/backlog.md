@@ -122,8 +122,8 @@ cancelamento pelo cliente sem penalização).
 
 **Trabalho a fazer (por ordem sugerida):**
 1. **Cancelamento pelo cliente:** endpoint `?action=customer-booking-cancel`
-   (`requireCustomer()` + verificar posse do agendamento + estados canceláveis) e botão em
-   `/agendamentos`; **sem penalização**.
+   (`Session::requireProfileApi(["cliente"])` + verificar posse do agendamento + estados canceláveis) e
+   botão em `/agendamentos`; **sem penalização**.
 2. **Regra das 24 h na criação de rotas:** `decideRoute`/listagem só consideram agendamentos com
    ≥ 24 h de antecedência; os demais são excluídos do grupo (e cancelados).
 3. **Auto-cancelamento:** rotina **on-demand** (ao abrir as listagens do gestor/funcionário, sem CRON)
