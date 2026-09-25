@@ -1073,6 +1073,49 @@ presente na 2.ª iteração) — **reformulada nesta iteração** para não reab
 | Q-57 | ~~Os impostos do RH dividem-se em DMR e DRI?~~                        | ✅ **RESOLVIDA:** existe a folha `DMR - DRI` e as capturas das duas | Fechada quanto à **divisão**. Resta **Q-62** (anexos).              |
 |      |                                                                       | declarações; o DRI imprime a taxa **34,75 %**                       |                                                                     |
 
+**Perguntas novas, nascidas do confronto antigo↔novo (F.9):**
+
+| ID   | Pergunta                                                                                          |
+| :--- | :------------------------------------------------------------------------------------------------ |
+| Q-58 | **Rácios:** as células indicadas apontam para as colunas do *Balanço* e a coluna `E` **não        |
+|      | existe** na folha. Os 5 rácios estão no **2.º quadro** (linhas 11-15, colunas B/C/D).             |
+|      | Confirmam **`B11..D15`**?                                                                         |
+| Q-59 | **Passivo não corrente:** não indicaram **célula nenhuma** e o valor é `0` nas três colunas.      |
+|      | Quais as células — ou o Card é dispensável enquanto for sempre 0?                                 |
+| Q-60 | **IVA nas "Dívidas a pagar":** o valor vem do **Saldo Devedor** (IVA a favor) e é somado a três   |
+|      | saldos credores. É a **posição líquida** que querem, ou a dívida **bruta**?                       |
+| Q-61 | **Capital em dívida:** o plano de financiamento dá **24 016,80 €** e a conta 25 do balancete dá   |
+|      | **49 354,66 €** (que também entra nas Dívidas a pagar). Qual alimenta o Card?                     |
+| Q-62 | **Anexos fiscais:** querem o **PDF/imagem das declarações** anexado ao registo do calendário?     |
+|      | (Hoje o calendário fiscal **não** guarda anexos.)                                                 |
+| Q-63 | **Subsídio de alimentação:** o valor varia com os **dias úteis do mês** (20/21/22 dias × 6,15 €). |
+|      | Confirmam que é **introduzido por mês**, ou devem os dias ser calculados?                         |
+| Q-64 | **Dias:** a DRI declara **29 dias** por trabalhador; o subsídio usa **~21**. São critérios        |
+|      | diferentes ou há uma gralha numa das folhas?                                                      |
+| Q-65 | **Gráficos e período:** o documento novo **deixou cair** os gráficos e o seletor mensal/          |
+|      | trimestral/anual. Mantêm só o gráfico *remuneração vs líquido* em Custos de funcionários?         |
+
+#### 2.10.1 Nota de implementação — fórmula do custo de pessoal (corrigida)
+
+```text
+Por trabalhador (periodo = n meses):
+  remuneracao_bruta_p = salario_base * n
+  SA_p                = soma(dias_uteis_mes * 6.15)        <- VARIA por mes (F.4)
+  IRS_p               = remuneracao_bruta_p * taxa_irs_p    <- taxa POR trabalhador
+  SS_trab_p           = remuneracao_bruta_p * 0,11
+  SS_empresa_p        = remuneracao_bruta_p * 0,2375
+  liquido_a_pagar_p   = remuneracao_bruta_p + SA_p - IRS_p - SS_trab_p
+
+Cards:
+  REMUNERACAO = soma(remuneracao_bruta_p + SA_p)   -> 22 262,40 (jan-mar, 6 trab.)
+  IRS         = soma IRS_p                         ->  1 221,00
+  SS          = soma(SS_trab_p + SS_empresa_p)     ->  6 932,63   (= 34,75 %)
+```
+
+**Regras provadas pelos ficheiros novos:** a base de incidência da SS é a **remuneração bruta**, *não* `+ SA`;
+a taxa de IRS é **por trabalhador**; o líquido a pagar **não** desconta a SS patronal; e **o SA não é uma
+constante mensal** — é `6,15 € × dias úteis do mês`.
+
 ## 3. CONFLITOS A RESOLVER MANUALMENTE
 
 > Pontos em que os **novos requisitos colidem com regras/modelos já definidos** e que **não podem ser
@@ -1308,6 +1351,58 @@ Dividas a pagar = F7+F9+E11+F10                           OK   obtido=59271.23
 Capital em divida = inicial - amortizado                  OK   obtido=24016.80
 Racios: Liquidez / Fundo de Maneio / Autonomia            OK   (3 identidades, erro < 1e-7)
 ```
+
+### 4.4 Varrimento de inexistência (o que **não** existe na BD)
+
+```text
+DataBase_v3.sql -> 24 tabelas: agendamento, agendamento_pessoa, agendamento_servico, alerta_fiscal,
+  base_partida, categoria_profissional, cidade, cliente, cliente_morada, config_recibo_verde,
+  execucao_agendamento, fecho_caixa_diario, feedback_cliente, funcionario, gorjeta, matriz_deslocacao,
+  obrigacao_fiscal, rota_ambulante, rota_funcionario, servico, servico_foto, servico_local,
+  transacao_financeira, utilizador
+pesquisa por: ativo_fixo | deprecia | amortiza | emprestimo | financiamento | balancete | dmr | dri
+  -> 0 ocorrencias no codigo e no schema
+pesquisa por: fornecedor -> 4 ocorrencias, TODAS comentarios de modules\common\js\api\geocodingApi.js
+  (o "fornecedor" e o servico de geocoding, nao uma entidade de negocio)
+```
+
+⇒ **Nenhuma** tabela suporta ativos, depreciações, empréstimos, financiamentos, balancete, DMR/DRI, despesas
+ou fornecedores. As conclusões de §F.4/§F.5/§F.6 (e os conflitos **C-25…C-27**) ficam confirmadas por
+varrimento, **não** por suposição.
+
+### 4.5 Nota sobre os dados — mudou de **natureza**, não só de valor
+
+|               | Iteração 3 (modelos)                | Iteração 4 (esta)                                                |
+| :------------ | :---------------------------------- | :--------------------------------------------------------------- |
+| Empresa       | *"Empresa Solução Certa"* (exemplo) | **EMPRESA SECADE BEAUTY LDA** · NIF 514740540 · NISS 11499501734 |
+| Trabalhadores | 6 anónimos (só vencimento)          | **6 com nome**, NISS e data de nascimento                        |
+| Ativos        | 4 de exemplo                        | **2 reais** (`Portátil Apple`, `Carrinha`)                       |
+| Período       | indefinido                          | **janeiro a março de 2026**                                      |
+
+**Consequência:** os valores passam a ser **citáveis** — servem de **caso de teste** e de conferência do que o
+sistema vier a calcular. Deixam de ser meras ilustrações de mecânica. (Os antigos `406,50` · `325,20` ·
+`16 954,73` · `1 463,40` **já não pertencem a nenhuma folha** e não devem ser usados como referência.)
+
+> 📌 **Nota sobre versionamento.** Os dois ficheiros estão em `_dev/mapaMentalMVP/`, que está no `.gitignore`
+> (`/_dev/mapaMentalMVP/`) e **só existe versionada na branch `agent-workspace`** (§11.5). Sendo **entradas do
+> cliente**, ficam **no disco mas invisíveis para o Git** nas restantes branches. Se o gestor quiser os
+> originais versionados, tem de decidir **onde** os colocar (fora de `_dev/mapaMentalMVP/`) — é decisão do
+> utilizador, não do agente (§11.2).
+
+### 4.6 Encaixe nos módulos — o que a 4.ª iteração altera
+
+| Onde                          | O que muda                                                                                           |
+| :---------------------------- | :--------------------------------------------------------------------------------------------------- |
+| §1.12 **reescrita** (F.0—F.9) | Novos ficheiros como fonte de verdade; **F.8** (DMR/DRI) e **F.9** (confronto antigo↔novo) são novas |
+| §F.3 Dashboard                | Células **novas e verificadas**; valores reais; **IVA é saldo devedor** dentro das dívidas a pagar   |
+| §F.4 RH                       | **SA deixou de ser constante** (dias úteis variam); taxa de SS **34,75 %** confirmada pelo DRI       |
+| §F.5 Ativos                   | **Fórmula da depreciação corrigida** (`round` do mensal); **vida útil por ativo** (3 e 4 anos)       |
+| §F.6 Financiamentos           | Dois "capitais em dívida" (**24 016,80 €** vs **49 354,66 €**) → decisão nova (**Q-61**)             |
+| §F.6 Análise financeira       | IRC: `RAI * 20 %` **escrito no ficheiro**; duas caixas (taxa + valor) confirmadas                    |
+| §2.10 **reescrita**           | Q-48/Q-50/Q-57 **fechadas**; **Q-58…Q-65** novas, todas nascidas do confronto                        |
+| §2.10.1                       | Fórmula do custo de pessoal corrigida (SA variável)                                                  |
+| §3 C-25…C-30                  | Atualizados com valores reais; **C-28** passa a ter **dois** casos (IRS e SA)                        |
+| `mensagem_teams.txt`          | Reescrita: saem as perguntas respondidas pelos ficheiros, entram **Q-58…Q-65**                       |
 
 ---
 
