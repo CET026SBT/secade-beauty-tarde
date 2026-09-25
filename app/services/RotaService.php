@@ -18,9 +18,8 @@ require_once APP_PATH . "/utils/Session.php";
  */
 class RotaService extends BaseService {
 
-    private const BASE_PARTIDA_ID        = 1;    // Base fixa (Évora)
-    private const FIXED_OPERATIONAL_COST = 50.0; // Custo fixo operacional
-    private const REFERENCE_PROFITABILITY = 50.0;// Indicador VISUAL de referência (Fase 4)
+    private const BASE_PARTIDA_ID         = 1;    // Base fixa (Évora)
+    private const REFERENCE_PROFITABILITY = 50.0; // Indicador VISUAL de referência (Fase 4)
 
     private RotaRepository $rotaRepository;
     private BookingRepository $bookingRepository;
@@ -59,7 +58,7 @@ class RotaService extends BaseService {
             throw new Exception("Decisão inválida. Use 'aprovada' ou 'recusada'.", 422);
         }
 
-        $managerId = Session::user()["id"] ?? null;
+        $managerId = Session::userId();
 
         return $this->executeTransactional(function() use ($cityId, $date, $decision, $notes, $managerId) {
             $bookings = $this->bookingRepository->findDecidableByCityAndDate($date, $cityId);
@@ -77,8 +76,7 @@ class RotaService extends BaseService {
             }
 
             $fuelCost      = $this->rotaRepository->getFuelCost($cityId, self::BASE_PARTIDA_ID);
-            $totalCost     = round($fuelCost + self::FIXED_OPERATIONAL_COST, 2);
-            $profitability = round($revenue - $totalCost, 2);
+            $profitability = round($revenue - $fuelCost, 2);
             $approved      = $decision === "aprovada";
 
             $bookingState = $approved ? "confirmado" : "cancelado";
@@ -123,8 +121,6 @@ class RotaService extends BaseService {
                 "bookingIds"    => $bookingIds,
                 "revenue"       => $revenue,
                 "fuelCost"      => $fuelCost,
-                "fixedCost"     => self::FIXED_OPERATIONAL_COST,
-                "totalCost"     => $totalCost,
                 "profitability" => $profitability,
                 "meetsReference"=> $reference,
                 "bookingStatus" => $bookingState,
@@ -159,9 +155,8 @@ class RotaService extends BaseService {
         foreach ($groups as $group) {
             $groupCityId = (int)$group["cidade_id"];
             $revenue     = (float)$group["receita_prevista"];
-            $fuelCost    = $this->rotaRepository->getFuelCost($groupCityId, self::BASE_PARTIDA_ID);
-            $totalCost   = round($fuelCost + self::FIXED_OPERATIONAL_COST, 2);
-            $profitability = round($revenue - $totalCost, 2);
+            $fuelCost      = $this->rotaRepository->getFuelCost($groupCityId, self::BASE_PARTIDA_ID);
+            $profitability = round($revenue - $fuelCost, 2);
             $consolidated = (int)($group["total_consolidados"] ?? 0);
             $total        = (int)$group["total_agendamentos"];
             $key = $group["data_rota"] . "|" . $groupCityId;
@@ -182,8 +177,6 @@ class RotaService extends BaseService {
                 "awaitingAcceptance" => $total - $consolidated,
                 "revenue"        => $revenue,
                 "fuelCost"       => $fuelCost,
-                "fixedCost"      => self::FIXED_OPERATIONAL_COST,
-                "totalCost"      => $totalCost,
                 "profitability"  => $profitability,
                 "meetsReference" => $profitability >= self::REFERENCE_PROFITABILITY,
                 "canDecide"      => in_array($status, ["planeada", "aprovada", "recusada"], true),
@@ -206,8 +199,6 @@ class RotaService extends BaseService {
                 "awaitingAcceptance" => 0,
                 "revenue"        => (float)($route["servicesProfit"] ?? 0),
                 "fuelCost"       => (float)($route["fuelCost"] ?? 0),
-                "fixedCost"      => self::FIXED_OPERATIONAL_COST,
-                "totalCost"      => round((float)($route["fuelCost"] ?? 0) + self::FIXED_OPERATIONAL_COST, 2),
                 "profitability"  => (float)($route["totalProfit"] ?? 0),
                 "meetsReference" => (float)($route["totalProfit"] ?? 0) >= self::REFERENCE_PROFITABILITY,
                 "canDecide"      => false,
@@ -224,7 +215,6 @@ class RotaService extends BaseService {
         return [
             "routes"               => $rows,
             "baseId"               => self::BASE_PARTIDA_ID,
-            "fixedCost"            => self::FIXED_OPERATIONAL_COST,
             "referenceProfitability" => self::REFERENCE_PROFITABILITY,
             "decisionMode"         => "manual"
         ];

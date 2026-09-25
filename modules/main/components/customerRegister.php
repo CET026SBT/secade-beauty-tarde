@@ -1,6 +1,7 @@
 <?php
 register_script("validators/user.validator", "common");
 register_script("validators/customer.validator", "common");
+register_script("api/geocodingApi", "common");
 register_script("utils/addressAutocomplete", "common");
 register_script("components/customerRegister", "main");
 ?>

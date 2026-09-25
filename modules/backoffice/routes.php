@@ -3,11 +3,7 @@ require_once __DIR__ . "/../../app/config/config.php";
 require_once APP_PATH . "/utils/Session.php";
 
 // Backoffice: acesso restrito a gestores
-Session::requireLogin();
-if (!Session::isManager()) {
-    header("Location: " . BASE_URL . "/");
-    exit;
-}
+Session::requireProfile(["gestor"]);
 
 register_script("components/routes", "backoffice");
 
@@ -23,8 +19,9 @@ include_once ROOT_PATH . "/modules/backoffice/includes/boNavbar.php";
         <div>
             <h2 class="mb-1"><i class="bi bi-signpost-split text-primary me-2"></i>Gestão de Rotas</h2>
             <p class="text-muted small mb-0">
-                Algoritmo de viabilidade: receita <strong>−</strong> (combustível + <?= number_format(50, 0) ?> € fixos) e
-                limiar mínimo de <strong>100 €</strong>.
+                A decisão é <strong>manual e livre</strong>: aprovar ou recusar é sempre do gestor.
+                Os <strong>50 €</strong> junto da rentabilidade são apenas um <strong>indicador visual</strong> de
+                referência — nunca bloqueiam nem decidem nada.
             </p>
         </div>
         <a href="<?= BASE_URL ?>/gestao/agendamentos" class="btn btn-outline-primary">
@@ -84,7 +81,6 @@ include_once ROOT_PATH . "/modules/backoffice/includes/boNavbar.php";
                             <th class="text-center">Agendamentos</th>
                             <th class="text-end">Receita</th>
                             <th class="text-end">Combustível</th>
-                            <th class="text-end">Custo total</th>
                             <th class="text-end">Rentabilidade</th>
                             <th class="text-center">Estado</th>
                             <th class="text-end">Decisão</th>

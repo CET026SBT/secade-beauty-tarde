@@ -56,7 +56,7 @@ $assets = [
     "modules/backoffice/js/components/services.js",
     "modules/backoffice/js/components/fiscal.js",
     "modules/backoffice/js/components/greenReceipts.js",
-    "modules/common/css/ext-bootstrap.css"
+    "modules/common/css/ext-bootstrap.css",
     "modules/common/css/style.css"
 ];
 

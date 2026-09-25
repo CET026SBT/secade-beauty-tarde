@@ -7,6 +7,15 @@ class Session {
         }
     }
 
+    /**
+     * Garante a sessão iniciada, para quem guarda estado PRÓPRIO em sessão (ex.: o OTP do
+     * `OTPService`, dono da sua chave). O utilizador autenticado tem os acessores acima;
+     * isto não é uma API genérica de chaves de sessão.
+     */
+    public static function start(): void {
+        self::init();
+    }
+
     public static function createLoginSession(array $user): void {
         self::init();
         $_SESSION["user_id"] = $user["id"];
@@ -39,6 +48,11 @@ class Session {
         return $_SESSION["user_profile"] ?? null;
     }
 
+    /** Id do utilizador em sessão, ou `null`. Evita desestruturar o array de `user()`. */
+    public static function userId(): ?int {
+        return self::isLoggedIn() ? (int)$_SESSION["user_id"] : null;
+    }
+
     public static function isManager(): bool {
         return self::getUserProfile() === "gestor";
     }
@@ -62,6 +76,22 @@ class Session {
     public static function requireLoginApi(): void {
         if (!self::isLoggedIn()) {
             throw new Exception("Sessão não iniciada.", 401);
+        }
+    }
+
+    /**
+     * Guard de PÁGINA (HTML): exige sessão e um dos perfis, redireccionando se falhar.
+     * Simétrico ao requireProfileApi(), que serve as APIs (401/403 em JSON).
+     * Substitui o bloco `requireLogin() + if (!isX()) { header(...); exit; }` que estava
+     * repetido em cada página do backoffice.
+     */
+    public static function requireProfile(array $profiles, ?string $redirectUrl = null): void {
+        self::requireLogin($redirectUrl);
+
+        if (!in_array(self::getUserProfile(), $profiles, true)) {
+            $url = $redirectUrl ?? (defined("BASE_URL") ? BASE_URL . "/" : "/");
+            header("Location: {$url}");
+            exit;
         }
     }
 
