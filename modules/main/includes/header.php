@@ -32,8 +32,8 @@ $pageTitle = isset($pageTitle) ? $pageTitle . " - " . SITE_NAME : SITE_NAME . " 
     <!-- Our Libraries Stylesheet -->
     <link href="<?= BASE_URL ?>/modules/common/lib-our/jq-preloader/jq-preloader.css" rel="stylesheet">
 
-    <!-- Main Stylesheet -->
-    <link href="<?= BASE_URL ?>/modules/main/css/style.css" rel="stylesheet">
+    <!-- Common Stylesheet -->
+    <link href="<?= BASE_URL ?>/modules/common/css/style.css" rel="stylesheet">
 
     <script>
         window.BASE_URL = <?= json_encode(BASE_URL) ?>;

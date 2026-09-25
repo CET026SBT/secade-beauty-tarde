@@ -12,7 +12,7 @@ $boMenuUser = Session::user();
 $boMenuNameParts = explode(" ", trim($boMenuUser["name"] ?? ""));
 $boMenuDisplayName = $boMenuNameParts[0] . (count($boMenuNameParts) > 1 ? " " . end($boMenuNameParts) : "");
 ?>
-<div class="menuUser menuUser-bo dropdown">
+<div class="menuUser menuUser-bo dropdown ms-auto me-xl-4 order-xl-last">
     <button class="btn btn-link dropdown-toggle d-flex align-items-center text-decoration-none p-0"
             type="button" data-bs-toggle="dropdown" aria-expanded="false">
         <span class="text-white me-2 d-none d-lg-inline"><?= htmlspecialchars($boMenuDisplayName) ?></span>

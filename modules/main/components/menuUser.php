@@ -33,7 +33,7 @@ if ($isLoggedIn && $user):
         $managementLinks[] = ["url" => "/gestao/recibos-verdes", "icon" => "bi-cash-stack", "label" => "Recibos Verdes"];
     }
 ?>
-<div class="menuUser dropdown">
+<div class="menuUser dropdown ms-auto me-xl-4 order-xl-last">
     <button class="btn btn-link dropdown-toggle d-flex align-items-center text-decoration-none p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
         <span class="text-white me-2 d-none d-lg-inline"><?= htmlspecialchars($userName) ?></span>
         <img src="<?= BASE_URL ?>/modules/common/img/testimonial-1.jpg"
@@ -77,7 +77,7 @@ if ($isLoggedIn && $user):
     </ul>
 </div>
 <?php else: ?>
-<a href="<?= BASE_URL ?>/login" class="btn btn-sm btn-primary no-bg m-0 ms-lg-3 px-3 py-2">
+<a href="<?= BASE_URL ?>/login" class="btn btn-sm btn-primary no-bg px-3 py-2 m-0 ms-auto me-2 me-xl-4 order-xl-last">
     <i class="fa fa-user-lock me-2"></i>Iniciar Sessão
 </a>
 <?php endif; ?>

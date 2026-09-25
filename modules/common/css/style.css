@@ -38,32 +38,6 @@ body {
 .object-fit-scale-down{ object-fit: scale-down !important; }
 .object-fit-none      { object-fit: none !important; }
 
-/* > Utilitary Color Classes (Bootstrap Style) */
-/* Primary Dark */
-.bg-primary-dark { background-color: var(--bs-primary-dark) !important; }
-.text-primary-dark { color: var(--bs-primary-dark) !important; }
-.border-primary-dark { border-color: var(--bs-primary-dark) !important; }
-
-/* Primary Light */
-.bg-primary-light { background-color: var(--bs-primary-light) !important; }
-.text-primary-light { color: var(--bs-primary-light) !important; }
-.border-primary-light { border-color: var(--bs-primary-light) !important; }
-
-/* Primary Lighter */
-.bg-primary-lighter { background-color: var(--bs-primary-lighter) !important; }
-.text-primary-lighter { color: var(--bs-primary-lighter) !important; }
-.border-primary-lighter { border-color: var(--bs-primary-lighter) !important; }
-
-/* Secondary Dark */
-.bg-secondary-dark { background-color: var(--bs-secondary-dark) !important; }
-.text-secondary-dark { color: var(--bs-secondary-dark) !important; }
-.border-secondary-dark { border-color: var(--bs-secondary-dark) !important; }
-
-/* Secondary Darker */
-.bg-secondary-darker { background-color: var(--bs-secondary-darker) !important; }
-.text-secondary-darker { color: var(--bs-secondary-darker) !important; }
-.border-secondary-darker { border-color: var(--bs-secondary-darker) !important; }
-
 /* > SVG Height to Font-Size */
 img[src$=".svg"]:is(.h1, .h2, .h3, .h4, .h5, .h6) {
     height: 1em;
@@ -297,14 +271,9 @@ form .row > *:has([aria-invalid="true"])*/ {
     .navbar .navbar-brand {
         font-size: 20px;
     }
-
-    .navbar .navbar-nav .nav-link  {
-        margin-left: 0;
-        padding: 10px 0;
-    }
 }
 
-@media (min-width: 992px) {
+@media (min-width: 1240px) {
     .navbar .nav-item .dropdown-menu {
         display: block;
         border: none;
