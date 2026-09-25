@@ -15,9 +15,18 @@ abstract class BaseController {
         return is_array($inputData) ? $inputData : [];
     }
 
+    /**
+     * Guard de API: exige um dos perfis e devolve o id do utilizador em sessão.
+     * Via ÚNICA para APIs autenticadas (lança 401/403 via Session::requireProfileApi).
+     * Substitui os guardas por perfil que existiam a duplicar este corpo
+     * (`requireCustomer()` aqui e um `requireEmployee()` local no ServiceController).
+     */
+    protected function requireProfile(array $profiles): int {
+        Session::requireProfileApi($profiles);
+        return (int)Session::user()["id"];
+    }
+
     protected function requireCustomer(): int {
-        Session::requireProfileApi(["cliente"]);
-        $user = Session::user();
-        return (int)$user["id"];
+        return $this->requireProfile(["cliente"]);
     }
 }

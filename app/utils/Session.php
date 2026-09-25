@@ -39,6 +39,11 @@ class Session {
         return $_SESSION["user_profile"] ?? null;
     }
 
+    /** Id do utilizador em sessão, ou `null`. Evita desestruturar o array de `user()`. */
+    public static function userId(): ?int {
+        return self::isLoggedIn() ? (int)$_SESSION["user_id"] : null;
+    }
+
     public static function isManager(): bool {
         return self::getUserProfile() === "gestor";
     }
@@ -65,11 +70,47 @@ class Session {
         }
     }
 
+    /**
+     * Guard de PÁGINA (HTML): exige sessão e um dos perfis, redireccionando se falhar.
+     * Simétrico ao requireProfileApi(), que serve as APIs (401/403 em JSON).
+     * Substitui o bloco `requireLogin() + if (!isX()) { header(...); exit; }` que estava
+     * repetido em cada página do backoffice.
+     */
+    public static function requireProfile(array $profiles, ?string $redirectUrl = null): void {
+        self::requireLogin($redirectUrl);
+
+        if (!in_array(self::getUserProfile(), $profiles, true)) {
+            $url = $redirectUrl ?? (defined("BASE_URL") ? BASE_URL . "/" : "/");
+            header("Location: {$url}");
+            exit;
+        }
+    }
+
     public static function requireProfileApi(array $profiles): void {
         self::requireLoginApi();
         if (!in_array(self::getUserProfile(), $profiles, true)) {
             throw new Exception("Sem permissões para esta operação.", 403);
         }
+    }
+
+    /**
+     * Acesso genérico a chaves de sessão fora do utilizador autenticado (ex.: OTP).
+     * Existe para nenhum consumidor tocar em `$_SESSION` directamente — o bootstrap
+     * da sessão e o contrato de nomes das chaves ficam só aqui.
+     */
+    public static function get(string $key, mixed $default = null): mixed {
+        self::init();
+        return $_SESSION[$key] ?? $default;
+    }
+
+    public static function set(string $key, mixed $value): void {
+        self::init();
+        $_SESSION[$key] = $value;
+    }
+
+    public static function forget(string $key): void {
+        self::init();
+        unset($_SESSION[$key]);
     }
 
     public static function destroy() {
