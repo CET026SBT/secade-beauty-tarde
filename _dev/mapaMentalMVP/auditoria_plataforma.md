@@ -222,8 +222,9 @@ o varrimento inicial era de linha única. Registado como armadilha em
 
 1. **Textos do cliente fora do repositório.** Os requisitos da 1.ª e 2.ª iteração chegaram por Teams e
    **não são verificáveis** aqui — é a limitação de fundo. Posso provar **o que está no código**; não
-   posso provar o que o cliente escreveu fora dele. Os anexos (`Menu APOIO 3.docx`, `CUSTOS RH 2.xlsx`)
-   são **binários**: só o conteúdo parafraseado é citável.
+   posso provar o que o cliente escreveu fora dele. *(Nota de 25/09/2026: os anexos das iterações 3/4 —
+   `.docx`/`.xlsx` — **já não** são caixa negra: sendo ZIP, o conteúdo é extraível com `zlib` em PHP puro,
+   sem pacotes (medido em `analise_backoffice_gestor.md` §F.7). O conteúdo **passou a ser citável**.)*
 2. **Não avaliado:** qualidade funcional, desempenho, segurança ofensiva, acessibilidade e CSS (fora do
    diagnóstico pontual **P-09**). `admin/` fora por instrução (`.clinerules` §1).
 3. **Duplicação semântica.** O detetor compara **nomes** e **texto** de blocos idênticos; duplicações com

@@ -1,10 +1,12 @@
 SECADE BEAUTY — BACKOFFICE
 Estrutura proposta, o que já recebemos e dúvidas a esclarecer
-(4.ª versão — 25/09/2026)
+(5.ª versão — 25/09/2026)
 
 ============================================================
 1) ESTRUTURA DO BACKOFFICE
 ============================================================
+
+O que o GESTOR/FUNCIONARIO podem ver/aceder:
 
 GESTOR
 - Resumo (painel de entrada)
@@ -15,7 +17,7 @@ GESTOR
 - Rotas                           (JÁ EXISTE)
 - Fiscal                          (JÁ EXISTE: IVA, IRC, Segurança Social, Seguros)
 - Recibos verdes                  (JÁ EXISTE: percentagens + simulador)
-- Contabilidade (NOVO) — 6 secções, seguindo o "MENU APOIO" que nos enviaram:
+- Contabilidade (NOVO) — 6 secções, seguindo o "Menu Dashboard" que nos enviaram:
     - Resumo ............ Disponibilidades · Dívidas a receber · Dívidas a pagar
     - Rácios ............ Ativo corrente / não corrente · Capital próprio ·
                           Passivo não corrente
@@ -34,6 +36,7 @@ GESTOR
 - Fornecedores (EM ANDAMENTO — prioridade 1 do trabalho futuro)
 - Serviços (JÁ EXISTE, em modo supervisão)
 
+
 FUNCIONÁRIO
 - A minha agenda (marcações que lhe estão atribuídas)
 - Aceitação de serviços          (JÁ EXISTE: aceitar, desfazer, trocar)
@@ -41,26 +44,29 @@ FUNCIONÁRIO
 - Promoções (apenas leitura)
 - Avisos / lembretes no sino
 
-SEM ACESSO (só gestor)
-- Contabilidade, Equipa, Fornecedores, Resultados
 
 SITE PÚBLICO
 - Secção resumida sobre os serviços prestados, no Início e no Sobre
-- Valores mostrados ao cliente com IVA incluído
-- Imagem em cada card de serviço
+- Valores mostrados ao cliente com IVA incluído (ex: Valor Total já com IVA incluido, nos Agendamentos)
+- Imagem em cada card de serviço (Agendamentos e Detalhes de Serviço (slider de imagens do serviço) (POR IMPLEMENTAR))
 
 ============================================================
 2) O QUE JÁ RECEBEMOS
 ============================================================
 
-Recebemos os dois ficheiros de apoio ("Menu APOIO 3.docx" e "CUSTOS RH 2.xlsx").
-Foi deles que saiu a estrutura da Contabilidade acima.
+Recebemos dois ficheiros NOVOS ("Menu Dashboard.docx" e
+"Contabilidade Secade Beauty.xlsx"), que substituem os dois primeiros
+("Menu APOIO 3.docx" e "CUSTOS RH 2.xlsx"). A estrutura da Contabilidade acima
+sai dos ficheiros novos.
 
 APROVEITÁMOS
+- Os ficheiros já trazem dados reais da empresa (janeiro a março de 2026), o que
+  nos permite CONFERIR os números em vez de os supor.
+- Sabemos agora a que célula corresponde cada card que pediram.
 - A folha dos custos de pessoal traz a fórmula completa: remuneração, subsídio
   de alimentação, IRS e Segurança Social.
-- O mapa do balancete dá para preencher os cards do Resumo.
-- A lista de ativos e o balancete de ativos dão o mapa de depreciações.
+- A lista de ativos e o mapa de depreciações dão as duas vistas dos ativos.
+- As declarações de DMR e DRI vêm ilustradas e identificam a empresa.
 - Confirmámos que as vendas e os custos de rota já vêm da própria plataforma.
 
 AINDA NÃO EXISTE (na base de dados nem no sistema)
@@ -84,9 +90,11 @@ AINDA NÃO EXISTE (na base de dados nem no sistema)
    confirmam?)
 
 3. No painel, querem ver os dois valores de IVA — o que é pago ao Estado e o
-   apurado a partir das vendas e das despesas — ou só um deles? E no IRC,
-   confirmam o cálculo simples (resultado antes do imposto × taxa, e zero quando
-   o resultado é negativo), com a taxa editável no painel?
+   apurado a partir das vendas e das despesas — ou só um deles? E no IRC, a
+   folha nova já indica a fórmula (resultado antes do imposto x 20%) e pede uma
+   caixa para a taxa e outra para o valor a pagar: confirmam que a taxa é
+   editável por vocês no painel, e que o valor a pagar é decidido por vocês e
+   não calculado sozinho?
 
 --- DE ONDE VÊM OS NÚMEROS ---
 
@@ -105,26 +113,28 @@ AINDA NÃO EXISTE (na base de dados nem no sistema)
 8. O saldo de caixa e o saldo de banco são duas contas distintas? E são valores
    que introduzem e vão atualizando, ou vêm de um ficheiro do banco?
 
-9. O balancete chega em Excel? Com que regularidade? E as posições dos valores
-   que nos indicaram mantêm-se de ficheiro para ficheiro, ou mudam de sítio?
+9. Os ficheiros de contabilidade já nos chegaram (obrigado!) e as células que
+   indicaram batem certo. A dúvida que fica é se, nas próximas emissões, os
+   valores continuam nas mesmas posições ou mudam de sítio de mês para mês.
 
 10. As "dívidas a pagar" aparecem com naturezas diferentes (fornecedores,
-    retenções, IVA, Segurança Social e impostos). Confirmam estas naturezas?
+    financiamento, IVA e Segurança Social). Confirmam estas naturezas?
 
 11. Os rácios (ativo corrente e não corrente, capital próprio, passivo não
     corrente) devem ser lidos do balancete ou calculados por nós?
 
 --- ATIVOS, DEPRECIAÇÕES E FINANCIAMENTOS ---
 
-12. A empresa e os ativos que aparecem nos exemplos que nos enviaram são reais
-    ou são um exemplo do modelo? Não queremos tomar exemplos por dados reais.
+12. Nesses mapas há colunas para revalorizações e imparidades (aumentos de valor
+    e perdas de valor dos ativos). Ficam de fora nesta fase? Nos dados enviados
+    estão vazias.
 
 13. A "localização" dos ativos (sede, loja, carrinha) é relevante para o mapa de
     depreciações? E o valor de aquisição é com ou sem IVA?
 
 14. A depreciação que querem no card é a do período (do ano) ou a acumulada
-    desde a compra? Nos exemplos coincidem, porque são do início do ano, mas nos
-    anos seguintes deixam de coincidir.
+    desde a compra? Nos dados enviados coincidem, porque os ativos são do
+    início do ano, mas nos anos seguintes deixam de coincidir.
 
 15. Contam com vendas ou abates de ativos? Se sim, precisamos do valor de venda
     e da data de saída.
@@ -140,14 +150,45 @@ AINDA NÃO EXISTE (na base de dados nem no sistema)
 18. Nos contratos efetivos, o valor mensal é só o salário base ou inclui
     subsídios? E o 13.º e o 14.º mês entram no cálculo?
 
-19. A taxa de IRS é diferente de trabalhador para trabalhador e não existe uma
-    percentagem única da empresa, certo? Onde a podemos obter?
+19. Vimos na folha que a taxa de IRS é diferente de trabalhador para trabalhador
+    (8%, 3,6% e 8,56%) e que não há uma percentagem única da empresa, certo? As
+    taxas que lá estão mantêm-se de mês para mês ou mudam? Vêm das declarações
+    de DMR/DRI que já nos mostraram?
 
 20. As declarações de impostos devem ficar anexadas ao registo no calendário?
 
 21. Ao desativar um funcionário, o que acontece aos serviços que já lhe estão
     atribuídos e às marcações futuras?
 
+--- DOS FICHEIROS NOVOS (pontos em que os documentos não dizem o mesmo) ---
+
+29. Nos Rácios, as células que nos indicaram para os cinco rácios (liquidez,
+    fundo de maneio, autonomia financeira, endividamento e solvabilidade) não
+    apontam para onde os valores estão. Os rácios estão num segundo quadro, mais
+    abaixo na mesma folha. Confirmam que é desse quadro que devemos ler?
+
+30. O card "Passivo não corrente" ficou sem células indicadas, e nos dados é
+    sempre zero. Indicam as células, ou dispensamos o card por agora?
+
+31. Nas "Dívidas a pagar" está a ser somado o IVA, que nesse mês está A FAVOR da
+    empresa (saldo devedor), a três valores que a empresa deve. Querem a posição
+    líquida (como está na folha) ou o total que a empresa deve?
+
+32. No financiamento há dois valores diferentes para a dívida: 24 016,80 € no
+    plano de amortização e 49 354,66 € na conta do balancete (que também entra
+    nas dívidas a pagar). Qual deve aparecer no card?
+
+33. O subsídio de alimentação não é igual todos os meses: vi 129,15 €, 123,00 € e
+    135,30 € no mesmo trimestre, porque os dias úteis variam. Introduzem o valor
+    de cada mês, ou querem que calculemos os dias?
+
+34. Na declaração DRI aparecem 29 dias por trabalhador, mas no subsídio de
+    alimentação os dias usados são cerca de 21. São critérios diferentes ou há
+    uma gralha numa das folhas?
+
+35. O documento novo deixou de pedir os gráficos e a opção mensal / trimestral /
+    anual que constavam do primeiro. Mantemos só o gráfico de "Custos de
+    funcionários" (remuneração vs. valor que o funcionário recebe)?
 --- AVISOS ---
 
 22. O sino do backoffice e os avisos ao cliente devem ser o mesmo mecanismo ou
@@ -186,8 +227,13 @@ AINDA NÃO EXISTE (na base de dados nem no sistema)
 ============================================================
 NOTA FINAL
 ============================================================
-As respostas às perguntas sobre valores e IVA, origem dos números, ativos e
-financiamentos, pessoal e avisos (1 a 24) condicionam o desenho final do painel,
-da contabilidade, dos recursos humanos e das notificações. Sem elas, avançamos
-apenas com os módulos que não dependem de valores externos (agendamentos, rotas,
-serviços, promoções e site público).
+As respostas às perguntas 1 a 21 e 29 a 35 (valores e IVA, origem dos números,
+ativos, depreciações e financiamentos, pessoal e painel) condicionam o desenho
+final do painel, da contabilidade, dos recursos humanos e das notificações. Sem
+elas, avançamos apenas com os módulos que não dependem de valores externos
+(agendamentos, rotas, serviços, promoções e site público).
+
+NOTA: os ficheiros novos respondem a várias perguntas da versão anterior —
+a empresa e os trabalhadores estão identificados, o mapa das células veio
+preenchido e a divisão DMR/DRI existe. As perguntas desses pontos saíram desta
+lista.
