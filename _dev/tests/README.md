@@ -10,7 +10,7 @@ especificação §26.
 |                       |              |                    | integridade relacional                                                                                                                   |
 | `http_test.php`       | **119**      | **Apache + MySQL** | Stack real (roteamento + sessões): autenticação dos 3 perfis, APIs REST, códigos de erro, fluxo end-to-end de carrinha e registo/login   |
 | `asset_test.php`      | **65**       | **Apache**         | Assets (HTTP 200), injeção de scripts por página e contrato de nomes do formulário de registo                                            |
-| `js_syntax_check.php` | 15 ficheiros | —                  | Estrutura e sintaxe de todos os ficheiros JavaScript (sem Node)                                                                          |
+| `js_syntax_check.php` | 17 ficheiros | —                  | Estrutura e sintaxe de todos os ficheiros JavaScript (sem Node)                                                                          |
 
 **Total: 289 verificações.**
 

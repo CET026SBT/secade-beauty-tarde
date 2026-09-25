@@ -76,7 +76,7 @@ pasta raiz `admin/` · **motorista dedicado / logística de condução** (explic
 |                                  |              | registo e integridade relacional                                                                                                                       |
 | `_dev/tests/http_test.php`       | **119**      | Stack real (Apache + roteamento + sessões): autenticação de perfis, APIs REST, códigos de erro, fluxo end-to-end de carrinha e fluxos de registo/login |
 | `_dev/tests/asset_test.php`      | **65**       | Validação de assets (HTTP 200), injeção de scripts por página e contrato de nomes do formulário de registo                                             |
-| `_dev/tests/js_syntax_check.php` | 15 ficheiros | Verificação estrutural e de sintaxe de todos os ficheiros JavaScript do ecossistema                                                                    |
+| `_dev/tests/js_syntax_check.php` | 17 ficheiros | Verificação estrutural e de sintaxe de todos os ficheiros JavaScript do ecossistema                                                                    |
 
 **Execução:** comandos, pré-requisitos por suite (Apache e MySQL) e garantias de repetibilidade em
 **`_dev/tests/README.md`** — fonte única dos testes. Esta secção guarda o **registo de validação**
