@@ -69,6 +69,7 @@ AINDA NÃO EXISTE (na base de dados nem no sistema)
 - Rácios
 - Fornecedores e despesas externas (rendas, luz, água, seguros, manutenção)
 - Retenção de IRS na fonte, por trabalhador
+
 ============================================================
 3) DÚVIDAS A ESCLARECER
 ============================================================

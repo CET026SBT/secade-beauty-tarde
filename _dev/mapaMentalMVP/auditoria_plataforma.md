@@ -51,6 +51,7 @@ inferido. Onde a prova não existe, diz-se que não existe (§5).
 - **F-07** — fechou por **medição**: **7** ficheiros de imagem de categoria **vs** **3** cards
   renderizados (**3** categorias na BD). Os dois números medem coisas diferentes (inventário vs uso) e o
   texto passou a dizer os dois.
+
 ### 1.2 Código — convenções, duplicações e inconsistências (A-nn)
 
 | #    | Achado                                                                    | Onde                                                      | Estado                  |
@@ -176,6 +177,7 @@ o varrimento inicial era de linha única. Registado como armadilha em
 |      | custo intra-cidade** (§25.3) — era esse o papel provisório dos 50 € fixos.                                  |        |
 | P-09 | **L307 do `style.css`.** O espaço entre os blocos do menu vem de `gap-lg-2` no `<ul>` (Bootstrap 5.0.0,     | 📐     |
 |      | ≥ 992 px), **não** de `margin`. Correção: `gap-lg-0` (ou `gap: 0` no pai). Diagnosticado, **não** aplicado. |        |
+
 ---
 
 ## 4. ATESTADO — VERIFICADO E CERTO (não voltar a rever)
@@ -213,6 +215,7 @@ o varrimento inicial era de linha única. Registado como armadilha em
 |                                                                             | `validate()`                                                         |
 | **A-11 (natureza):** `ManagerRepository::find` **é** uma leitura de domínio | `WHERE u.tipo_perfil = 'gestor'` (L10-23) — **não** é camada sobre o |
 |                                                                             | `Session`; é apenas **sem uso** (ver §1.2)                           |
+
 ---
 
 ## 5. LIMITES DESTA RONDA
