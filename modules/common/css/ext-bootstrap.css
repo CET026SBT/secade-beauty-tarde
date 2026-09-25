@@ -1,0 +1,433 @@
+/* > Utilitary Color Classes (Bootstrap Style) */
+/* Primary Dark */
+.bg-primary-dark { background-color: var(--bs-primary-dark) !important; }
+.text-primary-dark { color: var(--bs-primary-dark) !important; }
+.border-primary-dark { border-color: var(--bs-primary-dark) !important; }
+
+/* Primary Light */
+.bg-primary-light { background-color: var(--bs-primary-light) !important; }
+.text-primary-light { color: var(--bs-primary-light) !important; }
+.border-primary-light { border-color: var(--bs-primary-light) !important; }
+
+/* Primary Lighter */
+.bg-primary-lighter { background-color: var(--bs-primary-lighter) !important; }
+.text-primary-lighter { color: var(--bs-primary-lighter) !important; }
+.border-primary-lighter { border-color: var(--bs-primary-lighter) !important; }
+
+/* Secondary Dark */
+.bg-secondary-dark { background-color: var(--bs-secondary-dark) !important; }
+.text-secondary-dark { color: var(--bs-secondary-dark) !important; }
+.border-secondary-dark { border-color: var(--bs-secondary-dark) !important; }
+
+/* Secondary Darker */
+.bg-secondary-darker { background-color: var(--bs-secondary-darker) !important; }
+.text-secondary-darker { color: var(--bs-secondary-darker) !important; }
+.border-secondary-darker { border-color: var(--bs-secondary-darker) !important; }
+
+@media (min-width: 576px) {
+  /* --- BOTÕES PADRÃO --- */
+  .btn-sm-primary { background-color: var(--bs-primary); border-color: var(--bs-primary); color: #fff; }
+  .btn-sm-outline-primary { color: var(--bs-primary); border-color: var(--bs-primary); background: transparent; }
+  
+  .btn-sm-secondary { background-color: var(--bs-secondary); border-color: var(--bs-secondary); color: #fff; }
+  .btn-sm-outline-secondary { color: var(--bs-secondary); border-color: var(--bs-secondary); background: transparent; }
+
+  .btn-sm-success { background-color: var(--bs-success); border-color: var(--bs-success); color: #fff; }
+  .btn-sm-outline-success { color: var(--bs-success); border-color: var(--bs-success); background: transparent; }
+
+  .btn-sm-danger { background-color: var(--bs-danger); border-color: var(--bs-danger); color: #fff; }
+  .btn-sm-outline-danger { color: var(--bs-danger); border-color: var(--bs-danger); background: transparent; }
+
+  .btn-sm-warning { background-color: var(--bs-warning); border-color: var(--bs-warning); color: #000; }
+  .btn-sm-outline-warning { color: var(--bs-warning); border-color: var(--bs-warning); background: transparent; }
+
+  .btn-sm-info { background-color: var(--bs-info); border-color: var(--bs-info); color: #000; }
+  .btn-sm-outline-info { color: var(--bs-info); border-color: var(--bs-info); background: transparent; }
+
+  .btn-sm-light { background-color: var(--bs-light); border-color: var(--bs-light); color: #000; }
+  .btn-sm-outline-light { color: var(--bs-light); border-color: var(--bs-light); background: transparent; }
+
+  .btn-sm-dark { background-color: var(--bs-dark); border-color: var(--bs-dark); color: #fff; }
+  .btn-sm-outline-dark { color: var(--bs-dark); border-color: var(--bs-dark); background: transparent; }
+
+  /* --- BOTÕES CUSTOMIZADOS --- */
+  .btn-sm-primary-dark { background-color: var(--bs-primary-dark); border-color: var(--bs-primary-dark); color: #fff; }
+  .btn-sm-outline-primary-dark { color: var(--bs-primary-dark); border-color: var(--bs-primary-dark); background: transparent; }
+  
+  .btn-sm-primary-light { background-color: var(--bs-primary-light); border-color: var(--bs-primary-light); color: #000; }
+  .btn-sm-outline-primary-light { color: var(--bs-primary-light); border-color: var(--bs-primary-light); background: transparent; }
+  
+  .btn-sm-primary-lighter { background-color: var(--bs-primary-lighter); border-color: var(--bs-primary-lighter); color: #000; }
+  .btn-sm-outline-primary-lighter { color: var(--bs-primary-lighter); border-color: var(--bs-primary-lighter); background: transparent; }
+  
+  .btn-sm-secondary-dark { background-color: var(--bs-secondary-dark); border-color: var(--bs-secondary-dark); color: #fff; }
+  .btn-sm-outline-secondary-dark { color: var(--bs-secondary-dark); border-color: var(--bs-secondary-dark); background: transparent; }
+  
+  .btn-sm-secondary-darker { background-color: var(--bs-secondary-darker); border-color: var(--bs-secondary-darker); color: #fff; }
+  .btn-sm-outline-secondary-darker { color: var(--bs-secondary-darker); border-color: var(--bs-secondary-darker); background: transparent; }
+
+  /* --- UTILITIES (Background, Text, Border) --- */
+  .bg-sm-primary { background-color: var(--bs-primary) !important; }
+  .text-sm-primary { color: var(--bs-primary) !important; }
+  .border-sm-primary { border-color: var(--bs-primary) !important; }
+
+  .bg-sm-secondary { background-color: var(--bs-secondary) !important; }
+  .text-sm-secondary { color: var(--bs-secondary) !important; }
+  .border-sm-secondary { border-color: var(--bs-secondary) !important; }
+
+  .bg-sm-success { background-color: var(--bs-success) !important; }
+  .text-sm-success { color: var(--bs-success) !important; }
+  .border-sm-success { border-color: var(--bs-success) !important; }
+
+  .bg-sm-danger { background-color: var(--bs-danger) !important; }
+  .text-sm-danger { color: var(--bs-danger) !important; }
+  .border-sm-danger { border-color: var(--bs-danger) !important; }
+
+  .bg-sm-warning { background-color: var(--bs-warning) !important; }
+  .text-sm-warning { color: var(--bs-warning) !important; }
+  .border-sm-warning { border-color: var(--bs-warning) !important; }
+
+  .bg-sm-info { background-color: var(--bs-info) !important; }
+  .text-sm-info { color: var(--bs-info) !important; }
+  .border-sm-info { border-color: var(--bs-info) !important; }
+
+  .bg-sm-light { background-color: var(--bs-light) !important; }
+  .text-sm-light { color: var(--bs-light) !important; }
+  .border-sm-light { border-color: var(--bs-light) !important; }
+
+  .bg-sm-dark { background-color: var(--bs-dark) !important; }
+  .text-sm-dark { color: var(--bs-dark) !important; }
+  .border-sm-dark { border-color: var(--bs-dark) !important; }
+
+  /* Customizadas */
+  .bg-sm-primary-dark { background-color: var(--bs-primary-dark) !important; }
+  .text-sm-primary-dark { color: var(--bs-primary-dark) !important; }
+  .border-sm-primary-dark { border-color: var(--bs-primary-dark) !important; }
+
+  .bg-sm-primary-light { background-color: var(--bs-primary-light) !important; }
+  .text-sm-primary-light { color: var(--bs-primary-light) !important; }
+  .border-sm-primary-light { border-color: var(--bs-primary-light) !important; }
+
+  .bg-sm-primary-lighter { background-color: var(--bs-primary-lighter) !important; }
+  .text-sm-primary-lighter { color: var(--bs-primary-lighter) !important; }
+  .border-sm-primary-lighter { border-color: var(--bs-primary-lighter) !important; }
+
+  .bg-sm-secondary-dark { background-color: var(--bs-secondary-dark) !important; }
+  .text-sm-secondary-dark { color: var(--bs-secondary-dark) !important; }
+  .border-sm-secondary-dark { border-color: var(--bs-secondary-dark) !important; }
+
+  .bg-sm-secondary-darker { background-color: var(--bs-secondary-darker) !important; }
+  .text-sm-secondary-darker { color: var(--bs-secondary-darker) !important; }
+  .border-sm-secondary-darker { border-color: var(--bs-secondary-darker) !important; }
+}
+
+
+/* ==========================================================================
+   2. BREAKPOINT: MD (A partir de 768px)
+   ========================================================================== */
+@media (min-width: 768px) {
+  /* --- BOTÕES PADRÃO --- */
+  .btn-md-primary { background-color: var(--bs-primary); border-color: var(--bs-primary); color: #fff; }
+  .btn-md-outline-primary { color: var(--bs-primary); border-color: var(--bs-primary); background: transparent; }
+  
+  .btn-md-secondary { background-color: var(--bs-secondary); border-color: var(--bs-secondary); color: #fff; }
+  .btn-md-outline-secondary { color: var(--bs-secondary); border-color: var(--bs-secondary); background: transparent; }
+
+  .btn-md-success { background-color: var(--bs-success); border-color: var(--bs-success); color: #fff; }
+  .btn-md-outline-success { color: var(--bs-success); border-color: var(--bs-success); background: transparent; }
+
+  .btn-md-danger { background-color: var(--bs-danger); border-color: var(--bs-danger); color: #fff; }
+  .btn-md-outline-danger { color: var(--bs-danger); border-color: var(--bs-danger); background: transparent; }
+
+  .btn-md-warning { background-color: var(--bs-warning); border-color: var(--bs-warning); color: #000; }
+  .btn-md-outline-warning { color: var(--bs-warning); border-color: var(--bs-warning); background: transparent; }
+
+  .btn-md-info { background-color: var(--bs-info); border-color: var(--bs-info); color: #000; }
+  .btn-md-outline-info { color: var(--bs-info); border-color: var(--bs-info); background: transparent; }
+
+  .btn-md-light { background-color: var(--bs-light); border-color: var(--bs-light); color: #000; }
+  .btn-md-outline-light { color: var(--bs-light); border-color: var(--bs-light); background: transparent; }
+
+  .btn-md-dark { background-color: var(--bs-dark); border-color: var(--bs-dark); color: #fff; }
+  .btn-md-outline-dark { color: var(--bs-dark); border-color: var(--bs-dark); background: transparent; }
+
+  /* --- BOTÕES CUSTOMIZADOS --- */
+  .btn-md-primary-dark { background-color: var(--bs-primary-dark); border-color: var(--bs-primary-dark); color: #fff; }
+  .btn-md-outline-primary-dark { color: var(--bs-primary-dark); border-color: var(--bs-primary-dark); background: transparent; }
+  
+  .btn-md-primary-light { background-color: var(--bs-primary-light); border-color: var(--bs-primary-light); color: #000; }
+  .btn-md-outline-primary-light { color: var(--bs-primary-light); border-color: var(--bs-primary-light); background: transparent; }
+  
+  .btn-md-primary-lighter { background-color: var(--bs-primary-lighter); border-color: var(--bs-primary-lighter); color: #000; }
+  .btn-md-outline-primary-lighter { color: var(--bs-primary-lighter); border-color: var(--bs-primary-lighter); background: transparent; }
+  
+  .btn-md-secondary-dark { background-color: var(--bs-secondary-dark); border-color: var(--bs-secondary-dark); color: #fff; }
+  .btn-md-outline-secondary-dark { color: var(--bs-secondary-dark); border-color: var(--bs-secondary-dark); background: transparent; }
+  
+  .btn-md-secondary-darker { background-color: var(--bs-secondary-darker); border-color: var(--bs-secondary-darker); color: #fff; }
+  .btn-md-outline-secondary-darker { color: var(--bs-secondary-darker); border-color: var(--bs-secondary-darker); background: transparent; }
+
+  /* --- UTILITIES (Background, Text, Border) --- */
+  .bg-md-primary { background-color: var(--bs-primary) !important; }
+  .text-md-primary { color: var(--bs-primary) !important; }
+  .border-md-primary { border-color: var(--bs-primary) !important; }
+
+  .bg-md-secondary { background-color: var(--bs-secondary) !important; }
+  .text-md-secondary { color: var(--bs-secondary) !important; }
+  .border-md-secondary { border-color: var(--bs-secondary) !important; }
+
+  .bg-md-success { background-color: var(--bs-success) !important; }
+  .text-md-success { color: var(--bs-success) !important; }
+  .border-md-success { border-color: var(--bs-success) !important; }
+
+  .bg-md-danger { background-color: var(--bs-danger) !important; }
+  .text-md-danger { color: var(--bs-danger) !important; }
+  .border-md-danger { border-color: var(--bs-danger) !important; }
+
+  .bg-md-warning { background-color: var(--bs-warning) !important; }
+  .text-md-warning { color: var(--bs-warning) !important; }
+  .border-md-warning { border-color: var(--bs-warning) !important; }
+
+  .bg-md-info { background-color: var(--bs-info) !important; }
+  .text-md-info { color: var(--bs-info) !important; }
+  .border-md-info { border-color: var(--bs-info) !important; }
+
+  .bg-md-light { background-color: var(--bs-light) !important; }
+  .text-md-light { color: var(--bs-light) !important; }
+  .border-md-light { border-color: var(--bs-light) !important; }
+
+  .bg-md-dark { background-color: var(--bs-dark) !important; }
+  .text-md-dark { color: var(--bs-dark) !important; }
+  .border-md-dark { border-color: var(--bs-dark) !important; }
+
+  /* Customizadas */
+  .bg-md-primary-dark { background-color: var(--bs-primary-dark) !important; }
+  .text-md-primary-dark { color: var(--bs-primary-dark) !important; }
+  .border-md-primary-dark { border-color: var(--bs-primary-dark) !important; }
+
+  .bg-md-primary-light { background-color: var(--bs-primary-light) !important; }
+  .text-md-primary-light { color: var(--bs-primary-light) !important; }
+  .border-md-primary-light { border-color: var(--bs-primary-light) !important; }
+
+  .bg-md-primary-lighter { background-color: var(--bs-primary-lighter) !important; }
+  .text-md-primary-lighter { color: var(--bs-primary-lighter) !important; }
+  .border-md-primary-lighter { border-color: var(--bs-primary-lighter) !important; }
+
+  .bg-md-secondary-dark { background-color: var(--bs-secondary-dark) !important; }
+  .text-md-secondary-dark { color: var(--bs-secondary-dark) !important; }
+  .border-md-secondary-dark { border-color: var(--bs-secondary-dark) !important; }
+
+  .bg-md-secondary-darker { background-color: var(--bs-secondary-darker) !important; }
+  .text-md-secondary-darker { color: var(--bs-secondary-darker) !important; }
+  .border-md-secondary-darker { border-color: var(--bs-secondary-darker) !important; }
+}
+
+
+/* ==========================================================================
+   3. BREAKPOINT: LG (A partir de 992px)
+   ========================================================================== */
+@media (min-width: 992px) {
+  /* --- BOTÕES PADRÃO --- */
+  .btn-lg-primary { background-color: var(--bs-primary); border-color: var(--bs-primary); color: #fff; }
+  .btn-lg-outline-primary { color: var(--bs-primary); border-color: var(--bs-primary); background: transparent; }
+  
+  .btn-lg-secondary { background-color: var(--bs-secondary); border-color: var(--bs-secondary); color: #fff; }
+  .btn-lg-outline-secondary { color: var(--bs-secondary); border-color: var(--bs-secondary); background: transparent; }
+
+  .btn-lg-success { background-color: var(--bs-success); border-color: var(--bs-success); color: #fff; }
+  .btn-lg-outline-success { color: var(--bs-success); border-color: var(--bs-success); background: transparent; }
+
+  .btn-lg-danger { background-color: var(--bs-danger); border-color: var(--bs-danger); color: #fff; }
+  .btn-lg-outline-danger { color: var(--bs-danger); border-color: var(--bs-danger); background: transparent; }
+
+  .btn-lg-warning { background-color: var(--bs-warning); border-color: var(--bs-warning); color: #000; }
+  .btn-lg-outline-warning { color: var(--bs-warning); border-color: var(--bs-warning); background: transparent; }
+
+  .btn-lg-info { background-color: var(--bs-info); border-color: var(--bs-info); color: #000; }
+  .btn-lg-outline-info { color: var(--bs-info); border-color: var(--bs-info); background: transparent; }
+
+  .btn-lg-light { background-color: var(--bs-light); border-color: var(--bs-light); color: #000; }
+  .btn-lg-outline-light { color: var(--bs-light); border-color: var(--bs-light); background: transparent; }
+
+  .btn-lg-dark { background-color: var(--bs-dark); border-color: var(--bs-dark); color: #fff; }
+  .btn-lg-outline-dark { color: var(--bs-dark); border-color: var(--bs-dark); background: transparent; }
+
+  /* --- BOTÕES CUSTOMIZADOS --- */
+  .btn-lg-primary-dark { background-color: var(--bs-primary-dark); border-color: var(--bs-primary-dark); color: #fff; }
+  .btn-lg-outline-primary-dark { color: var(--bs-primary-dark); border-color: var(--bs-primary-dark); background: transparent; }
+  
+  .btn-lg-primary-light { background-color: var(--bs-primary-light); border-color: var(--bs-primary-light); color: #000; }
+  .btn-lg-outline-primary-light { color: var(--bs-primary-light); border-color: var(--bs-primary-light); background: transparent; }
+  
+  .btn-lg-primary-lighter { background-color: var(--bs-primary-lighter); border-color: var(--bs-primary-lighter); color: #000; }
+  .btn-lg-outline-primary-lighter { color: var(--bs-primary-lighter); border-color: var(--bs-primary-lighter); background: transparent; }
+  
+  .btn-lg-secondary-dark { background-color: var(--bs-secondary-dark); border-color: var(--bs-secondary-dark); color: #fff; }
+  .btn-lg-outline-secondary-dark { color: var(--bs-secondary-dark); border-color: var(--bs-secondary-dark); background: transparent; }
+  
+  .btn-lg-secondary-darker { background-color: var(--bs-secondary-darker); border-color: var(--bs-secondary-darker); color: #fff; }
+  .btn-lg-outline-secondary-darker { color: var(--bs-secondary-darker); border-color: var(--bs-secondary-darker); background: transparent; }
+
+  /* --- UTILITIES (Background, Text, Border) --- */
+  .bg-lg-primary { background-color: var(--bs-primary) !important; }
+  .text-lg-primary { color: var(--bs-primary) !important; }
+  .border-lg-primary { border-color: var(--bs-primary) !important; }
+
+  .bg-lg-secondary { background-color: var(--bs-secondary) !important; }
+  .text-lg-secondary { color: var(--bs-secondary) !important; }
+  .border-lg-secondary { border-color: var(--bs-secondary) !important; }
+
+  .bg-lg-success { background-color: var(--bs-success) !important; }
+  .text-lg-success { color: var(--bs-success) !important; }
+  .border-lg-success { border-color: var(--bs-success) !important; }
+
+  .bg-lg-danger { background-color: var(--bs-danger) !important; }
+  .text-lg-danger { color: var(--bs-danger) !important; }
+  .border-lg-danger { border-color: var(--bs-danger) !important; }
+
+  .bg-lg-warning { background-color: var(--bs-warning) !important; }
+  .text-lg-warning { color: var(--bs-warning) !important; }
+  .border-lg-warning { border-color: var(--bs-warning) !important; }
+
+  .bg-lg-info { background-color: var(--bs-info) !important; }
+  .text-lg-info { color: var(--bs-info) !important; }
+  .border-lg-info { border-color: var(--bs-info) !important; }
+
+  .bg-lg-light { background-color: var(--bs-light) !important; }
+  .text-lg-light { color: var(--bs-light) !important; }
+  .border-lg-light { border-color: var(--bs-light) !important; }
+
+  .bg-lg-dark { background-color: var(--bs-dark) !important; }
+  .text-lg-dark { color: var(--bs-dark) !important; }
+  .border-lg-dark { border-color: var(--bs-dark) !important; }
+
+  /* Customizadas */
+  .bg-lg-primary-dark { background-color: var(--bs-primary-dark) !important; }
+  .text-lg-primary-dark { color: var(--bs-primary-dark) !important; }
+  .border-lg-primary-dark { border-color: var(--bs-primary-dark) !important; }
+
+  .bg-lg-primary-light { background-color: var(--bs-primary-light) !important; }
+  .text-lg-primary-light { color: var(--bs-primary-light) !important; }
+  .border-lg-primary-light { border-color: var(--bs-primary-light) !important; }
+
+  .bg-lg-primary-lighter { background-color: var(--bs-primary-lighter) !important; }
+  .text-lg-primary-lighter { color: var(--bs-primary-lighter) !important; }
+  .border-lg-primary-lighter { border-color: var(--bs-primary-lighter) !important; }
+
+  .bg-lg-secondary-dark { background-color: var(--bs-secondary-dark) !important; }
+  .text-lg-secondary-dark { color: var(--bs-secondary-dark) !important; }
+  .border-lg-secondary-dark { border-color: var(--bs-secondary-dark) !important; }
+
+  .bg-lg-secondary-darker { background-color: var(--bs-secondary-darker) !important; }
+  .text-lg-secondary-darker { color: var(--bs-secondary-darker) !important; }
+  .border-lg-secondary-darker { border-color: var(--bs-secondary-darker) !important; }
+}
+
+
+/* ==========================================================================
+   4. BREAKPOINT: XL (A partir de 1200px)
+   ========================================================================== */
+@media (min-width: 1200px) {
+  /* --- BOTÕES PADRÃO --- */
+  .btn-xl-primary { background-color: var(--bs-primary); border-color: var(--bs-primary); color: #fff; }
+  .btn-xl-outline-primary { color: var(--bs-primary); border-color: var(--bs-primary); background: transparent; }
+  
+  .btn-xl-secondary { background-color: var(--bs-secondary); border-color: var(--bs-secondary); color: #fff; }
+  .btn-xl-outline-secondary { color: var(--bs-secondary); border-color: var(--bs-secondary); background: transparent; }
+
+  .btn-xl-success { background-color: var(--bs-success); border-color: var(--bs-success); color: #fff; }
+  .btn-xl-outline-success { color: var(--bs-success); border-color: var(--bs-success); background: transparent; }
+
+  .btn-xl-danger { background-color: var(--bs-danger); border-color: var(--bs-danger); color: #fff; }
+  .btn-xl-outline-danger { color: var(--bs-danger); border-color: var(--bs-danger); background: transparent; }
+
+  .btn-xl-warning { background-color: var(--bs-warning); border-color: var(--bs-warning); color: #000; }
+  .btn-xl-outline-warning { color: var(--bs-warning); border-color: var(--bs-warning); background: transparent; }
+
+  .btn-xl-info { background-color: var(--bs-info); border-color: var(--bs-info); color: #000; }
+  .btn-xl-outline-info { color: var(--bs-info); border-color: var(--bs-info); background: transparent; }
+
+  .btn-xl-light { background-color: var(--bs-light); border-color: var(--bs-light); color: #000; }
+  .btn-xl-outline-light { color: var(--bs-light); border-color: var(--bs-light); background: transparent; }
+
+  .btn-xl-dark { background-color: var(--bs-dark); border-color: var(--bs-dark); color: #fff; }
+  .btn-xl-outline-dark { color: var(--bs-dark); border-color: var(--bs-dark); background: transparent; }
+
+  /* --- BOTÕES CUSTOMIZADOS --- */
+  .btn-xl-primary-dark { background-color: var(--bs-primary-dark); border-color: var(--bs-primary-dark); color: #fff; }
+  .btn-xl-outline-primary-dark { color: var(--bs-primary-dark); border-color: var(--bs-primary-dark); background: transparent; }
+  
+  .btn-xl-primary-light { background-color: var(--bs-primary-light); border-color: var(--bs-primary-light); color: #000; }
+  .btn-xl-outline-primary-light { color: var(--bs-primary-light); border-color: var(--bs-primary-light); background: transparent; }
+  
+  .btn-xl-primary-lighter { background-color: var(--bs-primary-lighter); border-color: var(--bs-primary-lighter); color: #000; }
+  .btn-xl-outline-primary-lighter { color: var(--bs-primary-lighter); border-color: var(--bs-primary-lighter); background: transparent; }
+  
+  .btn-xl-secondary-dark { background-color: var(--bs-secondary-dark); border-color: var(--bs-secondary-dark); color: #fff; }
+  .btn-xl-outline-secondary-dark { color: var(--bs-secondary-dark); border-color: var(--bs-secondary-dark); background: transparent; }
+  
+  .btn-xl-secondary-darker { background-color: var(--bs-secondary-darker); border-color: var(--bs-secondary-darker); color: #fff; }
+  .btn-xl-outline-secondary-darker { color: var(--bs-secondary-darker); border-color: var(--bs-secondary-darker); background: transparent; }
+
+  /* --- UTILITIES (Background, Text, Border) --- */
+  .bg-xl-primary { background-color: var(--bs-primary) !important; }
+  .text-xl-primary { color: var(--bs-primary) !important; }
+  .border-xl-primary { border-color: var(--bs-primary) !important; }
+
+  .bg-xl-secondary { background-color: var(--bs-secondary) !important; }
+  .text-xl-secondary { color: var(--bs-secondary) !important; }
+  .border-xl-secondary { border-color: var(--bs-secondary) !important; }
+
+  .bg-xl-success { background-color: var(--bs-success) !important; }
+  .text-xl-success { color: var(--bs-success) !important; }
+  .border-xl-success { border-color: var(--bs-success) !important; }
+
+  .bg-xl-danger { background-color: var(--bs-danger) !important; }
+  .text-xl-danger { color: var(--bs-danger) !important; }
+  .border-xl-danger { border-color: var(--bs-danger) !important; }
+
+  .bg-xl-warning { background-color: var(--bs-warning) !important; }
+  .text-xl-warning { color: var(--bs-warning) !important; }
+  .border-xl-warning { border-color: var(--bs-warning) !important; }
+
+  .bg-xl-info { background-color: var(--bs-info) !important; }
+  .text-xl-info { color: var(--bs-info) !important; }
+  .border-xl-info { border-color: var(--bs-info) !important; }
+
+  .bg-xl-light { background-color: var(--bs-light) !important; }
+  .text-xl-light { color: var(--bs-light) !important; }
+  .border-xl-light { border-color: var(--bs-light) !important; }
+
+  .bg-xl-dark { background-color: var(--bs-dark) !important; }
+  .text-xl-dark { color: var(--bs-dark) !important; }
+  .border-xl-dark { border-color: var(--bs-dark) !important; }
+
+  /* Customizadas */
+  .bg-xl-primary-dark { background-color: var(--bs-primary-dark) !important; }
+  .text-xl-primary-dark { color: var(--bs-primary-dark) !important; }
+  .border-xl-primary-dark { border-color: var(--bs-primary-dark) !important; }
+
+  .bg-xl-primary-light { background-color: var(--bs-primary-light) !important; }
+  .text-xl-primary-light { color: var(--bs-primary-light) !important; }
+  .border-xl-primary-light { border-color: var(--bs-primary-light) !important; }
+
+  .bg-xl-primary-lighter { background-color: var(--bs-primary-lighter) !important; }
+  .text-xl-primary-lighter { color: var(--bs-primary-lighter) !important; }
+  .border-xl-primary-lighter { border-color: var(--bs-primary-lighter) !important; }
+
+  .bg-xl-secondary-dark { background-color: var(--bs-secondary-dark) !important; }
+  .text-xl-secondary-dark { color: var(--bs-secondary-dark) !important; }
+  .border-xl-secondary-dark { border-color: var(--bs-secondary-dark) !important; }
+
+  .bg-xl-secondary-darker { background-color: var(--bs-secondary-darker) !important; }
+  .text-xl-secondary-darker { color: var(--bs-secondary-darker) !important; }
+  .border-xl-secondary-darker { border-color: var(--bs-secondary-darker) !important; }
+}
+
+/* --- Efeitos de Hover automáticos para as classes responsivas --- */
+[class*="btn-sm-"]:hover, 
+[class*="btn-md-"]:hover, 
+[class*="btn-lg-"]:hover, 
+[class*="btn-xl-"]:hover {
+  filter: brightness(90%);
+}
