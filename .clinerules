@@ -45,12 +45,28 @@ ficheiro corrige-se aqui.
 Stack fixa: PHP puro + PDO + MySQL 8.4.3 · HTML5/CSS3/JS com Bootstrap 5.0.0, jQuery 3.6.1 e as
 bibliotecas de `modules/common/lib` · Laragon local. Detalhe: `_dev/docs/spec/core.md` §1.
 
-- ❌ Instalar pacotes (Composer, npm) ou adotar frameworks externos.
+- ❌ Instalar pacotes (Composer, npm) ou adotar frameworks externos — **exceto** as exceções de §1.1.
 - ❌ Aceder ou alterar `/admin` na raiz — o backoffice vive em `modules/backoffice/`.
 - ❌ Alterar a estrutura da BD sem justificação registada na especificação.
 - ❌ Refatorar código existente sem planeamento aprovado.
 - ❌ Criar ou reescrever documentação **sem pedido explícito**.
 - ❌ Duplicar neste ficheiro conteúdo da especificação, de `_dev/tests/README.md` ou de `_dev/tools/README.md`.
+
+### 1.1 Exceções aprovadas à stack (fechadas, 25/09/2026)
+
+> Só estas — **nada além delas**. Fonte normativa e justificação: `_dev/docs/spec/core.md` **§1.2** e
+> **§3.12 · D-12**.
+
+| #   | Exceção                                                                                                                                      | Âmbito / onde está registada                 |
+| :-- | :------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------- |
+| E-1 | Bibliotecas do **material de formação** (`PhpSpreadsheet`, `TCPDF`, `PHPMailer`; `vendor/` Composer) — **devem ser usadas** na importação de | `_dev/docs/spec/core.md` §1.2 · §3.12 (D-12) |
+|     | ficheiros                                                                                                                                    |                                              |
+| E-2 | **Extensão PHP `zip`** ativa no Laragon (`php.ini`)                                                                                          | `_dev/docs/spec/core.md` §1.2 (E-2)          |
+| E-3 | **Chart.js** nos gráficos do backoffice                                                                                                      | `_dev/docs/spec/core.md` §1.2 (E-3)          |
+| E-4 | **Tabelas novas** para persistir o que é importado (justificação de BD registada)                                                            | `_dev/docs/spec/data-api.md` §17.9           |
+
+Fora destas quatro, a proibição de instalar pacotes e de adotar frameworks externos **mantém-se
+integralmente**. Requisitos e regra associados: **RF-75 · RF-76 · RN-30** (`requirements.md` §4.7 · §5.1).
 
 Decisões de gestão são **manuais**: nenhum indicador automático decide ou bloqueia
 (`_dev/docs/spec/core.md` §3.1 · `_dev/docs/spec/booking.md` §12.2 · §12.3).
@@ -163,8 +179,12 @@ revogado**: `_dev/docs/rules/build_history_on_demand.md`.
 ---
 
 **Este ficheiro não deve ser alterado sem aprovação.**
-**Versão:** 3.4 · **Data:** 25/09/2026
-**Histórico:** v3.3 → v3.4 — §2 corrige a via de autorização: o `BaseController` perde o
+**Versão:** 3.5 · **Data:** 25/09/2026
+**Histórico:** v3.4 → v3.5 — §1 ganha **exceções aprovadas e fechadas** (E-1…E-4): bibliotecas do material de
+formação por Composer, extensão `zip`, Chart.js nos gráficos de gestão e tabelas novas para o que é
+importado. Decisão e justificação em `_dev/docs/spec/core.md` §1.2 e §3.12 (**D-12**), com a regra do
+*override* de importação (**RN-30**) e os requisitos **RF-75/RF-76**.
+v3.3 → v3.4 — §2 corrige a via de autorização: o `BaseController` perde o
 `requireCustomer()`/`requireProfile()` (não são assunto do transporte do pedido) e o `Session` perde o
 acesso genérico `get/set/forget` (um só consumidor); quem autoriza chama o `Session` directamente.
 v3.2 → v3.3 — §4 passa de *"integrar é decisão do utilizador"* para **fluxo delegado**: cada

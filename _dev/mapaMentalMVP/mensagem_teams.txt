@@ -189,6 +189,16 @@ AINDA NÃO EXISTE (na base de dados nem no sistema)
 35. O documento novo deixou de pedir os gráficos e a opção mensal / trimestral /
     anual que constavam do primeiro. Mantemos só o gráfico de "Custos de
     funcionários" (remuneração vs. valor que o funcionário recebe)?
+--- IMPORTAÇÃO DE FICHEIROS ---
+
+36. Os valores dos vossos ficheiros passam a ser importados para a base de dados, e a
+    importação vai poder ser feita por vocês no backoffice (carregar o ficheiro e
+    gravar). Uma importação nova substitui a anterior por completo, para não haver
+    valores repetidos. A dúvida é de PRIORIDADE: em cada indicador, o valor deve vir
+    do FICHEIRO importado (o balancete) ou do que o sistema já calcula sozinho
+    (marcações, rotas, comissões)? E quando os dois lados têm valores para o mesmo
+    número, qual manda? (Exemplo: os "Gastos" do balancete e os custos de rota que a
+    plataforma já conhece — somam-se, ou conta só um deles?)
 --- AVISOS ---
 
 22. O sino do backoffice e os avisos ao cliente devem ser o mesmo mecanismo ou
@@ -227,8 +237,8 @@ AINDA NÃO EXISTE (na base de dados nem no sistema)
 ============================================================
 NOTA FINAL
 ============================================================
-As respostas às perguntas 1 a 21 e 29 a 35 (valores e IVA, origem dos números,
-ativos, depreciações e financiamentos, pessoal e painel) condicionam o desenho
+As respostas às perguntas 1 a 21 e 29 a 36 (valores e IVA, origem dos números,
+ativos, depreciações e financiamentos, pessoal, painel e importação dos ficheiros) condicionam o desenho
 final do painel, da contabilidade, dos recursos humanos e das notificações. Sem
 elas, avançamos apenas com os módulos que não dependem de valores externos
 (agendamentos, rotas, serviços, promoções e site público).

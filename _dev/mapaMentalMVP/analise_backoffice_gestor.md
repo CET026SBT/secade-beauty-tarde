@@ -762,6 +762,16 @@ Consequências:
   visual, macros, gráficos nem formatação condicional. Para "ler as células que o cliente indicou" **chega
   perfeitamente**; para "reproduzir o balancete como no Excel" **não**.
 
+> 📌 **Nota de 25/09/2026 — rota decidida, facto inalterado.** A importação passa a usar a biblioteca
+> **`PhpSpreadsheet`** do material de formação (§5 · `core.md` §3.12 · D-12 · E-1), com a extensão **`zip`**
+> ativa — **medido nesta data**: lê o balancete em **135 ms**, as **9 folhas** e **exatamente os mesmos
+> valores** que o leitor próprio (E2/E3/E8/F7/F9/E11/F10 · Rácios `B11..D15` · Financiamento · Análise
+> financeira · datas `46023 → 01/01/2026`). Dois métodos independentes a concordar: os números do cliente
+> ficam **confirmados**. O leitor em PHP puro (`PharData`/`gzinflate` + `SimpleXML`) continua **viável e
+> testado** e fica registado como alternativa (não necessita da extensão `zip`).
+> ⚠️ A armadilha da célula auto-fechada (`<c r="D2"/>`) **desaparece** com leitura por XML/AST
+> (`SimpleXML` ou `PhpSpreadsheet`) — só afeta leitores por regex.
+
 #### F.8 Os impostos do pessoal — `DMR` e `DRI` (novo: já há declaração)
 
 Este é o **bloco que mais ganhou** na iteração 4. No modelo anterior, *"IMPOSTOS"* era uma linha **genérica**
@@ -1075,25 +1085,30 @@ presente na 2.ª iteração) — **reformulada nesta iteração** para não reab
 
 **Perguntas novas, nascidas do confronto antigo↔novo (F.9):**
 
-| ID   | Pergunta                                                                                          |
-| :--- | :------------------------------------------------------------------------------------------------ |
-| Q-58 | **Rácios:** as células indicadas apontam para as colunas do *Balanço* e a coluna `E` **não        |
-|      | existe** na folha. Os 5 rácios estão no **2.º quadro** (linhas 11-15, colunas B/C/D).             |
-|      | Confirmam **`B11..D15`**?                                                                         |
-| Q-59 | **Passivo não corrente:** não indicaram **célula nenhuma** e o valor é `0` nas três colunas.      |
-|      | Quais as células — ou o Card é dispensável enquanto for sempre 0?                                 |
-| Q-60 | **IVA nas "Dívidas a pagar":** o valor vem do **Saldo Devedor** (IVA a favor) e é somado a três   |
-|      | saldos credores. É a **posição líquida** que querem, ou a dívida **bruta**?                       |
-| Q-61 | **Capital em dívida:** o plano de financiamento dá **24 016,80 €** e a conta 25 do balancete dá   |
-|      | **49 354,66 €** (que também entra nas Dívidas a pagar). Qual alimenta o Card?                     |
-| Q-62 | **Anexos fiscais:** querem o **PDF/imagem das declarações** anexado ao registo do calendário?     |
-|      | (Hoje o calendário fiscal **não** guarda anexos.)                                                 |
-| Q-63 | **Subsídio de alimentação:** o valor varia com os **dias úteis do mês** (20/21/22 dias × 6,15 €). |
-|      | Confirmam que é **introduzido por mês**, ou devem os dias ser calculados?                         |
-| Q-64 | **Dias:** a DRI declara **29 dias** por trabalhador; o subsídio usa **~21**. São critérios        |
-|      | diferentes ou há uma gralha numa das folhas?                                                      |
-| Q-65 | **Gráficos e período:** o documento novo **deixou cair** os gráficos e o seletor mensal/          |
-|      | trimestral/anual. Mantêm só o gráfico *remuneração vs líquido* em Custos de funcionários?         |
+| ID   | Pergunta                                                                                              |
+| :--- | :---------------------------------------------------------------------------------------------------- |
+| Q-58 | **Rácios:** as células indicadas apontam para as colunas do *Balanço* e a coluna `E` **não            |
+|      | existe** na folha. Os 5 rácios estão no **2.º quadro** (linhas 11-15, colunas B/C/D).                 |
+|      | Confirmam **`B11..D15`**?                                                                             |
+| Q-59 | **Passivo não corrente:** não indicaram **célula nenhuma** e o valor é `0` nas três colunas.          |
+|      | Quais as células — ou o Card é dispensável enquanto for sempre 0?                                     |
+| Q-60 | **IVA nas "Dívidas a pagar":** o valor vem do **Saldo Devedor** (IVA a favor) e é somado a três       |
+|      | saldos credores. É a **posição líquida** que querem, ou a dívida **bruta**?                           |
+| Q-61 | **Capital em dívida:** o plano de financiamento dá **24 016,80 €** e a conta 25 do balancete dá       |
+|      | **49 354,66 €** (que também entra nas Dívidas a pagar). Qual alimenta o Card?                         |
+| Q-62 | **Anexos fiscais:** querem o **PDF/imagem das declarações** anexado ao registo do calendário?         |
+|      | (Hoje o calendário fiscal **não** guarda anexos.)                                                     |
+| Q-63 | **Subsídio de alimentação:** o valor varia com os **dias úteis do mês** (20/21/22 dias × 6,15 €).     |
+|      | Confirmam que é **introduzido por mês**, ou devem os dias ser calculados?                             |
+| Q-64 | **Dias:** a DRI declara **29 dias** por trabalhador; o subsídio usa **~21**. São critérios            |
+|      | diferentes ou há uma gralha numa das folhas?                                                          |
+| Q-65 | **Gráficos e período:** o documento novo **deixou cair** os gráficos e o seletor mensal/              |
+|      | trimestral/anual. Mantêm só o gráfico *remuneração vs líquido* em Custos de funcionários?             |
+| Q-66 | **Origem dos dados importados:** os valores **vindos dos ficheiros do cliente** (balancete) e os      |
+|      | valores **calculados pela própria plataforma** (receita de agendamentos, custos de rota, comissões)   |
+|      | podem entrar **somados no mesmo indicador**? Qual das duas fontes **prevalece** em cada cartão?       |
+|      | (Ex.: "Gastos" do balancete *vs.* custos de rota que o sistema já conhece.) → **pergunta 36** de      |
+|      | `mensagem_teams.txt`. Enquanto não houver resposta, cada widget **declara a sua origem** (D-12 · §5). |
 
 #### 2.10.1 Nota de implementação — fórmula do custo de pessoal (corrigida)
 
@@ -1403,6 +1418,31 @@ sistema vier a calcular. Deixam de ser meras ilustrações de mecânica. (Os ant
 | §2.10.1                       | Fórmula do custo de pessoal corrigida (SA variável)                                                  |
 | §3 C-25…C-30                  | Atualizados com valores reais; **C-28** passa a ter **dois** casos (IRS e SA)                        |
 | `mensagem_teams.txt`          | Reescrita: saem as perguntas respondidas pelos ficheiros, entram **Q-58…Q-65**                       |
+
+---
+
+## 5. DECISÃO DE IMPORTAÇÃO (25/09/2026) — o que muda nesta análise
+
+> Registada a pedido do gestor. Esta secção **não** cria regra nova: a decisão normativa ficou em
+> `_dev/docs/spec/core.md` **§3.12 (D-12)** e **§1.2 (E-1…E-4)**; os requisitos e a regra em
+> `requirements.md` (**RF-75 · RF-76 · RN-30**) e a justificação de BD em `data-api.md` **§17.9**.
+
+| Ponto                                   | Antes (análise)                                        | Agora (decidido)                                                        |
+| :-------------------------------------- | :----------------------------------------------------- | :---------------------------------------------------------------------- |
+| Leitura do `.xlsx`                      | leitor próprio em PHP puro (`zlib`) — §F.7             | **`PhpSpreadsheet`** do material de formação (E-1), com `zip` (E-2)     |
+| Destino dos dados                       | "mapa de células" lido em runtime (**C-29**, proposto) | **Persistir em BD** e os widgets lerem **da BD** (D-12)                 |
+| Nova importação                         | não estava definido                                    | **Substitui** integralmente a anterior, em transação (**RN-30**)        |
+| Upload na demonstração                  | não estava definido                                    | **Funciona**; a importação ao vivo substitui qualquer importação prévia |
+| Gráficos                                | CSS/SVG próprios (**P7**)                              | **Chart.js** permitido nos gráficos de gestão (**E-3**)                 |
+| `C-19` / `Q-43` (o `.xlsx` é tratável?) | corrigido por §F.7 (*sim*, com `zlib`)                 | Mantém-se: é tratável — agora **também** com biblioteca → **C-30**      |
+| Origem dos números                      | `Q-31` / `C-20` (proposta: o interno é primário)       | **`Q-66` nova**: importado *vs.* plataforma → **pergunta 36** cliente   |
+
+**Estado dos itens desta análise, depois da decisão:**
+
+- **`C-29` → decidido**: a via é a **importação para tabelas**, não o mapa de células em runtime.
+- **`C-19` / `C-30` → arquivados**: a limitação técnica que os originou já era falsa (§F.7) e a rota mudou.
+- **`Q-58`…`Q-65` → mantêm-se abertas** (são sobre o conteúdo dos ficheiros, não sobre a rota).
+- **`Q-66` → nova e aberta** (§2.10 · pergunta 36 de `mensagem_teams.txt`).
 
 ---
 

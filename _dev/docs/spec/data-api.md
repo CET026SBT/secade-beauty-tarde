@@ -150,6 +150,21 @@ erDiagram
 | `rota_ambulante`                                                                                | A cidade do grupo entra por `cidade_id`, mas os agendamentos que constituem a rota **não** são |
 |                                                                                                 | gravados como filhos (a rota é um agregado calculado)                                          |
 
+### 17.9 Tabelas de importação de ficheiros (novas — D-12)
+
+> **Justificação da alteração de BD** (exigida por `.clinerules` §1): o backoffice passa a **importar**
+> ficheiros CSV/XLSX entregues pelo cliente e a **persistir** o resultado — os cartões, tabelas e gráficos
+> leem **da BD** (§3.12 · D-12 · RF-75 · RF-76). **Nenhuma** tabela existente é alterada; a importação
+> nova **substitui** a anterior (**RN-30**).
+
+| Tabela proposta       | Papel                                                                   | Campos mínimos                                                  |
+| :-------------------- | :---------------------------------------------------------------------- | :-------------------------------------------------------------- |
+| ➕ `importacao`       | Um registo por importação (auditoria e *override* — RN-30)              | `ficheiro`, `tipo`, `importado_em`, `registos`, `utilizador_id` |
+| ➕ `importacao_linha` | Linhas importadas (folha · referência · rótulo · valor) para os widgets | `importacao_id`, `folha`, `referencia`, `rotulo`, `valor`       |
+
+**Nota:** os nomes e a granularidade fecham-se com a implementação; o que esta secção registra é a
+**necessidade** e o **âmbito** da alteração. **Estado:** ⬜ por implementar (D-12).
+
 ## 18. ARQUITETURA E CONVENÇÕES
 
 ### 18.1 Camadas e fluxo

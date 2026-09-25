@@ -34,6 +34,25 @@ num backoffice único.
 
 **Base URL local:** `http://localhost/secade-beauty-tarde`
 
+### 1.2 Exceções aprovadas à stack (fechadas)
+
+> Registadas por decisão do gestor do projeto (**25/09/2026**). Valem **só** para o que está listado —
+> não abrem a porta a outros pacotes nem a novos frameworks. Justificação: **§3.12 · D-12**.
+
+| #   | Exceção                                                                                                                 | Âmbito                                                                            |
+| :-- | :---------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------- |
+| E-1 | **Bibliotecas do material de formação** (`PhpSpreadsheet`, `TCPDF`, `PHPMailer` + dependências), via Composer `vendor/` | **Devem ser usadas** na importação de ficheiros (CSV/XLSX) e no que dela depender |
+| E-2 | **Extensão PHP `zip`** ativa no Laragon (`php.ini`)                                                                     | Requisito do PhpSpreadsheet para ler `.xlsx`                                      |
+| E-3 | **Chart.js** nos gráficos do backoffice                                                                                 | Só nos gráficos das páginas de gestão                                             |
+| E-4 | **Tabelas novas** na BD para persistir o que é importado (§17.9)                                                        | Só as tabelas de importação; **nenhuma** tabela existente é alterada              |
+
+Fora destas exceções mantém-se a regra geral: **não instalar pacotes nem adotar frameworks externos**
+(`.clinerules` §1).
+
+> **Nota sobre a E-3:** o material de formação carrega o Chart.js por CDN
+> (`cdn.jsdelivr.net/npm/chart.js@4.4.1`), o que exige **internet** na demonstração. Alternativa sem
+> internet: guardar `chart.umd.min.js` em `modules/common/lib/` e servi-lo localmente — **preferível**.
+
 ## 2. REGRAS DE OURO E PREVALÊNCIA
 
 ### 2.0 Fluxo das regras — o que prevalece sobre o quê
@@ -42,8 +61,8 @@ num backoffice único.
 | :-- | :--------------------------------------------- | :-------------------------------------------------------------------------------- | :------------- |
 | 1   | Regras de operação                             | Como o trabalho é executado (restrições, convenções **aplicadas**, Git)           | `.clinerules`  |
 | 2   | **Regras de Ouro (§2.A–§2.E)**                 | Invariantes de produto — nenhuma decisão as contraria                             | este documento |
-| 3   | **Decisões finais (§3 · D-01…D-11)**           | Resolvem cada conflito de fontes; prevalecem sobre as fontes originais            | este documento |
-| 4   | **Regras de negócio (§5 · RN-01…RN-29)**       | Regra operativa e testável; **no detalhe, a RN vence a §2** (a §2 dá o princípio) | este documento |
+| 3   | **Decisões finais (§3 · D-01…D-12)**           | Resolvem cada conflito de fontes; prevalecem sobre as fontes originais            | este documento |
+| 4   | **Regras de negócio (§5 · RN-01…RN-30)**       | Regra operativa e testável; **no detalhe, a RN vence a §2** (a §2 dá o princípio) | este documento |
 | 5   | Requisitos e módulos (§4 · §6–§16 · §19 · §20) | O que o sistema faz e como; **conforma-se** às camadas 2–4                        | este documento |
 | 6   | Gap, futuro e critérios (§24 · §25 · §28)      | O que falta, por que ordem, e como se aceita                                      | este documento |
 | 7   | Manutenção (§29.3)                             | Meta-regras deste documento                                                       | este documento |
@@ -77,7 +96,7 @@ Sem motorista dedicado e sem controlo logístico de condução; **nada disso dev
 Aprovar ou recusar uma rota é **inteiramente do gestor**; o valor de referência é **apenas visual** e
 nunca bloqueia. Alertas fiscais gerados *on-demand*, sem CRON (D-01 · RN-05 · §12.3).
 
-## 3. DECISÕES FINAIS (D-01 … D-11)
+## 3. DECISÕES FINAIS (D-01 … D-12)
 
 > Decisões de produto que resolveram os conflitos entre fontes de planeamento. **As fontes originais
 > estão revogadas** e não se acumulam aqui — o histórico está no Git (§29.2). Cada decisão aponta as
@@ -146,3 +165,28 @@ no terreno, apenas **numerário**; recibo manual como trabalho futuro.
 é **auto-cancelado** das listagens mas **retido na BD**; o cliente recebe **lembrete** (≤ 24 h) a
 sugerir loja física ou reagendamento; o cliente **pode cancelar** sem penalização financeira.
 **Regras:** RN-24 · RN-25 · RN-26 · **Estado:** ⬜ **por implementar integralmente** (§24.6 · §15).
+
+### 3.12 — D-12 · Importação de ficheiros, persistência e origem dos dados
+
+**Decisão (25/09/2026):** o backoffice **importa ficheiros externos** (CSV/XLSX) por upload e
+**persiste** o resultado em tabelas do projeto; os cartões, tabelas e gráficos leem **da BD**.
+
+| #   | O que fica decidido                                                                                                                                                           |
+| :-- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | A leitura usa as **bibliotecas do material de formação (E-1)** — `PhpSpreadsheet` para `.xlsx`, com a **extensão `zip`** ativa (E-2); CSV em `fgetcsv` nativo                 |
+| 2   | A importação **substitui integralmente** a anterior, numa transação (**RN-30**) — nunca soma nem acumula                                                                      |
+| 3   | Os gráficos usam **Chart.js (E-3)**                                                                                                                                           |
+| 4   | O **upload funciona na demonstração**; pode haver uma importação prévia, que é substituída por qualquer importação feita ao vivo                                              |
+| 5   | **Origem de cada número:** valores **importados** e valores **calculados na plataforma** (receita de agendamentos, custos de rota, comissões) **não se somam no mesmo total** |
+| 6   | **Novas tabelas** (justificação em §17.9): apenas as necessárias para persistir o importado                                                                                   |
+
+**Regras:** RN-30 · **Requisitos:** RF-75 · RF-76 · **Exceções:** E-1…E-4 (§1.2) · **Dúvida aberta:**
+pergunta **36** de `mensagem_teams.txt` (que fonte prevalece em cada indicador) — enquanto não houver
+resposta, **cada widget declara a sua origem** e as somas mistas ficam interditas.
+**Estado:** 🟡 desenho fechado; implementação ⬜.
+
+**Porquê estas exceções:** as bibliotecas vieram no material de formação entregue ao projeto
+(`0605-MATERIA/csv_pdf_email`) e resolvem, sem código próprio, a leitura de `.xlsx` — que é o formato em
+que o cliente entrega o balancete. **Alternativa rejeitada nesta fase:** leitor próprio em PHP puro
+(ZIP por `zlib` + XML por `SimpleXML`) — viável e já testado, mas com mais código para manter e sem o
+tratamento de datas/formatos que a biblioteca já oferece.
