@@ -19,14 +19,16 @@ $boLinks = $boIsEmployee
         ["page" => "greenReceipts","url" => "/gestao/recibos-verdes", "icon" => "bi-cash-stack",      "label" => "Recibos Verdes"]
       ];
 ?>
-<nav class="navbar navbar-expand-lg navbar-dark bo-navbar py-3">
+<nav class="navbar navbar-expand-xl navbar-dark bo-navbar py-3">
     <div class="container-fluid">
         <a class="navbar-brand d-flex align-items-center gap-2" href="<?= $boHomeUrl ?>">
             <img src="<?= BASE_URL ?>/modules/common/img/sb-logo-primary.svg" alt="Secade Beauty" height="32" class="user-select-none" draggable="false">
             <span class="fw-bold">Backoffice</span>
         </a>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#boNavbarCollapse">
+        <?php include ROOT_PATH . "/modules/backoffice/components/menuUserBo.php" ?>
+
+        <button type="button" class="navbar-toggler mx-2" data-bs-toggle="collapse" data-bs-target="#boNavbarCollapse">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -34,17 +36,13 @@ $boLinks = $boIsEmployee
             <ul class="navbar-nav me-auto ms-lg-4 gap-lg-2">
                 <?php foreach ($boLinks as $link): ?>
                     <li class="nav-item">
-                        <a class="nav-link <?= $boCurrentPage === $link["page"] ? "active" : "" ?>"
+                        <a class="nav-link py-sm-1 <?= $boCurrentPage === $link["page"] ? "active" : "" ?>"
                            href="<?= BASE_URL . $link["url"] ?>">
                             <i class="bi <?= $link["icon"] ?> me-1"></i> <?= htmlspecialchars($link["label"]) ?>
                         </a>
                     </li>
                 <?php endforeach; ?>
             </ul>
-
-            <div class="d-flex align-items-center gap-3">
-                <?php include ROOT_PATH . "/modules/backoffice/components/menuUserBo.php" ?>
-            </div>
         </div>
     </div>
 </nav>
