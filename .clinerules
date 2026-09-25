@@ -9,7 +9,7 @@ Ficheiro de **operação**. Não contém produto: contém (a) restrições, conv
 
 | #   | Ler                                             | Quando                                         |
 | :-- | :---------------------------------------------- | :--------------------------------------------- |
-| 1   | Este ficheiro (≈155 linhas)                     | sempre                                         |
+| 1   | Este ficheiro (≈173 linhas)                     | sempre                                         |
 | 2   | `especificacao_mvp.md` — **router** (~63 l.)    | sempre: dá o mapa `§ → ficheiro`               |
 | 3   | **UM** ficheiro de `_dev/docs/spec/`            | só o domínio em causa — nunca os nove          |
 | 4   | `_dev/tests/README.md` · `_dev/tools/README.md` | ao testar · ao usar ferramentas                |
@@ -104,8 +104,19 @@ Decisões de gestão são **manuais**: nenhum indicador automático decide ou bl
 | `agent-workspace` | Pasta `_dev/` (docs, tools, tests, mapaMentalMVP), a spec e o `.clinerules` | — (**nunca** integrada)     |
 | restantes         | Branches de trabalho (contexto, funcionalidade, correção)                   | —                           |
 
-- ❌ **Nunca** commitar em `main` nem em `dev`. ✅ O agente commita nas **branches de contexto/tarefa**.
-- Integrar em `dev` — e de `dev` para `main` — é **merge/PR** e **decisão do utilizador**.
+- **Fluxo padrão de um pedido (delegado — não se pergunta):** `git fetch --all --prune` →
+  **`git merge origin/dev`** (esta branch fica sempre à frente do `dev`) → fazer as alterações →
+  **uma branch de contexto por assunto, criada a partir do `dev`**, levando **só** os caminhos de
+  produto (`git checkout -b <contexto> dev` + `git checkout agent-workspace -- app/ modules/ index.php …`)
+  → commit → push → **merge em `dev`** → **push de `dev`**. Só se o utilizador disser explicitamente
+  para não o fazer é que o ciclo não se fecha.
+- ❌ **Nunca** commitar directamente em `dev` nem em `main` — o agente commita nas **branches de
+  contexto**; às branches de integração chega apenas o **merge** delas.
+- **`dev` → `main`:** a pedido do utilizador, fazer o merge e `git push origin main`.
+- ⚠️ **O que nunca entra no `dev`:** os **ficheiros do agente** (`.clinerules`, `especificacao_mvp.md`,
+  `_dev/**`) — é para isso que esta branch existe. Excepção: `_dev/tests/**` ↔ `tests/**` no `dev`, e
+  **sem** as adaptações de profundidade da umbrella (`dirname(__DIR__)` mantém-se lá; `__DIR__, 2` é só
+  aqui) — medido em `tests/js_syntax_check.php`. **Não copiar o ficheiro à letra.**
 - Os ficheiros de cada branch de contexto são **disjuntos** (um ficheiro pertence a uma só branch); os
   transversais (`index.php`, `app/config/api.php`, `api.js`, `modules/main/css/style.css`) ficam numa
   branch de infraestrutura própria.
@@ -114,8 +125,9 @@ Decisões de gestão são **manuais**: nenhum indicador automático decide ou bl
   mudou e porquê.
 - **`agent-workspace`:** os seus caminhos — a pasta `_dev/`, `especificacao_mvp.md` e `.clinerules` — estão
   no `.gitignore`; para os versionar usa-se `git add -f`, e **só** nesta branch. `README.md`, os **testes**
-  e o código de produto versionam-se normalmente em `dev`. ⚠️ **Pendente de sync:** a umbrella `_dev/` só
-  existe nesta branch; no `dev` os testes continuam em `tests/` até a reestruturação ser integrada.
+  e o código de produto versionam-se normalmente em `dev`. ⚠️ No `dev` os testes continuam em `tests/`
+  (a reestruturação da umbrella só lá chega quando for decidida); até então o fluxo acima mapeia
+  `_dev/tests/**` → `tests/**`.
 - **Trocar de branch não pode perder os ficheiros do agente.** Existem **só** em `agent-workspace`: ao mudar
   para qualquer outra branch o Git **apaga-os do disco** — o `.gitignore` **não** protege ficheiros
   versionados (comportamento medido). Antes de sair: **commit + push**. Para os ter à mão noutra branch:
@@ -149,8 +161,12 @@ revogado**: `_dev/docs/rules/build_history_on_demand.md`.
 ---
 
 **Este ficheiro não deve ser alterado sem aprovação.**
-**Versão:** 3.2 · **Data:** 24/09/2026
-**Histórico:** v3.1 → v3.2 — a umbrella passa de `dev/` para **`_dev/`**: `dev` colidia com o **branch**
+**Versão:** 3.3 · **Data:** 25/09/2026
+**Histórico:** v3.2 → v3.3 — §4 passa de *"integrar é decisão do utilizador"* para **fluxo delegado**: cada
+pedido fecha o ciclo `fetch` → `merge origin/dev` → alterar → branch de contexto (a partir do `dev`, só
+caminhos de produto) → commit → push → merge em `dev` → push, salvo ordem explícita em contrário; merge
+`dev`→`main` a pedido. A proibição de commitar em `dev`/`main` mantém-se, agora com o merge como via única.
+v3.1 → v3.2 — a umbrella passa de `dev/` para **`_dev/`**: `dev` colidia com o **branch**
 homónimo e `git log dev` ficava *ambiguous argument*. v3.0 → v3.1 — umbrella criada para reunir o que
 **não é produto** (`docs/`, `tools/`, `tests/`, `mapaMentalMVP/`), separando-o do código da aplicação.
 v2.0 → v3.0 — arquitetura Lean em três níveis: a especificação passou a **router** + `_dev/docs/spec/` por

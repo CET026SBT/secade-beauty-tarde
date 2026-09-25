@@ -78,8 +78,7 @@ git show <revisão>^:<ficheiro>                # ver o conteúdo original
    `.clinerules` (§2 e §4), as **ferramentas** em `_dev/tools/README.md` e os **testes** em
    `_dev/tests/README.md`. **Não se duplica: aponta-se.**
 8. **Respeitar o fluxo de Git:** a especificação de branches, commits e integração está em
-   **`.clinerules` §4** — inclui a proibição de commitar em `dev`/`main`, a integração por merge/PR
-   como decisão do utilizador e a branch `agent-workspace`, que **nunca** é integrada.
+   **`.clinerules` §4** — que define também a branch `agent-workspace`, que **nunca** é integrada.
 9. **Usar escrita UTF-8 segura:** a regra e as vias corretas estão em **`.clinerules` §3** e a causa
    medida em **`_dev/tools/README.md` §1**. Antes de finalizar, correr `php _dev/tools/health-check.php`.
 
@@ -94,7 +93,7 @@ git show <revisão>^:<ficheiro>                # ver o conteúdo original
 | Porque não há CRON?                            | Simplificação assumida; tudo é on-demand — §2.E / §22.1                              |
 | Onde está a lógica de condução da carrinha?    | **Não existe** e não deve existir — §3.8                                             |
 | Porque o backoffice não está em `admin/`?      | Instrução de não tocar em `/admin` — `.clinerules` §1 · §25.3                        |
-| Posso commitar em `dev` ou `main`?             | **Não.** Só merge/PR a partir da branch correta — `.clinerules` §4                   |
+| Posso commitar em `dev` ou `main`?             | **Não.** Só por merge da branch de contexto — `.clinerules` §4                       |
 | Como devem ser as mensagens de commit?         | Resumidas, tipografia simples, sem emoji/markdown, `-` para bullets — §4             |
 
 ---

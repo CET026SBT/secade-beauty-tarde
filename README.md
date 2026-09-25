@@ -73,9 +73,9 @@ _dev/                      # Umbrella do que NÃO é produto (_dev/tests version
 
 ## 🌿 RAMOS DO REPOSITÓRIO (BRANCHES)
 
-> 📌 **Fonte única das regras de Git:** `.clinerules` §4 (modelo de branches, proibições de commit,
-> integração por merge/PR e a branch `agent-workspace`) — na branch `agent-workspace`. Aqui fica
-> apenas o **inventário dos ramos**, para orientação rápida.
+> 📌 **Fonte única das regras de Git:** `.clinerules` §4 (modelo de branches, fluxo de integração e a
+> branch `agent-workspace`) — na branch `agent-workspace`. Aqui fica apenas o **inventário dos ramos**,
+> para orientação rápida.
 
 | Branch            | Papel                                                                  |
 | :---------------- | :--------------------------------------------------------------------- |

@@ -297,9 +297,8 @@ View (PHP) → JS componente → api.js → api.php (routing) → Controller →
 ### 18.10 Fluxo de Git
 
 > 🔗 **Fonte única: `.clinerules` §4** — modelo de branches (`main` / `dev` / `agent-workspace` /
-> restantes), regras do agente (nunca commitar em `main` nem em `dev`; integração sempre por
-> merge/PR e por decisão do utilizador), regra de ouro contra conflitos por branch de contexto e
-> convenção das mensagens de commit. **Não se repete aqui.**
+> restantes), fluxo de integração e restrições do agente, regra de ouro contra conflitos por branch
+> de contexto e convenção das mensagens de commit. **Não se repete aqui.**
 
 ### 18.11 Ferramentas de manutenção (`_dev/tools/`)
 
