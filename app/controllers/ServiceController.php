@@ -17,27 +17,27 @@ class ServiceController extends BaseController {
     }
 
     public function pendingList(): array {
-        $this->requireProfile(["funcionario"]);
+        Session::requireProfileApi(["funcionario"]);
         return $this->acceptanceService->listPendingServices($_GET);
     }
 
     public function acceptedList(): array {
-        $employeeId = $this->requireProfile(["funcionario"]);
-        return $this->acceptanceService->listAcceptedServices($employeeId, $_GET);
+        Session::requireProfileApi(["funcionario"]);
+        return $this->acceptanceService->listAcceptedServices(Session::userId(), $_GET);
     }
 
     public function accept(): array {
-        $employeeId = $this->requireProfile(["funcionario"]);
+        Session::requireProfileApi(["funcionario"]);
         [$serviceId, $bookingId] = $this->extractTarget();
 
-        return $this->acceptanceService->acceptService($employeeId, $serviceId, $bookingId);
+        return $this->acceptanceService->acceptService(Session::userId(), $serviceId, $bookingId);
     }
 
     public function unaccept(): array {
-        $employeeId = $this->requireProfile(["funcionario"]);
+        Session::requireProfileApi(["funcionario"]);
         [$serviceId, $bookingId] = $this->extractTarget();
 
-        return $this->acceptanceService->unacceptService($employeeId, $serviceId, $bookingId);
+        return $this->acceptanceService->unacceptService(Session::userId(), $serviceId, $bookingId);
     }
 
     private function extractTarget(): array {

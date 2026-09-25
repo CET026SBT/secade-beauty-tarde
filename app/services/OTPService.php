@@ -6,6 +6,9 @@ require_once APP_PATH . "/utils/Session.php";
 /**
  * OTP simulada (restrição académica): o código é gerado e mostrado no ecrã,
  * validado contra a sessão. Sem envio real de SMS.
+ *
+ * A chave de sessão do OTP é DESTE serviço (`OTP_SESSION_KEY`) — o `Session` só garante
+ * que a sessão está iniciada; não há acessores genéricos de chaves de sessão.
  */
 class OTPService extends BaseService {
 
@@ -17,11 +20,12 @@ class OTPService extends BaseService {
 
         $code = str_pad((string)random_int(0, 999999), 6, "0", STR_PAD_LEFT);
 
-        Session::set(self::OTP_SESSION_KEY, [
+        Session::start();
+        $_SESSION[self::OTP_SESSION_KEY] = [
             "customerId" => $customerId,
             "code"       => $code,
             "expiresAt"  => time() + self::OTP_EXPIRY_SECONDS
-        ]);
+        ];
 
         // Simulação: em produção seria enviado por SMS. Mostrado no ecrã conforme planeamento.
         return [
@@ -35,14 +39,16 @@ class OTPService extends BaseService {
      * (Nome 'verify' para não colidir com BaseService::validate().)
      */
     public function verify(int $customerId, string $code): bool {
-        $otp = Session::get(self::OTP_SESSION_KEY);
+        Session::start();
+
+        $otp = $_SESSION[self::OTP_SESSION_KEY] ?? null;
 
         if (!$otp || $otp["customerId"] !== $customerId) {
             return false;
         }
 
         if (time() > $otp["expiresAt"]) {
-            Session::forget(self::OTP_SESSION_KEY);
+            unset($_SESSION[self::OTP_SESSION_KEY]);
             return false;
         }
 
@@ -50,7 +56,7 @@ class OTPService extends BaseService {
             return false;
         }
 
-        Session::forget(self::OTP_SESSION_KEY);
+        unset($_SESSION[self::OTP_SESSION_KEY]);
         return true;
     }
 }
