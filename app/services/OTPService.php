@@ -17,15 +17,11 @@ class OTPService extends BaseService {
 
         $code = str_pad((string)random_int(0, 999999), 6, "0", STR_PAD_LEFT);
 
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        $_SESSION[self::OTP_SESSION_KEY] = [
+        Session::set(self::OTP_SESSION_KEY, [
             "customerId" => $customerId,
             "code"       => $code,
             "expiresAt"  => time() + self::OTP_EXPIRY_SECONDS
-        ];
+        ]);
 
         // Simulação: em produção seria enviado por SMS. Mostrado no ecrã conforme planeamento.
         return [
@@ -39,18 +35,14 @@ class OTPService extends BaseService {
      * (Nome 'verify' para não colidir com BaseService::validate().)
      */
     public function verify(int $customerId, string $code): bool {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        $otp = $_SESSION[self::OTP_SESSION_KEY] ?? null;
+        $otp = Session::get(self::OTP_SESSION_KEY);
 
         if (!$otp || $otp["customerId"] !== $customerId) {
             return false;
         }
 
         if (time() > $otp["expiresAt"]) {
-            unset($_SESSION[self::OTP_SESSION_KEY]);
+            Session::forget(self::OTP_SESSION_KEY);
             return false;
         }
 
@@ -58,7 +50,7 @@ class OTPService extends BaseService {
             return false;
         }
 
-        unset($_SESSION[self::OTP_SESSION_KEY]);
+        Session::forget(self::OTP_SESSION_KEY);
         return true;
     }
 }

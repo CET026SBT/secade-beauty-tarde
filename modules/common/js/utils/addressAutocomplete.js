@@ -142,41 +142,9 @@ class AddressAutocomplete {
         return this.#formatAddress(addressObj, { includeAll: false });
     }
 
-    #mapApiResponseToAddress(item) {
-        const addr = item.address || {};
-
-        // Rua: preferir o nome da via; o nome do resultado é o fallback.
-        const streetParts = [
-            addr.road || addr.pedestrian || addr.square,
-            addr.industrial,
-            addr.leisure
-        ].filter(Boolean);
-
-        return {
-            isSaved: false,
-            street: [...new Set(streetParts)].join(', ') || item.name || '',
-            doorNumber: addr.house_number || '',
-            floor: '',
-            zipCode: addr.postcode || '',
-            cityName: addr.city || addr.town || addr.village || addr.hamlet || '',
-            district: addr.county || '',
-            raw: item
-        };
-    }
-
     fetchResults(query) {
-        $.get('https://nominatim.openstreetmap.org/search', {
-            q: query,
-            countrycodes: 'pt',
-            format: 'json',
-            addressdetails: 1,
-            limit: 5
-        })
-        .done((response) => {
-            const apiResults = (Array.isArray(response) ? response : [])
-                .slice(0, 5)
-                .map(item => this.#mapApiResponseToAddress(item));
-            
+        geocodingApi.search(query)
+        .done((apiResults) => {
             const combined = [
                 ...this.savedAddresses
                     .map(a => ({ ...a }))

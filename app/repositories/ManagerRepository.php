@@ -22,19 +22,4 @@ class ManagerRepository extends BaseRepository {
         $sql .= " ORDER BY u.id DESC";
         return $this->fetchAll($sql, $params);
     }
-
-    public function createWithUser(array $data): int {
-        $sql = "INSERT INTO utilizador (nome, email, password_hash, telemovel, nif, tipo_perfil)
-                VALUES (:nome, :email, :password_hash, :telemovel, :nif, 'gestor')";
-
-        $this->execute($sql, [
-            "nome"          => $data["name"],
-            "email"         => $data["email"],
-            "password_hash" => password_hash($data["password"], PASSWORD_BCRYPT),
-            "telemovel"     => $data["phone"],
-            "nif"           => $data["nif"] ?? null
-        ]);
-
-        return (int)$this->lastInsertId();
-    }
 }
