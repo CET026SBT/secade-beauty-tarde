@@ -186,7 +186,8 @@ AINDA NÃO EXISTE (na base de dados nem no sistema)
 ============================================================
 NOTA FINAL
 ============================================================
-As respostas às perguntas 1 a 21 e 23 a 24 condicionam o desenho final do painel,
-da contabilidade e dos recursos humanos. Sem elas, avançamos apenas com os
-módulos que não dependem de valores externos (agendamentos, rotas, serviços,
-promoções e site público).
+As respostas às perguntas sobre valores e IVA, origem dos números, ativos e
+financiamentos, pessoal e avisos (1 a 24) condicionam o desenho final do painel,
+da contabilidade, dos recursos humanos e das notificações. Sem elas, avançamos
+apenas com os módulos que não dependem de valores externos (agendamentos, rotas,
+serviços, promoções e site público).
