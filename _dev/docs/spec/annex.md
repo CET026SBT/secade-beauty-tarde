@@ -44,7 +44,7 @@
 | `_dev/tools/README.md`                            | Catálogo e comportamento das ferramentas                 | normativo (ferramentas)              |
 | `README.md`                                       | Instalação e uso rápido                                  | apoio                                |
 | `_dev/mapaMentalMVP/analise_backoffice_gestor.md` | Análise do backoffice do gestor (requisitos do cliente)  | apoio (não normativo)                |
-| `_dev/mapaMentalMVP/auditoria_artefactos.md`      | Auditoria de afirmações sem prova                        | apoio (não normativo)                |
+| `_dev/mapaMentalMVP/auditoria_plataforma.md`      | Auditoria: planeamento, código e cruzamento com o estado | apoio (não normativo)                |
 | `_dev/mapaMentalMVP/mensagem_teams.txt`           | Comunicação e dúvidas para o grupo/Teams                 | apoio (não normativo)                |
 | `_dev/mapaMentalMVP/Menu APOIO 3.docx`            | Entrada do cliente (*template*) — menus de contabilidade | apoio (não normativo)                |
 | `_dev/mapaMentalMVP/CUSTOS RH 2.xlsx`             | Entrada do cliente (*template*) — custo de pessoal       | apoio (não normativo)                |

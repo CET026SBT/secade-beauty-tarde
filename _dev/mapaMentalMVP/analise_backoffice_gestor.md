@@ -23,7 +23,7 @@ conflitos novos em **C-25…C-30**; prova de verificação em **§4**.
 
 **Revisão desta iteração (auditoria de artefactos):** foi feito um **varrimento de artefactos** a todo
 este documento. O que estava afirmado **sem prova** (ficheiro + linha) está identificado, com a prova
-e a correção, em **`_dev/mapaMentalMVP/auditoria_artefactos.md`** — casos **F-01…F-07**.
+e a correção, em **`_dev/mapaMentalMVP/auditoria_plataforma.md`** — casos **F-01…F-07**.
 
 **Cruzado com:** `especificacao_mvp.md` v1.1 (§2–§5, §11–§13, §17–§19, §22, §24–§26, §28, §29), os
 **templates da 3.ª iteração** (`Menu APOIO 3.docx` · `CUSTOS RH 2.xlsx`) e o código/BD reais (`index.php`,

@@ -1,6 +1,6 @@
 SECADE BEAUTY — BACKOFFICE
 Estrutura proposta, o que já recebemos e dúvidas a esclarecer
-(3.ª versão — 23/09/2026)
+(4.ª versão — 25/09/2026)
 
 ============================================================
 1) ESTRUTURA DO BACKOFFICE
@@ -8,20 +8,21 @@ Estrutura proposta, o que já recebemos e dúvidas a esclarecer
 
 GESTOR
 - Resumo (painel de entrada)
-    - Gastos vs. Rendimentos do mês corrente
+    - Gastos vs. Rendimentos do mês
     - Dívidas a fornecedores
-    - Avisos / lembretes de obrigações (sino na barra de cima)
-- Agendamentos             (JÁ EXISTE)
-- Rotas                    (JÁ EXISTE)
-- Fiscal                   (JÁ EXISTE: IVA, IRC, Segurança Social, Seguros)
-- Recibos verdes           (JÁ EXISTE: percentagens + simulador)
+    - Avisos e lembretes (sino)
+- Agendamentos                    (JÁ EXISTE)
+- Rotas                           (JÁ EXISTE)
+- Fiscal                          (JÁ EXISTE: IVA, IRC, Segurança Social, Seguros)
+- Recibos verdes                  (JÁ EXISTE: percentagens + simulador)
 - Contabilidade (NOVO) — 6 secções, seguindo o "MENU APOIO" que nos enviaram:
     - Resumo ............ Disponibilidades · Dívidas a receber · Dívidas a pagar
-    - Rácios ............ Ativo corrente / não corrente · Capital próprio · Passivo não corrente
+    - Rácios ............ Ativo corrente / não corrente · Capital próprio ·
+                          Passivo não corrente
     - Ativos ............ Lista de ativos · Mapa de depreciações
-    - Financiamentos .... Capital inicial · Capital amortizado · Capital em dívida
-    - Análise financeira  Rendimentos · Gastos · RAI (caixa da taxa de IRC e do IRC a pagar)
-    - Recursos Humanos .. Funcionários · Impostos (DMR e DRI) · Custos de funcionários
+    - Financiamentos .... Capital inicial · amortizado · em dívida
+    - Análise financeira  Rendimentos · Gastos · Resultado antes do imposto
+    - Recursos Humanos .. Funcionários · Impostos · Custos de funcionários
     - Balancete e tesouraria (saldo, entradas/saídas, posição de IVA)
 - Equipa / Recursos Humanos (NOVO)
     - Listagem, adicionar, editar, desativar
@@ -31,251 +32,160 @@ GESTOR
     - Tags sazonais (Natal, Verão, Black Friday, ...)
     - Serviços abrangidos (loja física e carrinha)
 - Fornecedores (EM ANDAMENTO — prioridade 1 do trabalho futuro)
-    - Fornecedores, faturas e dívidas a pagar
 - Serviços (JÁ EXISTE, em modo supervisão)
 
 FUNCIONÁRIO
 - A minha agenda (marcações que lhe estão atribuídas)
-- Aceitação de serviços (JÁ EXISTE: aceitar, desfazer, trocar)
+- Aceitação de serviços          (JÁ EXISTE: aceitar, desfazer, trocar)
 - As minhas comissões (para profissionais a recibos verdes)
-    - Histórico individual de recibos verdes
-- Promoções (apenas leitura), para saber que descontos estão ativos
-- Avisos / lembretes operacionais no sino
+- Promoções (apenas leitura)
+- Avisos / lembretes no sino
 
 SEM ACESSO (só gestor)
 - Contabilidade, Equipa, Fornecedores, Resultados
 
-SITE PÚBLICO (requisitos a incluir)
+SITE PÚBLICO
 - Secção resumida sobre os serviços prestados, no Início e no Sobre
 - Valores mostrados ao cliente com IVA incluído
-- Imagem em cada card de serviço (criação de marcação e catálogo)
+- Imagem em cada card de serviço
 
 ============================================================
-2) O QUE JÁ RECEBEMOS E COMO SE ENCAIXA
+2) O QUE JÁ RECEBEMOS
 ============================================================
 
 Recebemos os dois ficheiros de apoio ("Menu APOIO 3.docx" e "CUSTOS RH 2.xlsx").
-São modelos de trabalho — e foi deles que saiu a estrutura da Contabilidade acima.
+Foi deles que saiu a estrutura da Contabilidade acima.
 
-O QUE JÁ CONSEGUIMOS APROVEITAR
-- A folha dos custos de pessoal tem a fórmula toda: remuneração, subsídio de
-  alimentação, IRS, Segurança Social do trabalhador (11%) e da empresa (23,75%).
-  Passámos a ter números concretos para o módulo de Recursos Humanos.
-- O mapa de células do balancete (as referências que nos indicaram — J13, J16,
-  J25, K48, K85, K86, K113, K118) dá para implementar diretamente nos Cards
-  do Resumo.
-- A Lista de Ativos e o Balancete de Ativos dão-nos o mapa de depreciações, e
-  já reproduzimos a fórmula de cálculo exatamente como sai no vosso software.
-- Confirmámos que os valores que o sistema já produz (vendas e custos de rota)
-  não precisam de vir de ficheiro nenhum: são de dentro da plataforma.
+APROVEITÁMOS
+- A folha dos custos de pessoal traz a fórmula completa: remuneração, subsídio
+  de alimentação, IRS e Segurança Social.
+- O mapa do balancete dá para preencher os cards do Resumo.
+- A lista de ativos e o balancete de ativos dão o mapa de depreciações.
+- Confirmámos que as vendas e os custos de rota já vêm da própria plataforma.
 
-O QUE AINDA NÃO EXISTE (nem na base de dados, nem no sistema)
+AINDA NÃO EXISTE (na base de dados nem no sistema)
 - Ativos e depreciações
 - Empréstimos / financiamentos
-- Rácios (dependem do balancete)
+- Rácios
 - Fornecedores e despesas externas (rendas, luz, água, seguros, manutenção)
 - Retenção de IRS na fonte, por trabalhador
-
-NOTA IMPORTANTE SOBRE OS NÚMEROS
-Confirmámos que um ficheiro .xlsx pode ser lido pelo nosso sistema sem
-instalar nada de novo. Mesmo assim, continuamos a preferir ler apenas as
-células que nos indicam, em vez de importar o balancete inteiro para a base
-de dados: assim evita-se contar a mesma coisa duas vezes, porque as vendas
-já estão registadas nas marcações da plataforma.
-
 ============================================================
 3) DÚVIDAS A ESCLARECER
 ============================================================
 
 --- VALORES E IVA ---
 
-1. Os valores hoje registados nos serviços são sem IVA. Confirmam que o preço
-   que o cliente paga deve aparecer já com IVA incluído?
+1. Confirmam que os preços passam a ser mostrados ao cliente com IVA incluído?
+   E a taxa de IVA é a mesma para todos os serviços?
 
-2. A taxa de IVA é a mesma para todos os serviços (23%) ou há serviços com
-   taxa diferente?
+2. O sinal de reserva e as comissões dos profissionais são calculados sobre o
+   valor com IVA ou sem IVA? (Parece-nos que tinham mencionado remover o sinal —
+   confirmam?)
 
-3. O sinal de reserva (10%) e as comissões dos profissionais a recibo verde
-   devem ser calculados sobre o valor com IVA ou sem IVA?
-   R: creio que tinham mencionado remover este sinal, mas confirmem por favor.
+3. No painel, querem ver os dois valores de IVA — o que é pago ao Estado e o
+   apurado a partir das vendas e das despesas — ou só um deles? E no IRC,
+   confirmam o cálculo simples (resultado antes do imposto × taxa, e zero quando
+   o resultado é negativo), com a taxa editável no painel?
 
-4. Confirmam a diferença entre "obrigação de IVA" (o que a empresa paga ao
-   Estado, que registamos com prazo e valor) e "IVA apurado" (o que resultaria
-   das vendas menos o IVA das despesas)? O painel deve mostrar os dois ou só um?
+--- DE ONDE VÊM OS NÚMEROS ---
 
-5. No IRC, confirmam o cálculo simples: resultado antes do imposto x 20%, e
-   zero quando o resultado for negativo? Pelo que percebemos no Menu APOIO,
-   a taxa deve ser editável no painel — confirmam?
+4. Cada indicador do painel vem das marcações feitas na plataforma ou do
+   balancete que nos enviam? Se vier dos dois lados, corremos o risco de contar
+   a mesma coisa duas vezes — precisamos de saber qual é a fonte de cada número.
 
---- DE ONDE VÊM OS NÚMEROS E O BALANCETE ---
+5. Existem vendas fora da plataforma (atendimento sem marcação)?
 
-6. Os indicadores do painel (gastos, rendimentos) devem vir das marcações
-   feitas na plataforma, ou do ficheiro balancete que nos enviarão?
-   Se vierem dos dois lados, corremos o risco de contar a mesma coisa duas
-   vezes — precisamos de saber qual é a fonte de cada número.
+6. Qual é a fórmula da margem de lucro e que custos entram nela?
 
-7. "Entradas brutas" é a faturação total dos serviços prestados ou é o dinheiro
-   que entra na conta bancária? São coisas diferentes.
+7. A plataforma só conhece o combustível das rotas, as comissões e os salários
+   base. As restantes despesas (rendas, luz, água, consumíveis, seguros,
+   manutenção, contabilidade) como nos chegam?
 
-8. "Lucro das vendas": consideramos todas as vendas ou existem vendas fora da
-   plataforma (atendimento sem marcação)?
+8. O saldo de caixa e o saldo de banco são duas contas distintas? E são valores
+   que introduzem e vão atualizando, ou vêm de um ficheiro do banco?
 
-9. Margem de lucro: confirmam que é (vendas menos custos) a dividir pelas
-   vendas, em percentagem? E que custos contam para essa margem?
+9. O balancete chega em Excel? Com que regularidade? E as posições dos valores
+   que nos indicaram mantêm-se de ficheiro para ficheiro, ou mudam de sítio?
 
-10. Despesas operacionais: a plataforma só conhece o combustível e o custo
-    fixo das rotas, as comissões e os salários base. As restantes (rendas,
-    luz, água, consumíveis, seguros, manutenção da carrinha, contabilidade)
-    não existem no sistema. Como nos chegam?
+10. As "dívidas a pagar" aparecem com naturezas diferentes (fornecedores,
+    retenções, IVA, Segurança Social e impostos). Confirmam estas naturezas?
 
-11. Saldo bancário: é um valor que introduzem e vão atualizando, ou vem de um
-    ficheiro do banco, ou do balancete? No mapa de células aparece caixa (246)
-    e banco (16 708,73) separados — confirmam que são duas contas distintas?
+11. Os rácios (ativo corrente e não corrente, capital próprio, passivo não
+    corrente) devem ser lidos do balancete ou calculados por nós?
 
-12. Fluxo de caixa (entradas e saídas): mesmo tipo de resposta. O que o
-    sistema já sabe são os recebimentos das marcações.
+--- ATIVOS, DEPRECIAÇÕES E FINANCIAMENTOS ---
 
-13. Balancete: o que querem ver exatamente? A nossa proposta é saldo inicial,
-    entradas, saídas, saldo atual, IVA do período e o acumulado das dívidas a
-    fornecedores. Faz sentido? Falta algo?
+12. A empresa e os ativos que aparecem nos exemplos que nos enviaram são reais
+    ou são um exemplo do modelo? Não queremos tomar exemplos por dados reais.
+
+13. A "localização" dos ativos (sede, loja, carrinha) é relevante para o mapa de
+    depreciações? E o valor de aquisição é com ou sem IVA?
+
+14. A depreciação que querem no card é a do período (do ano) ou a acumulada
+    desde a compra? Nos exemplos coincidem, porque são do início do ano, mas nos
+    anos seguintes deixam de coincidir.
+
+15. Contam com vendas ou abates de ativos? Se sim, precisamos do valor de venda
+    e da data de saída.
+
+16. O financiamento é um só (por exemplo, a carrinha) ou há vários? A taxa e o
+    prazo mantêm-se fixos durante o contrato?
+
 --- PESSOAL ---
 
-14. As comissões dos profissionais a recibo verde contam como custo do mês em
+17. As comissões dos profissionais a recibo verde contam como custo do mês em
     que o serviço é aceite, ou do mês em que é efetivamente pago?
 
-15. Nos contratos efetivos: o valor mensal é apenas o salário base ou inclui
-    subsídios? Na folha que nos enviaram aparece o subsídio de alimentação
-    (129,15 € por mês = 6,15 € por dia, 21 dias úteis) — é assim que o
-    devemos considerar? E o 13.º e 14.º mês entram no cálculo?
+18. Nos contratos efetivos, o valor mensal é só o salário base ou inclui
+    subsídios? E o 13.º e o 14.º mês entram no cálculo?
 
-16. Ao desativar um funcionário, o que acontece aos serviços que já lhe estão
-    atribuídos e às marcações futuras? (Já tinha feito esta pergunta, mas
-    fiquei sem perceber.)
+19. A taxa de IRS é diferente de trabalhador para trabalhador e não existe uma
+    percentagem única da empresa, certo? Onde a podemos obter?
 
---- AVISOS E NOTIFICAÇÕES ---
+20. As declarações de impostos devem ficar anexadas ao registo no calendário?
 
-17. Sobre os avisos ao cliente: a especificação já define que o cliente recebe
-    um lembrete quando faltam 24 horas e a marcação não entrou em rota, com
-    sugestão de loja física ou reagendamento (ainda não está implementado).
-    A dúvida que resta é outra: o sino do backoffice (gestor e funcionário) e
-    os avisos ao cliente devem ser o mesmo mecanismo ou dois separados?
-    A nossa proposta é separar, porque o sino mostra dados de gestão (fisco,
-    fornecedores) que não devem ir para o cliente. E onde deve o cliente ver o
-    lembrete: em "Os meus agendamentos", na página inicial, ou nos dois?
+21. Ao desativar um funcionário, o que acontece aos serviços que já lhe estão
+    atribuídos e às marcações futuras?
 
-18. Quais os avisos querem ao certo e com quanta antecedência? Os prazos fiscais
-    já estão fixados (30, 15, 7, 3 e 1 dia do prazo, e todos os dias depois do
-    prazo). Além do fisco, que outros avisos devem existir — por exemplo o
-    pagamento a fornecedores? Seguem a mesma cadência ou uma cadência própria?
+--- AVISOS ---
 
-19. Sobre a "renovação de contratos" e as "revisões da carrinha": não conseguimos
-    apontar de onde saíram. Não estão na especificação aprovada nem em nenhum
-    ficheiro que tenhamos recebido. Vieram da nossa leitura dos requisitos do
-    painel que nos enviaram por Teams e, por isso, não as queremos tratar como
-    certas. Perguntamos então ao contrário: fazem parte dos avisos que querem?
-    Se sim, a renovação de contratos é de trabalho, de fornecimento ou de
-    instalações? E as revisões da carrinha são a manutenção periódica (por
-    quilómetros ou por tempo) ou a inspeção anual?
+22. O sino do backoffice e os avisos ao cliente devem ser o mesmo mecanismo ou
+    dois separados? A nossa proposta é separar, porque o sino mostra dados de
+    gestão (fisco, fornecedores) que não devem ir para o cliente. E onde deve o
+    cliente ver o lembrete: em "Os meus agendamentos", na página inicial, ou nos
+    dois?
 
-RESPOSTA AO INPUT (era a pergunta 19 da versão anterior)
-- A "renovação de contratos" saiu da nossa leitura dos requisitos do Painel de
-  Backoffice (Gestor) que nos enviaram por Teams, e foi por nós registada na
-  parte dos avisos ao gestor. Não a conseguimos reproduzir em nenhum ficheiro:
-  não existe na especificação, não existe nos documentos de planeamento já
-  eliminados e não existe no Menu APOIO nem nos CUSTOS RH. Como não a podemos
-  provar, deixamos de a afirmar: passa a pergunta, e não requisito. O mesmo vale
-  para as "revisões da carrinha".
+23. Quais os avisos que querem, além dos fiscais, e com quanta antecedência?
+
+24. Sobre a "renovação de contratos" e as "revisões da carrinha": não conseguimos
+    apontar de onde saíram — não estão na especificação aprovada nem em nenhum
+    ficheiro que tenhamos recebido. Fazem parte dos avisos que querem? Se sim,
+    que tipo de contratos são, e as revisões são a manutenção periódica ou a
+    inspeção anual?
 
 --- PROMOÇÕES ---
 
-20. O desconto é uma percentagem, um valor fixo, ou um dos dois?
+25. O desconto é uma percentagem, um valor fixo, ou um dos dois? E se duas
+    promoções estiverem ativas ao mesmo tempo para o mesmo serviço, acumulam ou
+    aplica-se só a mais vantajosa?
 
-21. Duas promoções podem estar ativas ao mesmo tempo para o mesmo serviço?
-    Se sim, acumulam ou aplica-se só a mais vantajosa?
+26. O cliente vê o preço já com o desconto no site e nos cards dos serviços, ou
+    o desconto é aplicado no momento do atendimento?
 
-22. O cliente vê o preço já com o desconto no site, ou o desconto é aplicado
-    pelo profissional no momento do atendimento?
+--- SITE E CONTEÚDOS ---
 
-23. A informação do(s) desconto(s) poderá/deverá ser apresentada nos cards dos
-    respetivos serviços, na home page?
-
---- CONTEÚDO DO SITE ---
-
-24. A secção sobre os serviços no Início e no Sobre é um texto nosso fixo ou
+27. A secção sobre os serviços no Início e no Sobre é um texto nosso fixo ou
     querem poder alterá-lo? A nossa proposta é texto fixo, sem complicar nesta
     fase.
 
-25. As imagens dos 35 serviços: assumo que são as que foram partilhadas no
-    Google Drive. Caso contrário, quem as fornece, em que formato e tamanho?
-    Em caso de inexistência, mostramos uma imagem genérica da categoria para os
-    cards não ficarem vazios.
-
-26. Confirmam que os preços no site passam a ser mostrados com IVA incluído
-    (valores redondos, como 5, 10, 15 euros)?
---- ATIVOS, DEPRECIAÇÕES E FINANCIAMENTOS ---
-
-27. A empresa que aparece nas capturas ("Empresa Solução Certa", NIF 513122095,
-    ativos 2026.00001 a 2026.00004) é a empresa real ou é um exemplo do
-    modelo? Perguntamos porque não queremos tomar dados de exemplo por reais.
-
-28. O balancete chega em Excel (.xlsx) do vosso software? Com que regularidade
-    (mensal, trimestral ou anual)?
-
-29. As células que nos indicaram (J13, J16, J25, K48, K85, K86, K113, K118)
-    mantêm-se sempre na mesma posição, ou mudam de sítio em cada ficheiro?
-    Reparámos que algumas referências na imagem estão riscadas e corrigidas à
-    mão — é um sinal de que variam. Se variarem, o card precisa de ser
-    reconfigurado de cada vez que o ficheiro muda.
-
-30. As "dívidas a pagar" aparecem divididas por natureza: fornecedores, retenções
-    e impostos, IVA, Segurança Social e mais uma referência que não conseguimos
-    ler (K118). O que é essa última — é a Segurança Social da empresa?
-    Confirmam que são estas cinco naturezas?
-
-31. Os ativos têm uma "Localização" (Sede). Devem ser atribuídos a sede, loja ou
-    carrinha, ou é indiferente para o mapa de depreciações?
-
-32. O valor de aquisição dos ativos é sem IVA ou com IVA? Perguntamos porque
-    406,50 € e 325,20 € não dão valores redondos quando se retira o IVA (ao
-    contrário dos preços dos serviços, que dão).
-
-33. A "depreciação acumulada" que querem no card é a do período (do ano), ou a
-    acumulada desde a compra? No exemplo que nos deram coincidem, porque os
-    ativos são de janeiro — mas nos anos seguintes deixam de coincidir.
-
-34. Contam também com vendas ou abates de ativos? Se sim, precisamos de saber o
-    valor de venda e a data de saída para calcular a mais-valia.
-
-35. O financiamento é um só (por exemplo, a carrinha) ou há vários? A taxa e o
-    prazo mantêm-se fixos durante a vida do contrato?
-
---- RECURSOS HUMANOS E IMPOSTOS ---
-
-36. Nos impostos do RH, querem a divisão em DMR (Segurança Social) e DRI (IRC)?
-    E o PDF/imagem das declarações deve ficar anexado ao registo? (Neste
-    momento o nosso calendário fiscal não guarda anexos.)
-
-37. Confirmam os valores da Segurança Social: 11% pagos pelo trabalhador e
-    23,75% pagos pela empresa? E confirmam que o card da Segurança Social deve
-    somar as duas parcelas (34,75% no total)?
-
-38. Confirmam que a taxa de IRS é diferente de trabalhador para trabalhador
-    (na vossa folha aparecem 8%, 3,6% e 8,56%) e que não existe uma
-    percentagem única da empresa? Precisamos de saber onde a podemos obter.
-
---- RÁCIOS ---
-
-39. Os Rácios (Ativo corrente, Ativo não corrente, Capital próprio, Passivo não
-    corrente) só existem no balancete. Confirmam que devemos lê-los por célula,
-    em vez de os calcular a partir dos dados da plataforma?
-
-40. Querem também o "fundo de maneio" como card? (Foi sugerido no Menu APOIO
-    como opcional.)
+28. As imagens dos serviços são as que foram partilhadas? Caso contrário, quem
+    as fornece? Se não houver imagem, mostramos uma imagem genérica da categoria
+    para os cards não ficarem vazios.
 
 ============================================================
 NOTA FINAL
 ============================================================
-As respostas às perguntas 1 a 5, 6 a 13, 15 a 19 e 27 a 40 condicionam o
-desenho final do painel, da contabilidade e dos recursos humanos.
-Sem elas, avançamos apenas com os módulos que não dependem de valores externos
-(agendamentos, rotas, serviços, promoções e site público).
+As respostas às perguntas 1 a 21 e 23 a 24 condicionam o desenho final do painel,
+da contabilidade e dos recursos humanos. Sem elas, avançamos apenas com os
+módulos que não dependem de valores externos (agendamentos, rotas, serviços,
+promoções e site público).
