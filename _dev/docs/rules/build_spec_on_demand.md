@@ -29,16 +29,16 @@
 
 ## 3. ESCREVER
 
-| Passo | Regra                                                                                                                                                                                   |
-| :---- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1     | **Número primeiro:** `RF-nn` / `RN-nn` / `D-nn` conforme §29.3 (§29 = `_dev/docs/spec/annex.md`). Nunca reutilizar um número extinto.                                                   |
-| 2     | **Estado explícito:** ✅ feito · 🟡 parcial · ⬜ por fazer. Nenhum requisito sem estado.                                                                                                |
-| 3     | **Evidência:** ao marcar gap, indicar o ficheiro/linha onde se verificou.                                                                                                               |
-| 4     | **Uma fonte por facto.** Se já existe no `.clinerules`, `_dev/tests/README.md` ou `_dev/tools/README.md` → **apontar**, não copiar.                                                     |
-| 5     | **Escrever seguro:** `php _dev/tools/file-edit.php replace <f> <jobs.json> --write` (evita BOM/mojibake).                                                                               |
-| 6     | **Limiar:** se o ficheiro alvo passar de **3000 linhas**, **modularizar antes de escrever** (DOUTRINA 6 de `_dev/docs/README.md`).                                                      |
-| 7     | **Para quem chega de fora:** cada módulo abre com uma frase de contexto (o que resolve e a quem se aplica) e define os termos próprios que usa — o detalhe é bem-vindo, o implícito não |
-|       | (DOUTRINA 6).                                                                                                                                                                           |
+| Passo | Regra                                                                                                                                                                                      |
+| :---- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1     | **Número primeiro:** `RF-nn` / `RN-nn` / `D-nn` conforme §29.3 (§29 = `_dev/docs/spec/annex.md`). Nunca reutilizar um número extinto.                                                      |
+| 2     | **Estado explícito:** ✅ feito · 🟡 parcial · ⬜ por fazer. Nenhum requisito sem estado.                                                                                                   |
+| 3     | **Evidência:** ao marcar gap, indicar o ficheiro/linha onde se verificou.                                                                                                                  |
+| 4     | **Uma fonte por facto.** Se já existe no `.clinerules`, `_dev/tests/README.md` ou `_dev/tools/README.md` → **apontar**, não copiar.                                                        |
+| 5     | **Escrever seguro:** `php _dev/tools/file-edit.php replace <f> <jobs.json> --write` (evita BOM/mojibake).                                                                                  |
+| 6     | **Limiar:** este ficheiro é **mantido** — se passar de **400 linhas**, **modularizar antes de escrever** (DOUTRINA 6 de `_dev/docs/README.md`).                                            |
+| 7     | **Referenciar o derivado, não o copiar:** o que nasceu de investigação vive no **artefacto** (DOUTRINA 8) e cita-se pelo **ID** (`§F.9` · **`Q-66`** · `A-01`); a spec guarda a **regra**, |
+|       | não a análise.                                                                                                                                                                             |
 
 ## 4. FECHAR O CICLO (mesma alteração, sempre)
 

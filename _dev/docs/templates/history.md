@@ -1,12 +1,14 @@
 # TEMPLATE — HISTÓRICO POR DATA (com revogados)
 
-> Molde. Copiar para `_dev/docs/out/historico_<assunto>.md`. Preencher com o que o Git devolver; apagar o que
-> não se aplica. **Legibilidade é prioridade** (lê-se para decidir).
+> Molde. Copiar para `_dev/docs/out/historico_<assunto>.md` (DOUTRINA 8 de `_dev/docs/README.md`).
+> Preencher com o que o Git devolver; apagar o que não se aplica. **Legibilidade é prioridade** (lê-se
+> para decidir); sem limite de linhas.
 > Regra: cada linha da cronologia tem **prova** (revisão). Nada inferido: o "porquê" sai da mensagem de
 > commit, não da memória.
 
 **Assunto:** <<§/RF/RN/D ou tema>> · **Contexto pedido:** <<âmbito extra>> · **Data:** <<AAAA-MM-DD>>
-**Reconstruído com:** `_dev/docs/rules/build_history_on_demand.md` · **Natureza:** derivado do Git — **descartável**
+**Reconstruído com:** `_dev/docs/rules/build_history_on_demand.md` · **Natureza:** derivado do Git —
+**regenerável** (DOUTRINA 8)
 **Âmbito analisado:** `<<HEAD | --all>>` · **Revisões cobertas:** `<<primeira>>..<<última>>`
 
 ## 1. CRONOLOGIA

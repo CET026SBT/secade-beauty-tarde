@@ -1,11 +1,13 @@
 # TEMPLATE — GUIA DE TESTE MANUAL
 
-> Molde. Copiar para `_dev/docs/out/guia_teste_manual.md`. Preencher com dados **lidos do schema** e do
-> código; apagar o que não se aplica. Legibilidade aqui **é** prioridade (é lido por humanos).
+> Molde. Copiar para `_dev/docs/out/guia_<assunto>.md` (DOUTRINA 8: nome fixo, regenerado em cima).
+> Preencher com dados **lidos do schema** e do código; apagar o que não se aplica. Legibilidade aqui **é**
+> prioridade (é lido por humanos) e o ficheiro **não tem limite de linhas**.
 > Regra: cada passo tem **Ação → Esperado → ☐ OK**; quando toca API/BD, acrescenta a prova.
 
 **Projeto:** Secade Beauty · **Âmbito:** <<fluxos cobertos>> · **Data:** <<AAAA-MM-DD>>
-**Gerado com:** `_dev/docs/rules/build_test_guide_on_demand.md` · **Nota:** ficheiro descartável — regenerar em vez de corrigir.
+**Gerado com:** `_dev/docs/rules/build_test_guide_on_demand.md` · **Nota:** artefacto **regenerável**
+(DOUTRINA 8) — regenerar em vez de corrigir à mão.
 
 ## 1. PRÉ-REQUISITOS
 

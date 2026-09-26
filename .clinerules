@@ -14,6 +14,13 @@ Ficheiro de **operação**. Não contém produto: contém (a) restrições, conv
 | 3   | **UM** ficheiro de `_dev/docs/spec/`            | só o domínio em causa — nunca os nove          |
 | 4   | `_dev/tests/README.md` · `_dev/tools/README.md` | ao testar · ao usar ferramentas                |
 | 5   | `_dev/docs/README.md`                           | **só** quando o humano pedir documentação/mapa |
+| ❌  | `_dev/docs/out/**`                              | **nunca** por rotina — ver abaixo              |
+
+**Artefactos on-demand (`_dev/docs/out/**`) — o agente GERA, não lê.** São documentos **para humanos**
+(relatórios, auditorias, guias), **sem limite de linhas**; o agente só os abre se o humano o pedir
+explicitamente. Escrevem-se com o detalhe todo, segundo o molde e a regra do tipo (`_dev/docs/README.md`
+— DOUTRINA 8), e **substituem-se em bloco** quando regenerados. Têm IDs estáveis (`A-nn`, `Q-nn`, `C-nn`,
+marcados com `<!-- id:… -->`) que o humano abre com `git ref-open A-01`.
 
 **Convenções de referência**
 
@@ -174,11 +181,11 @@ Cada assunto tem **uma** fonte. Ao tocar num ficheiro, manter coerentes os que o
 | Instalação e uso rápido                  | `README.md`                                | —            | stack, instalação, pastas     |
 | Análise, auditoria e guias (**apoio**)   | `_dev/mapaMentalMVP/*.md`                  | —            | nova iteração (não normativo) |
 
-**Crescimento de um documento:** `_dev/docs/**`, o router, os `README`s ou **este** ficheiro a passar de
-**3000 linhas** → **modularizar antes de acrescentar** (o pai passa a router; cortar nas fronteiras de
-`§N`). Até lá, o detalhe é bem-vindo — mas escrito para **quem lê fora de contexto**. Procedimento e
-exceções: `_dev/docs/README.md` — DOUTRINA 6. O gate já mede (`md-verify` imprime
-`linhas=N`).
+**Crescimento de um documento:** só o que é **mantido** tem limite (**≤ 400 linhas**); ao passar disso,
+**modularizar antes de acrescentar** (o pai passa a router; corte nas fronteiras de `§N`, por contexto).
+O que é **gerado sob demanda** **não tem limite** — e o agente **não o lê** (§0). Âmbito dos dois regimes,
+procedimento, convenção de nomes e IDs: `_dev/docs/README.md` — DOUTRINA 6 e **8**. O gate mede
+(`md-verify` imprime `linhas=N`).
 
 **Histórico:** regras revogadas e decisões antigas **não se acumulam** — o arquivo é o **Git**
 (`git log --diff-filter=D --oneline -- "*.md"`). Reconstruir um histórico por data, **incluindo o
@@ -187,8 +194,14 @@ revogado**: `_dev/docs/rules/build_history_on_demand.md`.
 ---
 
 **Este ficheiro não deve ser alterado sem aprovação.**
-**Versão:** 3.6 · **Data:** 26/09/2026
-**Histórico:** v3.5 → v3.6 — §5 sobe o limiar de modularização de **400** para **3000 linhas**: mais
+**Versão:** 3.7 · **Data:** 26/09/2026
+**Histórico:** v3.6 → v3.7 — §5 substitui o limiar único de 3000 linhas por **dois regimes**: o que é
+**mantido** (incl. `especificacao_mvp.md`, spec, regras, `README`s e este ficheiro) fica **≤ 400 linhas**;
+o que é **gerado sob demanda** (`_dev/docs/out/**`, entradas e análise em `_dev/mapaMentalMVP/`) **não tem
+limite** — é lido por humanos e vale pelo detalhe. Novos **artefactos on-demand** com **nome fixo**
+(`relatorio_` · `auditoria_` · `mindmap_` · `guia_` · `historico_`) e **IDs** (`A-nn`, `Q-nn`, `C-nn`)
+marcados com `<!-- id:… -->`, referenciáveis por `git ref-open` (`_dev/docs/README.md` DOUTRINA 6 e 8).
+v3.5 → v3.6 — §5 sobe o limiar de modularização de **400** para **3000 linhas**: mais
 detalhe por documento, mantendo o corte **por contexto** e exigindo texto legível a quem lê de fora.
 §4 ganha as **referências navegáveis** (`git ref-open` · `ref-back` · `ref-forward`), **locais ao clone**
 e nunca versionadas (`_dev/tools/README.md` §2.2).

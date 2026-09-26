@@ -1,10 +1,16 @@
 # TEMPLATE — RELATÓRIO / ANÁLISE / AUDITORIA
 
-> Molde. Copiar para `_dev/docs/out/<assunto>.md`. Preencher; apagar o que não se aplica.
+> Molde. Copiar para `_dev/docs/out/relatorio_<slug>.md` (DOUTRINA 8 de `_dev/docs/README.md`:
+> **regenerado no mesmo nome**; sem limite de linhas). Preencher; apagar o que não se aplica.
 > Regra: **cada afirmação com prova** (ficheiro:linha ou comando). Nada inferido sem o dizer.
+> **Para quem lê de fora:** diz o que é cada coisa antes de a julgar e escreve cada achado com
+> *prova → consequência → proposta*.
+> Cada achado marca-se com o seu ID (`<!-- id:A-01 -->`), que passa a ser referenciável
+> (`git ref-open A-01`) e citável da especificação.
 
 **Data:** <<AAAA-MM-DD>> · **Âmbito:** <<ficheiros analisados>> · **Autor:** agente
-**Natureza:** apoio (não normativo) — autoridade: `especificacao_mvp.md` + `_dev/docs/spec/`
+**Artefacto:** `_dev/docs/out/relatorio_<<slug>>.md` · **Natureza:** apoio (não normativo)
+**Autoridade:** `especificacao_mvp.md` + `_dev/docs/spec/`
 
 ## 1. RESUMO
 
@@ -16,12 +22,13 @@
 
 ## 2. DETALHE
 
-### A-01 · <<título do achado>>
+### A-01 · <<título do achado>>  <!-- id:A-01 -->
 
 **Afirmado em:** `<<ficheiro>>` §<<N>> — *"<<texto exato>>"*
 **Prova:** `<<comando executado>>` → <<resultado>>
 **Porque é problema:** <<consequência concreta>>
 **Proposta:** <<ação>> ou **decisão necessária** <<alternativas>>
+**IDs relacionados:** <<`Q-nn`/`C-nn` do artefacto de origem, `RF-nn`, `§N`>>
 
 ## 3. VERIFICADO E CORRETO (caderneta "não voltar a rever")
 

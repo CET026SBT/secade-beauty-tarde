@@ -1,7 +1,8 @@
 # RULE — build_test_guide_on_demand
 
 **Objetivo:** gerar o **guia de teste manual passo-a-passo** quando pedido (file-based ou UI).
-**Saída:** `_dev/docs/out/guia_teste_manual.md` (descartável; regenerável a qualquer momento).
+**Saída:** `_dev/docs/out/guia_<assunto>.md` (DOUTRINA 8: nome fixo, **regenerado em cima**; sem limite de
+linhas — é lido por humanos; existe para ser seguido, não lido).
 **Não confundir com:** testes automatizados — esses são `_dev/tests/` (`_dev/tests/README.md`).
 
 ## 1. QUANDO
@@ -54,3 +55,5 @@ UTF-8 sem BOM · CRLF · escrever por `_dev/tools/file-edit.php` ou via .NET.
 | :------- | :--------------------------------------------------- | :-------------- |
 | um fluxo | 1 domínio + o Controller/Service                     | ~80-150 linhas  |
 | integral | `requirements.md` + `booking.md` + `delivery.md` §27 | ~500-900 linhas |
+
+> Os números são **esforço de escrita**, não um tecto: o artefacto **não tem limite de linhas**.

@@ -1,8 +1,13 @@
 # RULE — build_report_on_demand
 
 **Objetivo:** produzir **relatórios, auditorias e análises** quando pedidos, com evidência e sem inchar.
-**Saída:** `_dev/docs/out/<assunto>.md` (descartável; **não versionar**).
+**Saída:** `_dev/docs/out/relatorio_<assunto>.md` (ou `auditoria_<assunto>.md` numa varredura —
+DOUTRINA 8 de `_dev/docs/README.md`: **nome fixo**, regenerado em cima; a versão é o Git).
 **Molde:** `_dev/docs/templates/report.md` — a estrutura do output não se inventa aqui.
+**Limite:** o artefacto **não tem máximo de linhas** — é lido por humanos e vale pelo detalhe. Escreve
+para quem **não tem o contexto**: diz o que é cada coisa antes de a julgar, define os termos próprios e,
+por cada achado, dá **prova + consequência + proposta**. Marca cada achado com `<!-- id:A-01 -->` na
+linha que o define: passa a ser referenciável (`git ref-open A-01`) e citável da especificação.
 
 ## 1. QUANDO
 
@@ -45,6 +50,17 @@
 8. **Verificar o uso efectivo, não a existência.** Um método pode existir e nunca ser chamado
    (`findManager`, `findByIdAndBooking`): varrer `Nome->metodo`/`Nome::metodo` antes de contar com ele.
    O mesmo para chaves de resposta: `booking.people` era produzido e **ninguém** o lia.
+9. **As fontes de conversa não são citáveis linha a linha.** `_dev/mapaMentalMVP/mensagem_teams.txt` é
+   texto do grupo: os números de linha **deslocam-se** e partes do conteúdo **não existem no repositório**
+   (perguntas nascidas de conversa — `.clinerules` §0 regra 3). Citar por **ficheiro + pergunta/ID**
+   (`mensagem_teams.txt` pergunta 36 · **Q-66**), nunca por linha; e dizer explicitamente quando não há
+   fonte no repositório.
+10. **Artefactos regeneram-se, não se corrigem.** `_dev/docs/out/**` não é fonte única de nada: se um
+    relatório ficou desatualizado, **volta-se a gerar no mesmo nome** (DOUTRINA 8). Corrigir à mão um
+    artefacto derivado é trabalho perdido na próxima geração.
+11. **Ler os `.txt`/`.docx` do cliente com as ferramentas.** O `mensagem_teams.txt` é UTF-8 válido, mas
+    `Get-Content` (PS 5.1) mostra-o em mojibake — é o bug de leitura do `_dev/tools/README.md` §1, não
+    corrupção do ficheiro. Ler com `php _dev/tools/file-edit.php show <f> <inicio> <n>`.
 
 ## 4. ESTRUTURA OBRIGATÓRIA (do molde)
 
@@ -66,3 +82,6 @@ O relatório **não altera** o produto: se revelar uma quebra, isso é achado a 
 | uma pergunta          | 1 padrão + 1-2 leituras       | ~10-20 linhas   |
 | um eixo (ex.: sessão) | 2-3 padrões + 4-6 leituras    | ~50-80 linhas   |
 | projeto inteiro       | 8-12 padrões + 10-20 leituras | ~250-350 linhas |
+
+> Os números são **esforço de escrita**, não um tecto: o artefacto **não tem limite de linhas** — se o
+> assunto pedir detalhe (provas, alternativas, passos), escreve-se. O que não se faz é encher.

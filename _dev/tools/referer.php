@@ -111,12 +111,26 @@ const KEY_PATTERNS = [
     '/\bD-0*(\d+)\b/u'  => "D-%02d",
     '/\bRF-0*(\d+)\b/u' => "RF-%02d",
     '/\bRN-0*(\d+)\b/u' => "RN-%02d",
+    /* Familias dos ARTEFACTOS on-demand (`_dev/docs/out/`, `_dev/mapaMentalMVP/`):
+       duvidas e conflitos nascem la e so la estao definidos (tabela, 1.a celula). */
+    '/\bQ-0*(\d+)\b/u'  => "Q-%02d",
+    '/\bC-0*(\d+)\b/u'  => "C-%02d",
 ];
 
 /** Linhas que podem carregar um identificador (titulo, item, tabela, citacao). */
 const KEY_BEARING_RE = '/^\s*(#{1,6}\s|\*\*|[-*+]\s|\d+[.)]\s|\||>)/u';
 /** Cabecalho numerado = ancora `§N` / `§N.N`. */
 const HEADING_RE = '/^(#{1,6})\s+(\d+(?:\.\d+)*)\.?\s+(\S.*)$/u';
+
+/**
+ * Fontes de conversa indexadas de fabrico (entram no indice semeado pelo `install`).
+ * Sao as ENTRADAS do cliente e a analise: nelas nascem os IDs `Q-nn`/`C-nn` que as
+ * perguntas ao cliente citam. Declaradas aqui para ninguem ter de escrever nomes.
+ */
+const DEFAULT_INCLUDES = [
+    "_dev/mapaMentalMVP/analise_backoffice_gestor.md",
+    "_dev/mapaMentalMVP/mensagem_teams*.txt",
+];
 
 /* =============================================================== argumentos */
 
@@ -201,36 +215,55 @@ function writeJson(string $file, array $data): void
 
 /**
  * Ficheiros de onde se extraem referencias: a documentacao VIVA do projeto.
- * `_dev/docs/out/` fica de fora (saida descartavel — `_dev/docs/README.md`).
+ *
+ * Entram: os controlos do projeto, `_dev/docs/spec|rules|templates` e `_dev/docs/out`
+ * (artefactos on-demand: relatorios, auditorias, mapas, guias). `_dev/docs/out/` existe
+ * para isto — um artefacto pode definir IDs proprios (`<!-- id:A-01 -->`) que passam a ser
+ * referenciados da especificacao e abertos com `git ref-open A-01`.
+ *
+ * NAO entram por omissao: as ENTRADAS do cliente e a analise de conversa
+ * (`_dev/mapaMentalMVP/*`, 1411+ linhas): sao texto de trabalho, com factos de Teams que
+ * nao existem no repositorio e numeros de linha que se deslocam. Indexam-se a pedido com
+ * `--include=<glob>`, e o `--include` fica gravado no indice (nao se repete).
+ *
+ * Devolve rel => ["estavel" => bool]: `false` marca as fontes cujos numeros de linha nao
+ * se podem confiar (conversa/analise) — o `open` avisa e prefere a ancora.
  */
-function docFiles(string $root): array
+function docFiles(string $root, array $includes = []): array
 {
     $files = [];
     foreach ([".clinerules", "especificacao_mvp.md", "README.md", "_dev/docs/README.md",
               "_dev/tools/README.md", "_dev/tests/README.md"] as $f) {
-        if (is_file($root . "/" . $f)) $files[$f] = true;
+        if (is_file($root . "/" . $f)) $files[$f] = ["estavel" => true];
     }
-    foreach (["_dev/docs/spec", "_dev/docs/rules", "_dev/docs/templates"] as $d) {
+    foreach (["_dev/docs/spec", "_dev/docs/rules", "_dev/docs/templates", "_dev/docs/out"] as $d) {
         $abs = $root . "/" . $d;
         if (!is_dir($abs)) continue;
         $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($abs, FilesystemIterator::SKIP_DOTS));
         foreach ($it as $f) {
             if (!$f->isFile() || strtolower($f->getExtension()) !== "md") continue;
-            $rel = relPath($root, str_replace("\\", "/", $f->getPathname()));
-            if (str_contains($rel, "/out/")) continue;
-            $files[$rel] = true;
+            $files[relPath($root, str_replace("\\", "/", $f->getPathname()))] = ["estavel" => true];
         }
     }
-    $out = array_keys($files);
-    sort($out);
-    return $out;
+    foreach ($includes as $pat) {
+        foreach (glob($root . "/" . $pat) ?: [] as $abs) {
+            if (!is_file($abs)) continue;
+            $files[relPath($root, str_replace("\\", "/", $abs))] = ["estavel" => false];
+        }
+    }
+    ksort($files);
+    return $files;
 }
 
 /**
  * Le um documento e devolve os cabecalhos numerados (ancoras) e os identificadores
  * mencionados, cada mencao ligada a seccao em que aparece.
+ *
+ * `$allowIds`: so um ARTEFACTO (`_dev/docs/out/**`) pode DEFINIR IDs com
+ * `<!-- id:A-01 -->`. Nos restantes ficheiros a mesma marca aparece a **documentar** a
+ * convencao, dentro de inline code — e nao e uma definicao (ver DOUTRINA 8).
  */
-function parseDoc(string $abs): array
+function parseDoc(string $abs, bool $allowIds = false): array
 {
     $sections = [];
     $entries  = [];
@@ -244,6 +277,17 @@ function parseDoc(string $abs): array
             $lastSec = $m[2];
             /* A linha do cabecalho tambem transporta chaves: e onde vive a chave "dona" de uma
                seccao (`### 3.12 · D-12 · ...`). Sem isto o dono nunca era encontrado. */
+        }
+        if ($allowIds && preg_match('/<!--\s*id:([A-Za-z][A-Za-z0-9.\-]*)\s*-->/u', $raw, $mk)) {
+            /* ID DEFINIDO no artefacto (`<!-- id:A-01 -->`). E a via para um artefacto
+               on-demand ter chaves proprias: a especificacao aponta-lhes e o
+               `git ref-open A-01` abre-as. Pode vir sozinho ou no fim da linha do achado.
+               Fica de fora o que esteja entre crases (e a convencao a ser documentada). */
+            if (!preg_match('/`[^`]*<!--\s*id:[^`]*`/u', $raw)) {
+                $entries[] = [
+                    "key" => $mk[1], "line" => $n, "text" => trim($raw), "sec" => $lastSec, "def" => true,
+                ];
+            }
         }
         if (!preg_match(KEY_BEARING_RE, $raw)) continue;
         foreach (KEY_PATTERNS as $re => $fmt) {
@@ -305,21 +349,22 @@ function canonKey(string $s): ?string
  * colisao). Com mais do que uma candidata decide a regra do DONO; se continuar
  * empatado a entrada fica AMBIGUA e e reportada — nunca resolvida em silencio.
  */
-function buildIndex(string $root, bool $dropAmb, ?string $onlyFile, ?string $idOpt, ?string $anchorOpt): array
+function buildIndex(string $root, bool $dropAmb, ?string $onlyFile, ?string $idOpt, ?string $anchorOpt, array $includes = []): array
 {
     $items   = [];
     $alias   = [];
     $amb     = [];
     $byKey   = [];
-    $sources = docFiles($root);
+    $sources = docFiles($root, $includes);
 
-    foreach ($sources as $rel) {
+    foreach ($sources as $rel => $meta) {
         if ($onlyFile !== null && $onlyFile !== $rel) continue;
-        $p = parseDoc($root . "/" . $rel);
+        $estavel = !empty($meta["estavel"]);
+        $p = parseDoc($root . "/" . $rel, str_contains($rel, "/out/"));
         foreach ($p["sections"] as $num => $s) {
             $items["§" . $num] = [
                 "ref" => "§" . $num, "file" => $rel, "line" => $s["line"], "anchor" => "§" . $num,
-                "title" => $s["title"], "kind" => "seccao", "sig" => $s["text"],
+                "title" => $s["title"], "kind" => "seccao", "sig" => $s["text"], "estavel" => $estavel,
             ];
         }
         foreach ($p["entries"] as $e) {
@@ -328,6 +373,7 @@ function buildIndex(string $root, bool $dropAmb, ?string $onlyFile, ?string $idO
                 "file" => $rel, "line" => $e["line"], "text" => $e["text"], "sec" => $e["sec"],
                 "secText" => $e["sec"] !== null ? ($p["sections"][$e["sec"]]["text"] ?? null) : null,
                 "def" => !empty($e["def"]), "explicito" => ($idOpt !== null && $idOpt === $e["key"]),
+                "estavel" => $estavel,
             ];
         }
     }
@@ -336,7 +382,10 @@ function buildIndex(string $root, bool $dropAmb, ?string $onlyFile, ?string $idO
         $uniq = [];
         foreach ($hits as $h) {
             $k = $h["file"] . "#" . ($h["sec"] ?? "-");
-            if (!isset($uniq[$k])) $uniq[$k] = $h;
+            /* Dentro da mesma (ficheiro, seccao) a chave tem UM lugar: a linha que a DEFINE
+               (a 1.a celula da tabela, `| Q-61 | …`). Sem isto, uma mencao anterior na mesma
+               seccao vencia a definicao e a referencia abria a meio de outra frase. */
+            if (!isset($uniq[$k]) || (!empty($h["def"]) && empty($uniq[$k]["def"]))) $uniq[$k] = $h;
         }
         $cands  = array_values($uniq);
         $chosen = null;
@@ -397,7 +446,7 @@ function buildIndex(string $root, bool $dropAmb, ?string $onlyFile, ?string $idO
             "ref" => $key, "file" => $chosen["file"], "line" => $chosen["line"],
             "anchor" => $secNum !== null ? "§" . $secNum : null,
             "title" => mb_substr($chosen["text"], 0, 90), "kind" => "chave",
-            "sig" => $chosen["text"], "nota" => $reason,
+            "sig" => $chosen["text"], "nota" => $reason, "estavel" => !empty($chosen["estavel"]),
         ];
 
         /* Alias: chave definida no TITULO de uma seccao aponta para essa seccao
@@ -407,8 +456,8 @@ function buildIndex(string $root, bool $dropAmb, ?string $onlyFile, ?string $idO
 
     ksort($items, SORT_NATURAL);
     return [
-        "version" => 1, "generated_at" => date("c"), "sources" => $sources,
-        "alias" => $alias, "items" => $items, "ambiguous" => $amb,
+        "version" => 1, "generated_at" => date("c"), "includes" => $includes,
+        "sources" => array_keys($sources), "alias" => $alias, "items" => $items, "ambiguous" => $amb,
     ];
 }
 
@@ -428,7 +477,15 @@ function resolveRef(array $idx, string $ref): ?array
         if (isset($items[$canon])) return $items[$canon];
     }
     if (isset($items["§" . $r])) return $items["§" . $r];
-    return $items[$r] ?? null;
+    if (isset($items[$r])) return $items[$r];
+
+    /* Ultimo recurso: chaves definidas em artefactos (`A-01`, `Q-01`, …) escritas com
+       outra caixa. So resolve se nao houver duvida — ambigua devolve null e o `open` diz. */
+    $hit = null;
+    foreach ($items as $k => $it) {
+        if (strcasecmp($k, $r) === 0) { if ($hit !== null) return null; $hit = $it; }
+    }
+    return $hit;
 }
 /* -------------------------------------------------- posicao e editor */
 
@@ -595,6 +652,10 @@ function openPosition(string $root, array $editor, array $entry, bool $dryRun, a
     if (!empty($entry["title"])) out("  titulo     : " . mb_substr((string) $entry["title"], 0, 78));
     out("  historico  : " . histLine($st));
 
+    if (empty($entry["estavel"])) {
+        out("  aviso      : fonte de conversa/analise — os numeros de linha ai deslocam-se;");
+        out("               a posicao e reconfirmada pela ancora antes de abrir.");
+    }
     if ($ver["status"] === "sem-ficheiro") {
         err("ERRO: {$rel} nao existe no disco.");
         err("      Numa branch de produto os ficheiros do agente so existem depois de:");
@@ -619,6 +680,7 @@ function entryFrom(string $ref, array $item): array
         "anchor" => $item["anchor"] ?? null,
         "sig"    => (string) ($item["sig"] ?? ""),
         "title"  => (string) ($item["title"] ?? ""),
+        "estavel" => !empty($item["estavel"]),
     ];
 }
 /* -------------------------------------------------- install (uma vez) */
@@ -690,7 +752,8 @@ if ($cmd === "install") {
     foreach ([["ref-open", $alias . " open"],
               ["ref-back", $alias . " back"],
               ["ref-forward", $alias . " forward"],
-              ["ref-index", $alias . " index"]] as [$name, $val]) {
+              ["ref-index", $alias . " index"],
+              ["ref-status", $alias . " status"]] as [$name, $val]) {
         $c = runArgv(["git", "-C", $root, "config", "alias." . $name, $val], $cap);
         if ($c !== 0) fail("nao consegui criar o alias {$name}: " . trim((string) $cap));
         out("alias: git " . $name);
@@ -701,6 +764,19 @@ if ($cmd === "install") {
     out("  git ref-open §18.2      git ref-open D-12      git ref-open RF-75");
     out("  git ref-back            git ref-back 2         git ref-forward");
     out("  git ref-index --write   (refaz o indice depois de editar a documentacao)");
+    out("  git ref-status          (indice, historico, editor, exclusoes — e se esta copia e a atual)");
+
+    /* 4) Semeia o indice, para nao ser preciso escrever nome nenhum de ficheiro:
+          as fontes de conversa ficam declaradas no proprio indice (persistem no --include). */
+    if (!is_file($refsFile)) {
+        $seed  = DEFAULT_INCLUDES;
+        $idx   = buildIndex($root, false, null, null, null, $seed);
+        writeJson($refsFile, $idx);
+        out("indice      : semeado (" . count($idx["items"]) . " referencias"
+            . ($seed ? "; inclui " . implode(", ", $seed) : "") . ")");
+    } else {
+        out("indice      : ja existe (" . relPath($root, $refsFile) . ") — `git ref-index --write` para refazer");
+    }
     exit(0);
 }
 
@@ -720,7 +796,16 @@ if ($cmd === "status") {
     out("editor      : " . ($editor["exe"] !== "" ? $editor["exe"] . "   [" . $editor["origem"] . "]"
                                                    : "NAO ENCONTRADO — usar --editor=CAMINHO"));
     out("exclusoes   : " . ($exclude ? "a instalar: " . implode(", ", $exclude) : "instaladas"));
-    out("copia .git/ : " . (is_file($gitDir . "/" . TOOL_DEST) ? "presente" : "AUSENTE — correr `install`"));
+
+    /* A copia em `.git/` e a que os aliases chamam: se o ficheiro de `_dev/tools/` evoluiu e
+       nao se voltou a correr `install`, a consola continua a usar a versao ANTIGA. */
+    $copy = $gitDir . "/" . TOOL_DEST;
+    $copiaMsg = "AUSENTE — correr `install`";
+    if (is_file($copy)) {
+        $copiaMsg = md5_file($copy) === md5_file(__FILE__) ? "presente e igual"
+                  : "DESATUALIZADA — correr `install` (os alias chamam esta copia)";
+    }
+    out("copia .git/ : " . $copiaMsg);
     out("alias git   : " . (trim((string) shell_exec("git -C " . escapeshellarg($root) . " config alias.ref-open 2>&1")) !== ""
         ? "instalados" : "AUSENTES — correr `install`"));
     exit(0);
@@ -743,11 +828,13 @@ if (!$cmd || hasFlag($argvAll, "--help") || hasFlag($argvAll, "-h")) {
         "index [--write] [--strict] [--drop-ambiguous]   constroi o indice a partir da documentacao",
         "      --file=CAMINHO --id=CHAVE --anchor=§N       fixa uma referencia (chave unica)",
         "list  [filtro] [--verbose]                      lista as referencias resolvidas",
-        "open  <ref> [--dry-run]                         abre a referencia no editor (ex.: §18.2 · D-12)",
+        "open  <ref> [--dry-run]                         abre a referencia no editor (ex.: §18.2 · D-12 · A-01)",
         "back  [n]  |  forward [n]                       volta/avanca n posicoes na pilha",
         "install [--dry-run]                             copia em .git/ + exclusoes locais + alias git",
         "status                                          estado do indice, do historico e do editor",
         "",
+        "index ... --include=<glob>  indexa tambem fontes de conversa (entradas do cliente e a",
+        "                            analise em _dev/mapaMentalMVP/); fica gravado no indice",
         "--editor=CAMINHO   editor a usar (ou REF_EDITOR); --editor=none so calcula a posicao",
         "--new-window       abre numa janela nova em vez de reaproveitar a atual",
     ]);
@@ -755,12 +842,21 @@ if (!$cmd || hasFlag($argvAll, "--help") || hasFlag($argvAll, "-h")) {
 
 $editor = resolveEditor($editorOpt, $editorArgs, $newWindow);
 
-/* ------------------------------------------------------------- index */
+/* ---- index */
 if ($cmd === "index") {
-    $idx = buildIndex($root, $dropAmb, $onlyFile, $idOpt, $anchorOpt);
+    $includes = [];
+    foreach ($argvAll as $a) if (str_starts_with($a, "--include=")) $includes[] = substr($a, 10);
+    if (!$includes) {
+        /* O `--include` fica gravado no indice: repete-se sozinho nas reconstrucoes. */
+        $prev = readJson($refsFile);
+        $includes = array_values((array) ($prev["includes"] ?? []));
+    }
+
+    $idx = buildIndex($root, $dropAmb, $onlyFile, $idOpt, $anchorOpt, $includes);
     $n   = count($idx["items"]);
 
-    out("fontes     : " . count($idx["sources"]) . " ficheiro(s) de documentacao");
+    out("fontes     : " . count($idx["sources"]) . " ficheiro(s) de documentacao"
+        . ($idx["includes"] ? "  (+" . count($idx["includes"]) . " em --include: " . implode(", ", $idx["includes"]) . ")" : ""));
     out("referencias: {$n}  (" . count($idx["alias"]) . " alias de chave->seccao)");
     out("ambiguas   : " . count($idx["ambiguous"]));
 
@@ -807,7 +903,13 @@ if ($cmd === "open") {
 
     $idx  = readJson($refsFile);
     $novo = false;
-    if (!$idx) { $idx = buildIndex($root, false, $onlyFile, $idOpt, $anchorOpt); $novo = true; }
+    if (!$idx) {
+        $idx  = buildIndex($root, false, $onlyFile, $idOpt, $anchorOpt, []);
+        if ($onlyFile === null && $idOpt === null && $anchorOpt === null) {
+            $idx["includes"] = [];   // sem indice previo nao ha includes a herdar
+        }
+        $novo = true;
+    }
 
     $item = resolveRef($idx, $ref);
     if (!$item) {

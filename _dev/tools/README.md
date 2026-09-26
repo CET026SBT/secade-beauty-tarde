@@ -133,25 +133,44 @@ php _dev/tools/referer.php install     # cópia em .git/ + exclusões locais + a
 git ref-index --write                  # constrói o índice a partir da documentação
 ```
 
-O `install` faz três coisas: (1) copia a ferramenta para `.git/ref-open/` — é o único sítio que um
+O `install` faz quatro coisas: (1) copia a ferramenta para `.git/ref-open/` — é o único sítio que um
 `git checkout` nunca apaga, e sem ela o `back` morreria exactamente quando é preciso, com o `_dev/` já
 fora do disco (mesmo *chicken-and-egg* do §2.1); (2) acrescenta `/_dev/tools/refs.json` e `/.vscode/` a
-`.git/info/exclude`; (3) cria os aliases `git ref-open` / `ref-back` / `ref-forward` / `ref-index` em
-`.git/config`, que **sobrevivem a qualquer troca de branch**.
+`.git/info/exclude`; (3) cria os aliases `git ref-open` / `ref-back` / `ref-forward` / `ref-index` /
+`ref-status` em `.git/config`, que **sobrevivem a qualquer troca de branch**; (4) **semeia o índice**
+(só se ainda não existir), já com as fontes de conversa declaradas — é o que garante que ninguém tem de
+escrever o nome de um ficheiro gerado para o poder abrir.
 
 **Comandos no dia-a-dia** (em qualquer branch, depois do `install`):
 
-| Comando                           | O que faz                                                                        |
-| :-------------------------------- | :------------------------------------------------------------------------------- |
-| `git ref-open §18.2`              | Abre `§18.2` no ficheiro e linha exatos, **reaproveitando a janela** do editor   |
-| `git ref-open D-12`               | Idem para uma decisão (`D-12` → `§3.12`), requisito (`RF-75`) ou regra (`RN-30`) |
-| `git ref-back` · `git ref-back 2` | Volta 1 (ou *n*) posições na pilha, **na posição exata** onde estava antes       |
-| `git ref-forward`                 | Avança na pilha (desfaz um `back`), como no browser                              |
-| `git ref-index --write`           | Refaz o índice **depois de editar a documentação**                               |
+| Comando                           | O que faz                                                                                |
+| :-------------------------------- | :--------------------------------------------------------------------------------------- |
+| `git ref-open §18.2`              | Abre `§18.2` no ficheiro e linha exatos, **reaproveitando a janela** do editor           |
+| `git ref-open D-12`               | Idem para uma decisão (`D-12` → `§3.12`), requisito (`RF-75`) ou regra (`RN-30`)         |
+| `git ref-open A-01`               | Idem para um **ID de um artefacto** (`A-nn` achados · `Q-nn` dúvidas · `C-nn` conflitos) |
+| `git ref-back` · `git ref-back 2` | Volta 1 (ou *n*) posições na pilha, **na posição exata** onde estava antes               |
+| `git ref-forward`                 | Avança na pilha (desfaz um `back`), como no browser                                      |
+| `git ref-index --write`           | Refaz o índice **depois de editar a documentação**                                       |
+| `git ref-status`                  | Estado do índice/histórico/editor — e se a **cópia em `.git/` é a atual**                |
+
+> ⚠️ **Depois de editar `_dev/tools/referer.php`, voltar a correr `install`.** Os alias chamam a **cópia
+> em `.git/ref-open/`** (é ela que sobrevive às trocas de branch), por isso a consola continua a usar a
+> versão anterior enquanto a cópia não for refrescada. O `status` deteta-o:
+> `copia .git/ : DESATUALIZADA — correr install (os alias chamam esta copia)`.
 
 Sem alias, tudo passa por `php _dev/tools/referer.php <comando>`. O subcomando `status` mostra o
 estado do índice, do histórico, do editor e das exclusões; `list` lista as referências (`list D-`
 filtra); `open --dry-run` calcula a posição **sem** arrancar o editor.
+
+**Índice: o que entra.** A documentação mantida (`_dev/docs/spec|rules|templates`), os **artefactos**
+(`_dev/docs/out/**`, DOUTRINA 8 de `_dev/docs/README.md`) e os controlos do projeto. As **fontes de
+conversa** (entradas do cliente e a análise em `_dev/mapaMentalMVP/`) entram só a pedido —
+`index --include='_dev/mapaMentalMVP/*.md'` — porque aí há factos que **não existem no repositório** e
+números de linha que se deslocam; o `--include` **fica gravado no índice**, logo não se repete, e o
+`open` avisa quando a fonte é dessas. Famílias de chaves reconhecidas: `§N`, `D-nn`, `RF-nn`, `RN-nn`
+**e** `Q-nn` / `C-nn` (dúvidas e conflitos, que vivem nos artefactos). Um artefacto pode ainda definir
+**IDs próprios** — `A-01` (achados), `Q-01`, `C-01` — marcando a linha com `<!-- id:A-01 -->`; passam a
+ser referenciáveis (`git ref-open A-01`) e citáveis da especificação, como qualquer `RF-nn`.
 
 **Regra da unicidade — uma referência aponta para UM ficheiro:linha.** Os identificadores informais
 (`D-nn`, `RF-nn`, `RN-nn`) aparecem dezenas de vezes na documentação; o índice **não pode** escolher ao

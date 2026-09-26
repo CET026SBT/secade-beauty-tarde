@@ -2,7 +2,8 @@
 
 **Objetivo:** reconstruir, **por data**, a história de **qualquer parte** da especificação — **incluindo o
 que foi revogado** — mais o contexto que o humano pedir.
-**Saída:** `_dev/docs/out/historico_<assunto>.md` (descartável; regenerável a qualquer momento).
+**Saída:** `_dev/docs/out/historico_<assunto>.md` (DOUTRINA 8: nome fixo, **regenerado em cima**; sem
+limite de linhas — reconstrói-se, nunca se corrige).
 **Princípio:** o histórico **não se mantém** — o arquivo é o **Git** (`.clinerules` §5). Este ficheiro não
 cria arquivo paralelo: **lê** o que já lá está. Corpus atual: **107 commits**, 2026-08-03 → 2026-09-24.
 
@@ -81,3 +82,5 @@ uma edição a fazer.
 | uma secção / um ID  | 1 pickaxe + 1 `show <rev>^` | ~30-60 linhas   |
 | um tema transversal | 2-3 pickaxes + 3-5 `show`   | ~80-150 linhas  |
 | evolução completa   | §3 inteiro + ~10 `show`     | ~200-400 linhas |
+
+> Os números são **esforço de escrita**, não um tecto: o artefacto **não tem limite de linhas**.

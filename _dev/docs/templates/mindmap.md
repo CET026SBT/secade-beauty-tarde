@@ -1,7 +1,8 @@
 # TEMPLATE — MAPA MENTAL / DIAGRAMA DE FLUXO
 
-> Molde. Copiar para `_dev/docs/out/<assunto>.md`. Um diagrama **por ficheiro**, ligado ao código real.
-> Regra: cada caixa/seta tem de existir no código; o que não existe marca-se ⬜ (a construir), não se inventa.
+> Molde. Copiar para `_dev/docs/out/mindmap_<assunto>.md` (DOUTRINA 8). Um diagrama **por ficheiro**,
+> ligado ao código real. Regra: cada caixa/seta tem de existir no código; o que não existe marca-se ⬜
+> (a construir), não se inventa. Sem limite de linhas — o diagrama é o produto.
 
 **Assunto:** <<camada/fluxo>> · **Data:** <<AAAA-MM-DD>>
 **Fontes lidas:** `<<ficheiro:linha>>` (listar) · **Natureza:** apoio (não normativo)
