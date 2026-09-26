@@ -70,6 +70,7 @@ $txt = [System.IO.File]::ReadAllText($path, $enc)
 | Ficheiro              | Para que serve                                                                                                                                                              |
 | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `agent-files.php`     | Mantém os ficheiros do agente no disco **noutras branches**: `status` / `install` / `exclude` / `restore`. Ver §2.1                                                         |
+| `referer.php`         | Abre uma **referência** (`§18.2`, `D-12`, `RF-75`) no editor, no **ficheiro e linha exatos**, e volta atrás em pilha (`back` / `forward`). Ver §2.2                         |
 | `_common.php`         | Módulo comum: I/O UTF-8 seguro, CLI, largura de texto/emoji, deteção de encoding. **Não executar directamente**                                                             |
 | `encoding-check.php`  | Deteta BOM, mojibake, UTF-8 inválido, **UTF-16** e fins de linha mistos. Aceita `--ignore=` (exceções conhecidas)                                                           |
 | `encoding-fix.php`    | **Repara** BOM e mojibake (mapa CP1252 explícito + verificação *round-trip*) e **converte UTF-16 → UTF-8**                                                                  |
@@ -110,10 +111,92 @@ php _dev/tools/agent-files.php status    # o que está no Git vs o que está no 
 - É uma rede de segurança **local a este clone**, nada versionado. Noutra máquina: `install` outra vez, ou
   simplesmente `git checkout agent-workspace`, onde os ficheiros são versionados.
 
+### 2.2 `referer.php` — abrir uma referência no ponto exato (e voltar atrás)
+
+A documentação deste projeto referencia-se por identificadores — `§18.2`, `D-12`, `RF-75`, `RN-30`.
+Seguir uma delas era procurar o ficheiro e a linha à mão. Este utilitário resolve a referência a partir
+de um **índice gerado do próprio repositório**, abre-a no editor na **linha exata** e memoriza a
+posição de onde se veio, para se poder **voltar atrás várias vezes** — como o *back* do browser.
+
+**Três peças** (só a primeira é versionada):
+
+| Peça                         | O que é                                                    | Versionada?                        |
+| :--------------------------- | :--------------------------------------------------------- | :--------------------------------- |
+| `_dev/tools/referer.php`     | A ferramenta (com cópia de emergência em `.git/ref-open/`) | sim — `agent-workspace`            |
+| `_dev/tools/refs.json`       | Índice resolvido (`ref → ficheiro:linha`). **Gerado**      | **não** (local, em `info/exclude`) |
+| `.git/ref-open/history.json` | Pilha de navegação do `back` / `forward`                   | **não** (dentro de `.git/`)        |
+
+**Instalação — uma vez por clone** (grava só estado local; não versiona nada):
+
+```bash
+php _dev/tools/referer.php install     # cópia em .git/ + exclusões locais + alias git
+git ref-index --write                  # constrói o índice a partir da documentação
+```
+
+O `install` faz três coisas: (1) copia a ferramenta para `.git/ref-open/` — é o único sítio que um
+`git checkout` nunca apaga, e sem ela o `back` morreria exactamente quando é preciso, com o `_dev/` já
+fora do disco (mesmo *chicken-and-egg* do §2.1); (2) acrescenta `/_dev/tools/refs.json` e `/.vscode/` a
+`.git/info/exclude`; (3) cria os aliases `git ref-open` / `ref-back` / `ref-forward` / `ref-index` em
+`.git/config`, que **sobrevivem a qualquer troca de branch**.
+
+**Comandos no dia-a-dia** (em qualquer branch, depois do `install`):
+
+| Comando                           | O que faz                                                                        |
+| :-------------------------------- | :------------------------------------------------------------------------------- |
+| `git ref-open §18.2`              | Abre `§18.2` no ficheiro e linha exatos, **reaproveitando a janela** do editor   |
+| `git ref-open D-12`               | Idem para uma decisão (`D-12` → `§3.12`), requisito (`RF-75`) ou regra (`RN-30`) |
+| `git ref-back` · `git ref-back 2` | Volta 1 (ou *n*) posições na pilha, **na posição exata** onde estava antes       |
+| `git ref-forward`                 | Avança na pilha (desfaz um `back`), como no browser                              |
+| `git ref-index --write`           | Refaz o índice **depois de editar a documentação**                               |
+
+Sem alias, tudo passa por `php _dev/tools/referer.php <comando>`. O subcomando `status` mostra o
+estado do índice, do histórico, do editor e das exclusões; `list` lista as referências (`list D-`
+filtra); `open --dry-run` calcula a posição **sem** arrancar o editor.
+
+**Regra da unicidade — uma referência aponta para UM ficheiro:linha.** Os identificadores informais
+(`D-nn`, `RF-nn`, `RN-nn`) aparecem dezenas de vezes na documentação; o índice **não pode** escolher ao
+acaso. Resolve por esta ordem, e o que escolheu fica gravado em `nota` (visível em `list --verbose`):
+
+| #   | Critério                                                                                   |
+| :-- | :----------------------------------------------------------------------------------------- |
+| 1   | **Menção única** — só uma (ficheiro, secção) menciona a chave                              |
+| 2   | **Secção dona** — o título da secção traz a chave (`### 3.12 — D-12 · …`); havendo várias, |
+|     | fica a que a **nomeia mais cedo** no título (nomeia ≠ cita entre parênteses)               |
+| 3   | **Número equivalente** — `D-07` → `§3.7` (a numeração do projeto é a própria âncora)       |
+| 4   | **Linha de definição** — a chave na primeira célula da tabela (`\| RN-30 \| …`)            |
+
+Sem critério aplicável, a entrada fica marcada **AMBÍGUA**: o `index` **lista as candidatas** em vez de
+escolher em silêncio, e o `list` conta-as. Neste projeto o índice fecha em **`0` ambíguas**; `--strict`
+transforma cada ambígua em *exit code* `1` (para uso automático). Os `§N` não passam por aqui: são
+resolvidos pelo **cabeçalho numerado**, que é único por construção.
+
+**Anotar uma referência à mão** (quando a estrutura não decide): `--id=CHAVE` fixa a chave,
+`--anchor=§N` fixa a secção e `--file=CAMINHO` fixa o ficheiro — combináveis numa passagem de `index`.
+Chaves que **não** sejam `§N`/`D-nn`/`RF-nn`/`RN-nn` entram no índice **só** por `--id=`.
+
+**Voltar atrás (`back` / `forward`).** Cada `open` empilha a posição anterior
+(`.git/ref-open/history.json`); `back` desempilha e abre-a **na linha onde estava**, `forward` desfaz um
+`back`. Aceita *n* (`back 3`) e o movimento é dos dois lados, como no browser: abrir uma referência nova
+limpa o `forward`. Se a **linha tiver mudado** desde o índice, o cabeçalho é reencontrado pela âncora
+(o estado aparece como `movida`; `ok` = a linha ainda é a mesma; `perdida` = usada a linha antiga).
+
+**Editor.** Descobre o VS Code (ou Cursor) instalado; a janela é **reaproveitada** (`-r`) e a posição vai
+pela via documentada `--goto <ficheiro>:<linha>:<coluna>` (o editor faz o *scroll* até lá).
+`--new-window`, `REF_EDITOR` e `REF_EDITOR_ARGS` (com os marcadores `{file}`, `{line}`, `{col}`)
+sobrepõem-se; `--editor=none` só calcula a posição. **Noutro projeto sem VS Code**, nada disto quebra:
+`install` cria um `.cmd` em vez do prefixo de shell, e `resolveEditor` cai em `xdg-open`/`open`.
+
+**Local ao clone — nada vai para o remoto.** O índice, o histórico, a cópia de emergência e os aliases
+vivem em `.git/` ou em `.git/info/exclude` — **nenhum** é versionado, logo **nenhum** aparece no
+`git status` (nem aqui, nem nas branches de produto) e não existe no remoto para lá chegar. Noutra
+máquina ou clone: `install` outra vez.
+
 **Convenções comuns**
 - Todos assumem que são corridos **a partir da raiz do projeto**.
 - Operações de escrita são **dry-run por omissão**; só gravam com `--write`.
 - **Exit code:** `0` = ok · `1` = problema/erro.
+- **Exceção de navegação:** o `referer.php` grava estado em cada `open`/`back` (índice ausente e
+  histórico) — é o mecanismo que faz o `back` funcionar, não conteúdo do projeto; `--dry-run` desliga-o.
 - Recusam gravar se o resultado não for UTF-8 válido.
 - Incluem a **documentação viva sem extensão** — hoje `.clinerules` — sempre que `md` estiver no
   âmbito de extensões. `collectFiles()` filtra por extensão, e sem isto o ficheiro escapava ao
@@ -174,6 +257,15 @@ php _dev/tools/file-edit.php grep "funcionario_categoria"
 php _dev/tools/file-edit.php grep "admin-service-" --ext=php --ignore-case
 php _dev/tools/file-edit.php replace doc.md spec.json --write
 php _dev/tools/file-edit.php lines doc.md 12 18 novo.txt --write
+
+# --- REFERÊNCIAS: abrir no ponto exato e voltar atrás (instalar uma vez) ---
+php _dev/tools/referer.php install          # .git/ + exclusões locais + alias git
+php _dev/tools/referer.php index --write    # constrói o índice a partir da documentação
+php _dev/tools/referer.php status           # índice, histórico, editor e exclusões
+php _dev/tools/referer.php list D-          # lista as referências (filtro: D-)
+php _dev/tools/referer.php open §18.2       # abre no ficheiro:linha, reaproveitando a janela
+php _dev/tools/referer.php open D-12 --dry-run   # só calcula a posição
+git ref-open RF-75 ; git ref-back ; git ref-forward
 ```
 
 ### Formato do `spec.json` (para `file-edit.php replace`)

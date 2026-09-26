@@ -14,8 +14,12 @@ documentação. Ler **apenas quando** o humano pedir documentação, mapa, relat
    → N3 `_dev/docs/` (só por pedido). Nunca carregar os três níveis por rotina.
 5. **Ficheiros de controlo são densos; o output é legível.** Estes `.md` de regras são telegráficos de
    propósito. O documento que produzem segue o molde de `_dev/docs/templates/` e passa pelo pipeline.
-6. **Limiar de 400 linhas — modularizar antes de crescer.** Um documento que passa de **400 linhas**
-   deixa de poder ser carregado de uma vez: **divide-se antes de lhe acrescentar conteúdo**. Não é
+6. **Limiar de 3000 linhas — detalhe sim, desordem não.** Um documento do âmbito abaixo só se divide
+   quando passa de **3000 linhas**; até lá, **aprofundar é o objetivo**. Cada módulo tem de ser
+   **completo, explícito e legível para quem o lê fora de contexto**: premissas ditas por palavras,
+   termos próprios definidos ou ligados ao glossário (§29.1), cada facto com o seu `§`/ID e nada deixado
+   «a quem já sabe». **A forma de modularizar não muda:** quando se divide, corta-se **por contexto**
+   (domínio; ou fase/etapa, num só assunto longo), com o pai a passar a router — como abaixo. Não é
    preciso medir à mão — o `md-verify` do gate imprime `linhas=N` por ficheiro.
    **Âmbito:** documentos que **mantemos** (`_dev/docs/**`, `especificacao_mvp.md`, `.clinerules`, `README`s).
    Entradas do cliente (`.docx`/`.xlsx`) e `_dev/docs/out/` (descartável) estão fora.

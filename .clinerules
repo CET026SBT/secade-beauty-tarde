@@ -9,7 +9,7 @@ Ficheiro de **operação**. Não contém produto: contém (a) restrições, conv
 
 | #   | Ler                                             | Quando                                         |
 | :-- | :---------------------------------------------- | :--------------------------------------------- |
-| 1   | Este ficheiro (≈175 linhas)                     | sempre                                         |
+| 1   | Este ficheiro (≈180 linhas)                     | sempre                                         |
 | 2   | `especificacao_mvp.md` — **router** (~63 l.)    | sempre: dá o mapa `§ → ficheiro`               |
 | 3   | **UM** ficheiro de `_dev/docs/spec/`            | só o domínio em causa — nunca os nove          |
 | 4   | `_dev/tests/README.md` · `_dev/tools/README.md` | ao testar · ao usar ferramentas                |
@@ -151,6 +151,13 @@ Decisões de gestão são **manuais**: nenhum indicador automático decide ou bl
   versionados (comportamento medido). Antes de sair: **commit + push**. Para os ter à mão noutra branch:
   `git agent-restore` (instalação única: `php _dev/tools/agent-files.php install`). Detalhe:
   `_dev/tools/README.md` §2.1.
+- **Referências navegáveis — só neste clone.** `git ref-open §18.2` (ou `D-12`, `RF-75`) abre a
+  documentação no **ficheiro e linha exatos**, reaproveitando a janela do editor; `git ref-back` volta à
+  posição anterior (pilha de várias posições) e `git ref-forward` desfaz o `back`. O índice
+  (`_dev/tools/refs.json`), o histórico (`.git/ref-open/`), a cópia de emergência e os aliases são
+  **locais ao clone** — em `git/info/exclude` ou em `.git/` — logo **nada disto é versionado** nem existe
+  no remoto para lá chegar. Instalação única: `php _dev/tools/referer.php install`. Detalhe:
+  `_dev/tools/README.md` §2.2.
 
 ## 5. FONTES ÚNICAS E MANUTENÇÃO
 
@@ -168,8 +175,9 @@ Cada assunto tem **uma** fonte. Ao tocar num ficheiro, manter coerentes os que o
 | Análise, auditoria e guias (**apoio**)   | `_dev/mapaMentalMVP/*.md`                  | —            | nova iteração (não normativo) |
 
 **Crescimento de um documento:** `_dev/docs/**`, o router, os `README`s ou **este** ficheiro a passar de
-**400 linhas** → **modularizar antes de acrescentar** (o pai passa a router; cortar nas fronteiras de
-`§N`). Procedimento e exceções: `_dev/docs/README.md` — DOUTRINA 6. O gate já mede (`md-verify` imprime
+**3000 linhas** → **modularizar antes de acrescentar** (o pai passa a router; cortar nas fronteiras de
+`§N`). Até lá, o detalhe é bem-vindo — mas escrito para **quem lê fora de contexto**. Procedimento e
+exceções: `_dev/docs/README.md` — DOUTRINA 6. O gate já mede (`md-verify` imprime
 `linhas=N`).
 
 **Histórico:** regras revogadas e decisões antigas **não se acumulam** — o arquivo é o **Git**
@@ -179,8 +187,12 @@ revogado**: `_dev/docs/rules/build_history_on_demand.md`.
 ---
 
 **Este ficheiro não deve ser alterado sem aprovação.**
-**Versão:** 3.5 · **Data:** 25/09/2026
-**Histórico:** v3.4 → v3.5 — §1 ganha **exceções aprovadas e fechadas** (E-1…E-4): bibliotecas do material de
+**Versão:** 3.6 · **Data:** 26/09/2026
+**Histórico:** v3.5 → v3.6 — §5 sobe o limiar de modularização de **400** para **3000 linhas**: mais
+detalhe por documento, mantendo o corte **por contexto** e exigindo texto legível a quem lê de fora.
+§4 ganha as **referências navegáveis** (`git ref-open` · `ref-back` · `ref-forward`), **locais ao clone**
+e nunca versionadas (`_dev/tools/README.md` §2.2).
+v3.4 → v3.5 — §1 ganha **exceções aprovadas e fechadas** (E-1…E-4): bibliotecas do material de
 formação por Composer, extensão `zip`, Chart.js nos gráficos de gestão e tabelas novas para o que é
 importado. Decisão e justificação em `_dev/docs/spec/core.md` §1.2 e §3.12 (**D-12**), com a regra do
 *override* de importação (**RN-30**) e os requisitos **RF-75/RF-76**.
