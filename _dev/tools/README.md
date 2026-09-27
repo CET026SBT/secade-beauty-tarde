@@ -184,6 +184,11 @@ acaso. Resolve por esta ordem, e o que escolheu fica gravado em `nota` (visível
 | 3   | **Número equivalente** — `D-07` → `§3.7` (a numeração do projeto é a própria âncora)       |
 | 4   | **Linha de definição** — a chave na primeira célula da tabela (`\| RN-30 \| …`)            |
 
+⚠️ **Menção ≠ definição:** a chave tem de estar **crua** na primeira célula (`| RN-30 |`). Escrita entre
+crases (`` | `C-01` | ``) ou dentro de uma frase é **menção** — é assim que uma tabela de cobertura cita
+`Q-nn`/`C-nn`/`A-nn` sem lhes roubar a definição (medido: uma tabela de 30 conflitos com `C-nn` na primeira
+célula criou **30 ambiguidades**; com crases, voltou a **0**).
+
 Sem critério aplicável, a entrada fica marcada **AMBÍGUA**: o `index` **lista as candidatas** em vez de
 escolher em silêncio, e o `list` conta-as. Neste projeto o índice fecha em **`0` ambíguas**; `--strict`
 transforma cada ambígua em *exit code* `1` (para uso automático). Os `§N` não passam por aqui: são
@@ -301,6 +306,9 @@ git ref-open RF-75 ; git ref-back ; git ref-forward
 ```
 - `search` — texto literal (ou expressão regular, se `regex: true`).
 - `count` — `0`/ausente = todas as ocorrências; `1`+ = limita.
+- ⚠️ **`regex` corre com `/u` mas *sem* `m`:** um `^`/`$` ancora ao **início/fim do ficheiro**, não a cada
+  linha — para ancorar a linhas, pôr `(?m)` no início do padrão (`"(?m)^\\|\\s+(C-\\d{2})"`). Medido: sem
+  isso, um padrão `^\| C-\d{2} \|` devolveu **0 substituições** mesmo com 30 linhas correspondentes.
 - Aceita tanto `[{...}, {...}]` como `{"comment":"...", "jobs":[...]}`.
 - Se um `search` não for encontrado, o utilitário **informa-o** (não falha em silêncio).
 - Este formato evita o *escaping* problemático do PowerShell.
