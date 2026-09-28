@@ -612,6 +612,61 @@ check("avisos do gestor incluem a origem fiscal", in_array("fiscal", $managerAle
 check("avisos do gestor identificam o perfil", ($managerAlerts["profile"] ?? "") === "gestor", json_encode($managerAlerts["profile"] ?? null));
 
 // ---------------------------------------------------------------------------
+section("14. Fase 6.1 - Fornecedores (RF-85)");
+
+require_once APP_PATH . "/services/SupplierService.php";
+require_once APP_PATH . "/repositories/SupplierRepository.php";
+
+$supplierService = new SupplierService();
+$supplierRepo    = new SupplierRepository();
+
+$supplierCatalog = $supplierService->listSuppliers([]);
+check("catalogo de fornecedores carregado (43 da v4)", (int)($supplierCatalog["summary"]["total"] ?? 0) >= 43, json_encode($supplierCatalog["summary"] ?? null));
+check("fornecedores sem NIF contabilizados (5 na fonte)", (int)($supplierCatalog["summary"]["withoutNif"] ?? 0) >= 5, json_encode($supplierCatalog["summary"] ?? null));
+
+$supplierSearch = $supplierService->listSuppliers(["term" => "Worten"]);
+check("pesquisa por nome devolve o fornecedor real", count(array_filter($supplierSearch["suppliers"], fn($row) => ($row["name"] ?? "") === "Worten")) === 1, json_encode($supplierSearch["suppliers"] ?? []));
+
+$supplierCreated = $supplierService->createSupplier([
+    "name" => "Fornecedor Teste Fase 6", "nif" => "999999990",
+    "email" => "teste@fornecedor.pt", "phone" => "+351911111100",
+    "active" => 1, "notes" => "criado pelo teste"
+]);
+$supplierId = (int)($supplierCreated["supplierId"] ?? 0);
+check("fornecedor criado", $supplierId > 0, json_encode($supplierCreated));
+
+$supplierService->updateSupplier($supplierId, ["name" => "Fornecedor Teste Fase 6 (editado)", "nif" => "999999990"]);
+$updatedSupplier = $supplierRepo->find($supplierId);
+check("fornecedor atualizado", ($updatedSupplier["name"] ?? "") === "Fornecedor Teste Fase 6 (editado)", json_encode($updatedSupplier));
+check("edicao sem estado mantem o fornecedor ativo", ($updatedSupplier["active"] ?? false) === true, json_encode($updatedSupplier));
+
+$deactivated = $supplierService->setActive($supplierId, false);
+$deactivatedSupplier = $supplierRepo->find($supplierId);
+check("desativar mantem o registo no catalogo", ($deactivatedSupplier["active"] ?? true) === false && !empty($deactivatedSupplier["id"]), json_encode($deactivatedSupplier));
+check("mensagem explica que o registo se mantem", str_contains((string)($deactivated["message"] ?? ""), "mantém-se"), json_encode($deactivated));
+
+$supplierMissingName = null;
+try { $supplierService->createSupplier(["name" => ""]); } catch (Exception $e) { $supplierMissingName = $e->getMessage(); }
+check("nome obrigatorio (422)", $supplierMissingName !== null, "sem erro");
+
+$supplierBadEmail = null;
+try { $supplierService->createSupplier(["name" => "Fornecedor Email", "email" => "invalido"]); } catch (Exception $e) { $supplierBadEmail = $e->getMessage(); }
+check("email invalido rejeitado (422)", $supplierBadEmail !== null, "sem erro");
+
+$supplierBadPhone = null;
+try { $supplierService->createSupplier(["name" => "Fornecedor Telefone", "phone" => "abc"]); } catch (Exception $e) { $supplierBadPhone = $e->getMessage(); }
+check("telemovel invalido rejeitado (422)", $supplierBadPhone !== null, "sem erro");
+
+$supplierNotFound = null;
+try { $supplierService->updateSupplier(999999, ["name" => "Inexistente"]); } catch (Exception $e) { $supplierNotFound = $e->getMessage(); }
+check("atualizar fornecedor inexistente (404)", $supplierNotFound !== null, "sem erro");
+
+if ($supplierId > 0) {
+    $conn->exec("DELETE FROM fornecedor WHERE id = " . $supplierId);
+}
+check("fornecedor de teste removido (limpeza)", (int)$conn->query("SELECT COUNT(*) FROM fornecedor WHERE id = {$supplierId}")->fetchColumn() === 0, "residuo");
+
+// ---------------------------------------------------------------------------
 section("RESULTADO FINAL");
 echo ($failed === 0 ? "TODOS OS TESTES PASSARAM" : "EXISTEM FALHAS") . " => {$passed} pass, {$failed} fail\n";
 exit($failed === 0 ? 0 : 1);

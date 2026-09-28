@@ -52,7 +52,9 @@ $assets = [
     "modules/common/js/validators/booking.validator.js",
     "modules/common/js/validators/customer.validator.js",
     "modules/common/js/validators/user.validator.js",
+    "modules/common/js/validators/supplier.validator.js",
     "modules/common/js/utils/addressAutocomplete.js",
+    "modules/common/js/utils/form.utils.js",
     "modules/common/js/utils/general.utils.js",
     "modules/common/js/utils/vat.utils.js",
     "modules/common/js/api/api.js",
@@ -65,6 +67,7 @@ $assets = [
     "modules/backoffice/js/components/dashboard.js",
     "modules/backoffice/js/components/alerts.js",
     "modules/backoffice/js/components/agenda.js",
+    "modules/backoffice/js/components/suppliers.js",
     "modules/common/lib/chartjs/Chart.bundle.min.js",
     "modules/common/css/ext-bootstrap.css",
     "modules/common/css/style.css"
@@ -88,6 +91,7 @@ $pages = [
     ["/gestao/recibos-verdes",$gestorJar, ["components/greenReceipts.js", "bo.utils.js"]],
     ["/gestao/painel",         $gestorJar, ["components/dashboard.js", "bo.utils.js"]],
     ["/gestao/avisos",         $gestorJar, ["components/alerts.js", "bo.utils.js"]],
+    ["/gestao/fornecedores",   $gestorJar, ["components/suppliers.js", "validators/supplier.validator.js", "utils/form.utils.js", "bo.utils.js"]],
     ["/gestao/agenda",         $employeeJar, ["components/agenda.js", "bo.utils.js"]]
 ];
 
@@ -124,6 +128,16 @@ check("backoffice tem o sino com contador de avisos", str_contains($painelPage["
 $agendaPage = http("{$base}/gestao/agenda", $employeeJar);
 check("agenda do funcionário traz a grelha do calendário", str_contains($agendaPage["body"], "agendaCalendar"));
 check("sidebar do funcionário não mostra o painel do gestor", !str_contains($agendaPage["body"], "/gestao/painel"));
+
+$suppliersPage = http("{$base}/gestao/fornecedores", $gestorJar);
+check("página de fornecedores traz tabela e formulário", str_contains($suppliersPage["body"], "suppliersTableBody") && str_contains($suppliersPage["body"], "supplierForm"));
+check("página de fornecedores explica que remover é desativar", str_contains($suppliersPage["body"], "desativa"));
+check("página de fornecedores tem os cartões de indicadores", str_contains($suppliersPage["body"], "supplierKpis"));
+
+$supplierValidatorJs = http("{$base}/modules/common/js/validators/supplier.validator.js")["body"];
+foreach (["name", "nif", "phone", "email"] as $supplierKey) {
+    check("supplier.validator.js valida '{$supplierKey}'", str_contains($supplierValidatorJs, "{$supplierKey}(val"));
+}
 
 echo "\n=== Contrato de nomes do formulário de registo (alinhado com os mappers) ===\n";
 

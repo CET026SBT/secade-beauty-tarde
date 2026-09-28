@@ -595,11 +595,62 @@ $avisosPage = request("{$base}/gestao/avisos", "GET", null, $e2eEmployeeJar);
 check("pagina de avisos responde 200 ao funcionario", $avisosPage["status"] === 200, (string)$avisosPage["status"]);
 
 // ---------------------------------------------------------------------------
+section("11.2 Fase 6.1: fornecedores (HTTP)");
+
+$supplierList = request("{$base}/api?action=admin-supplier-list", "GET", null, $e2eManagerJar);
+check("gestor lista fornecedores (200)", $supplierList["status"] === 200, (string)$supplierList["status"]);
+check("lista traz os 43 fornecedores do cliente", (int)($supplierList["json"]["summary"]["total"] ?? 0) >= 43, json_encode($supplierList["json"]["summary"] ?? null));
+check("resumo conta os fornecedores sem NIF", (int)($supplierList["json"]["summary"]["withoutNif"] ?? 0) >= 5, json_encode($supplierList["json"]["summary"] ?? null));
+
+$supplierEmployee = request("{$base}/api?action=admin-supplier-list", "GET", null, $e2eEmployeeJar);
+check("fornecedores negados ao funcionario (403)", $supplierEmployee["status"] === 403, (string)$supplierEmployee["status"]);
+
+$supplierClient = request("{$base}/api?action=admin-supplier-list", "GET", null, $clientJar);
+check("fornecedores negados ao cliente (403)", $supplierClient["status"] === 403, (string)$supplierClient["status"]);
+
+$supplierCreate = request("{$base}/api?action=admin-supplier-store", "POST", [
+    "name" => "Fornecedor HTTP Teste", "nif" => "999999991", "active" => 1
+], $e2eManagerJar);
+$httpSupplierId = (int)($supplierCreate["json"]["supplierId"] ?? 0);
+check("gestor cria fornecedor (HTTP)", $httpSupplierId > 0, json_encode($supplierCreate["json"] ?? []));
+
+$supplierInvalid = request("{$base}/api?action=admin-supplier-store", "POST", ["name" => ""], $e2eManagerJar);
+check("fornecedor sem nome devolve 422", $supplierInvalid["status"] === 422, (string)$supplierInvalid["status"]);
+check("erro identificado no campo name", !empty($supplierInvalid["json"]["errors"]["name"]), json_encode($supplierInvalid["json"]["errors"] ?? []));
+
+$supplierUpdate = request("{$base}/api?action=admin-supplier-update", "POST", [
+    "supplierId" => $httpSupplierId, "name" => "Fornecedor HTTP Teste (editado)", "active" => 1
+], $e2eManagerJar);
+check("gestor atualiza fornecedor (HTTP)", (int)($supplierUpdate["json"]["supplierId"] ?? 0) === $httpSupplierId, json_encode($supplierUpdate["json"] ?? []));
+
+$supplierToggle = request("{$base}/api?action=admin-supplier-set-active", "POST", [
+    "supplierId" => $httpSupplierId, "active" => 0
+], $e2eManagerJar);
+check("gestor desativa fornecedor (HTTP)", ($supplierToggle["json"]["active"] ?? true) === false, json_encode($supplierToggle["json"] ?? []));
+
+$supplierMissing = request("{$base}/api?action=admin-supplier-update", "POST", [
+    "supplierId" => 999999, "name" => "Inexistente"
+], $e2eManagerJar);
+check("fornecedor inexistente devolve 404", $supplierMissing["status"] === 404, (string)$supplierMissing["status"]);
+
+$supplierPage = request("{$base}/gestao/fornecedores", "GET", null, $e2eManagerJar);
+check("pagina de fornecedores responde 200 ao gestor", $supplierPage["status"] === 200, (string)$supplierPage["status"]);
+
+$supplierPageClient = request("{$base}/gestao/fornecedores", "GET", null, $clientJar);
+check("pagina de fornecedores desvia o cliente (302)", $supplierPageClient["status"] === 302, (string)$supplierPageClient["status"]);
+
+// ---------------------------------------------------------------------------
 section("12. Limpeza dos dados E2E");
 
 // O ON DELETE CASCADE remove as linhas de `cliente` e `cliente_morada`
 if ($e2eCustomerId > 0) {
     $pdo->exec("DELETE FROM utilizador WHERE id = " . $e2eCustomerId);
+}
+
+// Fornecedor de teste criado em 11.2 (não é produto do cliente)
+if ($httpSupplierId > 0) {
+    $pdo->exec("DELETE FROM fornecedor WHERE id = " . $httpSupplierId);
+    check("fornecedor de teste removido", (int)$pdo->query("SELECT COUNT(*) FROM fornecedor WHERE id = {$httpSupplierId}")->fetchColumn() === 0, "residuo");
 }
 
 $e2eLeftoverUsers    = (int)$pdo->query("SELECT COUNT(*) FROM utilizador WHERE email LIKE 'e2e.%@secade.pt'")->fetchColumn();

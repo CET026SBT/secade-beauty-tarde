@@ -44,6 +44,12 @@ const API = ((baseApi) => ({
         agenda: {
             month: (month) => baseApi.get(`?action=admin-employee-agenda-list&month=${month}`, 0)
         },
+        suppliers: {
+            list: (params = {}) => baseApi.get(`?action=admin-supplier-list&${$.param(params)}`, 0),
+            store: (data) => baseApi.post('?action=admin-supplier-store', data),
+            update: (data) => baseApi.post('?action=admin-supplier-update', data),
+            setActive: (supplierId, active) => baseApi.post('?action=admin-supplier-set-active', { supplierId, active })
+        },
         services: {
             pending: (params = {}) => baseApi.get(`?action=admin-service-pending-list&${$.param(params)}`, 0),
             accepted: (params = {}) => baseApi.get(`?action=admin-service-accepted-list&${$.param(params)}`, 0),

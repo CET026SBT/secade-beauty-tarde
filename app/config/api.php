@@ -39,6 +39,12 @@ $routes = [
         "admin-alert-read"           => ["controller" => "AlertController", "method" => "markRead", "http" => "POST"],
         "admin-employee-agenda-list" => ["controller" => "AgendaController", "method" => "month", "http" => "GET"],
 
+        // Fase 6.1 — fornecedores (RF-85 · §25.1)
+        "admin-supplier-list"        => ["controller" => "SupplierController", "method" => "list", "http" => "GET"],
+        "admin-supplier-store"       => ["controller" => "SupplierController", "method" => "store", "http" => "POST"],
+        "admin-supplier-update"      => ["controller" => "SupplierController", "method" => "update", "http" => "POST"],
+        "admin-supplier-set-active"  => ["controller" => "SupplierController", "method" => "setActive", "http" => "POST"],
+
         "admin-service-pending-list" => ["controller" => "ServiceController", "method" => "pendingList", "http" => "GET"],
         "admin-service-accepted-list"=> ["controller" => "ServiceController", "method" => "acceptedList", "http" => "GET"],
         "admin-service-accept"       => ["controller" => "ServiceController", "method" => "accept", "http" => "POST"],
