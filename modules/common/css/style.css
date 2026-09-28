@@ -901,6 +901,16 @@ form .row > *:has([aria-invalid="true"])*/ {
     color: #dc3545;
 }
 
+/* Decisão da rota (aprovar/recusar): mesma família visual dos botões de ação,
+   porque também são ícone + `title` sem texto. */
+.bo-action--approve {
+    color: #198754;
+}
+
+.bo-action--refuse {
+    color: #dc3545;
+}
+
 .bo-action:hover,
 .bo-action:focus {
     background-color: rgba(0, 0, 0, .05);

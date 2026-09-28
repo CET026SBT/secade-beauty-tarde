@@ -67,7 +67,9 @@ const boUtils = (() => {
     const ACTION_BUTTONS = {
         details: { icon: "bi-eye",     cssClass: "bo-action--details" },
         edit:    { icon: "bi-pencil",  cssClass: "bo-action--edit" },
-        remove:  { icon: "bi-trash",   cssClass: "bo-action--remove" }
+        remove:  { icon: "bi-trash",   cssClass: "bo-action--remove" },
+        approve: { icon: "bi-check2",  cssClass: "bo-action--approve" },
+        refuse:  { icon: "bi-x",       cssClass: "bo-action--refuse" }
     };
 
     function actionButton(action, title, attributes = "") {

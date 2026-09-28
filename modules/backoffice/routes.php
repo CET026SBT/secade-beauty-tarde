@@ -60,6 +60,12 @@ include_once ROOT_PATH . "/modules/backoffice/includes/boNavbar.php";
                 indicador de apoio — a referência de <strong><?= number_format(50, 0) ?> €</strong> é apenas visual
                 e <strong>não</strong> decide por si.
             </div>
+            <div class="alert alert-warning border small mb-0 mt-3">
+                <i class="bi bi-shield-exclamation me-1"></i>
+                <strong>Regra da rota (RN-31):</strong> uma rota só agrega agendamentos com <strong>todos os
+                serviços aceites</strong>. Grupos com serviços por aceitar aparecem aqui como aviso, mas
+                <strong>não</strong> podem ser decididos — a decisão devolve <strong>409</strong>.
+            </div>
         </div>
     </div>
 
@@ -92,5 +98,32 @@ include_once ROOT_PATH . "/modules/backoffice/includes/boNavbar.php";
         </div>
     </div>
 </main>
+
+<!-- Modal: detalhes da rota (RN-34 · §24.7 item 7)
+     O gestor inclui/exclui agendamentos ANTES de decidir: a decisão aplica-se ao
+     conjunto incluído e o que ficar de fora continua qualificado (nunca cancelado). -->
+<div class="modal fade" id="routeDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detalhes da rota</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <div id="routeDetailsSummary" class="mb-3"></div>
+                <div id="routeDetailsBody" preloader-defer></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-success" id="modalApproveRouteBtn">
+                    <i class="bi bi-check2 me-1"></i> Aprovar incluídos
+                </button>
+                <button type="button" class="btn btn-danger" id="modalRefuseRouteBtn">
+                    <i class="bi bi-x me-1"></i> Recusar incluídos
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <?php include_once ROOT_PATH . "/modules/backoffice/includes/boFooter.php"; ?>

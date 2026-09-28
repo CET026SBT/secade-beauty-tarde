@@ -188,18 +188,64 @@ $employeeLogin = request("{$base}/api?action=auth-login", "POST", [
 ], $employeeJar);
 check("login do funcionario", ($employeeLogin["json"]["success"] ?? false) === true, json_encode($employeeLogin["json"]));
 
-$routesList = request("{$base}/api?action=admin-routes-list&date={$bookingDate}", "GET", null, $managerJar);
-check("admin-routes-list devolve candidatas", count($routesList["json"]["routes"] ?? []) >= 1, json_encode($routesList["json"]));
-check("rotas em modo de decisao manual", ($routesList["json"]["decisionMode"] ?? null) === "manual", json_encode($routesList["json"]["decisionMode"] ?? null));
-check("indicador de referencia = 50 EUR", (float)($routesList["json"]["referenceProfitability"] ?? 0) === 50.0, json_encode($routesList["json"]["referenceProfitability"] ?? null));
+$ambBookingId = (int)($createAmb["json"]["bookingId"] ?? 0);
 
-$routeRow = $routesList["json"]["routes"][0] ?? [];
+// RN-31 (§24.7): uma rota só agrega/decide agendamentos com TODOS os serviços
+// aceites — antes da aceitação a decisão tem de devolver 409.
+$earlyRoutes = request("{$base}/api?action=admin-routes-list&date={$bookingDate}", "GET", null, $managerJar);
+check("rotas em modo de decisao manual", ($earlyRoutes["json"]["decisionMode"] ?? null) === "manual", json_encode($earlyRoutes["json"]["decisionMode"] ?? null));
+check("indicador de referencia = 50 EUR", (float)($earlyRoutes["json"]["referenceProfitability"] ?? 0) === 50.0, json_encode($earlyRoutes["json"]["referenceProfitability"] ?? null));
+
+$earlyAggregated = false;
+foreach ($earlyRoutes["json"]["routes"] ?? [] as $earlyRow) {
+    if (in_array($ambBookingId, array_map("intval", $earlyRow["bookingIds"] ?? []), true)) {
+        $earlyAggregated = true;
+    }
+}
+check("rota nao agrega agendamento com servicos por aceitar (RN-31)", $earlyAggregated === false, json_encode($earlyRoutes["json"]["routes"] ?? []));
+
+$ambAddress = $addressApi["json"]["addresses"][0] ?? [];
+$ambCityId  = (int)($ambAddress["cityId"] ?? 1);
+
+$earlyDecide = request("{$base}/api?action=admin-route-decide", "POST", [
+    "cityId" => $ambCityId, "date" => $bookingDate, "decision" => "aprovada"
+], $managerJar);
+check("decisao de rota com servicos por aceitar devolve 409 (RN-31)", $earlyDecide["status"] === 409, (string)$earlyDecide["status"]);
+
+// Aceitação de todos os serviços do agendamento (passa a qualificado)
+$ambDetails  = request("{$base}/api?action=admin-appointment-details&bookingId={$ambBookingId}", "GET", null, $managerJar);
+$ambServices = $ambDetails["json"]["services"] ?? [];
+$lastAccept  = null;
+
+foreach ($ambServices as $ambService) {
+    $lastAccept = request("{$base}/api?action=admin-service-accept", "POST", [
+        "bookingServiceId" => (int)($ambService["id"] ?? 0),
+        "bookingId"        => $ambBookingId
+    ], $employeeJar);
+}
+check("servicos do agendamento aceites pelo funcionario", count($ambServices) >= 1 && ($lastAccept["json"]["success"] ?? false) === true, json_encode($lastAccept["json"] ?? []));
+
+$routesList = request("{$base}/api?action=admin-routes-list&date={$bookingDate}", "GET", null, $managerJar);
+$routeRow = null;
+foreach ($routesList["json"]["routes"] ?? [] as $listedRow) {
+    if (in_array($ambBookingId, array_map("intval", $listedRow["bookingIds"] ?? []), true)) {
+        $routeRow = $listedRow;
+    }
+}
+check("rota passa a agregar o agendamento qualificado", $routeRow !== null, json_encode($routesList["json"]["routes"] ?? []));
+check("rota qualificada pode ser decidida", ($routeRow["canDecide"] ?? false) === true, json_encode($routeRow));
+check("detalhe da rota expoe os agendamentos incluidos (RN-34)", count($routeRow["bookingsDetail"] ?? []) >= 1, json_encode($routeRow["bookingsDetail"] ?? []));
+
+$routeRow = $routeRow ?? [];
+
 $decide = request("{$base}/api?action=admin-route-decide", "POST", [
-    "cityId"   => $routeRow["cityId"] ?? 0,
-    "date"     => $routeRow["routeDate"] ?? $bookingDate,
-    "decision" => "aprovada"
+    "cityId"     => $routeRow["cityId"] ?? $ambCityId,
+    "date"       => $routeRow["routeDate"] ?? $bookingDate,
+    "decision"   => "aprovada",
+    "bookingIds" => array_map("intval", $routeRow["bookingIds"] ?? [])
 ], $managerJar);
 check("admin-route-decide APROVA manualmente", ($decide["json"]["status"] ?? "") === "aprovada", json_encode($decide["json"]));
+check("decisao registra o conjunto incluido (RN-34)", (int)($decide["json"]["bookings"] ?? 0) >= 1 && (int)($decide["json"]["excluded"] ?? -1) === 0, json_encode($decide["json"] ?? []));
 
 $employeeDecide = request("{$base}/api?action=admin-route-decide", "POST", [
     "cityId" => 1, "date" => $bookingDate, "decision" => "aprovada"

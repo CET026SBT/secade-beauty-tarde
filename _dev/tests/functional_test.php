@@ -146,10 +146,12 @@ $richAddress = $addressService->createAddress($customerId, [
 ]);
 check("moradas criadas para o algoritmo", !empty($poorAddress["addressId"]) && !empty($richAddress["addressId"]), json_encode([$poorAddress, $richAddress]));
 
+// Os dois agendamentos têm de ficar em janelas distintas: o bloqueio da janela
+// temporal (uma consolidação por janela de ambulatório) impediria a 2.ª aceitação.
 $otp1 = $bookingService->requestOtp($customerId);
 $poorBooking = $bookingService->createAmbulatoryBooking($customerId, [
     "addressId" => $poorAddress["addressId"], "otpCode" => $otp1["otpCode"],
-    "date" => $routeDate, "time" => "10:00",
+    "date" => $routeDate, "time" => "17:00",
     "people" => [["name" => "João Cliente", "serviceIds" => [29]]]
 ]);
 
@@ -160,6 +162,28 @@ $richBooking = $bookingService->createAmbulatoryBooking($customerId, [
     "people" => [["name" => "João Cliente", "serviceIds" => [20, 18, 23, 21, 9, 2, 27]]]
 ]);
 check("agendamentos de teste criados", !empty($poorBooking["bookingId"]) && !empty($richBooking["bookingId"]), json_encode([$poorBooking, $richBooking]));
+
+// RN-31 (§24.7): enquanto houver serviços por aceitar, a rota não se agrega nem se decide
+$pendingRouteError = null;
+try {
+    $rotaService->decideRoute(["cityId" => (int)$cityPoor["id"], "date" => $routeDate, "decision" => "aprovada"]);
+} catch (Exception $e) { $pendingRouteError = $e->getMessage(); }
+check("rota com servicos por aceitar recusada (RN-31)", $pendingRouteError !== null, "decisao aceite sem todos os servicos");
+
+$pendingRows = $rotaService->findRouteSummaries(["date" => $routeDate])["routes"];
+check("rota nao agrega agendamentos por aceitar (RN-31)", count($pendingRows) === 0, json_encode($pendingRows));
+
+// Aceitação de todos os serviços (funcionário 2 = Ana Técnica do seed), como um
+// funcionário faria na área de Serviços antes de o gestor decidir a rota.
+$routeAcceptanceService = new ServiceAcceptanceService();
+$routeBookingServiceRepo = new BookingServiceRepository();
+$routeEmployeeId = 2;
+
+foreach ([$poorBooking["bookingId"], $richBooking["bookingId"]] as $routeBookingToAccept) {
+    foreach ($routeBookingServiceRepo->findByBooking((int)$routeBookingToAccept) as $routeServiceRow) {
+        $routeAcceptanceService->acceptService($routeEmployeeId, (int)$routeServiceRow["id"], (int)$routeBookingToAccept);
+    }
+}
 
 $summaryBefore = $rotaService->findRouteSummaries(["date" => $routeDate]);
 check("listagem de rotas mostra 2 candidatas", count($summaryBefore["routes"]) === 2, json_encode($summaryBefore["routes"]));

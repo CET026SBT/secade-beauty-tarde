@@ -133,12 +133,12 @@ class BookingServiceRepository extends BaseRepository {
                 LEFT JOIN agendamento_pessoa p ON s.agendamento_pessoa_id = p.id
                 WHERE s.estado_aceitacao = 'pendente'
                   AND a.local_prestacao = 'carrinha_ambulante'
-                  -- Tem de ser coerente com assertAcceptableBooking(): um serviço é aceitável
-                  -- enquanto o agendamento não estiver num estado terminal. Antes exigia-se
-                  -- 'pendente_aceitacao_funcionarios', o que escondia serviços por aceitar de
-                  -- agendamentos já confirmados (rota aprovada) — e esses nunca apareciam na
-                  -- lista, mesmo filtrando pelo dia certo.
-                  AND a.estado_reserva NOT IN ('cancelado', 'recusado', 'executado', 'concluido')";
+                  -- RN-32 (§24.7): a partir do momento em que o agendamento entra numa
+                  -- rota confirmada (`confirmado`) deixa de aparecer na lista Por
+                  -- aceitar — o acompanhamento passa a ser a agenda do funcionário
+                  -- (RN-33). Antes aceitavam-se serviços de rotas já aprovadas, o que
+                  -- contrariava a RN-31 (a rota só agrega o que está todo aceite).
+                  AND a.estado_reserva NOT IN ('cancelado', 'recusado', 'executado', 'concluido', 'confirmado')";
         $params = [];
 
         if (!empty($filters["categoriaId"])) {
