@@ -460,3 +460,20 @@ mesma disciplina de evidência (caminho:linha ou comando executado).
 - **Entrega ao `dev`:** as branches de contexto desta sessão são `fase6-infra`, `fase6-painel`,
   `fase6-rotas`, `fase6-fornecedores`, `fase6-comissoes`, `cliente-cancelamento` e `testes-430`
   (o mapa de ficheiros de cada uma está no histórico do Git; o `dev` recebeu-as por merge).
+
+### 12.5 Estado do Git no fim da 2.ª sessão (para a próxima não adivinhar)
+
+| Branch (local = remoto) | Commit final | Conteúdo                                                                        |
+| :---------------------- | :----------- | :------------------------------------------------------------------------------ |
+| `agent-workspace`       | `67efe83`    | tudo o que **não é produto** (`_dev/**`, `especificacao_mvp.md`, `.clinerules`) |
+| `dev`                   | `46e6ad5`    | produto + `tests/` — recebeu, por merge, as 8 branches de contexto              |
+| `main`                  | `66f141f`    | merge de `dev` (código final, 100% funcional de ponta a ponta)                  |
+
+**Branches de contexto da sessão (todas empurradas):** `fase6-infra` · `fase6-repositorios` ·
+`fase6-painel` · `fase6-rotas` · `fase6-fornecedores` · `fase6-comissoes` · `cliente-cancelamento` ·
+`testes-430` — cada uma com ficheiros **disjuntos** (`rules §4`).
+
+**Verificação final, já na branch `dev`:** as **4 suites** passam
+(`153 + 179 + 98 = 430`, sintaxe JS OK) e a paridade de produto entre `dev` e `agent-workspace` é
+**total** (`git diff dev agent-workspace -- app modules index.php database_migration_v4.sql README.md`
+não devolve nada).
