@@ -10,18 +10,18 @@
 > O **cronograma de 7 dias** dos documentos iniciais está **revogado** — substituído por este
 > roadmap por fases, alinhado com as regras finais.
 
-| Fase                                | Âmbito                                                                                                                                                | Estado                 |
-| :---------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------- |
-| **1 — Catálogo e base**             | Catálogo de serviços (filtros, modal), categorias, autenticação, registo, perfil/moradas, preloader, validators                                       | ✅ CONCLUÍDA           |
-| **2 — Agendamentos**                | Wizard **Loja** (5 passos) + Wizard **Carrinha** (7 passos + OTP), disponibilidade, conflitos, página de sucesso                                      | ✅ CONCLUÍDA           |
-| **3 — Backoffice do Funcionário**   | Aceitação individual, desfazer/trocar, consolidação, bloqueio de janela, **Simulador de Recibos Verdes**                                              | ✅ CONCLUÍDA           |
-| **4 — Backoffice do Gestor**        | Agendamentos (filtros, detalhe por serviço/funcionário, execução, cancelamento), **Rotas com decisão manual** (+50 € visual),                         | ✅ CONCLUÍDA           |
-|                                     | **Calendário Fiscal** + alertas, config. de recibos verdes                                                                                            |                        |
-| **5 — Integração e testes**         | Fluxos end-to-end (cliente → funcionário → gestor), responsividade, notificações simuladas, **293 verificações**                                      | ✅ CONCLUÍDA           |
-| **6 — Requisitos adicionais (§24)** | Página de detalhes + carousel; re-avaliação dinâmica de slots; 24 h + lembrete + cancelamento pelo cliente; multicidades + alerta de                  | ⬜ **A INICIAR** (§24) |
-|                                     | custos; config. do sinal; 10/90 + métodos de pagamento                                                                                                |                        |
-| **7 — Módulos do backoffice**       | **Dashboard** (`/gestao`: KPIs + **gráficos** Chart.js) · **agenda do funcionário** (`/gestao/agenda`, calendário) · contabilidade · RH · promoções · | ⬜ A INICIAR (§24.7)   |
-|                                     | **sidebar**                                                                                                                                           |                        |
+| Fase                                | Âmbito                                                                                                                               | Estado                 |
+| :---------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------- | :--------------------- |
+| **1 — Catálogo e base**             | Catálogo de serviços (filtros, modal), categorias, autenticação, registo, perfil/moradas, preloader, validators                      | ✅ CONCLUÍDA           |
+| **2 — Agendamentos**                | Wizard **Loja** (5 passos) + Wizard **Carrinha** (7 passos + OTP), disponibilidade, conflitos, página de sucesso                     | ✅ CONCLUÍDA           |
+| **3 — Backoffice do Funcionário**   | Aceitação individual, desfazer/trocar, consolidação, bloqueio de janela, **Simulador de Recibos Verdes**                             | ✅ CONCLUÍDA           |
+| **4 — Backoffice do Gestor**        | Agendamentos (filtros, detalhe por serviço/funcionário, execução, cancelamento), **Rotas com decisão manual** (+50 € visual),        | ✅ CONCLUÍDA           |
+|                                     | **Calendário Fiscal** + alertas, config. de recibos verdes                                                                           |                        |
+| **5 — Integração e testes**         | Fluxos end-to-end (cliente → funcionário → gestor), responsividade, notificações simuladas, **293 verificações**                     | ✅ CONCLUÍDA           |
+| **6 — Requisitos adicionais (§24)** | Página de detalhes + carousel; re-avaliação dinâmica de slots; 24 h + lembrete + cancelamento pelo cliente; multicidades + alerta de | ⬜ **A INICIAR** (§24) |
+|                                     | custos; config. do sinal; 10/90 + métodos de pagamento                                                                               |                        |
+|                                     | **+ módulos do backoffice**: dashboard/gráficos, agenda do funcionário, contabilidade, RH, promoções, fornecedores e sininho (§24.7) |                        |
+| **7 — Sidebar e rotas**             | **Sidebar** do backoffice (a navbar atual está no limite) e renomeação de rotas (§24.7 · §25.5)                                      | ⬜ planeada            |
 
 ### 21.1 Entregáveis
 
@@ -110,7 +110,7 @@ Testes end-to-end para as funcionalidades da **§24** quando forem implementadas
 - **Novos testes (§24.7 · §24.8):** asset **200** de `modules/common/lib/chartjs/Chart.bundle.min.js` ·
   injeção do script no backoffice · **409** ao decidir rota com serviços pendentes (RN-31) · `findPending`
   sem agendamentos em rota confirmada (RN-32) · JSON de `admin-dashboard-summary` e
-  `admin-employee-agenda-list` · *guard* do autocomplete no `asset_test` (sem `show` na construção).
+  `admin-employee-agenda-list` · **payload de `admin-routes-list` com os agendamentos da rota** (diálogo de detalhes) · *guard* do autocomplete no `asset_test` (sem `show` na construção).
 testes *server-to-end* à medida que as restantes funcionalidades estabilizarem.
 
 ## 27. INSTALAÇÃO E IMPORTAÇÃO DA BD
@@ -220,7 +220,7 @@ SET FOREIGN_KEY_CHECKS = 1;
     **auto-cancelados** e **retidos** na BD.
 18. ⬜ `/gestao` é o **dashboard do gestor** (KPIs + gráficos) e o funcionário é encaminhado para a sua **agenda**.
 19. ⬜ A **agenda** do funcionário mostra **só** agendamentos de **rotas confirmadas**, em calendário.
-20. ⬜ Uma rota **não** é confirmada com serviços por aceitar (**409**) e a lista **"Por aceitar"** não mostra serviços de rotas confirmadas.
+20. ⬜ Uma rota **não** é confirmada com serviços por aceitar (**409**), a lista **"Por aceitar"** deixa de mostrar serviços assim que o agendamento entra em rota confirmada, e a rota expõe o **detalhe dos agendamentos qualificados**.
 21. ⬜ O *dropdown* do autocomplete **não** aparece no carregamento de `/registo` (§24.8).
 13. ⬜ Cliente recebe **lembrete** com sugestão de loja física ou reagendamento.
 14. ⬜ Sinal **configurável** no backoffice; **90 %** cobrados no término com **método simulado**.

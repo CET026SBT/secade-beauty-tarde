@@ -156,6 +156,13 @@ com **todos** os serviços aceites.
   (RN-32).
 - ❌ **Sem agenda:** não existe `/gestao/agenda`, `agenda.php` nem `admin-employee-agenda-list`; o menu do
   funcionário (`boNavbar.php` L11-14) tem só "Serviços".
+- ✅ **A tabela de rotas já agrega por dia+cidade** (`/gestao/rotas`: data, cidade, agendamentos, receita,
+  combustível, rentabilidade, estado e **decisão por linha**) — `RotaService::listRoutes` · `routes.js`.
+- ❌ **Sem diálogo de detalhes da rota:** a agregação traz `GROUP_CONCAT(a.id) AS agendamentos_ids`
+  (`BookingRepository` L212), mas `RotaService::listRoutes` (L169-187) **não expõe** essa chave e
+  `routes.js` não tem modal.
+- ⚠️ **Botões de ação sem convenção única:** rotas usam `btn-success`/`btn-danger` (`routes.js` L36-43) e
+  agendamentos usam `btn-outline-primary`/`btn-outline-danger` (`appointments.js` L46/49/240).
 - ✅ **Dados já existem** (§1.2 · §1.7 do planeamento): `agendamento_servico.funcionario_id` +
   `agendamento.data_hora_pretendida` + `agendamento.estado_reserva` permitem o calendário **sem tabela nova**.
 
@@ -176,6 +183,19 @@ com **todos** os serviços aceites.
    (`estado_reserva = 'confirmado'`); o acompanhamento desses passa a ser a agenda (RN-33).
 6. **Sininho:** contador de alertas **não lidos** no menu do utilizador (`menuUserBo.php`), reutilizando
    `alerta_fiscal` + `admin-alert-summary`; leitura **global** enquanto houver um só gestor (§22.2 · C-03).
+7. **UX de rotas (decidido 28/09/2026):** `/gestao/rotas` é o **único** ecrã de formação e decisão de rota;
+   a agregação inclui **por defeito todos** os agendamentos **qualificados** do dia+cidade (RN-31); cada
+   linha ganha **Ver detalhes** — **diálogo Bootstrap** com a lista dos agendamentos qualificados
+   associados à rota potencial (`admin-routes-list` passa a expor `agendamentosIds`; alteração de §19 a
+   registar na implementação, por `data-api.md` estar no limite de 400 linhas).
+8. **Convenção dos botões de ação (coluna de ações):** sem texto — apenas **ícone + atributo `title`**,
+   **fundo transparente** e borda/ícone com a **mesma cor** por tipo de ação: **dourado = detalhes ·
+   azul = editar · vermelho = remover**; aplicar **uniformemente** às listagens do backoffice (rotas e
+   agendamentos incluídos).
+
+> **Fases (28/09/2026):** os módulos do backoffice ficam **alinhados na Fase 6** (pedido do gestor, pelo
+> prazo); a **Fase 7** reserva-se à **sidebar** do backoffice e à renomeação de rotas (§25.5). O Chart.js
+> é copiado para `modules/common/lib/chartjs/` na **mesma fase** em que os gráficos forem implementados.
 
 ### 24.8 — Defeito: dropdown do autocomplete visível no canto superior esquerdo (`/registo`)
 **Sintoma:** ao carregar `/registo`, o *dropdown* do autocomplete aparece **vazio no canto superior esquerdo**.
