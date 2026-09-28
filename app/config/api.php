@@ -17,6 +17,7 @@ $routes = [
         "booking-create-store"   => ["controller" => "BookingController", "method" => "createStoreBooking", "http" => "POST"],
         "booking-create-amb"     => ["controller" => "BookingController", "method" => "createAmbulatoryBooking", "http" => "POST"],
         "booking-my"             => ["controller" => "BookingController", "method" => "myBookings", "http" => "GET"],
+        "customer-booking-cancel" => ["controller" => "BookingController", "method" => "cancelBooking", "http" => "POST"],
 
         "customer-profile"            => ["controller" => "CustomerController", "method" => "profile", "http" => "GET"],
         "customer-address-list"       => ["controller" => "CustomerAddressController", "method" => "index", "http" => "GET"],

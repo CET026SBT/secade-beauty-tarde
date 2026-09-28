@@ -701,6 +701,33 @@ check("funcionario tem no maximo uma linha de totais", count($commissionOwn["emp
 check("linhas do funcionario sao todas dele", count(array_filter($commissionOwn["commissions"] ?? [], fn($row) => (int)$row["employeeId"] !== 2)) === 0, json_encode(array_column($commissionOwn["commissions"] ?? [], "employeeId")));
 
 // ---------------------------------------------------------------------------
+section("16. Fase 6 (§24.6) - Cancelamento pelo cliente (RF-12)");
+
+$cancelDate = nextWorkingDate(11);
+$cancelTarget = $bookingService->createStoreBooking($customerId, [
+    "serviceIds" => [30], "date" => $cancelDate, "time" => "15:30"
+]);
+$cancelTargetId = (int)($cancelTarget["bookingId"] ?? 0);
+check("agendamento criado para o cancelamento", $cancelTargetId > 0, json_encode($cancelTarget));
+
+$cancelResult = $bookingService->cancelCustomerBooking($customerId, $cancelTargetId);
+check("cliente cancela o proprio agendamento", ($cancelResult["status"] ?? "") === "cancelado", json_encode($cancelResult));
+check("cancelamento e sem penalizacao", str_contains((string)($cancelResult["message"] ?? ""), "penalização"), json_encode($cancelResult));
+check("estado na BD passa a cancelado", ((new BookingRepository())->find($cancelTargetId)["status"] ?? "") === "cancelado");
+
+$cancelAgain = null;
+try { $bookingService->cancelCustomerBooking($customerId, $cancelTargetId); } catch (Exception $e) { $cancelAgain = $e->getMessage(); }
+check("cancelar duas vezes devolve 409", $cancelAgain !== null, "sem erro");
+
+$cancelForeign = null;
+try { $bookingService->cancelCustomerBooking($customerId + 1, $cancelTargetId); } catch (Exception $e) { $cancelForeign = $e->getMessage(); }
+check("cancelar agendamento de outro cliente devolve 403", $cancelForeign !== null, "sem erro");
+
+$cancelMissing = null;
+try { $bookingService->cancelCustomerBooking($customerId, 999999); } catch (Exception $e) { $cancelMissing = $e->getMessage(); }
+check("cancelar agendamento inexistente devolve 404", $cancelMissing !== null, "sem erro");
+
+// ---------------------------------------------------------------------------
 section("RESULTADO FINAL");
 echo ($failed === 0 ? "TODOS OS TESTES PASSARAM" : "EXISTEM FALHAS") . " => {$passed} pass, {$failed} fail\n";
 exit($failed === 0 ? 0 : 1);

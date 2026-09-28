@@ -19,7 +19,8 @@ const API = ((baseApi) => ({
         requestOtp: () => baseApi.post('?action=booking-otp-request', {}),
         createStore: (data) => baseApi.post('?action=booking-create-store', data),
         createAmbulatory: (data) => baseApi.post('?action=booking-create-amb', data),
-        myBookings: () => baseApi.get('?action=booking-my', 0)
+        myBookings: () => baseApi.get('?action=booking-my', 0),
+        cancelBooking: (bookingId) => baseApi.post('?action=customer-booking-cancel', { bookingId })
     },
     customer: {
         profile: () => baseApi.get('?action=customer-profile', 0),

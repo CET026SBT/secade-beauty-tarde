@@ -657,6 +657,39 @@ $commissionPageHttp = request("{$base}/gestao/comissoes", "GET", null, $e2eEmplo
 check("pagina de comissoes responde 200 ao funcionario", $commissionPageHttp["status"] === 200, (string)$commissionPageHttp["status"]);
 
 // ---------------------------------------------------------------------------
+section("11.4 Fase 6 (24.6): cancelamento pelo cliente (HTTP)");
+
+$clientCancellable = request("{$base}/api?action=booking-create-store", "POST", [
+    "serviceIds" => [30], "date" => $bookingDate, "time" => "16:30"
+], $clientJar);
+$clientCancellableId = (int)($clientCancellable["json"]["bookingId"] ?? 0);
+check("cliente cria agendamento para cancelar", $clientCancellableId > 0, json_encode($clientCancellable["json"] ?? []));
+
+$clientCancel = request("{$base}/api?action=customer-booking-cancel", "POST", [
+    "bookingId" => $clientCancellableId
+], $clientJar);
+check("cliente cancela o proprio agendamento (200)", $clientCancel["status"] === 200 && ($clientCancel["json"]["status"] ?? "") === "cancelado", json_encode($clientCancel["json"] ?? []));
+check("cancelamento sem penalizacao (mensagem)", str_contains((string)($clientCancel["json"]["message"] ?? ""), "penalização"), json_encode($clientCancel["json"] ?? []));
+
+$clientCancelAgain = request("{$base}/api?action=customer-booking-cancel", "POST", [
+    "bookingId" => $clientCancellableId
+], $clientJar);
+check("cancelar duas vezes devolve 409", $clientCancelAgain["status"] === 409, (string)$clientCancelAgain["status"]);
+
+$managerCancelCustomer = request("{$base}/api?action=customer-booking-cancel", "POST", [
+    "bookingId" => $clientCancellableId
+], $e2eManagerJar);
+check("gestor nao usa o cancelamento do cliente (403)", $managerCancelCustomer["status"] === 403, (string)$managerCancelCustomer["status"]);
+
+$anonymousCancel = request("{$base}/api?action=customer-booking-cancel", "POST", [
+    "bookingId" => $clientCancellableId
+], $anonJar);
+check("cancelamento sem sessao devolve 401", $anonymousCancel["status"] === 401, (string)$anonymousCancel["status"]);
+
+$appointmentsPageClient = request("{$base}/agendamentos", "GET", null, $clientJar);
+check("pagina de agendamentos tem o botao de cancelamento", $appointmentsPageClient["status"] === 200 && str_contains($appointmentsPageClient["body"], "appointmentsSuccess"), (string)$appointmentsPageClient["status"]);
+
+// ---------------------------------------------------------------------------
 section("12. Limpeza dos dados E2E");
 
 // O ON DELETE CASCADE remove as linhas de `cliente` e `cliente_morada`

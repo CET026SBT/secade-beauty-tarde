@@ -361,6 +361,42 @@ class BookingService extends BaseService {
         ];
     }
 
+    /**
+     * RF-12 (§24.6 · §3.11): o cliente cancela o seu agendamento, **sem penalização**.
+     *
+     * Regras: o agendamento tem de ser **dele** (a posse verifica-se sempre contra a
+     * sessão, nunca contra o pedido) e não pode estar num estado terminal. As horas
+     * libertadas voltam a aparecer na disponibilidade, porque o estado `cancelado`
+     * sai da validação de conflito de janela.
+     */
+    public function cancelCustomerBooking(int $customerId, int $bookingId): array {
+        if ($bookingId <= 0) {
+            throw new Exception("Identificador de agendamento inválido.", 422);
+        }
+
+        $booking = $this->bookingRepository->find($bookingId);
+
+        if (!$booking) {
+            throw new Exception("Agendamento não encontrado.", 404);
+        }
+
+        if ((int)($booking["customerId"] ?? 0) !== $customerId) {
+            throw new Exception("Este agendamento não lhe pertence.", 403);
+        }
+
+        if (in_array($booking["status"], ["cancelado", "executado", "concluido"], true)) {
+            throw new Exception("Este agendamento já não pode ser cancelado (estado atual: {$booking['status']}).", 409);
+        }
+
+        $this->bookingRepository->updateEstado($bookingId, "cancelado");
+
+        return [
+            "bookingId" => $bookingId,
+            "status"    => "cancelado",
+            "message"   => "Agendamento cancelado sem penalização. O horário ficou novamente disponível."
+        ];
+    }
+
     // ------------------------------------------------------------------
     // Serviços ativos (catálogo público)
     // ------------------------------------------------------------------
