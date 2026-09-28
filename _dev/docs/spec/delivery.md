@@ -10,18 +10,20 @@
 > O **cronograma de 7 dias** dos documentos iniciais está **revogado** — substituído por este
 > roadmap por fases, alinhado com as regras finais.
 
-| Fase                                | Âmbito                                                                                                                                                 | Estado                 |
-| :---------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------- |
-| **1 — Catálogo e base**             | Catálogo de serviços (filtros, modal), categorias, autenticação, registo, perfil/moradas, preloader, validators                                        | ✅ CONCLUÍDA           |
-| **2 — Agendamentos**                | Wizard **Loja** (5 passos) + Wizard **Carrinha** (7 passos + OTP), disponibilidade, conflitos, página de sucesso                                       | ✅ CONCLUÍDA           |
-| **3 — Backoffice do Funcionário**   | Aceitação individual, desfazer/trocar, consolidação, bloqueio de janela, **Simulador de Recibos Verdes**                                               | ✅ CONCLUÍDA           |
-| **4 — Backoffice do Gestor**        | Agendamentos (filtros, detalhe por serviço/funcionário, execução, cancelamento), **Rotas com decisão manual** (+50 € visual),                          | ✅ CONCLUÍDA           |
-|                                     | **Calendário Fiscal** + alertas, config. de recibos verdes                                                                                             |                        |
-| **5 — Integração e testes**         | Fluxos end-to-end (cliente → funcionário → gestor), responsividade, notificações simuladas, **293 verificações**                                       | ✅ CONCLUÍDA           |
-| **6 — Requisitos adicionais (§24)** | Página de detalhes + carousel; re-avaliação dinâmica de slots; 24 h + lembrete + cancelamento pelo cliente; multicidades + alerta de                   | ⬜ **A INICIAR** (§24) |
-|                                     | custos; config. do sinal; 10/90 + métodos de pagamento                                                                                                 |                        |
-|                                     | **+ módulos do backoffice**: dashboard/gráficos, agenda do funcionário, contabilidade, RH, promoções, fornecedores, sininho e página de avisos (§24.7) |                        |
-| **7 — Sidebar e rotas**             | **Sidebar** do backoffice (a navbar atual está no limite) e renomeação de rotas (§24.7 · §25.5)                                                        | ⬜ planeada            |
+| Fase                                | Âmbito                                                                                                                                           | Estado                 |
+| :---------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------- |
+| **1 — Catálogo e base**             | Catálogo de serviços (filtros, modal), categorias, autenticação, registo, perfil/moradas, preloader, validators                                  | ✅ CONCLUÍDA           |
+| **2 — Agendamentos**                | Wizard **Loja** (5 passos) + Wizard **Carrinha** (7 passos + OTP), disponibilidade, conflitos, página de sucesso                                 | ✅ CONCLUÍDA           |
+| **3 — Backoffice do Funcionário**   | Aceitação individual, desfazer/trocar, consolidação, bloqueio de janela, **Simulador de Recibos Verdes**                                         | ✅ CONCLUÍDA           |
+| **4 — Backoffice do Gestor**        | Agendamentos (filtros, detalhe por serviço/funcionário, execução, cancelamento), **Rotas com decisão manual** (+50 € visual),                    | ✅ CONCLUÍDA           |
+|                                     | **Calendário Fiscal** + alertas, config. de recibos verdes                                                                                       |                        |
+| **5 — Integração e testes**         | Fluxos end-to-end (cliente → funcionário → gestor), responsividade, notificações simuladas, **293 verificações**                                 | ✅ CONCLUÍDA           |
+| **6 — Requisitos adicionais (§24)** | Página de detalhes + carousel; re-avaliação dinâmica de slots; 24 h + lembrete + cancelamento pelo cliente; multicidades + alerta de             | ⬜ **A INICIAR** (§24) |
+|                                     | custos; config. do sinal; 10/90 + métodos de pagamento                                                                                           |                        |
+|                                     | **+ módulos do backoffice**: dashboard/gráficos, agenda do funcionário, contabilidade, RH, fornecedores, sininho e página de avisos (**promoções |                        |
+|                                     | adiadas** — Fase 8 · §24.7)                                                                                                                      |                        |
+| **7 — Sidebar do backoffice**       | **Sidebar** (a navbar atual está no limite), com a página das **comissões** acessível por lá (§24.7 · §25.5)                                     | ⬜ planeada            |
+| **8 — Promoções**                   | Módulo de **promoções e campanhas** — adiado; avaliar antes o risco de **retro-atualização** de histórico e agendamentos passados (§24.7)        | ⬜ adiada              |
 
 ### 21.1 Entregáveis
 
@@ -216,19 +218,18 @@ SET FOREIGN_KEY_CHECKS = 1;
 
 ### 28.2 Critérios da Fase 6 (a cumprir com a §24)
 11. ⬜ Cliente consegue **cancelar** o seu agendamento pela plataforma, **sem penalização**.
-12. ⬜ Nenhuma rota é criada com agendamentos a **menos de 24 h**; agendamentos sem rota às 24 h são
-    **auto-cancelados** e **retidos** na BD.
-18. ⬜ `/gestao` é o **dashboard do gestor** (KPIs + gráficos) e o funcionário é encaminhado para a sua **agenda**.
-19. ⬜ A **agenda** do funcionário mostra **só** agendamentos de **rotas confirmadas**, em calendário.
-20. ⬜ Uma rota **não** é confirmada com serviços por aceitar (**409**), a lista **"Por aceitar"** deixa de mostrar serviços assim que o agendamento entra em rota confirmada, e a rota expõe o **detalhe dos agendamentos qualificados**.
-21. ⬜ O *dropdown* do autocomplete **não** aparece no carregamento de `/registo` (§24.8).
-22. ⬜ O gestor **exclui** um agendamento de uma rota **não decidida** e ele volta a **qualificado** (nunca `cancelado`).
-23. ⬜ Existe uma página de **avisos** por perfil, com **contador de não lidos** no sino e ligação no menu do utilizador.
+12. ⬜ Nenhuma rota é criada com agendamentos a **menos de 24 h**; agendamentos sem rota às 24 h são **auto-cancelados** e **retidos** na BD.
 13. ⬜ Cliente recebe **lembrete** com sugestão de loja física ou reagendamento.
 14. ⬜ Sinal **configurável** no backoffice; **90 %** cobrados no término com **método simulado**.
 15. ⬜ **Página de detalhes** por serviço com **carousel**.
 16. ⬜ **Multicidades** validado com espaçamento temporal + **alerta de custos** padronizado.
 17. ⬜ Lista de horas **revalidada** quando os serviços mudam.
+18. ⬜ `/gestao` é o **dashboard do gestor** (KPIs + gráficos) e o funcionário é encaminhado para a sua **agenda**.
+19. ⬜ A **agenda** do funcionário mostra **só** agendamentos de **rotas confirmadas**, em calendário.
+20. ⬜ Uma rota **não** é confirmada com serviços por aceitar (**409**), a lista **"Por aceitar"** deixa de mostrar serviços assim que o agendamento entra em rota confirmada, e a rota expõe o **detalhe dos agendamentos qualificados**.
+21. ⬜ O *dropdown* do autocomplete **não** aparece no carregamento de `/registo` (§24.8).
+22. ⬜ O gestor **reverte/exclui** um agendamento **antes** de a rota ser confirmada e ele volta a **qualificado** (nunca `cancelado`); em rota confirmada **não se altera**.
+23. ⬜ Existe uma página de **avisos** por perfil, com **contador de não lidos** no sino e ligação no menu do utilizador.
 
 ### 28.3 Critérios transversais (sempre)
 ✅ Código organizado e legível · ✅ interface responsiva · ✅ validações client+server ·

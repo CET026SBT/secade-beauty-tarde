@@ -349,19 +349,19 @@ Ou seja, já existe autorização **por endpoint**; falta autorização **por p�
 > respeita isso: o módulo de fornecedores **deixa de ser um item isolado** e passa a ser a fundação do eixo
 > de passivos da contabilidade.
 
-| Fase | Âmbito                                                 | Depende de     | Reaproveita ✚                                          | Novo ➕                                                 |
-| :--- | :----------------------------------------------------- | :------------- | :------------------------------------------------------ | :------------------------------------------------------ |
-| 6.0  | Autorização por perfil + painel v1 (KPIs já            | —              | `Session`, `FiscalService`, `BookingRepository`,        | `DashboardService`, mapa de permissões, `/gestao`       |
-|      | calculáveis) + sininho fiscal                          |                | `alerta_fiscal`                                         |                                                         |
-| 6.1  | **Fornecedores + despesas** (§25.1 — prioridade 1)     | 6.0            | `transacao_financeira` (referência de custos)           | `fornecedor`, `fatura_fornecedor`, `despesa`,           |
-|      |                                                        |                |                                                         | `SupplierService/Repo`, `/gestao/fornecedores`          |
-| 6.2  | Contabilidade: ativos/passivos · DR · simulador fiscal | 6.1 (despesas) | `rota_ambulante`, `obrigacao_fiscal`,                   | `AccountingService/Repo`, `config_fiscal`,              |
-|      | · tesouraria/IVA                                       |                | `fecho_caixa_diario`                                    | `/gestao/contabilidade`                                 |
-| 6.3  | RH (`/gestao/equipa`) + custo de pessoal no balanço    | 6.2            | `EmployeeService/Repo`, `funcionario`,                  | `admin-employee-*`                                      |
-|      |                                                        |                | `agendamento_servico`                                   |                                                         |
-| 6.4  | Promoções + aplicação no wizard                        | 6.2 (opcional) | `agendamento_servico.preco_praticado`, wizard existente | 4 tabelas, `PromotionService/Repo`, `/gestao/promocoes` |
-| 6.5  | Área do funcionário: agenda + comissões + promoções    | 6.0 · 6.4      | `ServiceAcceptanceService`, `GreenReceiptService`       | `/gestao/agenda`, `employee-*`                          |
-|      | (leitura)                                              |                |                                                         |                                                         |
+| Fase | Âmbito                                                            | Depende de     | Reaproveita ✚                                          | Novo ➕                                                 |
+| :--- | :---------------------------------------------------------------- | :------------- | :------------------------------------------------------ | :------------------------------------------------------ |
+| 6.0  | Autorização por perfil + painel v1 (KPIs já                       | —              | `Session`, `FiscalService`, `BookingRepository`,        | `DashboardService`, mapa de permissões, `/gestao`       |
+|      | calculáveis) + sininho fiscal                                     |                | `alerta_fiscal`                                         |                                                         |
+| 6.1  | **Fornecedores + despesas** (§25.1 — prioridade 1)                | 6.0            | `transacao_financeira` (referência de custos)           | `fornecedor`, `fatura_fornecedor`, `despesa`,           |
+|      |                                                                   |                |                                                         | `SupplierService/Repo`, `/gestao/fornecedores`          |
+| 6.2  | Contabilidade: ativos/passivos · DR · simulador fiscal            | 6.1 (despesas) | `rota_ambulante`, `obrigacao_fiscal`,                   | `AccountingService/Repo`, `config_fiscal`,              |
+|      | · tesouraria/IVA                                                  |                | `fecho_caixa_diario`                                    | `/gestao/contabilidade`                                 |
+| 6.3  | RH (`/gestao/equipa`) + custo de pessoal no balanço               | 6.2            | `EmployeeService/Repo`, `funcionario`,                  | `admin-employee-*`                                      |
+|      |                                                                   |                | `agendamento_servico`                                   |                                                         |
+| 6.4  | Promoções + aplicação no wizard (**ADIADO — Fase 8**, 28/09/2026) | 6.2 (opcional) | `agendamento_servico.preco_praticado`, wizard existente | 4 tabelas, `PromotionService/Repo`, `/gestao/promocoes` |
+| 6.5  | Área do funcionário: agenda + comissões + promoções               | 6.0 · 6.4      | `ServiceAcceptanceService`, `GreenReceiptService`       | `/gestao/agenda`, `employee-*`                          |
+|      | (leitura)                                                         |                |                                                         |                                                         |
 
 Cada fase deve **fechar o ciclo de §29.3.6** (atualizar §4 estado, §24 gap, §28 critérios e §26 testes na
 mesma alteração) e manter as **289 verificações** atuais a passar.
@@ -1328,6 +1328,7 @@ constante mensal** — é `6,15 € × dias úteis do mês`.
 | 33  | **IVA nas dívidas a pagar**: posição líquida (como está no ficheiro) ou dívida bruta                   | C-27 | ⬜     |
 | 34  | **Capital em dívida**: plano (**24 016,80 €**) ou conta 25 (**49 354,66 €**)                           | C-26 | ⬜     |
 | 35  | **Subsídio de alimentação variável**: dias úteis por mês vs valor fixo                                 | C-28 | ⬜     |
+| 37  | **Promoções adiadas** (Fase 8) — avaliar **retro-atualização** de histórico/agendamentos passados      | C-33 | ⬜     |
 | 36  | **Excluir agendamento de uma rota** (volta a qualificado, nunca a cancelado) — **decidido** (RN-34)    | C-31 | ⬜     |
 
 **Depois das decisões:** registar em `especificacao_mvp.md` (é o único documento normativo) como

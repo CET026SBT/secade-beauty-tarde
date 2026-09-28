@@ -202,15 +202,19 @@ com **todos** os serviços aceites.
 10. **Página centralizada de avisos (RF-81 · D-15):** `/gestao/avisos`, alcançável no **menu do
     utilizador** e pelo **clique no sino**; contador de não lidos por `alerta_fiscal` (global) e, quando
     existirem lembretes não fiscais, ➕ `notificacao` com leitura **por utilizador**.
+11. **Comissões do funcionário:** página própria (proposta `/gestao/comissoes`), acessível pelo **menu do
+    utilizador** e, na Fase 7, pela **sidebar**; os dados já existem
+    (`agendamento_servico.valor_recibo_verde_funcionario`, snapshot por aceitação — §11).
 
 > **Fases (28/09/2026):** os módulos do backoffice ficam **alinhados na Fase 6** (pedido do gestor, pelo
 > prazo); a **Fase 7** reserva-se à **sidebar** do backoffice (a renomeação de `/gestao/agendamentos`
 > **não** avança). O Chart.js é copiado para `modules/common/lib/chartjs/` na **mesma fase** em que os
 > gráficos forem implementados. **Ordem interna (de §1.9, sem conflito bloqueante):** 6.0 painel +
-> autorização por perfil → 6.1 fornecedores → 6.2 contabilidade → 6.3 RH → 6.4 promoções → 6.5 área do
-> funcionário. **Dependências assinaladas:** o card *Dívidas a Fornecedores* do dashboard só existe depois
-> de 6.1 (C-11 — até lá, estado vazio explicativo) e as promoções mexem em preços de referência dos testes
-> (C-08 · C-18 · Q-29).
+> autorização por perfil → 6.1 fornecedores → 6.2 contabilidade → 6.3 RH → 6.5 área do funcionário
+> (**promoções saem da Fase 6** — 28/09/2026: passam a **Fase 8**, com o risco de **retro-atualização de
+> histórico e agendamentos passados** a avaliar antes de implementar). **Dependências assinaladas:** o card
+> *Dívidas a Fornecedores* do dashboard só existe depois de 6.1 (C-11 — até lá, estado vazio explicativo) e
+> a **sidebar (Fase 7)** passa a ser a via de acesso à página das **comissões** (RF-81 não a inclui).
 
 ### 24.8 — Defeito: dropdown do autocomplete visível no canto superior esquerdo (`/registo`)
 **Sintoma:** ao carregar `/registo`, o *dropdown* do autocomplete aparece **vazio no canto superior esquerdo**.
