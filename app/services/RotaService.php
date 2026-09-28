@@ -3,6 +3,7 @@
 require_once __DIR__ . "/BaseService.php";
 require_once APP_PATH . "/repositories/RotaRepository.php";
 require_once APP_PATH . "/repositories/BookingRepository.php";
+require_once APP_PATH . "/repositories/BookingServiceRepository.php";
 require_once APP_PATH . "/utils/Session.php";
 
 /**
@@ -23,11 +24,33 @@ class RotaService extends BaseService {
 
     private RotaRepository $rotaRepository;
     private BookingRepository $bookingRepository;
+    private BookingServiceRepository $bookingServiceRepository;
 
     public function __construct() {
         parent::__construct();
         $this->rotaRepository = new RotaRepository();
         $this->bookingRepository = new BookingRepository();
+        $this->bookingServiceRepository = new BookingServiceRepository();
+    }
+
+    /**
+     * Lista de agendamentos que o gestor incluiu na rota (RN-34).
+     * Vazia = decidir sobre todos os qualificados.
+     */
+    private function normalizeBookingIds(mixed $rawIds): array {
+        if (!is_array($rawIds)) {
+            return [];
+        }
+
+        $ids = [];
+        foreach ($rawIds as $value) {
+            $id = (int)$value;
+            if ($id > 0) {
+                $ids[] = $id;
+            }
+        }
+
+        return array_values(array_unique($ids));
     }
 
     /**
@@ -59,20 +82,51 @@ class RotaService extends BaseService {
         }
 
         $managerId = Session::userId();
+        $requestedIds = $this->normalizeBookingIds($data["bookingIds"] ?? null);
 
-        return $this->executeTransactional(function() use ($cityId, $date, $decision, $notes, $managerId) {
+        return $this->executeTransactional(function() use ($cityId, $date, $decision, $notes, $managerId, $requestedIds) {
+            // RN-31: uma rota NÃO se decide com serviços por aceitar.
+            $pending = $this->bookingRepository->countPendingByCityAndDate($date, $cityId);
+
+            if ($pending > 0) {
+                throw new Exception(
+                    "Esta rota tem " . $pending . " agendamento(s) com serviços por aceitar. "
+                    . "Aceite (ou desfaça) todos os serviços na área de Serviços antes de decidir a rota (RN-31).",
+                    409
+                );
+            }
+
             $bookings = $this->bookingRepository->findDecidableByCityAndDate($date, $cityId);
 
             if (empty($bookings)) {
                 throw new Exception("Não existem agendamentos de ambulatório em condições de decisão para esta cidade e data.", 409);
             }
 
-            $revenue   = 0.0;
-            $bookingIds = [];
+            $qualifiedIds = [];
+            $prices = [];
 
             foreach ($bookings as $booking) {
-                $revenue += (float)$booking["valor_total"];
-                $bookingIds[] = (int)$booking["id"];
+                $bookingId = (int)$booking["id"];
+                $qualifiedIds[] = $bookingId;
+                $prices[$bookingId] = (float)$booking["valor_total"];
+            }
+
+            // RN-34: a decisão aplica-se ao CONJUNTO INCLUÍDO. Sem lista explícita
+            // aplica-se a todos os qualificados; os excluídos ficam qualificados
+            // (`totalmente_aceite_funcionarios`) — nunca `cancelado`.
+            $bookingIds = $requestedIds === []
+                ? $qualifiedIds
+                : array_values(array_intersect($qualifiedIds, $requestedIds));
+
+            if ($requestedIds !== [] && empty($bookingIds)) {
+                throw new Exception("Nenhum dos agendamentos indicados está qualificado para esta rota.", 422);
+            }
+
+            $excludedIds = array_values(array_diff($qualifiedIds, $bookingIds));
+            $revenue     = 0.0;
+
+            foreach ($bookingIds as $bookingId) {
+                $revenue += $prices[$bookingId] ?? 0.0;
             }
 
             $fuelCost      = $this->rotaRepository->getFuelCost($cityId, self::BASE_PARTIDA_ID);
@@ -119,14 +173,19 @@ class RotaService extends BaseService {
                 "status"        => $decision,
                 "bookings"      => count($bookingIds),
                 "bookingIds"    => $bookingIds,
+                "excludedIds"   => $excludedIds,
+                "excluded"      => count($excludedIds),
                 "revenue"       => $revenue,
                 "fuelCost"      => $fuelCost,
                 "profitability" => $profitability,
                 "meetsReference"=> $reference,
                 "bookingStatus" => $bookingState,
-                "message"       => $approved
+                "message"       => ($approved
                     ? "Rota aprovada. " . count($bookingIds) . " agendamento(s) confirmado(s); clientes notificados (simulado)."
-                    : "Rota recusada. " . count($bookingIds) . " agendamento(s) cancelado(s); clientes notificados com alternativas (simulado)."
+                    : "Rota recusada. " . count($bookingIds) . " agendamento(s) cancelado(s); clientes notificados com alternativas (simulado).")
+                    . (count($excludedIds) > 0
+                        ? " " . count($excludedIds) . " agendamento(s) ficaram fora da rota e continuam qualificados (RN-34)."
+                        : "")
             ];
         });
     }
@@ -161,10 +220,14 @@ class RotaService extends BaseService {
             $total        = (int)$group["total_agendamentos"];
             $key = $group["data_rota"] . "|" . $groupCityId;
 
+            // RN-31: o que ainda aguarda aceitação é MOSTRADO (aviso), nunca agregado.
+            $awaitingAcceptance = $this->bookingRepository->countPendingByCityAndDate($group["data_rota"], $groupCityId);
+
             $route = $routesIndex[$key] ?? null;
             unset($routesIndex[$key]);
 
             $status = $route["status"] ?? "planeada";
+            $canDecide = in_array($status, ["planeada", "aprovada", "recusada"], true) && $total > 0 && $awaitingAcceptance === 0;
 
             $rows[] = [
                 "routeId"        => $route["id"] ?? null,
@@ -174,12 +237,17 @@ class RotaService extends BaseService {
                 "district"       => $group["distrito"] ?? null,
                 "bookings"       => $total,
                 "consolidated"   => $consolidated,
-                "awaitingAcceptance" => $total - $consolidated,
+                "awaitingAcceptance" => $awaitingAcceptance,
+                "bookingIds"     => array_map("intval", array_filter(explode(",", (string)($group["agendamentos_ids"] ?? "")))),
+                "bookingsDetail" => $this->bookingDetailRows($group["data_rota"], $groupCityId),
                 "revenue"        => $revenue,
                 "fuelCost"       => $fuelCost,
                 "profitability"  => $profitability,
                 "meetsReference" => $profitability >= self::REFERENCE_PROFITABILITY,
-                "canDecide"      => in_array($status, ["planeada", "aprovada", "recusada"], true),
+                "canDecide"      => $canDecide,
+                "decideBlockReason" => $awaitingAcceptance > 0
+                    ? $awaitingAcceptance . " agendamento(s) com serviços por aceitar (RN-31)"
+                    : null,
                 "status"         => $status,
                 "decidedAt"      => $route["decidedAt"] ?? null,
                 "notes"          => $route["decisionNotes"] ?? null
@@ -197,11 +265,14 @@ class RotaService extends BaseService {
                 "bookings"       => 0,
                 "consolidated"   => 0,
                 "awaitingAcceptance" => 0,
+                "bookingIds"     => [],
+                "bookingsDetail" => [],
                 "revenue"        => (float)($route["servicesProfit"] ?? 0),
                 "fuelCost"       => (float)($route["fuelCost"] ?? 0),
                 "profitability"  => (float)($route["totalProfit"] ?? 0),
                 "meetsReference" => (float)($route["totalProfit"] ?? 0) >= self::REFERENCE_PROFITABILITY,
                 "canDecide"      => false,
+                "decideBlockReason" => null,
                 "status"         => $route["status"],
                 "decidedAt"      => $route["decidedAt"] ?? null,
                 "notes"          => $route["decisionNotes"] ?? null
@@ -218,5 +289,45 @@ class RotaService extends BaseService {
             "referenceProfitability" => self::REFERENCE_PROFITABILITY,
             "decisionMode"         => "manual"
         ];
+    }
+
+    /**
+     * Detalhe de cada agendamento qualificado da rota (RN-34 · §24.7 item 7).
+     *
+     * Os serviços são contados pelo `BookingServiceRepository` (a coleção filha
+     * nunca é lida por JOIN — §18.2).
+     */
+    private function bookingDetailRows(string $date, int $cityId): array {
+        $bookings = $this->bookingRepository->findAmbulatoryBookingsByCityAndDate($date, $cityId);
+        $rows = [];
+
+        foreach ($bookings as $booking) {
+            $states = $this->bookingServiceRepository->countByBookingGroupedByState((int)$booking["id"]);
+
+            $total    = 0;
+            $accepted = 0;
+
+            foreach ($states as $state) {
+                $count = (int)$state["total"];
+                $total += $count;
+
+                if (($state["estado_aceitacao"] ?? "") === "aceite") {
+                    $accepted += $count;
+                }
+            }
+
+            $rows[] = [
+                "bookingId"       => (int)$booking["id"],
+                "customerName"    => (string)$booking["cliente_nome"],
+                "customerPhone"   => $booking["cliente_telemovel"] ?? null,
+                "dateTime"        => (string)$booking["data_hora_pretendida"],
+                "status"          => (string)$booking["estado_reserva"],
+                "totalAmount"     => (float)$booking["valor_total"],
+                "servicesTotal"   => $total,
+                "servicesAccepted" => $accepted
+            ];
+        }
+
+        return $rows;
     }
 }
