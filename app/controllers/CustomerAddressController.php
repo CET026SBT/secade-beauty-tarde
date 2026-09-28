@@ -11,23 +11,23 @@ class CustomerAddressController extends BaseController {
     }
 
     public function index(): array {
-        $customerId = $this->requireCustomer();
-        return $this->addressService->findCustomerAddresses($customerId);
+        Session::requireProfileApi(["cliente"]);
+        return $this->addressService->findCustomerAddresses(Session::userId());
     }
 
     public function store(): array {
-        $customerId = $this->requireCustomer();
-        return $this->addressService->createAddress($customerId, $this->getRequestData());
+        Session::requireProfileApi(["cliente"]);
+        return $this->addressService->createAddress(Session::userId(), $this->getRequestData());
     }
 
     public function setPrincipal(): array {
-        $customerId = $this->requireCustomer();
-        return $this->addressService->setPrincipalAddress($customerId, $this->extractAddressId());
+        Session::requireProfileApi(["cliente"]);
+        return $this->addressService->setPrincipalAddress(Session::userId(), $this->extractAddressId());
     }
 
     public function delete(): array {
-        $customerId = $this->requireCustomer();
-        return $this->addressService->deleteAddress($customerId, $this->extractAddressId());
+        Session::requireProfileApi(["cliente"]);
+        return $this->addressService->deleteAddress(Session::userId(), $this->extractAddressId());
     }
 
     private function extractAddressId(): int {

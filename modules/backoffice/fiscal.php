@@ -3,11 +3,7 @@ require_once __DIR__ . "/../../app/config/config.php";
 require_once APP_PATH . "/utils/Session.php";
 
 // Backoffice do GESTOR
-Session::requireLogin();
-if (!Session::isManager()) {
-    header("Location: " . BASE_URL . "/");
-    exit;
-}
+Session::requireProfile(["gestor"]);
 
 register_script("components/fiscal", "backoffice");
 

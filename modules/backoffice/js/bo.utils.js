@@ -1,41 +1,8 @@
 const boUtils = (() => {
-    const BOOKING_STATUS_LABELS = {
-        pendente_aceitacao_funcionarios: "Aguarda aceitação (funcionários)",
-        pendente_validacao_logistica_loja: "Pendente validação logística (loja)",
-        totalmente_aceite_funcionarios: "Totalmente aceite por funcionários",
-        confirmado: "Confirmado",
-        recusado: "Recusado",
-        cancelado: "Cancelado",
-        executado: "Executado",
-        concluido: "Concluído"
-    };
-
-    const BOOKING_STATUS_CLASSES = {
-        pendente_aceitacao_funcionarios: "bg-secondary",
-        pendente_validacao_logistica_loja: "bg-warning text-dark",
-        totalmente_aceite_funcionarios: "bg-info text-dark",
-        confirmado: "bg-success",
-        recusado: "bg-danger",
-        cancelado: "bg-dark",
-        executado: "bg-primary",
-        concluido: "bg-primary"
-    };
-
-    const ROUTE_STATUS_LABELS = {
-        planeada: "Planeada",
-        aprovada: "Aprovada",
-        recusada: "Recusada",
-        em_execucao: "Em execução",
-        concluida: "Concluída"
-    };
-
-    const ROUTE_STATUS_CLASSES = {
-        planeada: "bg-secondary",
-        aprovada: "bg-success",
-        recusada: "bg-danger",
-        em_execucao: "bg-primary",
-        concluida: "bg-primary"
-    };
+    // Fonte única: `modules/common/js/utils/bookingStatus.utils.js` (ver lá o porquê).
+    // Aqui fica só a projecção para o público "admin" e o que é exclusivo do backoffice.
+    const BOOKING_STATUS_LABELS = bookingStatusUtils.booking.labels("admin");
+    const ROUTE_STATUS_LABELS = bookingStatusUtils.route.labels;
 
     const LOCAL_LABELS = {
         loja_fisica: "Loja Física",
@@ -43,14 +10,14 @@ const boUtils = (() => {
     };
 
     function bookingStatusBadge(status) {
-        const label = BOOKING_STATUS_LABELS[status] || status || "-";
-        const className = BOOKING_STATUS_CLASSES[status] || "bg-secondary";
+        const label = bookingStatusUtils.booking.label(status, "admin");
+        const className = bookingStatusUtils.booking.className(status);
         return `<span class="badge bo-status-badge ${className}">${generalUtils.escapeHtml(label)}</span>`;
     }
 
     function routeStatusBadge(status) {
-        const label = ROUTE_STATUS_LABELS[status] || status || "-";
-        const className = ROUTE_STATUS_CLASSES[status] || "bg-secondary";
+        const label = bookingStatusUtils.route.label(status);
+        const className = bookingStatusUtils.route.className(status);
         return `<span class="badge bo-status-badge ${className}">${generalUtils.escapeHtml(label)}</span>`;
     }
 

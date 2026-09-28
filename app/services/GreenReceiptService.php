@@ -78,7 +78,7 @@ class GreenReceiptService extends BaseService {
     }
 
     public function createConfig(array $data): array {
-        $managerId = Session::user()["id"] ?? null;
+        $managerId = Session::userId();
 
         return $this->executeTransactional(function() use ($data, $managerId) {
             $this->validate($data, function($v) {

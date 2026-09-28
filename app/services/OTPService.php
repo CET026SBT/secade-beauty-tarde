@@ -6,6 +6,9 @@ require_once APP_PATH . "/utils/Session.php";
 /**
  * OTP simulada (restrição académica): o código é gerado e mostrado no ecrã,
  * validado contra a sessão. Sem envio real de SMS.
+ *
+ * A chave de sessão do OTP é DESTE serviço (`OTP_SESSION_KEY`) — o `Session` só garante
+ * que a sessão está iniciada; não há acessores genéricos de chaves de sessão.
  */
 class OTPService extends BaseService {
 
@@ -17,10 +20,7 @@ class OTPService extends BaseService {
 
         $code = str_pad((string)random_int(0, 999999), 6, "0", STR_PAD_LEFT);
 
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
+        Session::start();
         $_SESSION[self::OTP_SESSION_KEY] = [
             "customerId" => $customerId,
             "code"       => $code,
@@ -39,9 +39,7 @@ class OTPService extends BaseService {
      * (Nome 'verify' para não colidir com BaseService::validate().)
      */
     public function verify(int $customerId, string $code): bool {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
+        Session::start();
 
         $otp = $_SESSION[self::OTP_SESSION_KEY] ?? null;
 

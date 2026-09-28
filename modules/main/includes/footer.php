@@ -46,6 +46,7 @@
 
     <!-- Essencial Utils -->
     <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/js/utils/general.utils.js"></script>
+    <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/js/utils/bookingStatus.utils.js"></script>
     <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/js/utils/form.utils.js"></script>
 
     <!-- Main Javascript -->

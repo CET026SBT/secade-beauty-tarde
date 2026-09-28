@@ -1,8 +1,11 @@
 <?php
 
 require_once __DIR__ . "/BaseRepository.php";
+require_once APP_PATH . "/mappers/BookingPersonMapper.php";
 
 class BookingPersonRepository extends BaseRepository {
+
+    protected ?string $mapper = BookingPersonMapper::class;
 
     public function findByBooking(int $bookingId): array {
         $sql = "SELECT id, agendamento_id, nome_pessoa, observacoes
@@ -27,6 +30,11 @@ class BookingPersonRepository extends BaseRepository {
         return (int)$this->lastInsertId();
     }
 
+    /**
+     * NOTA (auditoria): sem uso no projecto — nem PHP nem JS o invocam.
+     * Mantém-se por ser o único ponto de leitura por (id, agendamento) da tabela;
+     * se continuar sem uso na próxima iteração, deve ser removido.
+     */
     public function findByIdAndBooking(int $id, int $bookingId): ?array {
         $sql = "SELECT id, agendamento_id, nome_pessoa FROM agendamento_pessoa
                 WHERE id = :id AND agendamento_id = :agendamento_id LIMIT 1";

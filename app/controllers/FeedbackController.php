@@ -21,13 +21,13 @@ class FeedbackController extends BaseController {
 
     /** Cliente autenticado: estado do feedback dos seus agendamentos executados. */
     public function myState(): array {
-        $customerId = $this->requireCustomer();
-        return $this->feedbackService->findCustomerFeedbackState($customerId);
+        Session::requireProfileApi(["cliente"]);
+        return $this->feedbackService->findCustomerFeedbackState(Session::userId());
     }
 
     /** Cliente autenticado: criar avaliação de um agendamento executado. */
     public function create(): array {
-        $customerId = $this->requireCustomer();
-        return $this->feedbackService->createFeedback($customerId, $this->getRequestData());
+        Session::requireProfileApi(["cliente"]);
+        return $this->feedbackService->createFeedback(Session::userId(), $this->getRequestData());
     }
 }

@@ -56,7 +56,7 @@ $assets = [
     "modules/backoffice/js/components/services.js",
     "modules/backoffice/js/components/fiscal.js",
     "modules/backoffice/js/components/greenReceipts.js",
-    "modules/common/css/ext-bootstrap.css"
+    "modules/common/css/ext-bootstrap.css",
     "modules/common/css/style.css"
 ];
 
@@ -129,6 +129,13 @@ $autocompleteJs = http("{$base}/modules/common/js/utils/addressAutocomplete.js")
 check("addressAutocomplete declara FIELD_NAMES", str_contains($autocompleteJs, "FIELD_NAMES"));
 check("addressAutocomplete sem seletores legados", !str_contains($autocompleteJs, 'name="morada"') && !str_contains($autocompleteJs, 'name="numPorta"') && !str_contains($autocompleteJs, 'name="cidade"'));
 check("addressAutocomplete mapeia campos com nomes da API", str_contains($autocompleteJs, "doorNumber") && str_contains($autocompleteJs, "zipCode") && str_contains($autocompleteJs, "cityName"));
+// §24.8 — regressao: o dropdown do autocomplete nao pode nascer visivel (aparecia no
+// canto superior esquerdo de /registo) nem depender so de CSS Anchor Positioning.
+check("addressAutocomplete nao constroi o dropdown com 'show'", !str_contains($autocompleteJs, "autocomplete-dropdown dropdown-menu show"));
+check("addressAutocomplete tem posicionamento por JS (fallback)", str_contains($autocompleteJs, "getBoundingClientRect"));
+
+$styleCss = http("{$base}/modules/common/css/style.css")["body"];
+check("style.css esconde o dropdown sem a classe 'show'", str_contains($styleCss, ".autocomplete-dropdown:not(.show)"));
 
 echo "\n" . ($failed === 0 ? "VERIFICAÇÃO FINAL OK" : "VERIFICAÇÃO FINAL COM FALHAS") . " => {$passed} pass, {$failed} fail\n";
 exit($failed === 0 ? 0 : 1);

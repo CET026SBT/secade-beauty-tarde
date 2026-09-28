@@ -11,9 +11,9 @@ class CustomerController extends BaseController {
     }
 
     public function profile(): array {
-        $customerId = $this->requireCustomer();
+        Session::requireProfileApi(["cliente"]);
 
-        $profile = $this->customerService->getCustomerProfile($customerId);
+        $profile = $this->customerService->getCustomerProfile(Session::userId());
 
         if (!$profile) {
             throw new Exception("Perfil não encontrado.", 404);

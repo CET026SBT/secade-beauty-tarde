@@ -6,27 +6,9 @@ const appointments = (() => {
         feedbackByBooking: {}
     };
 
-    const STATUS_LABELS = {
-        pendente_aceitacao_funcionarios: "Aguarda aceitação",
-        pendente_validacao_logistica_loja: "Pendente validação (loja)",
-        totalmente_aceite_funcionarios: "Totalmente aceite",
-        confirmado: "Confirmado",
-        recusado: "Recusado",
-        cancelado: "Cancelado",
-        executado: "Executado",
-        concluido: "Concluído"
-    };
-
-    const STATUS_CLASSES = {
-        pendente_aceitacao_funcionarios: "bg-secondary",
-        pendente_validacao_logistica_loja: "bg-warning text-dark",
-        totalmente_aceite_funcionarios: "bg-info text-dark",
-        confirmado: "bg-success",
-        recusado: "bg-danger",
-        cancelado: "bg-dark",
-        executado: "bg-primary",
-        concluido: "bg-primary"
-    };
+    // Os rótulos/classes de estado vêm do comum (fonte única) — ver
+    // `modules/common/js/utils/bookingStatus.utils.js`. O público aqui é o cliente.
+    const statusUtils = bookingStatusUtils.booking;
 
     function filteredBookings() {
         if (!state.status) return state.bookings;
@@ -45,8 +27,8 @@ const appointments = (() => {
     }
 
     function bookingCard(booking) {
-        const label = STATUS_LABELS[booking.status] || booking.status;
-        const className = STATUS_CLASSES[booking.status] || "bg-secondary";
+        const label = statusUtils.label(booking.status);
+        const className = statusUtils.className(booking.status);
         const isAmbulatory = booking.local === "carrinha_ambulante";
         const canReview = ["executado", "concluido"].includes(booking.status);
 

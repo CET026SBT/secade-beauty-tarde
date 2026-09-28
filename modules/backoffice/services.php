@@ -3,11 +3,7 @@ require_once __DIR__ . "/../../app/config/config.php";
 require_once APP_PATH . "/utils/Session.php";
 
 // Backoffice de FUNCIONÁRIO (gestores também podem consultar)
-Session::requireLogin();
-if (!Session::isEmployee() && !Session::isManager()) {
-    header("Location: " . BASE_URL . "/");
-    exit;
-}
+Session::requireProfile(["funcionario", "gestor"]);
 
 register_script("components/services", "backoffice");
 
