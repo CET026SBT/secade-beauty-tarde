@@ -45,6 +45,9 @@ $routes = [
         "admin-supplier-update"      => ["controller" => "SupplierController", "method" => "update", "http" => "POST"],
         "admin-supplier-set-active"  => ["controller" => "SupplierController", "method" => "setActive", "http" => "POST"],
 
+        // Fase 6.4 — comissões (RF-84 · §25.5)
+        "admin-commission-list"      => ["controller" => "CommissionController", "method" => "list", "http" => "GET"],
+
         "admin-service-pending-list" => ["controller" => "ServiceController", "method" => "pendingList", "http" => "GET"],
         "admin-service-accepted-list"=> ["controller" => "ServiceController", "method" => "acceptedList", "http" => "GET"],
         "admin-service-accept"       => ["controller" => "ServiceController", "method" => "accept", "http" => "POST"],

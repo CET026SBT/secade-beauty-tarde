@@ -640,6 +640,23 @@ $supplierPageClient = request("{$base}/gestao/fornecedores", "GET", null, $clien
 check("pagina de fornecedores desvia o cliente (302)", $supplierPageClient["status"] === 302, (string)$supplierPageClient["status"]);
 
 // ---------------------------------------------------------------------------
+section("11.3 Fase 6.4: comissoes (HTTP)");
+
+$commissionManager = request("{$base}/api?action=admin-commission-list", "GET", null, $e2eManagerJar);
+check("gestor consulta comissoes (200)", $commissionManager["status"] === 200, (string)$commissionManager["status"]);
+check("comissoes do gestor cobrem todos os funcionarios", ($commissionManager["json"]["scope"] ?? "") === "todos", json_encode($commissionManager["json"]["scope"] ?? null));
+
+$commissionEmployeeHttp = request("{$base}/api?action=admin-commission-list", "GET", null, $e2eEmployeeJar);
+check("funcionario consulta as suas comissoes (200)", $commissionEmployeeHttp["status"] === 200, (string)$commissionEmployeeHttp["status"]);
+check("comissoes do funcionario ficam no proprio", ($commissionEmployeeHttp["json"]["scope"] ?? "") === "proprio", json_encode($commissionEmployeeHttp["json"]["scope"] ?? null));
+
+$commissionClientHttp = request("{$base}/api?action=admin-commission-list", "GET", null, $clientJar);
+check("comissoes negadas ao cliente (403)", $commissionClientHttp["status"] === 403, (string)$commissionClientHttp["status"]);
+
+$commissionPageHttp = request("{$base}/gestao/comissoes", "GET", null, $e2eEmployeeJar);
+check("pagina de comissoes responde 200 ao funcionario", $commissionPageHttp["status"] === 200, (string)$commissionPageHttp["status"]);
+
+// ---------------------------------------------------------------------------
 section("12. Limpeza dos dados E2E");
 
 // O ON DELETE CASCADE remove as linhas de `cliente` e `cliente_morada`

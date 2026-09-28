@@ -667,6 +667,40 @@ if ($supplierId > 0) {
 check("fornecedor de teste removido (limpeza)", (int)$conn->query("SELECT COUNT(*) FROM fornecedor WHERE id = {$supplierId}")->fetchColumn() === 0, "residuo");
 
 // ---------------------------------------------------------------------------
+section("15. Fase 6.4 - Comissoes por funcionario (RF-84)");
+
+require_once APP_PATH . "/services/CommissionService.php";
+require_once APP_PATH . "/repositories/CommissionRepository.php";
+
+$commissionService = new CommissionService();
+
+// Sem sessao de funcionario, a abrangencia e "todos" (visao do gestor)
+$commissionAll = $commissionService->summary([]);
+check("comissoes do mes devolvem o resumo", ($commissionAll["scope"] ?? "") === "todos" && isset($commissionAll["totals"], $commissionAll["commissions"]), json_encode(array_keys($commissionAll)));
+check("aceitacoes do teste entram nas comissoes", (int)($commissionAll["totals"]["services"] ?? 0) >= 1, json_encode($commissionAll["totals"] ?? null));
+check("comissao gravada e um valor da aceitacao (nao recalculado)", (float)($commissionAll["totals"]["employeeValue"] ?? 0) > 0, json_encode($commissionAll["totals"] ?? null));
+
+$commissionEmployeeRow = $commissionAll["employees"][0] ?? [];
+check("percentagem aplicada vem do snapshot da aceitacao", (float)($commissionEmployeeRow["averagePercentage"] ?? 0) > 0, json_encode($commissionEmployeeRow));
+
+$commissionFirst = $commissionAll["commissions"][0] ?? [];
+check(
+    "comissao + plataforma = valor do servico (70/30)",
+    abs(((float)($commissionFirst["employeeValue"] ?? 0) + (float)($commissionFirst["platformValue"] ?? 0)) - (float)($commissionFirst["price"] ?? 0)) < 0.02,
+    json_encode($commissionFirst)
+);
+
+$commissionInvalidMonth = $commissionService->summary(["month" => "99/2026"]);
+check("mes invalido nas comissoes cai no mes atual", ($commissionInvalidMonth["month"] ?? "") === date("Y-m"), json_encode($commissionInvalidMonth["month"] ?? null));
+
+// Com sessao de funcionario a abrangencia passa a ser o proprio
+Session::createLoginSession(["id" => 2, "name" => "Ana Tecnica", "email" => "funcionario@secade.pt", "profileType" => "funcionario"]);
+$commissionOwn = $commissionService->summary([]);
+check("funcionario ve apenas as suas comissoes", ($commissionOwn["scope"] ?? "") === "proprio", json_encode($commissionOwn["scope"] ?? null));
+check("funcionario tem no maximo uma linha de totais", count($commissionOwn["employees"] ?? []) <= 1, json_encode($commissionOwn["employees"] ?? []));
+check("linhas do funcionario sao todas dele", count(array_filter($commissionOwn["commissions"] ?? [], fn($row) => (int)$row["employeeId"] !== 2)) === 0, json_encode(array_column($commissionOwn["commissions"] ?? [], "employeeId")));
+
+// ---------------------------------------------------------------------------
 section("RESULTADO FINAL");
 echo ($failed === 0 ? "TODOS OS TESTES PASSARAM" : "EXISTEM FALHAS") . " => {$passed} pass, {$failed} fail\n";
 exit($failed === 0 ? 0 : 1);

@@ -50,6 +50,9 @@ const API = ((baseApi) => ({
             update: (data) => baseApi.post('?action=admin-supplier-update', data),
             setActive: (supplierId, active) => baseApi.post('?action=admin-supplier-set-active', { supplierId, active })
         },
+        commissions: {
+            list: (month) => baseApi.get(`?action=admin-commission-list&month=${month}`, 0)
+        },
         services: {
             pending: (params = {}) => baseApi.get(`?action=admin-service-pending-list&${$.param(params)}`, 0),
             accepted: (params = {}) => baseApi.get(`?action=admin-service-accepted-list&${$.param(params)}`, 0),

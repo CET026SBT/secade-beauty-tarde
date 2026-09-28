@@ -28,6 +28,7 @@ $files = [
     "modules/backoffice/js/components/alerts.js",
     "modules/backoffice/js/components/agenda.js",
     "modules/backoffice/js/components/suppliers.js",
+    "modules/backoffice/js/components/commissions.js",
     "modules/common/js/utils/form.utils.js",
     "modules/common/js/validators/supplier.validator.js"
 ];

@@ -68,6 +68,7 @@ $assets = [
     "modules/backoffice/js/components/alerts.js",
     "modules/backoffice/js/components/agenda.js",
     "modules/backoffice/js/components/suppliers.js",
+    "modules/backoffice/js/components/commissions.js",
     "modules/common/lib/chartjs/Chart.bundle.min.js",
     "modules/common/css/ext-bootstrap.css",
     "modules/common/css/style.css"
@@ -92,6 +93,7 @@ $pages = [
     ["/gestao/painel",         $gestorJar, ["components/dashboard.js", "bo.utils.js"]],
     ["/gestao/avisos",         $gestorJar, ["components/alerts.js", "bo.utils.js"]],
     ["/gestao/fornecedores",   $gestorJar, ["components/suppliers.js", "validators/supplier.validator.js", "utils/form.utils.js", "bo.utils.js"]],
+    ["/gestao/comissoes",      $employeeJar, ["components/commissions.js", "bo.utils.js"]],
     ["/gestao/agenda",         $employeeJar, ["components/agenda.js", "bo.utils.js"]]
 ];
 
@@ -138,6 +140,10 @@ $supplierValidatorJs = http("{$base}/modules/common/js/validators/supplier.valid
 foreach (["name", "nif", "phone", "email"] as $supplierKey) {
     check("supplier.validator.js valida '{$supplierKey}'", str_contains($supplierValidatorJs, "{$supplierKey}(val"));
 }
+
+$commissionsPage = http("{$base}/gestao/comissoes", $employeeJar);
+check("página de comissões traz totais e listagem", str_contains($commissionsPage["body"], "commissionEmployeesBody") && str_contains($commissionsPage["body"], "commissionsTableBody"));
+check("página de comissões explica que os valores vêm da aceitação", str_contains($commissionsPage["body"], "aceitação"));
 
 echo "\n=== Contrato de nomes do formulário de registo (alinhado com os mappers) ===\n";
 
