@@ -10,13 +10,17 @@ const API = ((baseApi) => ({
     categories: {
         getAll: () => baseApi.get('?action=category-all')
     },
+    stats: {
+        summary: () => baseApi.get('?action=site-stats', 0)
+    },
     booking: {
         services: () => baseApi.get('?action=booking-services'),
         availability: (params) => baseApi.get(`?action=booking-availability&${$.param(params)}`, 0),
         requestOtp: () => baseApi.post('?action=booking-otp-request', {}),
         createStore: (data) => baseApi.post('?action=booking-create-store', data),
         createAmbulatory: (data) => baseApi.post('?action=booking-create-amb', data),
-        myBookings: () => baseApi.get('?action=booking-my', 0)
+        myBookings: () => baseApi.get('?action=booking-my', 0),
+        cancelBooking: (bookingId) => baseApi.post('?action=customer-booking-cancel', { bookingId })
     },
     customer: {
         profile: () => baseApi.get('?action=customer-profile', 0),
@@ -32,6 +36,24 @@ const API = ((baseApi) => ({
         executeAppointment: (bookingId) => baseApi.post('?action=admin-appointment-execute', { bookingId }),
         routes: (params = {}) => baseApi.get(`?action=admin-routes-list&${$.param(params)}`, 0),
         decideRoute: (data) => baseApi.post('?action=admin-route-decide', data),
+        dashboard: () => baseApi.get('?action=admin-dashboard-summary', 0),
+        alerts: {
+            summary: () => baseApi.get('?action=admin-alert-summary', 0),
+            list: () => baseApi.get('?action=admin-alert-list', 0),
+            markRead: () => baseApi.post('?action=admin-alert-read', {})
+        },
+        agenda: {
+            month: (month) => baseApi.get(`?action=admin-employee-agenda-list&month=${month}`, 0)
+        },
+        suppliers: {
+            list: (params = {}) => baseApi.get(`?action=admin-supplier-list&${$.param(params)}`, 0),
+            store: (data) => baseApi.post('?action=admin-supplier-store', data),
+            update: (data) => baseApi.post('?action=admin-supplier-update', data),
+            setActive: (supplierId, active) => baseApi.post('?action=admin-supplier-set-active', { supplierId, active })
+        },
+        commissions: {
+            list: (month) => baseApi.get(`?action=admin-commission-list&month=${month}`, 0)
+        },
         services: {
             pending: (params = {}) => baseApi.get(`?action=admin-service-pending-list&${$.param(params)}`, 0),
             accepted: (params = {}) => baseApi.get(`?action=admin-service-accepted-list&${$.param(params)}`, 0),

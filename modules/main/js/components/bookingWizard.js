@@ -99,7 +99,15 @@ const bookingWizard = (() => {
         const amount = bookingAmount();
 
         $("#totalDuration").text(generalUtils.formatDuration(duration));
-        $("#totalAmount").text(generalUtils.formatCurrency(amount));
+        // O catálogo guarda o preço base (sem IVA); ao cliente mostra-se o valor com IVA (D-16 · RN-36).
+        $("#totalAmount").text(generalUtils.formatCurrencyWithVat(amount));
+
+        const vatAmount = vatUtils.vatAmount(amount);
+        $("#totalVatNote")
+            .toggleClass("d-none", amount <= 0)
+            .html(amount > 0
+                ? `<i class="bi bi-info-circle me-1 text-primary"></i>Valores com IVA. Acréscimo de IVA (${vatUtils.percentLabel()}): <strong>+ ${generalUtils.formatCurrency(vatAmount)}</strong> sobre ${generalUtils.formatCurrency(amount)} (base sem IVA).`
+                : "");
 
         // A grelha de horários oferece inícios dentro do horário de atendimento (09:00–19:00),
         // mas uma marcação longa pode prolongar-se para lá do fecho: avisar o cliente.
@@ -155,7 +163,8 @@ const bookingWizard = (() => {
                             <span class="d-block small text-muted">${generalUtils.escapeHtml(service.categoryName || '')} ${badge}</span>
                             <span class="d-block small mt-1">
                                 <i class="bi bi-clock me-1"></i>${generalUtils.formatDuration(service.estimatedDurationMinutes)}
-                                <i class="bi bi-tag ms-2 me-1"></i>${generalUtils.formatCurrency(service.basePrice)}
+                                <i class="bi bi-tag ms-2 me-1"></i>${generalUtils.formatCurrencyWithVat(service.basePrice)}
+                                <span class="text-muted">(IVA incl.)</span>
                             </span>
                         </label>
                     </div>
@@ -283,7 +292,7 @@ const bookingWizard = (() => {
                            id="${inputId}" data-person-index="${index}" ${checked} ${blocked ? "disabled" : ""}>
                     <label class="form-check-label small ${blocked ? "text-muted" : ""}" for="${inputId}">
                         ${generalUtils.escapeHtml(service.name)}
-                        <span class="text-muted">· ${generalUtils.formatDuration(service.estimatedDurationMinutes)} · ${generalUtils.formatCurrency(service.basePrice)}</span>
+                        <span class="text-muted">· ${generalUtils.formatDuration(service.estimatedDurationMinutes)} · ${generalUtils.formatCurrencyWithVat(service.basePrice)} <small>(IVA incl.)</small></span>
                         ${badge}
                     </label>
                 </div>
@@ -406,6 +415,13 @@ const bookingWizard = (() => {
         highlightSelectedSlot();
     }
 
+    function refreshSlotsIfNeeded() {
+        if (!state.date) return;
+        if (!form.validators.bookingDate()) return;
+
+        loadSlots();
+    }
+
     async function loadSlots() {
         if (!state.date) return;
 
@@ -469,7 +485,10 @@ const bookingWizard = (() => {
     function renderSummary() {
         const isAmb = state.channel === "carrinha_ambulante";
         const amount = bookingAmount();
-        const deposit = isAmb ? 0 : amount * 0.10;
+        // Valores apresentados ao cliente com IVA (D-16 · RN-36); a base sem IVA fica explícita.
+        const vatAmount = vatUtils.vatAmount(amount);
+        const grossAmount = vatUtils.gross(amount);
+        const deposit = isAmb ? 0 : Math.round(grossAmount * 0.10 * 100) / 100;
 
         let html = summaryRow("Canal", isAmb ? "Carrinha Ambulante" : "Loja Física (Évora)");
 
@@ -485,13 +504,15 @@ const bookingWizard = (() => {
 
         html += summaryRow("Data e hora", generalUtils.formatDateTime(`${state.date} ${state.time}`));
         html += summaryRow("Duração estimada", generalUtils.formatDuration(bookingDuration()));
-        html += summaryRow("Valor total", generalUtils.formatCurrency(amount));
+        html += summaryRow("Subtotal (sem IVA)", generalUtils.formatCurrency(amount));
+        html += summaryRow(`IVA (${vatUtils.percentLabel()})`, `+ ${generalUtils.formatCurrency(vatAmount)}`);
+        html += summaryRow("Valor total (com IVA)", generalUtils.formatCurrency(grossAmount));
 
         if (isAmb) {
             html += summaryRow("Sinal", "Dispensado (1ª marcação em ambulatório)");
         } else {
             html += summaryRow("Sinal 10% (simulado)", generalUtils.formatCurrency(deposit));
-            html += summaryRow("Restante a pagar no dia", generalUtils.formatCurrency(amount - deposit));
+            html += summaryRow("Restante a pagar no dia", generalUtils.formatCurrency(grossAmount - deposit));
         }
 
         html += `<div class="alert alert-info mt-3 mb-0 small">
@@ -758,6 +779,11 @@ const bookingWizard = (() => {
             updateTotals();
             syncChannelCards();
             $("#servicesError").addClass("d-none");
+
+            // §24.1 (D-07): a duração mudou, logo a lista de horas deixou de ser
+            // válida. Se já existe data escolhida, as horas são recalculadas (e a
+            // hora escolhida é descartada) — o servidor revalida na submissão (409).
+            refreshSlotsIfNeeded();
         });
 
         $(document).on("click", ".service-cat-filter", function () {
@@ -813,6 +839,10 @@ const bookingWizard = (() => {
             $("#peopleError").addClass("d-none");
             updateTotals();
             syncChannelCards();
+
+            // §24.1: alterar serviços de uma pessoa muda a duração — as horas voltam
+            // a ser calculadas quando já existe data escolhida.
+            refreshSlotsIfNeeded();
         });
 
         // Passo OTP

@@ -13,6 +13,8 @@ $files = [
     "modules/common/js/validators/booking.validator.js",
     "modules/common/js/utils/general.utils.js",
     "modules/common/js/utils/bookingStatus.utils.js",
+    "modules/common/js/utils/vat.utils.js",
+    "modules/common/js/utils/siteStats.utils.js",
     "modules/common/js/api/api.js",
     "modules/common/js/api/geocodingApi.js",
     "modules/backoffice/js/bo.js",
@@ -21,7 +23,14 @@ $files = [
     "modules/backoffice/js/components/routes.js",
     "modules/backoffice/js/components/services.js",
     "modules/backoffice/js/components/fiscal.js",
-    "modules/backoffice/js/components/greenReceipts.js"
+    "modules/backoffice/js/components/greenReceipts.js",
+    "modules/backoffice/js/components/dashboard.js",
+    "modules/backoffice/js/components/alerts.js",
+    "modules/backoffice/js/components/agenda.js",
+    "modules/backoffice/js/components/suppliers.js",
+    "modules/backoffice/js/components/commissions.js",
+    "modules/common/js/utils/form.utils.js",
+    "modules/common/js/validators/supplier.validator.js"
 ];
 
 $root = dirname(__DIR__);

@@ -188,18 +188,64 @@ $employeeLogin = request("{$base}/api?action=auth-login", "POST", [
 ], $employeeJar);
 check("login do funcionario", ($employeeLogin["json"]["success"] ?? false) === true, json_encode($employeeLogin["json"]));
 
-$routesList = request("{$base}/api?action=admin-routes-list&date={$bookingDate}", "GET", null, $managerJar);
-check("admin-routes-list devolve candidatas", count($routesList["json"]["routes"] ?? []) >= 1, json_encode($routesList["json"]));
-check("rotas em modo de decisao manual", ($routesList["json"]["decisionMode"] ?? null) === "manual", json_encode($routesList["json"]["decisionMode"] ?? null));
-check("indicador de referencia = 50 EUR", (float)($routesList["json"]["referenceProfitability"] ?? 0) === 50.0, json_encode($routesList["json"]["referenceProfitability"] ?? null));
+$ambBookingId = (int)($createAmb["json"]["bookingId"] ?? 0);
 
-$routeRow = $routesList["json"]["routes"][0] ?? [];
+// RN-31 (§24.7): uma rota só agrega/decide agendamentos com TODOS os serviços
+// aceites — antes da aceitação a decisão tem de devolver 409.
+$earlyRoutes = request("{$base}/api?action=admin-routes-list&date={$bookingDate}", "GET", null, $managerJar);
+check("rotas em modo de decisao manual", ($earlyRoutes["json"]["decisionMode"] ?? null) === "manual", json_encode($earlyRoutes["json"]["decisionMode"] ?? null));
+check("indicador de referencia = 50 EUR", (float)($earlyRoutes["json"]["referenceProfitability"] ?? 0) === 50.0, json_encode($earlyRoutes["json"]["referenceProfitability"] ?? null));
+
+$earlyAggregated = false;
+foreach ($earlyRoutes["json"]["routes"] ?? [] as $earlyRow) {
+    if (in_array($ambBookingId, array_map("intval", $earlyRow["bookingIds"] ?? []), true)) {
+        $earlyAggregated = true;
+    }
+}
+check("rota nao agrega agendamento com servicos por aceitar (RN-31)", $earlyAggregated === false, json_encode($earlyRoutes["json"]["routes"] ?? []));
+
+$ambAddress = $addressApi["json"]["addresses"][0] ?? [];
+$ambCityId  = (int)($ambAddress["cityId"] ?? 1);
+
+$earlyDecide = request("{$base}/api?action=admin-route-decide", "POST", [
+    "cityId" => $ambCityId, "date" => $bookingDate, "decision" => "aprovada"
+], $managerJar);
+check("decisao de rota com servicos por aceitar devolve 409 (RN-31)", $earlyDecide["status"] === 409, (string)$earlyDecide["status"]);
+
+// Aceitação de todos os serviços do agendamento (passa a qualificado)
+$ambDetails  = request("{$base}/api?action=admin-appointment-details&bookingId={$ambBookingId}", "GET", null, $managerJar);
+$ambServices = $ambDetails["json"]["services"] ?? [];
+$lastAccept  = null;
+
+foreach ($ambServices as $ambService) {
+    $lastAccept = request("{$base}/api?action=admin-service-accept", "POST", [
+        "bookingServiceId" => (int)($ambService["id"] ?? 0),
+        "bookingId"        => $ambBookingId
+    ], $employeeJar);
+}
+check("servicos do agendamento aceites pelo funcionario", count($ambServices) >= 1 && ($lastAccept["json"]["success"] ?? false) === true, json_encode($lastAccept["json"] ?? []));
+
+$routesList = request("{$base}/api?action=admin-routes-list&date={$bookingDate}", "GET", null, $managerJar);
+$routeRow = null;
+foreach ($routesList["json"]["routes"] ?? [] as $listedRow) {
+    if (in_array($ambBookingId, array_map("intval", $listedRow["bookingIds"] ?? []), true)) {
+        $routeRow = $listedRow;
+    }
+}
+check("rota passa a agregar o agendamento qualificado", $routeRow !== null, json_encode($routesList["json"]["routes"] ?? []));
+check("rota qualificada pode ser decidida", ($routeRow["canDecide"] ?? false) === true, json_encode($routeRow));
+check("detalhe da rota expoe os agendamentos incluidos (RN-34)", count($routeRow["bookingsDetail"] ?? []) >= 1, json_encode($routeRow["bookingsDetail"] ?? []));
+
+$routeRow = $routeRow ?? [];
+
 $decide = request("{$base}/api?action=admin-route-decide", "POST", [
-    "cityId"   => $routeRow["cityId"] ?? 0,
-    "date"     => $routeRow["routeDate"] ?? $bookingDate,
-    "decision" => "aprovada"
+    "cityId"     => $routeRow["cityId"] ?? $ambCityId,
+    "date"       => $routeRow["routeDate"] ?? $bookingDate,
+    "decision"   => "aprovada",
+    "bookingIds" => array_map("intval", $routeRow["bookingIds"] ?? [])
 ], $managerJar);
 check("admin-route-decide APROVA manualmente", ($decide["json"]["status"] ?? "") === "aprovada", json_encode($decide["json"]));
+check("decisao registra o conjunto incluido (RN-34)", (int)($decide["json"]["bookings"] ?? 0) >= 1 && (int)($decide["json"]["excluded"] ?? -1) === 0, json_encode($decide["json"] ?? []));
 
 $employeeDecide = request("{$base}/api?action=admin-route-decide", "POST", [
     "cityId" => 1, "date" => $bookingDate, "decision" => "aprovada"
@@ -482,6 +528,168 @@ $managerArea = request("{$base}/api?action=admin-routes-list", "GET", null, $e2e
 check("gestor acede a area de rotas (200)", $managerArea["status"] === 200, (string)$managerArea["status"]);
 
 // ---------------------------------------------------------------------------
+section("11.1 Fase 6.0/6.5: painel, avisos, agenda e encaminhamento de /gestao");
+
+$dashboardRes = request("{$base}/api?action=admin-dashboard-summary", "GET", null, $e2eManagerJar);
+check("gestor acede ao painel (200)", $dashboardRes["status"] === 200, (string)$dashboardRes["status"]);
+check("painel devolve kpis e graficos", isset($dashboardRes["json"]["kpis"], $dashboardRes["json"]["charts"]), json_encode(array_keys($dashboardRes["json"] ?? [])));
+check("painel conta os servicos ativos da BD", (int)($dashboardRes["json"]["kpis"]["activeServices"] ?? 0) >= 1, json_encode($dashboardRes["json"]["kpis"]["activeServices"] ?? null));
+check("painel traz serie dos proximos 7 dias", count($dashboardRes["json"]["charts"]["bookingsPerDay"]["data"] ?? []) === 7, json_encode($dashboardRes["json"]["charts"]["bookingsPerDay"] ?? []));
+check("contabilidade assume estado vazio (sem numero inventado)", ($dashboardRes["json"]["accounting"]["available"] ?? true) === false, json_encode($dashboardRes["json"]["accounting"] ?? []));
+
+$dashboardEmployee = request("{$base}/api?action=admin-dashboard-summary", "GET", null, $e2eEmployeeJar);
+check("painel negado ao funcionario (403)", $dashboardEmployee["status"] === 403, (string)$dashboardEmployee["status"]);
+
+$dashboardClient = request("{$base}/api?action=admin-dashboard-summary", "GET", null, $clientJar);
+check("painel negado ao cliente (403)", $dashboardClient["status"] === 403, (string)$dashboardClient["status"]);
+
+$alertSummary = request("{$base}/api?action=admin-alert-summary", "GET", null, $e2eManagerJar);
+check("sino devolve o contador ao gestor (200)", $alertSummary["status"] === 200 && is_numeric($alertSummary["json"]["count"] ?? null), json_encode($alertSummary["json"] ?? []));
+
+$alertList = request("{$base}/api?action=admin-alert-list", "GET", null, $e2eManagerJar);
+check("pagina de avisos devolve grupos", count($alertList["json"]["groups"] ?? []) >= 2, json_encode(array_keys($alertList["json"] ?? [])));
+check("avisos do gestor incluem a origem fiscal", in_array("fiscal", array_column($alertList["json"]["groups"] ?? [], "key"), true), json_encode(array_column($alertList["json"]["groups"] ?? [], "key")));
+check("avisos do gestor incluem os servicos por aceitar", in_array("servicos_pendentes", array_column($alertList["json"]["groups"] ?? [], "key"), true), json_encode(array_column($alertList["json"]["groups"] ?? [], "key")));
+
+$alertListEmployee = request("{$base}/api?action=admin-alert-list", "GET", null, $e2eEmployeeJar);
+check("funcionario tem avisos proprios (200)", $alertListEmployee["status"] === 200, (string)$alertListEmployee["status"]);
+check("avisos do funcionario nao mostram o grupo fiscal", !in_array("fiscal", array_column($alertListEmployee["json"]["groups"] ?? [], "key"), true), json_encode(array_column($alertListEmployee["json"]["groups"] ?? [], "key")));
+
+$alertListClient = request("{$base}/api?action=admin-alert-list", "GET", null, $clientJar);
+check("avisos negados ao cliente (403)", $alertListClient["status"] === 403, (string)$alertListClient["status"]);
+
+$alertRead = request("{$base}/api?action=admin-alert-read", "POST", [], $e2eManagerJar);
+check("marcar avisos fiscais como lidos (200)", $alertRead["status"] === 200 && isset($alertRead["json"]["updated"]), json_encode($alertRead["json"] ?? []));
+
+$alertReadEmployee = request("{$base}/api?action=admin-alert-read", "POST", [], $e2eEmployeeJar);
+check("funcionario nao marca os alertas fiscais (403)", $alertReadEmployee["status"] === 403, (string)$alertReadEmployee["status"]);
+
+$agendaRes = request("{$base}/api?action=admin-employee-agenda-list", "GET", null, $e2eEmployeeJar);
+check("funcionario acede a agenda (200)", $agendaRes["status"] === 200, (string)$agendaRes["status"]);
+check("agenda mostra so rotas confirmadas", ($agendaRes["json"]["filter"] ?? "") === "rotas_confirmadas", json_encode($agendaRes["json"]["filter"] ?? null));
+check("agenda normaliza o mes pedido", ($agendaRes["json"]["month"] ?? "") === date("Y-m"), json_encode($agendaRes["json"]["month"] ?? null));
+
+$agendaBadMonth = request("{$base}/api?action=admin-employee-agenda-list&month=nao-e-um-mes", "GET", null, $e2eEmployeeJar);
+check("mes invalido cai no mes atual", ($agendaBadMonth["json"]["month"] ?? "") === date("Y-m"), json_encode($agendaBadMonth["json"]["month"] ?? null));
+
+$agendaManager = request("{$base}/api?action=admin-employee-agenda-list", "GET", null, $e2eManagerJar);
+check("agenda negada ao gestor (403)", $agendaManager["status"] === 403, (string)$agendaManager["status"]);
+
+// D-14 (§3.14): `/gestao` passa a ser o painel do gestor e a agenda do funcionario.
+$gestaoAsManager = request("{$base}/gestao", "GET", null, $e2eManagerJar);
+check("gestor ve o painel em /gestao (200)", $gestaoAsManager["status"] === 200 && str_contains($gestaoAsManager["body"] ?? "", "chartBookingsByState"), (string)$gestaoAsManager["status"]);
+
+$gestaoAsEmployee = request("{$base}/gestao", "GET", null, $e2eEmployeeJar);
+check("funcionario e encaminhado de /gestao para a agenda", str_contains($gestaoAsEmployee["location"] ?? "", "/gestao/agenda"), (string)($gestaoAsEmployee["location"] ?? ""));
+
+$painelPage = request("{$base}/gestao/painel", "GET", null, $e2eManagerJar);
+check("pagina do painel responde 200 ao gestor", $painelPage["status"] === 200, (string)$painelPage["status"]);
+
+$agendaPage = request("{$base}/gestao/agenda", "GET", null, $e2eEmployeeJar);
+check("pagina da agenda responde 200 ao funcionario", $agendaPage["status"] === 200, (string)$agendaPage["status"]);
+
+$agendaPageManager = request("{$base}/gestao/agenda", "GET", null, $e2eManagerJar);
+check("pagina da agenda desvia o gestor (302)", $agendaPageManager["status"] === 302, (string)$agendaPageManager["status"]);
+
+$avisosPage = request("{$base}/gestao/avisos", "GET", null, $e2eEmployeeJar);
+check("pagina de avisos responde 200 ao funcionario", $avisosPage["status"] === 200, (string)$avisosPage["status"]);
+
+// ---------------------------------------------------------------------------
+section("11.2 Fase 6.1: fornecedores (HTTP)");
+
+$supplierList = request("{$base}/api?action=admin-supplier-list", "GET", null, $e2eManagerJar);
+check("gestor lista fornecedores (200)", $supplierList["status"] === 200, (string)$supplierList["status"]);
+check("lista traz os 43 fornecedores do cliente", (int)($supplierList["json"]["summary"]["total"] ?? 0) >= 43, json_encode($supplierList["json"]["summary"] ?? null));
+check("resumo conta os fornecedores sem NIF", (int)($supplierList["json"]["summary"]["withoutNif"] ?? 0) >= 5, json_encode($supplierList["json"]["summary"] ?? null));
+
+$supplierEmployee = request("{$base}/api?action=admin-supplier-list", "GET", null, $e2eEmployeeJar);
+check("fornecedores negados ao funcionario (403)", $supplierEmployee["status"] === 403, (string)$supplierEmployee["status"]);
+
+$supplierClient = request("{$base}/api?action=admin-supplier-list", "GET", null, $clientJar);
+check("fornecedores negados ao cliente (403)", $supplierClient["status"] === 403, (string)$supplierClient["status"]);
+
+$supplierCreate = request("{$base}/api?action=admin-supplier-store", "POST", [
+    "name" => "Fornecedor HTTP Teste", "nif" => "999999991", "active" => 1
+], $e2eManagerJar);
+$httpSupplierId = (int)($supplierCreate["json"]["supplierId"] ?? 0);
+check("gestor cria fornecedor (HTTP)", $httpSupplierId > 0, json_encode($supplierCreate["json"] ?? []));
+
+$supplierInvalid = request("{$base}/api?action=admin-supplier-store", "POST", ["name" => ""], $e2eManagerJar);
+check("fornecedor sem nome devolve 422", $supplierInvalid["status"] === 422, (string)$supplierInvalid["status"]);
+check("erro identificado no campo name", !empty($supplierInvalid["json"]["errors"]["name"]), json_encode($supplierInvalid["json"]["errors"] ?? []));
+
+$supplierUpdate = request("{$base}/api?action=admin-supplier-update", "POST", [
+    "supplierId" => $httpSupplierId, "name" => "Fornecedor HTTP Teste (editado)", "active" => 1
+], $e2eManagerJar);
+check("gestor atualiza fornecedor (HTTP)", (int)($supplierUpdate["json"]["supplierId"] ?? 0) === $httpSupplierId, json_encode($supplierUpdate["json"] ?? []));
+
+$supplierToggle = request("{$base}/api?action=admin-supplier-set-active", "POST", [
+    "supplierId" => $httpSupplierId, "active" => 0
+], $e2eManagerJar);
+check("gestor desativa fornecedor (HTTP)", ($supplierToggle["json"]["active"] ?? true) === false, json_encode($supplierToggle["json"] ?? []));
+
+$supplierMissing = request("{$base}/api?action=admin-supplier-update", "POST", [
+    "supplierId" => 999999, "name" => "Inexistente"
+], $e2eManagerJar);
+check("fornecedor inexistente devolve 404", $supplierMissing["status"] === 404, (string)$supplierMissing["status"]);
+
+$supplierPage = request("{$base}/gestao/fornecedores", "GET", null, $e2eManagerJar);
+check("pagina de fornecedores responde 200 ao gestor", $supplierPage["status"] === 200, (string)$supplierPage["status"]);
+
+$supplierPageClient = request("{$base}/gestao/fornecedores", "GET", null, $clientJar);
+check("pagina de fornecedores desvia o cliente (302)", $supplierPageClient["status"] === 302, (string)$supplierPageClient["status"]);
+
+// ---------------------------------------------------------------------------
+section("11.3 Fase 6.4: comissoes (HTTP)");
+
+$commissionManager = request("{$base}/api?action=admin-commission-list", "GET", null, $e2eManagerJar);
+check("gestor consulta comissoes (200)", $commissionManager["status"] === 200, (string)$commissionManager["status"]);
+check("comissoes do gestor cobrem todos os funcionarios", ($commissionManager["json"]["scope"] ?? "") === "todos", json_encode($commissionManager["json"]["scope"] ?? null));
+
+$commissionEmployeeHttp = request("{$base}/api?action=admin-commission-list", "GET", null, $e2eEmployeeJar);
+check("funcionario consulta as suas comissoes (200)", $commissionEmployeeHttp["status"] === 200, (string)$commissionEmployeeHttp["status"]);
+check("comissoes do funcionario ficam no proprio", ($commissionEmployeeHttp["json"]["scope"] ?? "") === "proprio", json_encode($commissionEmployeeHttp["json"]["scope"] ?? null));
+
+$commissionClientHttp = request("{$base}/api?action=admin-commission-list", "GET", null, $clientJar);
+check("comissoes negadas ao cliente (403)", $commissionClientHttp["status"] === 403, (string)$commissionClientHttp["status"]);
+
+$commissionPageHttp = request("{$base}/gestao/comissoes", "GET", null, $e2eEmployeeJar);
+check("pagina de comissoes responde 200 ao funcionario", $commissionPageHttp["status"] === 200, (string)$commissionPageHttp["status"]);
+
+// ---------------------------------------------------------------------------
+section("11.4 Fase 6 (24.6): cancelamento pelo cliente (HTTP)");
+
+$clientCancellable = request("{$base}/api?action=booking-create-store", "POST", [
+    "serviceIds" => [30], "date" => $bookingDate, "time" => "16:30"
+], $clientJar);
+$clientCancellableId = (int)($clientCancellable["json"]["bookingId"] ?? 0);
+check("cliente cria agendamento para cancelar", $clientCancellableId > 0, json_encode($clientCancellable["json"] ?? []));
+
+$clientCancel = request("{$base}/api?action=customer-booking-cancel", "POST", [
+    "bookingId" => $clientCancellableId
+], $clientJar);
+check("cliente cancela o proprio agendamento (200)", $clientCancel["status"] === 200 && ($clientCancel["json"]["status"] ?? "") === "cancelado", json_encode($clientCancel["json"] ?? []));
+check("cancelamento sem penalizacao (mensagem)", str_contains((string)($clientCancel["json"]["message"] ?? ""), "penalização"), json_encode($clientCancel["json"] ?? []));
+
+$clientCancelAgain = request("{$base}/api?action=customer-booking-cancel", "POST", [
+    "bookingId" => $clientCancellableId
+], $clientJar);
+check("cancelar duas vezes devolve 409", $clientCancelAgain["status"] === 409, (string)$clientCancelAgain["status"]);
+
+$managerCancelCustomer = request("{$base}/api?action=customer-booking-cancel", "POST", [
+    "bookingId" => $clientCancellableId
+], $e2eManagerJar);
+check("gestor nao usa o cancelamento do cliente (403)", $managerCancelCustomer["status"] === 403, (string)$managerCancelCustomer["status"]);
+
+$anonymousCancel = request("{$base}/api?action=customer-booking-cancel", "POST", [
+    "bookingId" => $clientCancellableId
+], $anonJar);
+check("cancelamento sem sessao devolve 401", $anonymousCancel["status"] === 401, (string)$anonymousCancel["status"]);
+
+$appointmentsPageClient = request("{$base}/agendamentos", "GET", null, $clientJar);
+check("pagina de agendamentos tem o botao de cancelamento", $appointmentsPageClient["status"] === 200 && str_contains($appointmentsPageClient["body"], "appointmentsSuccess"), (string)$appointmentsPageClient["status"]);
+
+// ---------------------------------------------------------------------------
 section("12. Limpeza dos dados E2E");
 
 // O ON DELETE CASCADE remove as linhas de `cliente` e `cliente_morada`
@@ -489,8 +697,19 @@ if ($e2eCustomerId > 0) {
     $pdo->exec("DELETE FROM utilizador WHERE id = " . $e2eCustomerId);
 }
 
+// Fornecedor de teste criado em 11.2 (não é produto do cliente)
+if ($httpSupplierId > 0) {
+    $pdo->exec("DELETE FROM fornecedor WHERE id = " . $httpSupplierId);
+    check("fornecedor de teste removido", (int)$pdo->query("SELECT COUNT(*) FROM fornecedor WHERE id = {$httpSupplierId}")->fetchColumn() === 0, "residuo");
+}
+
 $e2eLeftoverUsers    = (int)$pdo->query("SELECT COUNT(*) FROM utilizador WHERE email LIKE 'e2e.%@secade.pt'")->fetchColumn();
-$e2eLeftoverAddress  = (int)$pdo->query("SELECT COUNT(*) FROM cliente_morada WHERE cliente_id > 3")->fetchColumn();
+// ⚠️ A tabela `cliente_morada` tem agora moradas de clientes REAIS importados (clientes com id ≥ 100 —
+// §24.11 · `database_migration_v4.sql`), pelo que a asserção olha **só** para o que o teste criou
+// (o cliente E2E), e não para o total da tabela.
+$e2eLeftoverAddress = $e2eCustomerId > 0
+    ? (int)$pdo->query("SELECT COUNT(*) FROM cliente_morada WHERE cliente_id = {$e2eCustomerId}")->fetchColumn()
+    : 0;
 check("utilizadores E2E removidos", $e2eLeftoverUsers === 0, (string)$e2eLeftoverUsers);
 check("moradas E2E removidas (cascade)", $e2eLeftoverAddress === 0, (string)$e2eLeftoverAddress);
 

@@ -39,7 +39,7 @@ const services = (() => {
             $('#serviceModalBody').html(`
                 <p class="text-muted mb-3">${generalUtils.escapeHtml(service.description || '')}</p>
                 <ul class="list-unstyled mb-0">
-                    <li class="mb-2"><i class="bi bi-tag me-2 text-primary"></i><strong>Preço:</strong> ${generalUtils.formatCurrency(service.basePrice)}</li>
+                    <li class="mb-2"><i class="bi bi-tag me-2 text-primary"></i><strong>Preço:</strong> ${generalUtils.formatCurrencyWithVat(service.basePrice)} <small class="text-muted">(IVA incl.)</small></li>
                     <li class="mb-2"><i class="bi bi-clock me-2 text-primary"></i><strong>Duração estimada:</strong> ${generalUtils.formatDuration(service.estimatedDurationMinutes)}</li>
                     <li class="mb-2"><i class="bi bi-grid me-2 text-primary"></i><strong>Categoria:</strong> ${generalUtils.escapeHtml(service.categoryName || '-')}</li>
                     <li><i class="bi bi-shop me-2 text-primary"></i><strong>Disponível em:</strong> ${badge}</li>
@@ -91,7 +91,7 @@ const services = (() => {
                     <p class="text-muted small flex-grow-1 mb-3">${generalUtils.escapeHtml(service.description || '')}</p>
                     <ul class="list-unstyled small text-muted mb-3">
                         <li><i class="bi bi-clock me-1"></i>${generalUtils.formatDuration(service.estimatedDurationMinutes)}</li>
-                        <li><i class="bi bi-tag me-1"></i>${generalUtils.formatCurrency(service.basePrice)}</li>
+                        <li><i class="bi bi-tag me-1"></i>${generalUtils.formatCurrencyWithVat(service.basePrice)} <small>(IVA incl.)</small></li>
                     </ul>
                     <div class="d-flex gap-2">
                         <button type="button" class="btn btn-sm btn-outline-primary flex-fill" data-details="${service.id}">Detalhes</button>

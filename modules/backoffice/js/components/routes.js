@@ -1,7 +1,8 @@
 const boRoutes = (() => {
     const state = {
         routes: [],
-        referenceProfitability: 50
+        referenceProfitability: 50,
+        details: null
     };
 
     const tableUI = {
@@ -29,20 +30,22 @@ const boRoutes = (() => {
             ? `<i class="bi bi-check-circle text-success ms-1" title="Rentabilidade igual ou acima da referência de ${state.referenceProfitability} €"></i>`
             : `<i class="bi bi-exclamation-triangle text-warning ms-1" title="Abaixo da referência de ${state.referenceProfitability} € (apenas indicador visual)"></i>`;
 
+        const awaiting = Number(route.awaitingAcceptance || 0);
         const canDecide = route.canDecide && route.bookings > 0;
 
-        const actions = canDecide
-            ? `<div class="d-flex gap-1 justify-content-end">
-                   <button type="button" class="btn btn-sm btn-success" data-decide="aprovada"
-                           data-city="${route.cityId}" data-date="${route.routeDate}" title="Aprovar rota">
-                       <i class="bi bi-check2"></i>
-                   </button>
-                   <button type="button" class="btn btn-sm btn-danger" data-decide="recusada"
-                           data-city="${route.cityId}" data-date="${route.routeDate}" title="Recusar rota">
-                       <i class="bi bi-x"></i>
-                   </button>
-               </div>`
-            : '<span class="text-muted small">-</span>';
+        const actions = [
+            boUtils.actionButton("details", "Ver detalhes e escolher os agendamentos incluídos",
+                `data-route-details="${route.routeDate}|${route.cityId}"`),
+            canDecide ? boUtils.actionButton("approve", "Aprovar a rota (com os agendamentos incluídos)",
+                `data-decide="aprovada" data-city="${route.cityId}" data-date="${route.routeDate}"`) : "",
+            canDecide ? boUtils.actionButton("refuse", "Recusar a rota (com os agendamentos incluídos)",
+                `data-decide="recusada" data-city="${route.cityId}" data-date="${route.routeDate}"`) : "",
+            !canDecide && awaiting > 0
+                ? `<button type="button" class="btn btn-sm bo-action bo-action--refuse" disabled
+                       title="${generalUtils.escapeHtml(route.decideBlockReason || "Rota bloqueada")}">
+                       <i class="bi bi-lock"></i></button>`
+                : ""
+        ].filter(Boolean).join(" ");
 
         return `<tr>
             <td class="small">${generalUtils.formatDateTime(route.routeDate)}</td>
@@ -53,12 +56,15 @@ const boRoutes = (() => {
             <td class="text-center">
                 <span class="d-block fw-bold">${route.bookings}</span>
                 <span class="d-block small text-muted">${route.consolidated} aceite(s)</span>
+                ${awaiting > 0
+                    ? `<span class="d-block small text-danger">${awaiting} por aceitar</span>`
+                    : ""}
             </td>
             <td class="text-end">${generalUtils.formatCurrency(route.revenue)}</td>
             <td class="text-end">${generalUtils.formatCurrency(route.fuelCost)}</td>
             <td class="text-end ${profitClass}">${generalUtils.formatCurrency(route.profitability)}${referenceIcon}</td>
             <td class="text-center">${boUtils.routeStatusBadge(route.status)}</td>
-            <td class="text-end">${actions}</td>
+            <td class="text-end text-nowrap">${actions}</td>
         </tr>`;
     }
 
@@ -87,28 +93,42 @@ const boRoutes = (() => {
         }
     }
 
-    async function decideRoute(cityId, routeDate, decision) {
+    async function decideRoute(cityId, routeDate, decision, bookingIds = null) {
         const label = decision === "aprovada" ? "APROVAR" : "RECUSAR";
+        const scope = bookingIds && bookingIds.length > 0
+            ? `${bookingIds.length} agendamento(s) incluído(s)`
+            : "todos os agendamentos qualificados";
 
-        if (!confirm(`${label} a rota de ${routeDate}?`)) return;
+        if (!confirm(`${label} a rota de ${routeDate} (${scope})?`)) return;
 
         $("#routesError, #routesResult").addClass("d-none");
 
-        const promise = API.admin.decideRoute({
+        const payload = {
             cityId: Number(cityId),
             date: routeDate,
             decision
-        });
+        };
+
+        // RN-34: sem lista explícita o servidor decide sobre todos os qualificados.
+        if (bookingIds && bookingIds.length > 0) {
+            payload.bookingIds = bookingIds;
+        }
+
+        const promise = API.admin.decideRoute(payload);
         const preloader = $("#routesTableContainer").preloader(".jq-overlay-process", promise);
 
         try {
             const response = await promise;
+
+            bootstrap.Modal.getInstance(document.getElementById("routeDetailsModal"))?.hide();
 
             $("#routesResult")
                 .removeClass("d-none alert-warning")
                 .addClass("alert-success")
                 .html(`<i class="bi bi-clipboard-check me-1"></i>${generalUtils.escapeHtml(response?.message || "Decisão registada.")}
                     <span class="d-block small mt-1">
+                        Incluídos: <strong>${Number(response?.bookings || 0)}</strong> ·
+                        Fora da rota: <strong>${Number(response?.excluded || 0)}</strong> ·
                         Receita ${generalUtils.formatCurrency(response?.revenue)} ·
                         Combustível ${generalUtils.formatCurrency(response?.fuelCost)} ·
                         Rentabilidade <strong>${generalUtils.formatCurrency(response?.profitability)}</strong>
@@ -119,11 +139,87 @@ const boRoutes = (() => {
 
             await load();
         } catch (error) {
+            // 409 = rota com serviços por aceitar (RN-31): o motivo tem de ser visível.
             $("#routesError").removeClass("d-none")
                 .text(error?.responseJSON?.message || "Não foi possível registar a decisão.");
         } finally {
             await preloader;
         }
+    }
+
+    // ------------------------------------------------------------------
+    // Detalhes da rota: incluir/excluir agendamentos antes de decidir (RN-34)
+    // ------------------------------------------------------------------
+
+    function openDetails(key) {
+        const [routeDate, cityId] = String(key).split("|");
+        const route = state.routes.find((item) => item.routeDate === routeDate && Number(item.cityId) === Number(cityId));
+
+        if (!route) return;
+
+        state.details = route;
+        renderDetails(route);
+
+        bootstrap.Modal.getOrCreateInstance(document.getElementById("routeDetailsModal")).show();
+    }
+
+    function renderDetails(route) {
+        const canDecide = route.canDecide && route.bookings > 0;
+
+        $("#routeDetailsSummary").html(`
+            <p class="mb-1"><strong>${generalUtils.escapeHtml(route.cityName || "-")}</strong> ·
+               ${generalUtils.formatDateTime(route.routeDate)}</p>
+            <p class="mb-0 small text-muted">
+                ${canDecide
+                    ? "Escolha os agendamentos que entram na rota. Os que ficarem de fora continuam qualificados (RN-34)."
+                    : generalUtils.escapeHtml(route.decideBlockReason || "Esta rota já não pode ser decidida.")}
+            </p>`);
+
+        const details = route.bookingsDetail || [];
+
+        if (details.length === 0) {
+            $("#routeDetailsBody").html(`<p class="text-muted small mb-0">Não existem agendamentos qualificados nesta rota.</p>`);
+        } else {
+            $("#routeDetailsBody").html(`<ul class="list-unstyled mb-0" id="routeDetailsList">` + details.map((booking) => `
+                <li class="border-top py-2 d-flex align-items-start gap-2">
+                    <input class="form-check-input mt-1" type="checkbox" data-booking-include
+                           value="${booking.bookingId}" ${canDecide ? "checked" : "disabled"}>
+                    <span>
+                        <span class="d-block fw-bold small">#${booking.bookingId} · ${generalUtils.escapeHtml(booking.customerName)}</span>
+                        <span class="d-block text-muted small">
+                            ${generalUtils.formatDateTime(booking.dateTime)} ·
+                            ${booking.servicesAccepted}/${booking.servicesTotal} serviço(s) aceite(s) ·
+                            ${generalUtils.formatCurrency(booking.totalAmount)}
+                        </span>
+                    </span>
+                </li>`).join("") + `</ul>`);
+        }
+
+        $("#modalApproveRouteBtn, #modalRefuseRouteBtn").prop("disabled", !canDecide);
+        refreshSummary();
+    }
+
+    /**
+     * Resumo do conjunto incluído: o gestor decide sobre o que está marcado.
+     */
+    function refreshSummary() {
+        const ids = $("#routeDetailsBody [data-booking-include]:checked").map(function () {
+            return Number($(this).val());
+        }).get();
+
+        const revenue = ids.reduce((total, id) => {
+            const booking = (state.details?.bookingsDetail || []).find((item) => Number(item.bookingId) === id);
+            return total + Number(booking?.totalAmount || 0);
+        }, 0);
+
+        if ($("#routeDetailsIncluded").length === 0) {
+            $("#routeDetailsBody").append(`<p class="small text-muted mt-2 mb-0" id="routeDetailsIncluded"></p>`);
+        }
+
+        $("#routeDetailsIncluded").html(
+            `Incluídos: <strong>${ids.length}</strong> agendamento(s) · receita
+             <strong>${generalUtils.formatCurrency(revenue)}</strong>`
+        );
     }
 
     async function loadCities() {
@@ -147,7 +243,29 @@ const boRoutes = (() => {
             decideRoute($(this).data("city"), $(this).data("date"), $(this).data("decide"));
         });
 
+        $(document).on("click", "[data-route-details]", function () {
+            openDetails($(this).data("route-details"));
+        });
+
+        // O conjunto incluído muda a cada clique: o resumo tem de acompanhar.
+        $(document).on("change", "[data-booking-include]", refreshSummary);
+
+        $("#modalApproveRouteBtn").on("click", function () {
+            if (state.details) decideRoute(state.details.cityId, state.details.routeDate, "aprovada", checkedIds());
+        });
+
+        $("#modalRefuseRouteBtn").on("click", function () {
+            if (state.details) decideRoute(state.details.cityId, state.details.routeDate, "recusada", checkedIds());
+        });
+
         $("#routeDate, #routeCity, #routeStatus").on("change", load);
+    }
+
+    /** Ids marcados no diálogo de detalhes (RN-34). */
+    function checkedIds() {
+        return $("#routeDetailsBody [data-booking-include]:checked").map(function () {
+            return Number($(this).val());
+        }).get();
     }
 
     $(() => {
@@ -156,5 +274,5 @@ const boRoutes = (() => {
         load();
     });
 
-    return { state, load, decideRoute };
+    return { state, load, decideRoute, openDetails };
 })();

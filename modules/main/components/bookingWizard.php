@@ -48,6 +48,7 @@ $bookingUserName = Session::user()["name"] ?? "";
                                     <div class="alert alert-light border d-flex flex-wrap justify-content-between gap-2 mb-3">
                                         <span><i class="bi bi-clock me-1 text-primary"></i>Duração total: <strong id="totalDuration">0 min</strong></span>
                                         <span><i class="bi bi-tag me-1 text-primary"></i>Valor total: <strong id="totalAmount">0,00 €</strong></span>
+                                        <span class="small text-muted d-none w-100" id="totalVatNote"></span>
                                     </div>
 
                                     <div id="durationNotice" class="alert alert-warning d-none mb-3"></div>

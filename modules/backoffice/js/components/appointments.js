@@ -43,13 +43,10 @@ const boAppointments = (() => {
             <td>${boUtils.bookingStatusBadge(booking.status)}</td>
             <td class="text-end">${generalUtils.formatCurrency(booking.totalAmount)}</td>
             <td class="text-end text-nowrap">
-                <button type="button" class="btn btn-sm btn-outline-primary" data-details="${booking.id}">
-                    <i class="bi bi-eye"></i>
-                </button>
-                <button type="button" class="btn btn-sm btn-outline-danger" data-cancel="${booking.id}"
-                        ${canCancel ? "" : "disabled"}>
-                    <i class="bi bi-x-circle"></i>
-                </button>
+                ${boUtils.actionButton("details", "Ver detalhes do agendamento", `data-details="${booking.id}"`)}
+                ${canCancel
+                    ? boUtils.actionButton("remove", "Cancelar o agendamento", `data-cancel="${booking.id}"`)
+                    : `<button type="button" class="btn btn-sm bo-action bo-action--remove" title="Agendamento não cancelável" disabled><i class="bi bi-x-circle"></i></button>`}
             </td>
         </tr>`;
     }
