@@ -289,12 +289,12 @@ regra única, o mesmo serviço aparecia com dois valores diferentes conforme o e
 **de apresentação**: não se altera o que está gravado (mantém-se a coerência contabilística e a
 possibilidade de a taxa mudar sem reescrever histórico).
 
-| Onde                                        | Valor mostrado                                                         |
-| :------------------------------------------ | :--------------------------------------------------------------------- |
+| Onde                                                               | Valor mostrado                                                            |
+| :----------------------------------------------------------------- | :------------------------------------------------------------------------ |
 | Catálogo, modal de detalhes, "Meus Agendamentos", resumo do wizard | **com IVA** (`vatUtils.gross()` · `generalUtils.formatCurrencyWithVat()`) |
-| Resumo do wizard (**loja e carrinha**)      | **subtotal sem IVA + linha de IVA + total com IVA**                     |
-| **Sinal de 10 %**                           | calculado sobre o valor **com IVA**                                     |
-| BD (`preco_base`, `agendamento_servico.*`)  | **sem IVA** — inalterado                                                |
+| Resumo do wizard (**loja e carrinha**)                             | **subtotal sem IVA + linha de IVA + total com IVA**                       |
+| **Sinal de 10 %**                                                  | calculado sobre o valor **com IVA**                                       |
+| BD (`preco_base`, `agendamento_servico.*`)                         | **sem IVA** — inalterado                                                  |
 
 **Requisitos:** RF-87 · RF-88 · **Regras:** RN-36 · **Estado:** ✅ implementado (catálogo, wizard de loja,
 wizard de carrinha e "Meus Agendamentos"); ⬜ a **contabilidade** (§24.7) passa a ler a mesma utilidade.

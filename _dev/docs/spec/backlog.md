@@ -12,18 +12,18 @@
 
 ### 24.0 Resumo executivo
 
-| #         | Tema                                                                     | Estado     | Impacto Principal                 |
-| :-------- | :----------------------------------------------------------------------- | :--------- | :-------------------------------- |
-| **24.1**  | Re-avaliação dinâmica dos slots                                          | 🟡 parcial | UX — prevenção de slots obsoletos |
-| **24.2**  | Página de detalhes de serviço + carousel                                 | ⬜ ausente | Enriquecimento do Catálogo        |
-| **24.3**  | Encaminhamento por tipo de contrato                                      | ⬜ ausente | Regra de negócio operacional      |
-| **24.4**  | Multicidades + flexibilidade horária + alertas                           | ⬜ ausente | Gestão de Operação e Logística    |
-| **24.5**  | Sinal configurável + 10/90 + métodos de pagamento                        | 🟡 parcial | Componente Financeiro             |
-| **24.6**  | Regra das 24h + lembrete + cancelamento pelo cliente                     | ⬜ ausente | **Crítico / Operacional**         |
-| **24.7**  | Backoffice: dashboard, gráficos, agenda do funcionário e regra das rotas | ⬜ ausente | Entrada do backoffice e operação  |
-| **24.8**  | Defeito: dropdown do autocomplete visível no canto (`/registo`)          | ⬜ defeito | UI do registo                     |
-| **24.9**  | RH: folha de salários e líquido a pagar **calculados**                   | ⬜ ausente | Custo de pessoal e RH             |
-| **24.10** | Calendário fiscal: 8 famílias de obrigações e calendário de 2026         | 🟡 parcial | Módulo do Calendário Fiscal       |
+| #         | Tema                                                                  | Estado     | Impacto Principal                 |
+| :-------- | :-------------------------------------------------------------------- | :--------- | :-------------------------------- |
+| **24.1**  | Re-avaliação dinâmica dos slots                                       | ✅ feito   | UX — prevenção de slots obsoletos |
+| **24.2**  | Página de detalhes de serviço + carousel                              | ⬜ ausente | Enriquecimento do Catálogo        |
+| **24.3**  | Encaminhamento por tipo de contrato                                   | ⬜ ausente | Regra de negócio operacional      |
+| **24.4**  | Multicidades + flexibilidade horária + alertas                        | ⬜ ausente | Gestão de Operação e Logística    |
+| **24.5**  | Sinal configurável + 10/90 + métodos de pagamento                     | 🟡 parcial | Componente Financeiro             |
+| **24.6**  | Regra das 24h + lembrete + cancelamento pelo cliente                  | 🟡 parcial | **Crítico / Operacional**         |
+| **24.7**  | Backoffice: painel, gráficos, agenda do funcionário e regra das rotas | 🟡 parcial | Entrada do backoffice e operação  |
+| **24.8**  | Defeito: dropdown do autocomplete visível no canto (`/registo`)       | ✅ feito   | UI do registo                     |
+| **24.9**  | RH: folha de salários e líquido a pagar **calculados**                | ⬜ ausente | Custo de pessoal e RH             |
+| **24.10** | Calendário fiscal: 8 famílias de obrigações e calendário de 2026      | 🟡 parcial | Módulo do Calendário Fiscal       |
 
 ### 24.1 — Re-avaliação dinâmica dos slots (D-07)
 **Exigido:** o tempo estimado deve ser re-avaliado sempre que o cliente adiciona/descarta serviços,
@@ -40,6 +40,12 @@ usando a validação de disponibilidade server-side existente.
 **Trabalho a fazer:** recalcular/refrescar os slots quando `state.selectedServiceIds` muda e já
 existe `state.date` selecionada (ou invalidar a data/hora escolhida e exigir nova seleção),
 mantendo a revalidação server-side como rede de segurança.
+
+> ✅ **Feito (28/09/2026):** `bookingWizard.js` ganhou `refreshSlotsIfNeeded()`, chamado sempre que os
+> serviços mudam — na lista de serviços **e** nos serviços por pessoa do wizard da carrinha. Quando já
+> existe data escolhida, as horas são recalculadas e a hora escolhida é descartada; a revalidação
+> server-side (409 na submissão) mantém-se. Verificado por `functional_test`/`http_test` (§26) e pelo
+> contrato de JS (`js_syntax_check`).
 
 ### 24.2 — Página de detalhes de serviço + carousel (D-06)
 **Exigido:** página dedicada por serviço, com carousel de imagens, descrição e tempo estimado.
@@ -125,6 +131,13 @@ cancelamento pelo cliente sem penalização).
 - ℹ️ `agendamento.modo_urgencia` existe (sem uso no fluxo atual).
 
 **Trabalho a fazer (por ordem sugerida):**
+
+> ✅ **Feito (28/09/2026) — item 1:** o cancelamento pelo cliente existe:
+> `?action=customer-booking-cancel` (`Session::requireProfileApi(["cliente"])` + posse verificada contra
+> a sessão + estados terminais recusados com **409**) e botão em `/agendamentos` com o aviso de que
+> **não há penalização**. O horário libertado volta a aparecer na disponibilidade.
+> ⬜ **Em falta: itens 2 a 5** — regra das 24 h na criação de rotas, auto-cancelamento sem rota,
+> estado `expirou_sem_rota` e o lembrete ao cliente com sugestão de loja/reagendamento.
 1. **Cancelamento pelo cliente:** endpoint `?action=customer-booking-cancel`
    (`Session::requireProfileApi(["cliente"])` + verificar posse do agendamento + estados canceláveis) e
    botão em `/agendamentos`; **sem penalização**.
@@ -169,6 +182,20 @@ com **todos** os serviços aceites.
   `agendamento.data_hora_pretendida` + `agendamento.estado_reserva` permitem o calendário **sem tabela nova**.
 
 **Trabalho a fazer:**
+
+> ✅ **Feito (28/09/2026):** **itens 1, 3, 4, 5, 6, 7, 9, 10 e 11** —
+> `/gestao` passou a ser o **painel do gestor** (`DashboardController`/`Service`/`Repository`, KPIs e
+> gráficos com o **Chart.js 2.9.4 local** em `modules/common/lib/chartjs/`, carregado **só** no
+> backoffice) e o **funcionário** é encaminhado para a **agenda** (calendário próprio, sem biblioteca
+> nova, só rotas `confirmado` — RN-33); **RN-31/RN-32/RN-34** aplicadas (`findAmbulatoryGroups` agrega
+> apenas qualificados, decidir com pendentes devolve **409**, `findPending` exclui `confirmado` e o
+> gestor inclui/exclui agendamentos antes da decisão); **diálogo de detalhes da rota** com os
+> agendamentos qualificados; **sidebar** do backoffice (menu por perfil, `collapse` abaixo de `lg`);
+> **avisos** por perfil com contador no sino (`admin-alert-summary|list|read`); **página das comissões**
+> (`/gestao/comissoes`, valores da aceitação); **botões de ação** pela convenção única
+> (ícone + `title`, dourado/azul/vermelho) nas listagens de rotas e agendamentos.
+> ⬜ **Em falta: item 2 (o Chart.js local está feito; faltam os dados contabilísticos) e os módulos
+> 6.2 contabilidade (RF-75/76/79 · §17.9) e 6.3 RH (RF-82 · §24.9).**
 1. **Dashboard** (`/gestao`, perfil `gestor`): página nova, `DashboardService` que **delega nos
    Repositories** (§18.1–§18.2 — **nenhuma query no Service**) e `admin-dashboard-summary`; KPIs no topo
    (Disponibilidades · Dívidas a receber · Dívidas a pagar · Resultado) e **gráficos por baixo**.

@@ -4,29 +4,32 @@
 pré-requisitos têm. Referido no `.clinerules` §0 (protocolo de leitura) e §5 (fontes únicas) e na
 especificação §26.
 
-| Suite                 | Verificações | Pré-requisitos     | Âmbito                                                                                                                                   |
-| :-------------------- | :----------- | :----------------- | :--------------------------------------------------------------------------------------------------------------------------------------- |
-| `functional_test.php` | **105**      | MySQL              | Camadas Service/Repository: catálogo, disponibilidade, conflitos, OTP, decisão manual de rotas, backoffice, perfil/moradas, transações e |
-|                       |              |                    | integridade relacional                                                                                                                   |
-| `http_test.php`       | **119**      | **Apache + MySQL** | Stack real (roteamento + sessões): autenticação dos 3 perfis, APIs REST, códigos de erro, fluxo end-to-end de carrinha e registo/login   |
-| `asset_test.php`      | **70**       | **Apache + MySQL** | Assets (HTTP 200), injeção de scripts por página e contrato de nomes do formulário de registo                                            |
-| `js_syntax_check.php` | 17 ficheiros | —                  | Estrutura e sintaxe de todos os ficheiros JavaScript (sem Node)                                                                          |
+| Suite                 | Verificações | Pré-requisitos     | Âmbito                                                                                                                                |
+| :-------------------- | :----------- | :----------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
+| `functional_test.php` | **153**      | MySQL              | Camadas Service/Repository: catálogo, disponibilidade, conflitos, OTP, decisão manual de rotas, backoffice, perfil/moradas, Fase 3/4, |
+|                       |              |                    | painel/avisos/                                                                                                                        |
+|                       |              |                    | agenda, fornecedores, comissões, transações e integridade relacional                                                                  |
+| `http_test.php`       | **179**      | **Apache + MySQL** | Stack real (roteamento + sessões): autenticação dos 3 perfis, APIs REST, códigos de erro, fluxo end-to-end de carrinha, cancelamento  |
+|                       |              |                    | pelo cliente e                                                                                                                        |
+|                       |              |                    | registo/login                                                                                                                         |
+| `asset_test.php`      | **98**       | **Apache + MySQL** | Assets (HTTP 200), injeção de scripts por página e contrato de nomes do formulário de registo                                         |
+| `js_syntax_check.php` | 26 ficheiros | —                  | Estrutura e sintaxe de todos os ficheiros JavaScript (sem Node)                                                                       |
 
-**Total: 294 verificações.**
+**Total: 430 verificações.**
 
 ## Execução
 
 ```bash
 php _dev/tests/js_syntax_check.php   # SINTAXE JS: OK                        (sem dependências)
-php _dev/tests/functional_test.php   # 105 pass, 0 fail                     (requer MySQL)
-php _dev/tests/http_test.php         # 119 pass, 0 fail                     (requer Apache + MySQL)
-php _dev/tests/asset_test.php        #  70 pass, 0 fail                     (requer Apache + MySQL)
+php _dev/tests/functional_test.php   # 153 pass, 0 fail                     (requer MySQL)
+php _dev/tests/http_test.php         # 179 pass, 0 fail                     (requer Apache + MySQL)
+php _dev/tests/asset_test.php        #  98 pass, 0 fail                     (requer Apache + MySQL)
 ```
 
 Cada suite imprime o resumo final (`N pass, M fail`) e termina com *exit code* `0` (tudo a passar)
 ou `1` (existe falha).
 > ✅ **Medição de 28/09/2026 (ambiente local, já com a BD importada — §27.2):** as **4 suites passam**
-> (`105 + 119 + 70 = 294`, sintaxe JS OK). As verificações do `asset_test` que abrem **páginas
+> (`153 + 179 + 98 = 430`, sintaxe JS OK). As verificações do `asset_test` que abrem **páginas
 > autenticadas** exigem sessão → requerem a BD importada; com a base de testes carregada passam todas.
 > ⚠️ **Cuidado ao contar registos:** a BD de desenvolvimento tem **dados reais de cliente** (clientes com
 > **id ≥ 100**, moradas **≥ 200** — §24.11) — as asserções que contam uma tabela inteira têm de se

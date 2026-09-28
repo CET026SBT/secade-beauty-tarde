@@ -17,11 +17,14 @@
 | **3 — Backoffice do Funcionário**   | Aceitação individual, desfazer/trocar, consolidação, bloqueio de janela, **Simulador de Recibos Verdes**                                                | ✅ CONCLUÍDA          |
 | **4 — Backoffice do Gestor**        | Agendamentos (filtros, detalhe por serviço/funcionário, execução, cancelamento), **Rotas com decisão manual** (+50 € visual),                           | ✅ CONCLUÍDA          |
 |                                     | **Calendário Fiscal** + alertas, config. de recibos verdes                                                                                              |                       |
-| **5 — Integração e testes**         | Fluxos end-to-end (cliente → funcionário → gestor), responsividade, notificações simuladas, **294 verificações**                                        | ✅ CONCLUÍDA          |
+| **5 — Integração e testes**         | Fluxos end-to-end (cliente → funcionário → gestor), responsividade, notificações simuladas, **430 verificações**                                        | ✅ CONCLUÍDA          |
 | **6 — Requisitos adicionais (§24)** | Página de detalhes + carousel; re-avaliação dinâmica de slots; 24 h + lembrete + cancelamento pelo cliente; multicidades + alerta de custos; config. do | 🟡 **EM CURSO** (§24) |
 |                                     | sinal; 10/90 + métodos de pagamento                                                                                                                     |                       |
-|                                     | **+ módulos do backoffice**: dashboard/gráficos, agenda do funcionário, contabilidade, RH, fornecedores, comissões, sininho e página de avisos;         |                       |
-|                                     | **+ sidebar** do backoffice (§25.5) — **promoções adiadas** (Fase 7 · §24.7)                                                                            |                       |
+|                                     | **✅ feito:** slots revalidados (§24.1) · cancelamento pelo cliente (§24.6) · autocomplete (§24.8);                                                     |                       |
+|                                     | **painel do gestor** `/gestao` com KPIs e gráficos (Chart.js local) + **agenda do funcionário** + **avisos/sinho** + **sidebar** + **comissões**        |                       |
+|                                     | + **fornecedores** (§24.7 · §25.1 · RF-77/78/80/81/84/85) + regras das rotas (RN-31/32/34);                                                             |                       |
+|                                     | **⬜ falta:** 6.2 contabilidade (RF-75/76/79) · 6.3 RH (RF-82 · §24.9) · 24 h + lembrete · sinal 10/90 · detalhe de serviço · multicidades · 8 famílias |                       |
+|                                     | fiscais                                                                                                                                                 |                       |
 | **7 — Promoções**                   | Módulo de **promoções e campanhas** — adiado; avaliar antes o risco de **retro-atualização** de histórico e agendamentos passados (§24.7)               | ⬜ adiada             |
 
 > **Já feito dentro da Fase 6:** a **carga dos dados reais** entregues pelo cliente
@@ -39,7 +42,7 @@
 3. **Documentação**: `especificacao_mvp.md` (mestre) + `_dev/docs/spec/` (por domínio) + `README.md`
    + `_dev/docs/` (regras e moldes on-demand)
 4. **Diagrama de BD**: §17.8 (relações + consulta SQL para regenerar)
-5. **Testes automatizados** em `_dev/tests/` — 294 verificações (§26)
+5. **Testes automatizados** em `_dev/tests/` — 430 verificações (§26)
 
 ## 22. SIMPLIFICAÇÕES ACADÉMICAS E LIMITAÇÕES
 
@@ -79,15 +82,16 @@ pasta raiz `admin/` · **motorista dedicado / logística de condução** (explic
 
 ## 26. TESTES E VALIDAÇÃO
 
-### 26.1 Suites automatizadas — **294 verificações** (pré-requisito de BD em `_dev/tests/README.md`)
+### 26.1 Suites automatizadas — **430 verificações** (pré-requisito de BD em `_dev/tests/README.md`)
 
-| Suíte de Testes                  | Verificações | Âmbito Coberto Principal                                                                                                                               |
-| :------------------------------- | :----------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `_dev/tests/functional_test.php` | **105**      | Camadas Service/Repository: catálogo, disponibilidade, conflitos, OTP, decisão manual de rotas, backoffice, perfil/moradas, Fase 3/4, transações de    |
-|                                  |              | registo e integridade relacional                                                                                                                       |
-| `_dev/tests/http_test.php`       | **119**      | Stack real (Apache + roteamento + sessões): autenticação de perfis, APIs REST, códigos de erro, fluxo end-to-end de carrinha e fluxos de registo/login |
-| `_dev/tests/asset_test.php`      | **70**       | Validação de assets (HTTP 200), injeção de scripts por página e contrato de nomes do formulário de registo                                             |
-| `_dev/tests/js_syntax_check.php` | 17 ficheiros | Verificação estrutural e de sintaxe de todos os ficheiros JavaScript do ecossistema                                                                    |
+| Suíte de Testes                  | Verificações | Âmbito Coberto Principal                                                                                                                                |
+| :------------------------------- | :----------- | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `_dev/tests/functional_test.php` | **153**      | Camadas Service/Repository: catálogo, disponibilidade, conflitos, OTP, decisão manual de rotas, backoffice, perfil/moradas, Fase 3/4, transações de     |
+|                                  |              | registo, painel/avisos/agenda, fornecedores, comissões e integridade relacional                                                                         |
+| `_dev/tests/http_test.php`       | **179**      | Stack real (Apache + roteamento + sessões): autenticação de perfis, APIs REST, códigos de erro, fluxo end-to-end de carrinha, cancelamento pelo cliente |
+|                                  |              | e fluxos de registo/login                                                                                                                               |
+| `_dev/tests/asset_test.php`      | **98**       | Validação de assets (HTTP 200), injeção de scripts por página e contrato de nomes do formulário de registo                                              |
+| `_dev/tests/js_syntax_check.php` | 26 ficheiros | Verificação estrutural e de sintaxe de todos os ficheiros JavaScript do ecossistema                                                                     |
 
 **Execução:** comandos, pré-requisitos por suite (Apache e MySQL) e garantias de repetibilidade em
 **`_dev/tests/README.md`** — fonte única dos testes. Esta secção guarda o **registo de validação**
@@ -113,15 +117,23 @@ pasta raiz `admin/` · **motorista dedicado / logística de condução** (explic
 | **Feedback é único e pós-execução**     | Submissão duplicada ou antes da execução do serviço resulta num erro HTTP **409**                                                                  |
 | **Perfis de acesso são respeitados**    | Retorno de **401** sem sessão, **403** para perfis incorretos e redirecionamento automático nas páginas                                            |
 
-### 26.4 Cobertura em falta (a acrescentar com a Fase 6)
-Testes end-to-end para as funcionalidades da **§24** quando forem implementadas
-(cancelamento pelo cliente, 24 h, 10/90, multicidades, página de detalhe de serviço).
+### 26.4 Cobertura em falta (a acrescentar com o resto da Fase 6)
+Testes end-to-end para o que ainda falta da **§24** quando for implementado
+(24 h + auto-cancelamento + lembrete, sinal configurável + 10/90 + métodos de pagamento,
+multicidades + alerta de custos, página de detalhe de serviço com carousel) e para os módulos
+6.2 contabilidade e 6.3 RH.
+
 **Estratégia:** manter a cobertura end-to-end no **registo e login** e continuar a fazer crescer os
-- **Novos testes (§24.7 · §24.8):** asset **200** de `modules/common/lib/chartjs/Chart.bundle.min.js` ·
-  injeção do script no backoffice · **409** ao decidir rota com serviços pendentes (RN-31) · `findPending`
-  sem agendamentos em rota confirmada (RN-32) · JSON de `admin-dashboard-summary` e
-  `admin-employee-agenda-list` · **payload de `admin-routes-list` com os agendamentos da rota** (diálogo de detalhes) · *guard* do autocomplete no `asset_test` (sem `show` na construção).
 testes *server-to-end* à medida que as restantes funcionalidades estabilizarem.
+
+**Cobertura acrescentada em 28/09/2026 (Fase 6.0/6.1/6.4 · §24.1 · §24.6):**
+`functional_test` — painel (KPIs/séries/estado vazio da contabilidade), avisos por perfil (com e sem
+sessão de gestor), agenda (mês, filtro `rotas_confirmadas`, RN-33), fornecedores (CRUD, validações,
+desativação, 404), comissões (snapshot da aceitação, 70/30, abrangência por perfil) e cancelamento
+pelo cliente (posse, 409, 404). `http_test` — endpoints novos e autorizações (403/401), RN-31 (**409**
+antes da aceitação, agregação só depois), RN-34 (`bookingIds`), `/gestao` por perfil e páginas novas.
+`asset_test` — assets novos (Chart.js local, `form.utils`, validadores), injeção por página e
+elementos-chave do backoffice (sidebar, sino, calendário, formulário de fornecedores).
 
 ## 27. INSTALAÇÃO E IMPORTAÇÃO DA BD
 
@@ -235,27 +247,33 @@ SET FOREIGN_KEY_CHECKS = 1;
 7. ✅ **Calendário fiscal** centralizado com alertas 30/15/7/3/1/atraso para IVA, IRC, SS e Seguros.
 8. ✅ **Nenhum acesso do cliente ao backoffice**; perfis respeitados em todos os endpoints `admin-*`.
 9. ✅ **Feedback do cliente** após execução, com reflexo público nos testemunhos.
-10. ✅ Validações em client e server; **testes automatizados a passar** (294).
+10. ✅ Validações em client e server; **testes automatizados a passar** (430).
 
 ### 28.2 Critérios da Fase 6 (a cumprir com a §24)
-11. ⬜ Cliente consegue **cancelar** o seu agendamento pela plataforma, **sem penalização**.
+11. ✅ Cliente consegue **cancelar** o seu agendamento pela plataforma, **sem penalização** (`customer-booking-cancel` · RF-12).
 12. ⬜ Nenhuma rota é criada com agendamentos a **menos de 24 h**; agendamentos sem rota às 24 h são **auto-cancelados** e **retidos** na BD.
 13. ⬜ Cliente recebe **lembrete** com sugestão de loja física ou reagendamento.
 14. ⬜ Sinal **configurável** no backoffice; **90 %** cobrados no término com **método simulado**.
 15. ⬜ **Página de detalhes** por serviço com **carousel**.
 16. ⬜ **Multicidades** validado com espaçamento temporal + **alerta de custos** padronizado.
-17. ⬜ Lista de horas **revalidada** quando os serviços mudam.
-18. ⬜ `/gestao` é o **dashboard do gestor** (KPIs + gráficos) e o funcionário é encaminhado para a sua **agenda**.
-19. ⬜ A **agenda** do funcionário mostra **só** agendamentos de **rotas confirmadas**, em calendário.
-20. ⬜ Uma rota **não** é confirmada com serviços por aceitar (**409**), a lista **"Por aceitar"** deixa de mostrar serviços assim que o agendamento entra em rota confirmada, e a rota expõe o **detalhe dos agendamentos qualificados**.
-21. ⬜ O *dropdown* do autocomplete **não** aparece no carregamento de `/registo` (§24.8).
-22. ⬜ O gestor **reverte/exclui** um agendamento **antes** de a rota ser confirmada e ele volta a **qualificado** (nunca `cancelado`); em rota confirmada **não se altera**.
-23. ⬜ Existe uma página de **avisos** por perfil, com **contador de não lidos** no sino e ligação no menu do utilizador.
-24. ⬜ Existe página das **comissões** por funcionário, com os valores **já gravados na aceitação**.
-25. ⬜ O backoffice tem **sidebar** (a navbar atual está no limite) e as páginas `/gestao/*` mantêm a autorização por perfil.
-26. ⬜ Existe **gestão de fornecedores** em `/gestao/fornecedores` sobre a tabela `fornecedor` **já carregada** com os 43 fornecedores reais (RF-85 · §25.1).
+17. ✅ Lista de horas **revalidada** quando os serviços mudam (§24.1 — avulso e por pessoa).
+18. ✅ `/gestao` é o **dashboard do gestor** (KPIs + gráficos) e o funcionário é encaminhado para a sua **agenda**.
+19. ✅ A **agenda** do funcionário mostra **só** agendamentos de **rotas confirmadas**, em calendário.
+20. ✅ Uma rota **não** é confirmada com serviços por aceitar (**409**), a lista **"Por aceitar"** deixa de mostrar serviços assim que o agendamento entra em rota confirmada, e a rota expõe o **detalhe dos agendamentos qualificados**.
+21. ✅ O *dropdown* do autocomplete **não** aparece no carregamento de `/registo` (§24.8 — corrigido na branch `fix-autocomplete-dropdown`).
+22. ✅ O gestor **reverte/exclui** um agendamento **antes** de a rota ser confirmada e ele volta a **qualificado** (nunca `cancelado`); em rota confirmada **não se altera**.
+23. ✅ Existe uma página de **avisos** por perfil, com **contador de não lidos** no sino e ligação no menu do utilizador.
+24. ✅ Existe página das **comissões** por funcionário, com os valores **já gravados na aceitação**.
+25. ✅ O backoffice tem **sidebar** (a navbar atual está no limite) e as páginas `/gestao/*` mantêm a autorização por perfil.
+26. ✅ Existe **gestão de fornecedores** em `/gestao/fornecedores` sobre a tabela `fornecedor` **já carregada** com os 43 fornecedores reais (RF-85 · §25.1).
 27. ✅ As **durações reais dos 35 serviços**, os **43 fornecedores** e os **65 clientes** entregues pelo cliente estão na BD por **migração idempotente** gerada a partir do ficheiro (`database_migration_v4.sql` — RF-86 · §24.11).
-28. ⬜ Os **contadores públicos** (`site-stats`) nunca publicam número **inventado** nem **sabidamente incompleto**: contagem da BD → valor documental → chaves de `SITE_STATS_DOCUMENTAL` (§3.12).
+28. ✅ Os **contadores públicos** (`site-stats`) nunca publicam número **inventado** nem **sabidamente incompleto**: contagem da BD → valor documental → chaves de `SITE_STATS_DOCUMENTAL` (§3.12).
+
+> **Em falta na Fase 6 (por ordem da §24.7):** 6.2 contabilidade/gráficos dos dados importados
+> (RF-75/76/79) · 6.3 RH (`PayrollService` — RF-82 · §24.9) · os critérios 12 a 16 acima
+> (24 h + lembrete, sinal configurável + 10/90 + métodos, detalhe de serviço + carousel,
+> multicidades + alerta de custos) · as 8 famílias fiscais (§24.10 · RF-83). **Promoções** são a
+> **Fase 7** (§24.7).
 
 ### 28.3 Critérios transversais (sempre)
 ✅ Código organizado e legível · ✅ interface responsiva · ✅ validações client+server ·

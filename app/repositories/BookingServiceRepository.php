@@ -133,12 +133,12 @@ class BookingServiceRepository extends BaseRepository {
                 LEFT JOIN agendamento_pessoa p ON s.agendamento_pessoa_id = p.id
                 WHERE s.estado_aceitacao = 'pendente'
                   AND a.local_prestacao = 'carrinha_ambulante'
-                  -- Tem de ser coerente com assertAcceptableBooking(): um serviço é aceitável
-                  -- enquanto o agendamento não estiver num estado terminal. Antes exigia-se
-                  -- 'pendente_aceitacao_funcionarios', o que escondia serviços por aceitar de
-                  -- agendamentos já confirmados (rota aprovada) — e esses nunca apareciam na
-                  -- lista, mesmo filtrando pelo dia certo.
-                  AND a.estado_reserva NOT IN ('cancelado', 'recusado', 'executado', 'concluido')";
+                  -- RN-32 (§24.7): a partir do momento em que o agendamento entra numa
+                  -- rota confirmada (`confirmado`) deixa de aparecer na lista Por
+                  -- aceitar — o acompanhamento passa a ser a agenda do funcionário
+                  -- (RN-33). Antes aceitavam-se serviços de rotas já aprovadas, o que
+                  -- contrariava a RN-31 (a rota só agrega o que está todo aceite).
+                  AND a.estado_reserva NOT IN ('cancelado', 'recusado', 'executado', 'concluido', 'confirmado')";
         $params = [];
 
         if (!empty($filters["categoriaId"])) {
@@ -234,5 +234,45 @@ class BookingServiceRepository extends BaseRepository {
                 GROUP BY estado_aceitacao";
 
         return $this->fetchAllRaw($sql, ["agendamento_id" => $bookingId]);
+    }
+
+    // ------------------------------------------------------------------
+    // Fase 6.5 — Agenda do funcionário
+    // ------------------------------------------------------------------
+
+    /**
+     * Agenda do funcionário num intervalo de datas.
+     *
+     * RN-33 (§24.7 · §10.1): a agenda mostra **apenas** agendamentos de **rotas
+     * confirmadas** (`estado_reserva = 'confirmado'`). O que ainda se aceita ou
+     * desfaz continua na listagem, não no calendário.
+     */
+    public function findByEmployeeAndRange(int $employeeId, string $dateFrom, string $dateTo): array {
+        $sql = "SELECT s.id, s.agendamento_id, s.servico_id, s.preco_praticado, s.duracao_minutos,
+                       s.estado_aceitacao, sv.nome AS servico_nome, cat.nome AS categoria_nome,
+                       p.nome_pessoa,
+                       a.data_hora_pretendida, a.local_prestacao, a.estado_reserva,
+                       a.cliente_id, u.nome AS cliente_nome,
+                       cm.cidade_id, cid.nome AS cidade_nome
+                FROM agendamento_servico s
+                INNER JOIN servico sv ON s.servico_id = sv.id
+                INNER JOIN categoria_profissional cat ON sv.categoria_id = cat.id
+                INNER JOIN agendamento a ON s.agendamento_id = a.id
+                INNER JOIN cliente c ON a.cliente_id = c.id
+                INNER JOIN utilizador u ON c.id = u.id
+                LEFT JOIN cliente_morada cm ON a.cliente_morada_id = cm.id
+                LEFT JOIN cidade cid ON cm.cidade_id = cid.id
+                LEFT JOIN agendamento_pessoa p ON s.agendamento_pessoa_id = p.id
+                WHERE s.funcionario_id = :funcionario_id
+                  AND s.estado_aceitacao = 'aceite'
+                  AND a.estado_reserva = 'confirmado'
+                  AND DATE(a.data_hora_pretendida) BETWEEN :de AND :ate
+                ORDER BY a.data_hora_pretendida ASC, s.id ASC";
+
+        return $this->fetchAllRaw($sql, [
+            "funcionario_id" => $employeeId,
+            "de"             => $dateFrom,
+            "ate"            => $dateTo
+        ]);
     }
 }

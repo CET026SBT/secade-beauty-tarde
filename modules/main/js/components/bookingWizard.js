@@ -415,6 +415,13 @@ const bookingWizard = (() => {
         highlightSelectedSlot();
     }
 
+    function refreshSlotsIfNeeded() {
+        if (!state.date) return;
+        if (!form.validators.bookingDate()) return;
+
+        loadSlots();
+    }
+
     async function loadSlots() {
         if (!state.date) return;
 
@@ -772,6 +779,11 @@ const bookingWizard = (() => {
             updateTotals();
             syncChannelCards();
             $("#servicesError").addClass("d-none");
+
+            // §24.1 (D-07): a duração mudou, logo a lista de horas deixou de ser
+            // válida. Se já existe data escolhida, as horas são recalculadas (e a
+            // hora escolhida é descartada) — o servidor revalida na submissão (409).
+            refreshSlotsIfNeeded();
         });
 
         $(document).on("click", ".service-cat-filter", function () {
@@ -827,6 +839,10 @@ const bookingWizard = (() => {
             $("#peopleError").addClass("d-none");
             updateTotals();
             syncChannelCards();
+
+            // §24.1: alterar serviços de uma pessoa muda a duração — as horas voltam
+            // a ser calculadas quando já existe data escolhida.
+            refreshSlotsIfNeeded();
         });
 
         // Passo OTP

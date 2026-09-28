@@ -23,7 +23,14 @@ $files = [
     "modules/backoffice/js/components/routes.js",
     "modules/backoffice/js/components/services.js",
     "modules/backoffice/js/components/fiscal.js",
-    "modules/backoffice/js/components/greenReceipts.js"
+    "modules/backoffice/js/components/greenReceipts.js",
+    "modules/backoffice/js/components/dashboard.js",
+    "modules/backoffice/js/components/alerts.js",
+    "modules/backoffice/js/components/agenda.js",
+    "modules/backoffice/js/components/suppliers.js",
+    "modules/backoffice/js/components/commissions.js",
+    "modules/common/js/utils/form.utils.js",
+    "modules/common/js/validators/supplier.validator.js"
 ];
 
 $root = dirname(__DIR__, 2);

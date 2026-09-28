@@ -120,6 +120,6 @@ git show <revisão>^:<ficheiro>                # ver o conteúdo original
 
 ---
 
-**Versão:** 2.0 · **Data:** 24/09/2026 · **Estado:** ✅ Fases 1-5 concluídas e validadas (294 verificações) ·
+**Versão:** 2.1 · **Data:** 28/09/2026 · **Estado:** ✅ Fases 1-5 concluídas e validadas (430 verificações) ·
 ⬜ Fase 6 (requisitos adicionais §24 + módulos do backoffice, **sidebar** e **comissões**) em curso
 **Prevalência:** este documento é a **única** fonte de requisitos. As fontes anteriores estão revogadas — arquivo no Git (§29.2)
