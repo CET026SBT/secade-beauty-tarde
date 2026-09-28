@@ -34,4 +34,8 @@ class CustomerRepository extends BaseRepository {
 
         return $id;
     }
+
+    public function countAll(): int {
+        return (int)$this->fetchRaw("SELECT COUNT(*) AS total FROM cliente")["total"];
+    }
 }
