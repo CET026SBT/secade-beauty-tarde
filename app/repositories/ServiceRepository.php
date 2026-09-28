@@ -68,18 +68,31 @@ class ServiceRepository extends BaseRepository {
             }
 
             public function findActive(?int $categoryId = null): array {
-                $sql = "SELECT s.*, c.nome AS categoria_nome
-                        FROM servico s
-                        LEFT JOIN categoria_profissional c ON s.categoria_id = c.id
-                        WHERE s.ativo = 1";
-                $params = [];
+        $sql = "SELECT s.*, c.nome AS categoria_nome
+                FROM servico s
+                LEFT JOIN categoria_profissional c ON s.categoria_id = c.id
+                WHERE s.ativo = 1";
+        $params = [];
 
-                if ($categoryId !== null) {
-                    $sql .= " AND s.categoria_id = :categoryId";
-                    $params["categoryId"] = $categoryId;
-                }
-
-                $sql .= " ORDER BY s.id ASC";
-                return $this->fetchAll($sql, $params);
-            }
+        if ($categoryId !== null) {
+            $sql .= " AND s.categoria_id = :categoryId";
+            $params["categoryId"] = $categoryId;
         }
+
+        $sql .= " ORDER BY s.id ASC";
+        return $this->fetchAll($sql, $params);
+    }
+
+    /** Serviços ativos — indicador público do catálogo (§24.7). */
+    public function countActive(): int {
+        return (int)$this->fetchRaw("SELECT COUNT(*) AS total FROM servico WHERE ativo = 1")["total"];
+    }
+
+    /**
+     * Preço base (sem IVA) mais baixo do catálogo ativo — alimenta o "preços desde" da página
+     * pública, que o cliente vê **com IVA** (D-16 · RN-36).
+     */
+    public function findMinPrice(): float {
+        return (float)$this->fetchRaw("SELECT MIN(preco_base) AS minimo FROM servico WHERE ativo = 1")["minimo"];
+    }
+}

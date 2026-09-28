@@ -10,6 +10,9 @@ const API = ((baseApi) => ({
     categories: {
         getAll: () => baseApi.get('?action=category-all')
     },
+    stats: {
+        summary: () => baseApi.get('?action=site-stats', 0)
+    },
     booking: {
         services: () => baseApi.get('?action=booking-services'),
         availability: (params) => baseApi.get(`?action=booking-availability&${$.param(params)}`, 0),

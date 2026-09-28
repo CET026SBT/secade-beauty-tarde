@@ -25,6 +25,11 @@ class EmployeeRepository extends BaseRepository {
         return $this->fetchAll($sql, $params);
     }
 
+    /** Funcionários ativos — base dos indicadores públicos da equipa (§24.7). */
+    public function countActive(): int {
+        return (int)$this->fetchRaw("SELECT COUNT(*) AS total FROM funcionario WHERE ativo = 1")["total"];
+    }
+
     public function create(array $data): int {
         $sql = "INSERT INTO funcionario (id, tipo_contrato, salario_base, cc, ativo)
                 VALUES (:id, :tipo_contrato, :salario_base, :cc, 1)";

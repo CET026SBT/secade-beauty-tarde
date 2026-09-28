@@ -10,20 +10,27 @@
 > O **cronograma de 7 dias** dos documentos iniciais está **revogado** — substituído por este
 > roadmap por fases, alinhado com as regras finais.
 
-| Fase                                | Âmbito                                                                                                                                           | Estado                 |
-| :---------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------- |
-| **1 — Catálogo e base**             | Catálogo de serviços (filtros, modal), categorias, autenticação, registo, perfil/moradas, preloader, validators                                  | ✅ CONCLUÍDA           |
-| **2 — Agendamentos**                | Wizard **Loja** (5 passos) + Wizard **Carrinha** (7 passos + OTP), disponibilidade, conflitos, página de sucesso                                 | ✅ CONCLUÍDA           |
-| **3 — Backoffice do Funcionário**   | Aceitação individual, desfazer/trocar, consolidação, bloqueio de janela, **Simulador de Recibos Verdes**                                         | ✅ CONCLUÍDA           |
-| **4 — Backoffice do Gestor**        | Agendamentos (filtros, detalhe por serviço/funcionário, execução, cancelamento), **Rotas com decisão manual** (+50 € visual),                    | ✅ CONCLUÍDA           |
-|                                     | **Calendário Fiscal** + alertas, config. de recibos verdes                                                                                       |                        |
-| **5 — Integração e testes**         | Fluxos end-to-end (cliente → funcionário → gestor), responsividade, notificações simuladas, **293 verificações**                                 | ✅ CONCLUÍDA           |
-| **6 — Requisitos adicionais (§24)** | Página de detalhes + carousel; re-avaliação dinâmica de slots; 24 h + lembrete + cancelamento pelo cliente; multicidades + alerta de             | ⬜ **A INICIAR** (§24) |
-|                                     | custos; config. do sinal; 10/90 + métodos de pagamento                                                                                           |                        |
-|                                     | **+ módulos do backoffice**: dashboard/gráficos, agenda do funcionário, contabilidade, RH, fornecedores, sininho e página de avisos (**promoções |                        |
-|                                     | adiadas** — Fase 8 · §24.7)                                                                                                                      |                        |
-| **7 — Sidebar do backoffice**       | **Sidebar** (a navbar atual está no limite), com a página das **comissões** acessível por lá (§24.7 · §25.5)                                     | ⬜ planeada            |
-| **8 — Promoções**                   | Módulo de **promoções e campanhas** — adiado; avaliar antes o risco de **retro-atualização** de histórico e agendamentos passados (§24.7)        | ⬜ adiada              |
+| Fase                                | Âmbito                                                                                                                                                  | Estado                |
+| :---------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------ | :-------------------- |
+| **1 — Catálogo e base**             | Catálogo de serviços (filtros, modal), categorias, autenticação, registo, perfil/moradas, preloader, validators                                         | ✅ CONCLUÍDA          |
+| **2 — Agendamentos**                | Wizard **Loja** (5 passos) + Wizard **Carrinha** (7 passos + OTP), disponibilidade, conflitos, página de sucesso                                        | ✅ CONCLUÍDA          |
+| **3 — Backoffice do Funcionário**   | Aceitação individual, desfazer/trocar, consolidação, bloqueio de janela, **Simulador de Recibos Verdes**                                                | ✅ CONCLUÍDA          |
+| **4 — Backoffice do Gestor**        | Agendamentos (filtros, detalhe por serviço/funcionário, execução, cancelamento), **Rotas com decisão manual** (+50 € visual),                           | ✅ CONCLUÍDA          |
+|                                     | **Calendário Fiscal** + alertas, config. de recibos verdes                                                                                              |                       |
+| **5 — Integração e testes**         | Fluxos end-to-end (cliente → funcionário → gestor), responsividade, notificações simuladas, **294 verificações**                                        | ✅ CONCLUÍDA          |
+| **6 — Requisitos adicionais (§24)** | Página de detalhes + carousel; re-avaliação dinâmica de slots; 24 h + lembrete + cancelamento pelo cliente; multicidades + alerta de custos; config. do | 🟡 **EM CURSO** (§24) |
+|                                     | sinal; 10/90 + métodos de pagamento                                                                                                                     |                       |
+|                                     | **+ módulos do backoffice**: dashboard/gráficos, agenda do funcionário, contabilidade, RH, fornecedores, comissões, sininho e página de avisos;         |                       |
+|                                     | **+ sidebar** do backoffice (§25.5) — **promoções adiadas** (Fase 7 · §24.7)                                                                            |                       |
+| **7 — Promoções**                   | Módulo de **promoções e campanhas** — adiado; avaliar antes o risco de **retro-atualização** de histórico e agendamentos passados (§24.7)               | ⬜ adiada             |
+
+> **Já feito dentro da Fase 6:** a **carga dos dados reais** entregues pelo cliente
+> (`database_migration_v4.sql` — durações, 43 fornecedores, 65 clientes) — **RF-86** ✅ · §24.11.
+> É a base de dados do módulo de **fornecedores**, que é a prioridade 1 do trabalho futuro (§25.1).
+> **Chart.js (E-3):** entra na **Fase 6**, junto com os gráficos do dashboard — **não** fica para depois.
+> A biblioteca continua **local** em `modules/common/lib/chartjs/` (nunca por CDN) e **só** carregada no
+> backoffice. A **sidebar** do backoffice e a página das **comissões** entram **também na Fase 6** (§25.5);
+> `/gestao/agendamentos` **mantém o nome** — a renomeação de rotas **não** faz parte desta fase.
 
 ### 21.1 Entregáveis
 
@@ -32,7 +39,7 @@
 3. **Documentação**: `especificacao_mvp.md` (mestre) + `_dev/docs/spec/` (por domínio) + `README.md`
    + `_dev/docs/` (regras e moldes on-demand)
 4. **Diagrama de BD**: §17.8 (relações + consulta SQL para regenerar)
-5. **Testes automatizados** em `_dev/tests/` — 293 verificações (§26)
+5. **Testes automatizados** em `_dev/tests/` — 294 verificações (§26)
 
 ## 22. SIMPLIFICAÇÕES ACADÉMICAS E LIMITAÇÕES
 
@@ -72,14 +79,14 @@ pasta raiz `admin/` · **motorista dedicado / logística de condução** (explic
 
 ## 26. TESTES E VALIDAÇÃO
 
-### 26.1 Suites automatizadas — **293 verificações** (pré-requisito de BD em `_dev/tests/README.md`)
+### 26.1 Suites automatizadas — **294 verificações** (pré-requisito de BD em `_dev/tests/README.md`)
 
 | Suíte de Testes                  | Verificações | Âmbito Coberto Principal                                                                                                                               |
 | :------------------------------- | :----------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `_dev/tests/functional_test.php` | **105**      | Camadas Service/Repository: catálogo, disponibilidade, conflitos, OTP, decisão manual de rotas, backoffice, perfil/moradas, Fase 3/4, transações de    |
 |                                  |              | registo e integridade relacional                                                                                                                       |
 | `_dev/tests/http_test.php`       | **119**      | Stack real (Apache + roteamento + sessões): autenticação de perfis, APIs REST, códigos de erro, fluxo end-to-end de carrinha e fluxos de registo/login |
-| `_dev/tests/asset_test.php`      | **65**       | Validação de assets (HTTP 200), injeção de scripts por página e contrato de nomes do formulário de registo                                             |
+| `_dev/tests/asset_test.php`      | **70**       | Validação de assets (HTTP 200), injeção de scripts por página e contrato de nomes do formulário de registo                                             |
 | `_dev/tests/js_syntax_check.php` | 17 ficheiros | Verificação estrutural e de sintaxe de todos os ficheiros JavaScript do ecossistema                                                                    |
 
 **Execução:** comandos, pré-requisitos por suite (Apache e MySQL) e garantias de repetibilidade em
@@ -96,14 +103,15 @@ pasta raiz `admin/` · **motorista dedicado / logística de condução** (explic
   aplicação das migrações/seed em MySQL 8.4.3 sem erros.
 
 ### 26.3 Testes que provam decisões-chave
-| Decisão Arquitetural / de Negócio    | Prova / Mecanismo de Validação Técnica                                                                  |
-| :----------------------------------- | :------------------------------------------------------------------------------------------------------ |
-| **Rotas são manuais**                | Aprovação de rota abaixo de 50 € define como `confirmado`; recusa acima de 50 € define como `cancelado` |
-| **Categorias não restringem**        | Tabela `funcionario_categoria` eliminada da BD; aceitação de serviços é livre entre funcionários        |
-| **Consolidação bloqueia**            | Tentar desfazer um agendamento após estar consolidado resulta num erro HTTP **409**                     |
-| **OTP é obrigatório e de uso único** | Código inválido retorna **422**; tentativa de reutilização do código falha imediatamente                |
-| **Feedback é único e pós-execução**  | Submissão duplicada ou antes da execução do serviço resulta num erro HTTP **409**                       |
-| **Perfis de acesso são respeitados** | Retorno de **401** sem sessão, **403** para perfis incorretos e redirecionamento automático nas páginas |
+| Decisão Arquitetural / de Negócio       | Prova / Mecanismo de Validação Técnica                                                                                                             |
+| :-------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Rotas são manuais**                   | Aprovação de rota abaixo de 50 € define como `confirmado`; recusa acima de 50 € define como `cancelado`                                            |
+| **Categorias não restringem**           | Tabela `funcionario_categoria` eliminada da BD; aceitação de serviços é livre entre funcionários                                                   |
+| **Consolidação bloqueia**               | Tentar desfazer um agendamento após estar consolidado resulta num erro HTTP **409**                                                                |
+| **Custos de pessoal e rácios conferem** | Bateria de conferência contra o Balancete: folha de salários ↔ conta **63 = 27 234,13** e os **5 rácios** ↔ Balanço de março — §3.12 linhas 8 a 12 |
+| **OTP é obrigatório e de uso único**    | Código inválido retorna **422**; tentativa de reutilização do código falha imediatamente                                                           |
+| **Feedback é único e pós-execução**     | Submissão duplicada ou antes da execução do serviço resulta num erro HTTP **409**                                                                  |
+| **Perfis de acesso são respeitados**    | Retorno de **401** sem sessão, **403** para perfis incorretos e redirecionamento automático nas páginas                                            |
 
 ### 26.4 Cobertura em falta (a acrescentar com a Fase 6)
 Testes end-to-end para as funcionalidades da **§24** quando forem implementadas
@@ -121,7 +129,7 @@ testes *server-to-end* à medida que as restantes funcionalidades estabilizarem.
 Laragon com **Apache + MySQL** ativos · projeto em `C:\laragon\www\secade-beauty-tarde` ·
 **internet** (o autocomplete de morada usa a API Nominatim) · browser com DevTools.
 
-### 27.2 Importação (instalação de raiz) — 2 ficheiros
+### 27.2 Importação (instalação de raiz) — 2 ficheiros + migrações de dados
 ```powershell
 $mysql = 'C:\laragon\bin\mysql\mysql-8.4.3-winx64\bin\mysql.exe'
 cd C:\laragon\www\secade-beauty-tarde
@@ -131,38 +139,51 @@ cd C:\laragon\www\secade-beauty-tarde
 
 # 2) Utilizadores de teste + morada de demonstração   ← OBRIGATÓRIO
 & $mysql -u root --default-character-set=utf8mb4 -e "source database_seed.sql"
+
+# 3) Dados REAIS entregues pelo cliente (durações · 43 fornecedores · 65 clientes)
+& $mysql -u root --default-character-set=utf8mb4 -e "source database_migration_v4.sql"
 ```
 > ⚠️ Em **PowerShell** a redireção `<` não funciona — usar sempre `-e "source ficheiro.sql"`.
 > Alternativa: painel do Laragon → phpMyAdmin → *Import*.
-> **Não** é preciso correr as migrações: o `DataBase_v2.sql` já inclui tudo o que elas fazem.
+> **Não** são precisas as migrações v2/v3: o `DataBase_v2.sql` já inclui tudo o que elas fazem.
+> O passo **3** é **dados reais de cliente** (§24.11), não demonstração — é o que dá conteúdo à gestão de
+> **fornecedores** (§25.1) e às **durações** reais do catálogo. É **idempotente**: pode repetir-se.
 
 ### 27.3 Migração de uma BD antiga (preserva dados)
 ```powershell
 & $mysql -u root --default-character-set=utf8mb4 -e "source database_migration_v2.sql"  # só se BD v1
 & $mysql -u root --default-character-set=utf8mb4 -e "source database_migration_v3.sql"  # idempotente
+& $mysql -u root --default-character-set=utf8mb4 -e "source database_migration_v4.sql"  # idempotente
 & $mysql -u root --default-character-set=utf8mb4 -e "source database_seed.sql"          # opcional
 ```
 - `database_migration_v2.sql` é de **uso único** (falha com `Duplicate column` se repetido).
-- `database_migration_v3.sql` é **idempotente** e pode correr em qualquer schema.
+- `database_migration_v3.sql` e `database_migration_v4.sql` são **idempotentes**
+  (a v4 usa ids explícitos + `ON DUPLICATE KEY UPDATE`) e podem correr em qualquer schema.
+- A **v4** traz **dados reais** (§24.11): durações, `fornecedor` (43) e clientes (65) — em produção é
+  **obrigatória**, numa instalação de demonstração é opcional.
 
 ### 27.4 Confirmar a importação
 ```sql
 USE secade_beauty;
 SELECT
  (SELECT COUNT(*) FROM information_schema.tables
-   WHERE table_schema = 'secade_beauty')        AS tabelas,        -- esperado: 24
+   WHERE table_schema = 'secade_beauty')        AS tabelas,        -- esperado: 25 (24 + fornecedor)
  (SELECT COUNT(*) FROM servico)                 AS servicos,       -- esperado: 35
  (SELECT COUNT(*) FROM servico WHERE ativo = 1) AS servicos_ativos,-- esperado: 35
  (SELECT COUNT(*) FROM categoria_profissional)  AS categorias,     -- esperado: 3
  (SELECT COUNT(*) FROM cidade)                  AS cidades,        -- esperado: 10
  (SELECT COUNT(*) FROM matriz_deslocacao)       AS deslocacoes,    -- esperado: 9
- (SELECT COUNT(*) FROM utilizador)              AS utilizadores,   -- esperado: 3
- (SELECT COUNT(*) FROM cliente_morada)          AS moradas;        -- esperado: 1
+ (SELECT COUNT(*) FROM utilizador)              AS utilizadores,   -- 3 (só seed) ou 68 (com a v4)
+ (SELECT COUNT(*) FROM cliente_morada)          AS moradas,        -- 1 (só seed) ou 66 (com a v4)
+ (SELECT COUNT(*) FROM fornecedor)              AS fornecedores;   -- esperado: 43 (só com a v4)
 ```
 > ⚠️ **Diagnóstico rápido:** **24 tabelas + catálogo completo** mas **0 utilizadores** = importou o
 > esquema **sem** o `database_seed.sql`. Basta correr o passo 2 de §27.2 (não é preciso reimportar).
 > Consequência: não consegue fazer login e os testes HTTP falham com *foreign key* em
 > `agendamento.cliente_id` (falta o cliente de teste #3).
+> ⚠️ **Esperados diferentes conforme a BD:** numa instalação **de demonstração** (sem o passo 3) são
+> **3 utilizadores · 1 morada · 0 fornecedores**; com a **v4** (§24.11) são **68 utilizadores ·
+> 66 moradas · 43 fornecedores** e **25 tabelas**.
 
 ### 27.5 Configuração e acesso
 - Conexão: `app/config/connection.php` (default: `localhost`, `root`, sem password, DB `secade_beauty`).
@@ -214,7 +235,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 7. ✅ **Calendário fiscal** centralizado com alertas 30/15/7/3/1/atraso para IVA, IRC, SS e Seguros.
 8. ✅ **Nenhum acesso do cliente ao backoffice**; perfis respeitados em todos os endpoints `admin-*`.
 9. ✅ **Feedback do cliente** após execução, com reflexo público nos testemunhos.
-10. ✅ Validações em client e server; **testes automatizados a passar** (293).
+10. ✅ Validações em client e server; **testes automatizados a passar** (294).
 
 ### 28.2 Critérios da Fase 6 (a cumprir com a §24)
 11. ⬜ Cliente consegue **cancelar** o seu agendamento pela plataforma, **sem penalização**.
@@ -230,6 +251,11 @@ SET FOREIGN_KEY_CHECKS = 1;
 21. ⬜ O *dropdown* do autocomplete **não** aparece no carregamento de `/registo` (§24.8).
 22. ⬜ O gestor **reverte/exclui** um agendamento **antes** de a rota ser confirmada e ele volta a **qualificado** (nunca `cancelado`); em rota confirmada **não se altera**.
 23. ⬜ Existe uma página de **avisos** por perfil, com **contador de não lidos** no sino e ligação no menu do utilizador.
+24. ⬜ Existe página das **comissões** por funcionário, com os valores **já gravados na aceitação**.
+25. ⬜ O backoffice tem **sidebar** (a navbar atual está no limite) e as páginas `/gestao/*` mantêm a autorização por perfil.
+26. ⬜ Existe **gestão de fornecedores** em `/gestao/fornecedores` sobre a tabela `fornecedor` **já carregada** com os 43 fornecedores reais (RF-85 · §25.1).
+27. ✅ As **durações reais dos 35 serviços**, os **43 fornecedores** e os **65 clientes** entregues pelo cliente estão na BD por **migração idempotente** gerada a partir do ficheiro (`database_migration_v4.sql` — RF-86 · §24.11).
+28. ⬜ Os **contadores públicos** (`site-stats`) nunca publicam número **inventado** nem **sabidamente incompleto**: contagem da BD → valor documental → chaves de `SITE_STATS_DOCUMENTAL` (§3.12).
 
 ### 28.3 Critérios transversais (sempre)
 ✅ Código organizado e legível · ✅ interface responsiva · ✅ validações client+server ·

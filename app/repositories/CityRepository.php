@@ -28,4 +28,8 @@ class CityRepository extends BaseRepository {
         $sql .= " ORDER BY c.nome ASC";
         return $this->fetchAll($sql, $params);
     }
+
+    public function countAll(): int {
+        return (int)$this->fetchRaw("SELECT COUNT(*) AS total FROM cidade")["total"];
+    }
 }

@@ -19,6 +19,8 @@
     <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/js/api/api.js"></script>
     <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/js/utils/general.utils.js"></script>
     <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/js/utils/bookingStatus.utils.js"></script>
+    <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/js/utils/vat.utils.js"></script>
+    <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/js/utils/siteStats.utils.js"></script>
 
     <!-- Backoffice base -->
     <script type="text/javascript" src="<?= BASE_URL ?>/modules/backoffice/js/bo.utils.js"></script>

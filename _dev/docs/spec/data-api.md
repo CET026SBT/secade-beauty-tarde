@@ -71,15 +71,17 @@
 | `gorjeta`              | Registos de gorjeta — **sem UI no MVP**                                                       |
 
 ### 17.7 Ficheiros SQL e ordem de importação
-| Ficheiro                         | Função                                                                                                                                                          |
-| :------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`DataBase_v2.sql`**            | Dump **completo** (24 tabelas + dados de referência) — **1.º**                                                                                                  |
-| **`database_seed.sql`**          | Utilizadores de teste + morada — **2.º (obrigatório)**                                                                                                          |
-| `database_migration_v2.sql`      | Migração v1→v2 (**uso único**, só em BD v1 com dados)                                                                                                           |
-| `database_migration_v3.sql`      | Migração v2→v3 (**idempotente**): `servico.ativo`, `cliente.morada` anulável, **drop de `funcionario_categoria`**                                               |
-| ~~`DataBase.sql`~~               | Dump v1 (21 tabelas) — ❌ não usar                                                                                                                              |
-| ~~`DataBase_backup_pre_v2.sql`~~ | Arquivo histórico — ❌ não usar. ⚠️ Está em **UTF-16 LE** (dump legado do HeidiSQL); reconverter para UTF-8 (`iconv -f UTF-16LE -t UTF-8`) se for necessário no |
-|                                  | futuro                                                                                                                                                          |
+| Ficheiro                         | Função                                                                                                                                                                           |
+| :------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`DataBase_v2.sql`**            | Dump **completo** (24 tabelas + dados de referência) — **1.º**                                                                                                                   |
+| **`database_seed.sql`**          | Utilizadores de teste + morada — **2.º (obrigatório)**                                                                                                                           |
+| `database_migration_v2.sql`      | Migração v1→v2 (**uso único**, só em BD v1 com dados)                                                                                                                            |
+| `database_migration_v3.sql`      | Migração v2→v3 (**idempotente**): `servico.ativo`, `cliente.morada` anulável, **drop de `funcionario_categoria`**                                                                |
+| `database_migration_v4.sql`      | Migração v3→v4 (**idempotente**): **corrige as 35 durações** do catálogo, cria a tabela **`fornecedor`** (43 fornecedores) e carrega os **65 clientes** entregues pelo cliente — |
+|                                  | **§24.11**                                                                                                                                                                       |
+| ~~`DataBase.sql`~~               | Dump v1 (21 tabelas) — ❌ não usar                                                                                                                                               |
+| ~~`DataBase_backup_pre_v2.sql`~~ | Arquivo histórico — ❌ não usar. ⚠️ Está em **UTF-16 LE** (dump legado do HeidiSQL); reconverter para UTF-8 (`iconv -f UTF-16LE -t UTF-8`) se for necessário no                  |
+|                                  | futuro                                                                                                                                                                           |
 
 Detalhe operacional de importação em **§27**.
 
@@ -164,6 +166,22 @@ erDiagram
 
 **Nota:** os nomes e a granularidade fecham-se com a implementação; o que esta secção registra é a
 **necessidade** e o **âmbito** da alteração. **Estado:** ⬜ por implementar (D-12).
+
+#### Fornecedores — tabela **já criada** (migração v4 · §24.11)
+
+> **Justificação da alteração de BD** (`.clinerules` §1): o cliente entregou **43 fornecedores reais**
+> no ficheiro *Serviços, Clientes e Fornecedores.xlsx* e a **gestão de fornecedores é a prioridade 1**
+> do trabalho futuro (§25.1) — sem tabela, os dados não têm onde ficar. A alteração **acrescenta**
+> apenas: nenhuma tabela existente muda.
+
+| Tabela          | Papel                                                          | Campos                                                                                |
+| :-------------- | :------------------------------------------------------------- | :------------------------------------------------------------------------------------ |
+| ✅ `fornecedor` | Fornecedores (produtos/consumíveis, rendas, serviços externos) | `id` · `nome` · `nif` · `email` · `telemovel` · `ativo` · `observacoes` · `criado_em` |
+
+- **Estado:** ✅ tabela criada e **43 fornecedores carregados** (`database_migration_v4.sql`).
+- ⬜ **Falta:** o módulo do backoffice (`/gestao/fornecedores`) e os endpoints `admin-supplier-*` (§25.1).
+- ⚠️ **5 fornecedores vinham sem NIF válido** (rótulo de canal/observação, não NIF) → `nif` fica `NULL`
+  e o rótulo passa para `observacoes` (§24.11).
 
 ## 18. ARQUITETURA E CONVENÇÕES
 
@@ -302,7 +320,7 @@ View (PHP) → JS componente → api.js → api.php (routing) → Controller →
 - `DataBase.sql` / `DataBase_v2.sql`: alinhados com `ativo`; `DataBase_v2.sql` sem `funcionario_categoria`
 
 **Testes**
-- `_dev/tests/{functional_test,http_test,asset_test,js_syntax_check}.php` — **293 verificações** (§26)
+- `_dev/tests/{functional_test,http_test,asset_test,js_syntax_check}.php` — **294 verificações** (§26)
 
 **Ferramentas de desenvolvimento**
 - `_dev/tools/` — utilitários de manutenção dev-only (encoding, formatação/validação de `.md`,
@@ -325,76 +343,8 @@ View (PHP) → JS componente → api.js → api.php (routing) → Controller →
 
 > 🔗 **Fonte única: `.clinerules` §4** — conteúdo da branch, a regra de nunca ser integrada, o
 > comportamento do `.gitignore` e o uso de `git add -f`. **Não se repete aqui.**
-
 ## 19. API / ENDPOINTS
 
-**Padrão:** `?action=<dominio>-<acao>` · **37 endpoints** registados em `app/config/api.php`.
-Resposta de sucesso: `{"success":true, …chaves na raiz}`; erro: `{"success":false,"message":"…"}`
-(+ `errors` por campo em **422**).
-
-### 19.1 Públicos e de cliente
-| Endpoint                         | Método | Descrição                                           | Acesso         |
-| :------------------------------- | :----- | :-------------------------------------------------- | :------------- |
-| `auth-register`                  | POST   | Registo (cliente público; gestor pode criar perfis) | público        |
-| `auth-login` / `auth-logout`     | POST   | Gestão de sessão                                    | público / auth |
-| `city-supported`                 | GET    | Listagem das 10 cidades                             | público        |
-| `category-all`                   | GET    | Listagem das 3 categorias profissionais             | público        |
-| `booking-services`               | GET    | Catálogo de serviços ativos                         | público        |
-| `feedback-list`                  | GET    | Feedback público (testemunhos)                      | público        |
-| `booking-availability`           | GET    | Consulta de slots (data + duração + canal)          | público*       |
-| `booking-otp-request`            | POST   | Pedido de OTP (devolve código no ecrã)              | cliente        |
-| `booking-create-store`           | POST   | Cria agendamento de loja                            | cliente        |
-| `booking-create-amb`             | POST   | Cria agendamento de ambulatório (com validação OTP) | cliente        |
-| `booking-my`                     | GET    | Consulta de agendamentos do cliente                 | cliente        |
-| `customer-profile`               | GET    | Dados de perfil e moradas do cliente                | cliente        |
-| `customer-address-list`          | GET    | Listagem de moradas                                 | cliente        |
-| `customer-address-store`         | POST   | Registo de nova morada                              | cliente        |
-| `customer-address-set-principal` | POST   | Definição de morada principal                       | cliente        |
-| `customer-address-delete`        | POST   | Remoção de morada                                   | cliente        |
-| `feedback-my`                    | GET    | Estado do feedback do cliente                       | cliente        |
-| `feedback-create`                | POST   | Submissão de nova avaliação                         | cliente        |
-
-\* `booking-availability` não exige sessão, mas devolve apenas grelha de horários (sem dados pessoais).
-
-### 19.2 Backoffice — funcionário
-| Endpoint                      | Método | Descrição                                                      | Acesso      |
-| :---------------------------- | :----- | :------------------------------------------------------------- | :---------- |
-| `admin-service-pending-list`  | GET    | Serviços de ambulatório por aceitar                            | funcionário |
-| `admin-service-accepted-list` | GET    | Serviços aceites pelo funcionário + totais                     | funcionário |
-| `admin-service-accept`        | POST   | Aceitar serviço (inclui cálculo de recibo verde)               | funcionário |
-| `admin-service-unaccept`      | POST   | Desfazer / trocar atribuição (bloqueia com 409 se consolidado) | funcionário |
-
-### 19.3 Backoffice — gestor
-| Endpoint                          | Método | Descrição                                                               |
-| :-------------------------------- | :----- | :---------------------------------------------------------------------- |
-| `admin-appointments-list`         | GET    | Agendamentos (com filtros e paginação)                                  |
-| `admin-appointment-details`       | GET    | Detalhe por serviço/funcionário, progresso e registo de execução        |
-| `admin-appointment-cancel`        | POST   | Cancelar agendamento (retorna erro 409 se em estados terminais)         |
-| `admin-appointment-execute`       | POST   | Registar execução do agendamento (operação idempotente)                 |
-| `admin-routes-list`               | GET    | Rotas por dia e cidade com custos, lucros e indicador `meetsReference`  |
-| `admin-route-decide`              | POST   | Aprovar ou recusar rota de forma manual                                 |
-| `admin-fiscal-calendar-list`      | GET    | Calendário fiscal com geração on-demand de alertas                      |
-| `admin-fiscal-alert-list`         | GET    | Listagem de alertas fiscais progressivos                                |
-| `admin-fiscal-obligation-create`  | POST   | Criar nova obrigação fiscal (retorna erro 422 se dados inválidos)       |
-| `admin-fiscal-obligation-paid`    | POST   | Marcar obrigação como paga (validações 404 e 409)                       |
-| `admin-fiscal-alert-read`         | POST   | Marcar alertas fiscais como lidos                                       |
-| `admin-green-receipt-config`      | GET    | Consultar configuração de recibos verdes em vigor                       |
-| `admin-green-receipt-config-save` | POST   | Guardar configuração de recibos verdes (erro 422 se a soma não for 100) |
-| `admin-green-receipt-simulate`    | GET    | Simular distribuição de valores de recibos verdes para um dado montante |
-
-### 19.4 Matriz de códigos HTTP
-| Situação                               | Código HTTP       |
-| :------------------------------------- | :---------------- |
-| Sessão ausente / não autenticado       | **401**           |
-| Perfil sem permissão (não autorizado)  | **403**           |
-| Recurso inexistente                    | **404**           |
-| Endpoint inexistente / método errado   | **404** / **405** |
-| Conflito / violação de regra de estado | **409**           |
-| Erro de validação (com lista `errors`) | **422**           |
-
-### 19.5 Endpoints **previstos e não implementados** (futuro — §25)
-- `customer-booking-cancel` (cancelamento pelo cliente — §24.6)
-- `client-alert-*` (lembretes ao cliente — §24.6)
-- `admin-deposit-config` (configuração do sinal — §24.5)
-- `admin-payment-*` (cobrança dos 90 % + método — §24.5)
-- `admin-supplier-*` (**Fornecedores — prioridade máxima entre os futuros** — §25) · `admin-dashboard-summary` (dashboard do gestor — §24.7) · `admin-employee-agenda-list` (agenda do funcionário — §24.7) · `admin-alert-summary` (sininho — §24.7)
+> 🔗 **Fonte única: `_dev/docs/spec/data-api-endpoints.md`** — catálogo de endpoints por perfil, matriz de
+> códigos HTTP, a regra do número publicado em `site-stats` e a lista do que **falta** implementar
+> (§19.1–§19.5). **Não se repete aqui** (o ficheiro foi separado quando este chegou ao limite de 400 linhas).

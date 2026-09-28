@@ -37,25 +37,36 @@
 
 ### 29.2 Mapa documental
 
-| Ficheiro                                              | Papel                                                                                                       | Autoridade                           |
-| :---------------------------------------------------- | :---------------------------------------------------------------------------------------------------------- | :----------------------------------- |
-| **`especificacao_mvp.md`**                            | **Router**: mapa `§ → ficheiro`, prevalência, fontes                                                        | ✅ **máxima** — prevalece sobre tudo |
-| **`_dev/docs/spec/*.md`**                             | Especificação por domínio (§1–§29) — **o conteúdo**                                                         | ✅ **máxima** — prevalece sobre tudo |
-| `_dev/docs/README.md`                                 | Regras e mapa da documentação **on-demand**                                                                 | normativo (documentação)             |
-| `_dev/docs/out/**`                                    | **Artefactos** gerados sob demanda (relatório, auditoria, mapa, guia, histórico) — nome fixo, IDs próprios, | derived — **não normativo**          |
-|                                                       | **regenerados em cima**                                                                                     |                                      |
-| `_dev/docs/rules/` · `_dev/docs/templates/`           | Receitas e moldes para gerar documentos sob demanda                                                         | apoio                                |
-| `.clinerules`                                         | Operação: restrições, convenções **aplicadas**, Git                                                         | normativo (operação)                 |
-| `_dev/tests/README.md`                                | Suites de teste, execução e pré-requisitos                                                                  | normativo (testes)                   |
-| `_dev/tools/README.md`                                | Catálogo e comportamento das ferramentas                                                                    | normativo (ferramentas)              |
-| `README.md`                                           | Instalação e uso rápido                                                                                     | apoio                                |
-| `_dev/mapaMentalMVP/analise_backoffice_gestor.md`     | Análise do backoffice do gestor (requisitos do cliente)                                                     | apoio (não normativo)                |
-| `_dev/mapaMentalMVP/auditoria_plataforma.md`          | Auditoria: planeamento, código e cruzamento com o estado                                                    | apoio (não normativo)                |
-| `_dev/mapaMentalMVP/mensagem_teams.txt`               | Comunicação e dúvidas para o grupo/Teams                                                                    | apoio (não normativo)                |
-| `_dev/mapaMentalMVP/Menu Dashboard.docx`              | Entrada do cliente — menus, **mapa de células** e capturas                                                  | apoio (não normativo)                |
-| `_dev/mapaMentalMVP/Contabilidade Secade Beauty.xlsx` | Entrada do cliente — **9 folhas** de contabilidade (it. 4)                                                  | apoio (não normativo)                |
-| ~~`_dev/mapaMentalMVP/Menu APOIO 3.docx`~~            | **Substituído** pelo *Menu Dashboard.docx* (iteração 4)                                                     | histórico (não normativo)            |
-| ~~`_dev/mapaMentalMVP/CUSTOS RH 2.xlsx`~~             | **Substituído** pelo *Contabilidade Secade Beauty.xlsx*                                                     | histórico (não normativo)            |
+| Ficheiro                                                                                  | Papel                                                                                 | Autoridade                           |
+| :---------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------ | :----------------------------------- |
+| **`especificacao_mvp.md`**                                                                | **Router**: mapa `§ → ficheiro`, prevalência, fontes                                  | ✅ **máxima** — prevalece sobre tudo |
+| **`_dev/docs/spec/*.md`**                                                                 | Especificação por domínio (§1–§29) — **o conteúdo**                                   | ✅ **máxima** — prevalece sobre tudo |
+| `_dev/docs/spec/data-api-endpoints.md`                                                    | **§19** — endpoints, códigos HTTP e o que falta (separado do `data-api.md` por limite | ✅ **máxima** — prevalece sobre tudo |
+|                                                                                           | de linhas)                                                                            |                                      |
+| `_dev/docs/spec/backlog-future.md`                                                        | **§25** — trabalho futuro priorizado e menus do backoffice (separado do `backlog.md`) | ✅ **máxima** — prevalece sobre tudo |
+| `_dev/docs/README.md`                                                                     | Regras e mapa da documentação **on-demand**                                           | normativo (documentação)             |
+| `_dev/docs/out/**`                                                                        | **Artefactos** gerados sob demanda (relatório, auditoria, mapa, guia, histórico) —    | derived — **não normativo**          |
+|                                                                                           | nome fixo, IDs próprios,                                                              |                                      |
+|                                                                                           | **regenerados em cima**                                                               |                                      |
+| `_dev/docs/rules/` · `_dev/docs/templates/`                                               | Receitas e moldes para gerar documentos sob demanda                                   | apoio                                |
+| `.clinerules`                                                                             | Operação: restrições, convenções **aplicadas**, Git                                   | normativo (operação)                 |
+| `_dev/tests/README.md`                                                                    | Suites de teste, execução e pré-requisitos                                            | normativo (testes)                   |
+| `_dev/tools/README.md`                                                                    | Catálogo e comportamento das ferramentas                                              | normativo (ferramentas)              |
+| `README.md`                                                                               | Instalação e uso rápido                                                               | apoio                                |
+| `_dev/mapaMentalMVP/analise_backoffice_gestor.md`                                         | Análise do backoffice do gestor (requisitos do cliente)                               | apoio (não normativo)                |
+| `_dev/mapaMentalMVP/auditoria_plataforma.md`                                              | Auditoria: planeamento, código e cruzamento com o estado                              | apoio (não normativo)                |
+| `_dev/mapaMentalMVP/mensagem_teams.txt`                                                   | Comunicação e dúvidas para o grupo/Teams                                              | apoio (não normativo)                |
+| `_dev/mapaMentalMVP/Menu Dashboard.docx`                                                  | Entrada do cliente — menus, **mapa de células** e capturas                            | apoio (não normativo)                |
+| `_dev/mapaMentalMVP/Contabilidade Secade Beauty.xlsx`                                     | Entrada do cliente — **9 folhas** de contabilidade (it. 4)                            | apoio (não normativo)                |
+| `_dev/mapaMentalMVP/Serviços, Clientes e Fornecedores.xlsx`                               | Entrada do cliente — **43 fornecedores + 65 clientes** carregados na BD (§24.11)      | apoio (não normativo)                |
+| `_dev/mapaMentalMVP/Secade Duração Serviços 1.ods`                                        | Entrada do cliente — **durações reais dos 35 serviços** (3 blocos: Cabeleireiro ·     | apoio (não normativo)                |
+|                                                                                           | Estética · Barbearia)                                                                 |                                      |
+| `_dev/mapaMentalMVP/Faturas de vendas SECADE BEAUTY,Lda.xlsx`                             | Entrada do cliente — **faturas de vendas por serviço** (loja + ambulante), por cruzar | apoio (não normativo)                |
+|                                                                                           | (§24.12)                                                                              |                                      |
+| `_dev/mapaMentalMVP/imagem (2).png`                                                       | Entrada do cliente — **calendário fiscal resumido** de 2026 com responsáveis (§13)    | apoio (não normativo)                |
+| `_dev/mapaMentalMVP/Gastos e Rendimentos_Simulador processamento de salários Secade.xlsx` | Entrada do cliente — **folha de salários** (só valores; sem nomes — §24.9)            | apoio (não normativo)                |
+| ~~`_dev/mapaMentalMVP/Menu APOIO 3.docx`~~                                                | **Substituído** pelo *Menu Dashboard.docx* (iteração 4)                               | histórico (não normativo)            |
+| ~~`_dev/mapaMentalMVP/CUSTOS RH 2.xlsx`~~                                                 | **Substituído** pelo *Contabilidade Secade Beauty.xlsx*                               | histórico (não normativo)            |
 
 **Histórico — regras revogadas e decisões antigas:** os `.pdf` iniciais e os `.md` de planeamento
 anteriores foram **eliminados** e **não se acumulam aqui**. O arquivo é o **histórico do Git**:
@@ -109,6 +120,6 @@ git show <revisão>^:<ficheiro>                # ver o conteúdo original
 
 ---
 
-**Versão:** 2.0 · **Data:** 24/09/2026 · **Estado:** ✅ Fases 1-5 concluídas e validadas (293 verificações) ·
-⬜ Fase 6 (requisitos adicionais — §24) em curso
+**Versão:** 2.0 · **Data:** 24/09/2026 · **Estado:** ✅ Fases 1-5 concluídas e validadas (294 verificações) ·
+⬜ Fase 6 (requisitos adicionais §24 + módulos do backoffice, **sidebar** e **comissões**) em curso
 **Prevalência:** este documento é a **única** fonte de requisitos. As fontes anteriores estão revogadas — arquivo no Git (§29.2)

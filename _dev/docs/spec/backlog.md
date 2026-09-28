@@ -12,16 +12,18 @@
 
 ### 24.0 Resumo executivo
 
-| #        | Tema                                                                     | Estado     | Impacto Principal                 |
-| :------- | :----------------------------------------------------------------------- | :--------- | :-------------------------------- |
-| **24.1** | Re-avaliação dinâmica dos slots                                          | 🟡 parcial | UX — prevenção de slots obsoletos |
-| **24.2** | Página de detalhes de serviço + carousel                                 | ⬜ ausente | Enriquecimento do Catálogo        |
-| **24.3** | Encaminhamento por tipo de contrato                                      | ⬜ ausente | Regra de negócio operacional      |
-| **24.4** | Multicidades + flexibilidade horária + alertas                           | ⬜ ausente | Gestão de Operação e Logística    |
-| **24.5** | Sinal configurável + 10/90 + métodos de pagamento                        | 🟡 parcial | Componente Financeiro             |
-| **24.6** | Regra das 24h + lembrete + cancelamento pelo cliente                     | ⬜ ausente | **Crítico / Operacional**         |
-| **24.7** | Backoffice: dashboard, gráficos, agenda do funcionário e regra das rotas | ⬜ ausente | Entrada do backoffice e operação  |
-| **24.8** | Defeito: dropdown do autocomplete visível no canto (`/registo`)          | ⬜ defeito | UI do registo                     |
+| #         | Tema                                                                     | Estado     | Impacto Principal                 |
+| :-------- | :----------------------------------------------------------------------- | :--------- | :-------------------------------- |
+| **24.1**  | Re-avaliação dinâmica dos slots                                          | 🟡 parcial | UX — prevenção de slots obsoletos |
+| **24.2**  | Página de detalhes de serviço + carousel                                 | ⬜ ausente | Enriquecimento do Catálogo        |
+| **24.3**  | Encaminhamento por tipo de contrato                                      | ⬜ ausente | Regra de negócio operacional      |
+| **24.4**  | Multicidades + flexibilidade horária + alertas                           | ⬜ ausente | Gestão de Operação e Logística    |
+| **24.5**  | Sinal configurável + 10/90 + métodos de pagamento                        | 🟡 parcial | Componente Financeiro             |
+| **24.6**  | Regra das 24h + lembrete + cancelamento pelo cliente                     | ⬜ ausente | **Crítico / Operacional**         |
+| **24.7**  | Backoffice: dashboard, gráficos, agenda do funcionário e regra das rotas | ⬜ ausente | Entrada do backoffice e operação  |
+| **24.8**  | Defeito: dropdown do autocomplete visível no canto (`/registo`)          | ⬜ defeito | UI do registo                     |
+| **24.9**  | RH: folha de salários e líquido a pagar **calculados**                   | ⬜ ausente | Custo de pessoal e RH             |
+| **24.10** | Calendário fiscal: 8 famílias de obrigações e calendário de 2026         | 🟡 parcial | Módulo do Calendário Fiscal       |
 
 ### 24.1 — Re-avaliação dinâmica dos slots (D-07)
 **Exigido:** o tempo estimado deve ser re-avaliado sempre que o cliente adiciona/descarta serviços,
@@ -202,19 +204,19 @@ com **todos** os serviços aceites.
 10. **Página centralizada de avisos (RF-81 · D-15):** `/gestao/avisos`, alcançável no **menu do
     utilizador** e pelo **clique no sino**; contador de não lidos por `alerta_fiscal` (global) e, quando
     existirem lembretes não fiscais, ➕ `notificacao` com leitura **por utilizador**.
-11. **Comissões do funcionário:** página própria (proposta `/gestao/comissoes`), acessível pelo **menu do
-    utilizador** e, na Fase 7, pela **sidebar**; os dados já existem
+11. **Comissões do funcionário (RF-84):** página própria `/gestao/comissoes`, acessível pelo **menu do
+    utilizador** e pela **sidebar**; os dados já existem
     (`agendamento_servico.valor_recibo_verde_funcionario`, snapshot por aceitação — §11).
 
 > **Fases (28/09/2026):** os módulos do backoffice ficam **alinhados na Fase 6** (pedido do gestor, pelo
-> prazo); a **Fase 7** reserva-se à **sidebar** do backoffice (a renomeação de `/gestao/agendamentos`
-> **não** avança). O Chart.js é copiado para `modules/common/lib/chartjs/` na **mesma fase** em que os
-> gráficos forem implementados. **Ordem interna (de §1.9, sem conflito bloqueante):** 6.0 painel +
-> autorização por perfil → 6.1 fornecedores → 6.2 contabilidade → 6.3 RH → 6.5 área do funcionário
-> (**promoções saem da Fase 6** — 28/09/2026: passam a **Fase 8**, com o risco de **retro-atualização de
-> histórico e agendamentos passados** a avaliar antes de implementar). **Dependências assinaladas:** o card
-> *Dívidas a Fornecedores* do dashboard só existe depois de 6.1 (C-11 — até lá, estado vazio explicativo) e
-> a **sidebar (Fase 7)** passa a ser a via de acesso à página das **comissões** (RF-81 não a inclui).
+> prazo), **incluindo a sidebar e a página das comissões** (28/09/2026: **descem da então Fase 7**, que
+> deixa de existir); `/gestao/agendamentos` **não** é renomeado. O Chart.js é copiado para
+> `modules/common/lib/chartjs/` na **mesma fase** em que os gráficos forem implementados.
+> **Ordem interna (de §1.9, sem conflito bloqueante):** 6.0 painel + autorização por perfil → 6.1
+> fornecedores → 6.2 contabilidade → 6.3 RH → 6.4 **sidebar + comissões** → 6.5 área do funcionário
+> (**promoções saem da Fase 6** — passam a **Fase 7**, com o risco de **retro-atualização de histórico e
+> agendamentos passados** a avaliar antes de implementar). **Dependências assinaladas:** o card
+> *Dívidas a Fornecedores* do dashboard só existe depois de 6.1 (C-11 — até lá, estado vazio explicativo).
 
 ### 24.8 — Defeito: dropdown do autocomplete visível no canto superior esquerdo (`/registo`)
 **Sintoma:** ao carregar `/registo`, o *dropdown* do autocomplete aparece **vazio no canto superior esquerdo**.
@@ -235,58 +237,114 @@ com **todos** os serviços aceites.
 regressão no `asset_test.php`. **Estado:** ⬜ corrigir **depois** do alinhamento — branch de contexto própria
 (`rules §4`).
 
-## 25. TRABALHO FUTURO PRIORIZADO
+### 24.9 — RH: folha de salários e líquido a pagar calculados (28/09/2026)
+**Exigido:** *"Relativamente à coluna Pagar Ao Pessoal, a tabela está preenchida. Mas se pudermos calcular
+através do site, será melhor."* → o **líquido a pagar** deixa de ser um número fixo do ficheiro e passa a ser
+**calculado** pela plataforma (módulo de RH, Fase **6.3**).
 
-> Ordem **vinculativa**: as implementações futuras devem seguir esta prioridade.
-> **A prioridade máxima entre todas é Fornecedores** (indicação explícita dos esclarecimentos de retificações, §3).
+**Verificado — a folha de 28/09 e o Balancete oficial dizem o mesmo:**
 
-### 25.1 Prioridade 1 — Fornecedores ⭐
-Gestão de fornecedores (produtos/consumíveis, custos, contactos) integrada no backoffice,
-seguindo a **estrutura de menus** existente (§25.5).
-- Requer: nova entidade + módulo no backoffice + endpoints `admin-supplier-*`.
-- Nota: alinhar com `transacao_financeira` (custos) e com o calendário fiscal (encargos).
+| Rubrica                    | Fórmula do ficheiro           | Calculado     | Balancete           |
+| :------------------------- | :---------------------------- | :------------ | :------------------ |
+| Remuneração do período     | base × 3 meses                | 19 950,00     | 6321 = 19 950,00    |
+| Subsídio de alimentação    | dias úteis × 6,15             | 2 312,40      | 6324 = 2 312,40     |
+| **Total de remunerações**  | —                             | **22 262,40** | **632 = 22 262,40** |
+| IRS retido                 | base × (8 % · 3,6 % · 8,56 %) | 1 221,00      | — (retenção)        |
+| SS do trabalhador          | base × 11 %                   | 2 194,50      | —                   |
+| SS da entidade             | saldo × 23,75 %               | 4 721,68      | 635 = 4 721,70      |
+| **Líquido a pagar**        | total − IRS − SS 11 %         | **18 846,90** | —                   |
+| **Custo total (conta 63)** | 632 saldo + 635 + 636 + 638   | **27 234,13** | **63 = 27 234,13**  |
 
-### 25.2 Prioridade 2 — Requisitos adicionais (§24)
-| Ordem   | Item de Desenvolvimento                                                     | Referência |
-| :------ | :-------------------------------------------------------------------------- | :--------- |
-| **2.1** | **Cancelamento pelo cliente** + **janela de 24 h** + **lembrete**           | §24.6      |
-| **2.2** | **Sinal configurável** no backoffice + **10/90** + **métodos de pagamento** | §24.5      |
-| **2.3** | **Re-avaliação dinâmica dos slots** (prevenção de conflitos de UX)          | §24.1      |
-| **2.4** | **Multicidades** + **flexibilidade horária** + **convenção de alertas**     | §24.4      |
-| **2.5** | **Página de detalhes de serviço + carousel**                                | §24.2      |
-| **2.6** | **Encaminhamento por tipo de contrato**                                     | §24.3      |
+**Ficheiro substituído:** o `CUSTOS RH 2.xlsx` (23/09) trazia subsídio **387,45 para todos** e SS patronal
+**4 738,13** — **não** fecha com o Balancete (2 312,40 · 4 721,70) e **não** é fonte.
 
-### 25.3 Prioridade 3 — Consolidações técnicas
-- **Migrar o backoffice** de `modules/backoffice/` para a pasta raiz **`admin/`** prevista no
-  prevista no planeamento v3.0 (bloqueado pela instrução de não tocar em `/admin`).
-- **UI para `transacao_financeira`, `fecho_caixa_diario` e `gorjeta`** (existem na BD, sem UI).
-- **Notificações** (SMS/e-mail) reais ou persistidas, em vez de simuladas.
-- **Recibo manual** (se não existir) — a alinhar com as restantes melhorias.
-- **Estimar o custo de deslocação intra-cidade:** a `matriz_deslocacao` só cobre o percurso
-  **base → cidade**; o combustível **dentro da cidade** **não está modelado**. Era esse o papel
-  provisório que os 50 € fixos desempenhavam (removidos em 24/09/2026). Avaliar uma estimativa real
-  — eventualmente com serviço de geolocalização, o que exigiria centralizar o do `AddressAutocomplete`
-  numa utilidade própria (padrão `apiClient.js`/`api.js`).
+**Trabalho a fazer:**
+1. `PayrollService` com as fórmulas de **RN-35**; as **taxas de IRS por trabalhador** são **dados**
+   (por trabalhador), não constantes de código — ⚠️ se mudam de mês para mês continua **por responder**
+   (pergunta **19**).
+2. Página do **RH** com os trabalhadores, os valores do mês e o **líquido a pagar calculado** (RF-82).
+3. **Dias úteis** do mês como base do subsídio — ⚠️ critério de feriados **não fechado** (perguntas **33** e
+   **34**): em 2026 janeiro desconta **1 dia** (1 de janeiro) e fevereiro **não** desconta o Carnaval.
+4. **Dias por trabalhador** — a folha usa **63** para cinco trabalhadores e **61** para um → falta a origem
+   dos 2 dias (faltas/férias) → **perguntar**.
 
-### 25.4 Prioridade 4 — Nice-to-have
-- **Notificações centralizadas** (página única de avisos, por perfil) — o *dashboard* deixou de ser nice-to-have: é **RF-77** (§24.7).
-- Histórico/auditoria de decisões e alterações.
-- Anexos/documentos nas obrigações fiscais.
-- Algoritmos/simuladores sobre os dados retidos (agendamentos auto-cancelados — §15.2).
+**⚠️ As identidades dos 6 trabalhadores não constam de nenhum ficheiro entregue.** Verificado nas duas
+fontes que os descrevem — `Contabilidade Secade Beauty.xlsx` (folha «Custos Funcionários») e
+`Gastos e Rendimentos_Simulador processamento de salários Secade.xlsx` (folha «Processamento de salário»):
+ambas trazem **apenas** vencimento base (1200 · 1200 · 1000 · 1000 · 1000 · 1250) e a taxa de IRS
+(8 % · 8 % · 3,6 % · 3,6 % · 3,6 % · 8,56 %) — **nenhum nome, NIF ou NISS** (a folha *DMR – DRI* está vazia).
+Consequências registadas:
+1. **A BD não pode ser completada** com os 6 trabalhadores sem **perguntar** os nomes → pergunta **nova**.
+2. Até lá, `funcionario` tem **1 registo** (o de teste) e o contador público **"Profissionais"** mostraria
+   **1** em vez dos **6** documentados → a chave `team` está em **`SITE_STATS_DOCUMENTAL`**
+   (`app/config/config.php`) e publica o **valor documental** enquanto a contagem da BD não estiver completa.
 
-### 25.5 Estrutura de menus do backoffice (convenção a manter)
-```
-/gestao                → gestor      (dashboard: KPIs no topo + gráficos + sininho)  (NOVO — §24.7)
-/gestao/agendamentos   → gestor      (lista, filtros, detalhe, execução, cancelamento, pagamentos*)
-/gestao/rotas          → gestor      (dia+cidade, decisão manual, alertas padronizados)
-/gestao/fiscal         → gestor      (calendário, obrigações, alertas progressivos)
-/gestao/recibos-verdes → gestor      (config. de percentagens + [config. do sinal*] + histórico)
-/gestao/servicos       → funcionário (aceitação/desfazer em **listagem**) — o gestor vê em supervisão
-/gestao/agenda         → funcionário (agenda em **calendário**: rotas confirmadas)   (NOVO — §24.7)
-/gestao/fornecedores*  → gestor      (PRIORIDADE 1 do futuro)
-```
-`*` = por implementar. **Toda a implementação futura deve encaixar nesta estrutura** (não criar
-menus paralelos).
-**Notas (28/09/2026):** a navbar do backoffice está no limite de lotação — a migração para **sidebar**
-(componente exclusivo do backoffice) fica para a **Fase 7**; a renomeação de `/gestao/agendamentos`
-**não avança** (o nome fica) e a **renomeação** de outras rotas só se fizer com a sidebar.
+### 24.10 — Calendário fiscal: 8 famílias de obrigações e calendário de 2026 (28/09/2026)
+**Exigido:** o calendário de 2026 entregue cobre **8 famílias** e **substitui** a lista anterior: SAF-T ·
+DMR · retenções na fonte IRS/IRC · Segurança Social · IVA (declaração e pagamento) · IRC (Modelo 22, por
+conta e final) · IES/DA.
+
+**Verificado:** `obrigacao_fiscal.tipo` ∈ {iva, irc, seguranca_social, seguros} — cobre **4 de 8**;
+`alerta_fiscal` (30/15/7/3/1 dia + atraso) **não muda**. Padrão mensal e prazos: §13.
+
+**Trabalho a fazer:**
+1. **Alargar o enum** (`saft`, `dmr`, `retencoes`, `ies`) com a justificação de BD registada — **revê a
+   D-15**, que fixou o enum para não receber lembretes **de fornecedores**; estas famílias são **fiscais**.
+2. **Importar** o calendário do ficheiro (RF-83): 53 linhas mensais + o bloco anual, normalizando estados e
+   prazos em fim de semana.
+3. **Confirmar** a regra do fim de semana — o próprio ficheiro trata casos iguais de forma diferente (§13).
+
+### 24.11 — Carga dos ficheiros de serviços, fornecedores e clientes (28/09/2026)
+
+**Entregues:** `Secade Duração Serviços 1.ods` (durações reais dos serviços) e
+`Serviços, Clientes e Fornecedores.xlsx` (43 fornecedores + 65 clientes reais).
+
+**Feito — `database_migration_v4.sql`** (idempotente, ids explícitos + `ON DUPLICATE KEY UPDATE`;
+aplicada **duas vezes** sem erro):
+
+| Carga                                                              | Resultado verificado                                                                                                                     |
+| :----------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------- |
+| **Durações** dos 35 serviços (Cabeleireiro · Estética · Barbearia) | 35 casados por nome; os **preços já coincidiam** com a BD — nada mudou                                                                   |
+| **Fornecedores**                                                   | tabela `fornecedor` (**nova**) + **43 registos**                                                                                         |
+| **Clientes**                                                       | `utilizador` (ids **100–164**, `password_hash='*'` — login impossível de propósito), `cliente` (65) e `cliente_morada` (ids **200–264**) |
+| **Conferência**                                                    | 65 clientes reais · 65 moradas novas · 65 utilizadores novos · **0 e-mails duplicados**                                                  |
+
+**Decisões tomadas na carga (todas por ausência de dado — nada foi inventado):**
+
+1. **E-mail gerado** — a folha não tem e-mails: `<slug-do-nome>.<NIF|sN>@cliente.secade.local`
+   (domínio inexistente, só para garantir a unicidade da coluna). ⚠️ **Confirmar** se fica assim ou se o
+   cliente fornece os endereços reais.
+2. **Telefone em branco** (a coluna vem vazia) e **morada só com a cidade** (`rua` e `codigo_postal`
+   vazios) — nos agendamentos ao domicílio a cidade define a **rota** (§8) e o resto pede-se no primeiro
+   agendamento.
+3. **5 fornecedores sem NIF válido** (o campo trazia um rótulo de canal/observação): Temu, ViceDeal.com,
+   Aliexpress, Consumíveis e *Bandido Portugal.pt* → `nif` = `NULL` e o rótulo passa para `observacoes`.
+4. **"Manuel jacinto (renda)" aparece duas vezes** com NIFs diferentes → são **duas rendas distintas**;
+   ambas mantidas (não é duplicado a limpar).
+5. **Correções por semelhança no que casava por nome:** `Cordolete`→**Cordelete** (id 2),
+   `Tranças Box Braids`→**Box Braids** (id 1), cidade `Arraiaolos`→**Arraiolos** (5 registos).
+   ⚠️ **A confirmar com o cliente** — foram correções por semelhança, não por evidência documental.
+
+**Natureza dos dados:** é **dados reais de cliente**, não demonstração — numa instalação de raiz entra pela
+migração **v4** (§27.2) e **não** pelo `database_seed.sql`.
+
+### 24.12 — Ficheiro de faturas de vendas: cruzamento pendente (28/09/2026)
+
+**Entregue:** `Faturas de vendas SECADE BEAUTY,Lda.xlsx` — **1 folha**, ainda por cruzar com o Balancete,
+a DR e o IVA.
+
+**O que o ficheiro diz (lido, ainda não cruzado):**
+
+| Bloco                            | Total de clientes | Valor base   | IVA          | Total c/ IVA  |
+| :------------------------------- | :---------------- | :----------- | :----------- | :------------ |
+| **Cabeleireiro — espaço físico** | 133               | 4 774,06     | 1 098,03     | 5 872,09      |
+| **Área ambulante**               | 117               | 3 505,56     | 806,28       | 4 311,84      |
+| **Janeiro (detalhe mensal)**     | —                 | **8 279,62** | **1 904,31** | **10 183,93** |
+
+- ⚠️ **O cabeçalho do ficheiro não corresponde ao detalhe mensal:** traz *Total Vendas/IVA* **29 638,74** e
+  *Total Vendas S/IVA* **24 101,65**, quando o detalhe de janeiro soma **10 183,93** / **8 279,62** → são
+  **períodos diferentes** no mesmo ficheiro. **Não se infere** qual é qual: **perguntar**.
+- ⚠️ Os valores de **deslocação** do bloco ambulante (1,60 · 2,40 · 2,80 €) **têm** de ser cruzados com a
+  `matriz_deslocacao` (§8) — é a única fonte que confirma as distâncias por cidade.
+- **Trabalho a fazer:** cruzar com **71/vendas** e **72/IVA** do Balancete e com a DR; se fechar, passa a ser
+  fonte de referência para o simulador de vendas (Fase **6.2**).

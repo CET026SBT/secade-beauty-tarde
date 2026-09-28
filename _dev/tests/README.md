@@ -9,10 +9,10 @@ especificação §26.
 | `functional_test.php` | **105**      | MySQL              | Camadas Service/Repository: catálogo, disponibilidade, conflitos, OTP, decisão manual de rotas, backoffice, perfil/moradas, transações e |
 |                       |              |                    | integridade relacional                                                                                                                   |
 | `http_test.php`       | **119**      | **Apache + MySQL** | Stack real (roteamento + sessões): autenticação dos 3 perfis, APIs REST, códigos de erro, fluxo end-to-end de carrinha e registo/login   |
-| `asset_test.php`      | **69**       | **Apache**         | Assets (HTTP 200), injeção de scripts por página e contrato de nomes do formulário de registo                                            |
+| `asset_test.php`      | **70**       | **Apache + MySQL** | Assets (HTTP 200), injeção de scripts por página e contrato de nomes do formulário de registo                                            |
 | `js_syntax_check.php` | 17 ficheiros | —                  | Estrutura e sintaxe de todos os ficheiros JavaScript (sem Node)                                                                          |
 
-**Total: 293 verificações.**
+**Total: 294 verificações.**
 
 ## Execução
 
@@ -20,15 +20,17 @@ especificação §26.
 php _dev/tests/js_syntax_check.php   # SINTAXE JS: OK                        (sem dependências)
 php _dev/tests/functional_test.php   # 105 pass, 0 fail                     (requer MySQL)
 php _dev/tests/http_test.php         # 119 pass, 0 fail                     (requer Apache + MySQL)
-php _dev/tests/asset_test.php        #  69 verificações (56 pass, 13 fail — sessão)   (requer Apache)
+php _dev/tests/asset_test.php        #  70 pass, 0 fail                     (requer Apache + MySQL)
 ```
 
 Cada suite imprime o resumo final (`N pass, M fail`) e termina com *exit code* `0` (tudo a passar)
 ou `1` (existe falha).
-> ⚠️ **Medição de 28/09/2026 (ambiente local):** a base `secade_beauty` **não está importada** (`Unknown database`), pelo que as verificações do `asset_test` que abrem **páginas
-> autenticadas** falham com **302** (**13** falhas). O *baseline*
-> **sem** a correção do §24.8 é idêntico (`53 pass, 13 fail`) — **não é regressão**. As verificações de
-> **assets (200)** e do **contrato de nomes** passam. **Importar a BD (§27.2) repõe a suite.**
+> ✅ **Medição de 28/09/2026 (ambiente local, já com a BD importada — §27.2):** as **4 suites passam**
+> (`105 + 119 + 70 = 294`, sintaxe JS OK). As verificações do `asset_test` que abrem **páginas
+> autenticadas** exigem sessão → requerem a BD importada; com a base de testes carregada passam todas.
+> ⚠️ **Cuidado ao contar registos:** a BD de desenvolvimento tem **dados reais de cliente** (clientes com
+> **id ≥ 100**, moradas **≥ 200** — §24.11) — as asserções que contam uma tabela inteira têm de se
+> limitar ao que o teste criou (foi o que se corrigiu no `http_test.php`, secção 12).
 
 ## Garantias
 

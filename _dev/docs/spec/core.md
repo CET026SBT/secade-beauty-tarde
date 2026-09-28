@@ -62,8 +62,8 @@ Fora destas exceções mantém-se a regra geral: **não instalar pacotes nem ado
 | :-- | :--------------------------------------------- | :-------------------------------------------------------------------------------- | :------------- |
 | 1   | Regras de operação                             | Como o trabalho é executado (restrições, convenções **aplicadas**, Git)           | `.clinerules`  |
 | 2   | **Regras de Ouro (§2.A–§2.E)**                 | Invariantes de produto — nenhuma decisão as contraria                             | este documento |
-| 3   | **Decisões finais (§3 · D-01…D-12)**           | Resolvem cada conflito de fontes; prevalecem sobre as fontes originais            | este documento |
-| 4   | **Regras de negócio (§5 · RN-01…RN-30)**       | Regra operativa e testável; **no detalhe, a RN vence a §2** (a §2 dá o princípio) | este documento |
+| 3   | **Decisões finais (§3 · D-01…D-15)**           | Resolvem cada conflito de fontes; prevalecem sobre as fontes originais            | este documento |
+| 4   | **Regras de negócio (§5 · RN-01…RN-35)**       | Regra operativa e testável; **no detalhe, a RN vence a §2** (a §2 dá o princípio) | este documento |
 | 5   | Requisitos e módulos (§4 · §6–§16 · §19 · §20) | O que o sistema faz e como; **conforma-se** às camadas 2–4                        | este documento |
 | 6   | Gap, futuro e critérios (§24 · §25 · §28)      | O que falta, por que ordem, e como se aceita                                      | este documento |
 | 7   | Manutenção (§29.3)                             | Meta-regras deste documento                                                       | este documento |
@@ -97,7 +97,7 @@ Sem motorista dedicado e sem controlo logístico de condução; **nada disso dev
 Aprovar ou recusar uma rota é **inteiramente do gestor**; o valor de referência é **apenas visual** e
 nunca bloqueia. Alertas fiscais gerados *on-demand*, sem CRON (D-01 · RN-05 · §12.3).
 
-## 3. DECISÕES FINAIS (D-01 … D-12)
+## 3. DECISÕES FINAIS (D-01 … D-15)
 
 > Decisões de produto que resolveram os conflitos entre fontes de planeamento. **As fontes originais
 > estão revogadas** e não se acumulam aqui — o histórico está no Git (§29.2). Cada decisão aponta as
@@ -184,6 +184,41 @@ sugerir loja física ou reagendamento; o cliente **pode cancelar** sem penaliza�
 **Regras:** RN-30 · **Requisitos:** RF-75 · RF-76 · **Exceções:** E-1…E-4 (§1.2) · **Dúvida aberta:**
 pergunta **36** de `mensagem_teams.txt` (que fonte prevalece em cada indicador) — enquanto não houver
 resposta, **cada widget declara a sua origem** e as somas mistas ficam interditas.
+
+**Confirmado nos documentos oficiais do grupo de contabilidade** (Balanço, Demonstração de resultados,
+Balancete e mapa de conferência de IVA do 1.º trimestre de 2026) — reduz a dúvida da origem sem a fechar:
+
+> **Ficheiros entregues a 28/09/2026** (folha de salários **atualizada**, calendário fiscal e simulador de
+> gastos/rendimentos): um ficheiro novo **substitui** o anterior **quando fecha com os documentos
+> oficiais**; quando **não fecha**, prevalece o **oficial** e a diferença é **perguntada** — nunca somada
+> nem escondida (linhas **13** e **14** abaixo). Os ficheiros de 23/09 que estes substituem **não** são
+> usados como fonte.
+
+| #   | O que os documentos provam                                                                               | Consequência no que se implementa                                                                   |
+| :-- | :------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------- |
+| 1   | A **Demonstração de resultados é acumulada** desde janeiro (fevereiro inclui janeiro)                    | O valor **mensal** é a **diferença** para o mês anterior — nunca o valor publicado                  |
+| 2   | As **vendas são tributadas a 23 %**, confirmado fatura a fatura no mapa de conferência                   | Taxa **uniforme na venda**; nas **compras** há 6 % e 23 % e existe IVA **não dedutível**            |
+| 3   | O **IVA dedutível** está no **Ativo**; do lado do **Passivo** só há **Segurança Social + IRS retido**    | São naturezas diferentes e **não se somam** num cartão de "dívidas a pagar"                         |
+| 4   | O **capital em dívida** é o saldo da conta de **empréstimos bancários**                                  | O cartão lê o **saldo da conta**; o plano de amortização **não** é valor contabilístico             |
+| 5   | A coluna de **2025 está vazia** em todos os mapas                                                        | **Não há período homólogo**: a variação só se calcula **mês a mês dentro de 2026**                  |
+| 6   | **Clientes = 0** no balanço                                                                              | Confirma o recebimento imediato (§14.1) e serve de **caso de teste**                                |
+| 7   | Pelo menos **um valor do resumo entregue** (`.xlsx`) **não coincide** com o documento oficial            | ⚠️ **Divergência a perguntar** ao grupo de contabilidade: prevalece o **documento oficial**         |
+| 8   | A **folha de salários atualizada** **fecha com o Balancete**: 6321 = 19 950,00 · 6324 = 2 312,40 · 632 = | O custo de pessoal e o **líquido a pagar** são **calculados** na plataforma (RF-82), nunca lidos de |
+|     | 22 262,40 · IRS retido 1 221,00 · SS do trabalhador 2 194,50 · conta **63 = 27 234,13**                  | célula                                                                                              |
+| 9   | O **subsídio de alimentação = dias úteis × 6,15 €**; em 2026: janeiro 21 · fevereiro 20 · março 22 =     | Base **variável por mês** (RN-35); o critério de feriados fica **a confirmar** (perguntas 33 e 34)  |
+|     | **63 dias** = 387,45 (em fevereiro **não** se desconta o Carnaval)                                       |                                                                                                     |
+| 10  | A base da **SS patronal (23,75 %)** é o **saldo de remunerações** (19 880,77) e não o bruto (19 950,00): | O encargo patronal usa a **base corrigida**; **2 cêntimos** de arredondamento a documentar          |
+|     | 23,75 % × 19 880,77 = 4 721,68 [Balancete 635 = 4 721,70]                                                |                                                                                                     |
+| 11  | As **depreciações conferem**: 44 715,45/4 anos = 2 794,71 · 913,99/3 anos = 76,17 · **2 870,88** = conta | Tabela de ativos e cartão de depreciações ficam com **prova numérica** (§26.3)                      |
+|     | 64; 45 629,44 − 2 870,88 = **42 758,56** = Ativo não corrente de março                                   |                                                                                                     |
+| 12  | Os **5 rácios** derivam do Balanço de março e **fecham**: liquidez 0,593596 · fundo de maneio −34 463,82 | Os rácios são **calculados** do Balanço importado, com **fórmula no `tooltip`** (§3.13 ponto 4)     |
+|     | · autonomia 0,089098 · endividamento 0,910902 · solvabilidade 0,097813                                   |                                                                                                     |
+| 13  | O **simulador de gastos/rendimentos** diverge em **62** (15 277,70 vs **6 527,30**) e **69** (425,00 vs  | ⚠️ **Perguntar as duas contas**; o dashboard apresenta o **RAI oficial (−12 945,58)**               |
+|     | **415,32**); o RAI dele (−21 705,66, que **substitui** o −21 705,26 de 25/09) é **exatamente** −12       |                                                                                                     |
+|     | 945,58 − 8 750,40 − 9,68                                                                                 |                                                                                                     |
+| 14  | O **plano de amortização** (25 983,20 amortizado · 24 016,80 em dívida) **não é** o saldo real (645,34 · | **Real** e **plano** são indicadores **distintos**, identificados como tal — nunca somados          |
+|     | **49 354,66**)                                                                                           |                                                                                                     |
+
 **Estado:** 🟡 desenho fechado; implementação ⬜.
 
 **Porquê estas exceções:** as bibliotecas vieram no material de formação entregue ao projeto
@@ -191,11 +226,38 @@ resposta, **cada widget declara a sua origem** e as somas mistas ficam interdita
 que o cliente entrega o balancete. **Alternativa rejeitada nesta fase:** leitor próprio em PHP puro
 (ZIP por `zlib` + XML por `SimpleXML`) — viável e já testado, mas com mais código para manter e sem o
 tratamento de datas/formatos que a biblioteca já oferece.
+
+**Números publicados no site (contadores da página pública).** Os contadores do `Sobre nós` e do
+catálogo (`site-stats` · §19.1) obedecem à mesma regra de origem: **primeiro o valor contado na BD**;
+se a contagem for **0**, publica-se o **valor documental** (`SITE_STATS_FALLBACK`); e para as chaves
+listadas em **`SITE_STATS_DOCUMENTAL`** o documental mantém-se **mesmo com contagem > 0** — é o caso de
+`team`, porque a folha de salários documenta **6 trabalhadores** e a BD tem **1** (§24.9). Assim a página
+**nunca publica um número inventado nem um número sabidamente incompleto**.
+
 ### 3.13 — D-13 · Forma de apresentação: gráficos no financeiro, tabelas e calendários na operação
 **Decisão (28/09/2026):** os **dados contabilísticos/financeiros** apresentam-se **maioritariamente em
 gráficos** (Chart.js · E-3), com **tabelas apenas onde fizer sentido**; a **gestão de operação**
 (agendamentos, rotas, fiscal, serviços) mantém **tabelas** e **calendários** — sem gráficos.
 **Requisitos:** RF-77 · RF-78 · RF-79 · **Estado:** ⬜ por implementar (§24.7).
+
+**Forma dos indicadores no dashboard** (complementa D-13; é apresentação, não cálculo):
+
+| #   | Forma                                                                             | Onde se aplica                              |
+| :-- | :-------------------------------------------------------------------------------- | :------------------------------------------ |
+| 1   | **Cartão de KPI:** ícone + rótulo + valor + **variação face ao mês anterior**     | totais de topo (receita, custos, resultado) |
+| 2   | **Circular com o total ao centro** e legenda com **valor absoluto e percentagem** | distribuições (canal, rubrica, categoria)   |
+| 3   | **Barras agrupadas por rubrica**, com legenda de séries                           | rendimentos *vs* gastos, por mês            |
+| 4   | **Fórmula no `tooltip`** do indicador                                             | indicadores de **rácio**                    |
+| 5   | **Lista de detalhe + total do período**                                           | ativos e depreciações, custo de pessoal     |
+| 6   | **Faixa-resumo `A + B = C`**                                                      | somas parciais que fecham num total         |
+| 7   | **Período identificado** no próprio cartão                                        | todos os indicadores                        |
+| 8   | **Cor e estado são informativos** — nunca bloqueiam nem decidem (RN-05 · §3.1)    | indicadores de rácio                        |
+
+- A variação do ponto **1** só existe **dentro de 2026** (não há coluna de 2025 — ver §3.12).
+- Os **limiares** que dão a cada rácio o seu estado (*bom* / *atenção*) são **decisão do cliente** e
+  **não se inferem**; enquanto não houver resposta, o cartão mostra o valor e a fórmula, **sem** veredicto.
+- O **seletor de período** (mensal / trimestral / anual) está **por confirmar**; até lá o dashboard
+  apresenta **um** período e identifica-o (ponto **7**).
 
 ### 3.14 — D-14 · Entrada e páginas do backoffice por perfil
 **Decisão (28/09/2026):** `/gestao` é o **dashboard do gestor** (substitui o encaminhamento para a lista,
@@ -214,3 +276,25 @@ CRON); o **calendário fiscal fica fiscal** e o enum `obrigacao_fiscal.tipo` **n
 partir o que existe). A **página centralizada de avisos** é uma por perfil, alcançável pelo **menu do
 utilizador** e pelo **clique no sino** (`/gestao/avisos`).
 **Requisitos:** RF-81 · **Estado:** ⬜ por implementar (§24.7).
+
+### 3.16 — D-16 · O catálogo guarda o líquido, o cliente vê o valor com IVA
+
+> **Decisão (28/09/2026):** a BD guarda **sempre** o **preço base tributável** (sem IVA) em
+> `servico.preco_base` e nos valores gravados no agendamento; **todos** os ecrãs **virados ao cliente**
+> apresentam o valor **com IVA**, calculado numa única utilidade (`vatUtils`) a partir da taxa de
+> configuração (**`IVA_RATE`**, 23 % — `app/config/config.php`).
+
+**Motivo:** o catálogo do cliente vinha **sem IVA** e o Balancete/faturas trabalham **com** IVA — sem uma
+regra única, o mesmo serviço aparecia com dois valores diferentes conforme o ecrã (§24.12). A conversão é
+**de apresentação**: não se altera o que está gravado (mantém-se a coerência contabilística e a
+possibilidade de a taxa mudar sem reescrever histórico).
+
+| Onde                                        | Valor mostrado                                                         |
+| :------------------------------------------ | :--------------------------------------------------------------------- |
+| Catálogo, modal de detalhes, "Meus Agendamentos", resumo do wizard | **com IVA** (`vatUtils.gross()` · `generalUtils.formatCurrencyWithVat()`) |
+| Resumo do wizard (**loja e carrinha**)      | **subtotal sem IVA + linha de IVA + total com IVA**                     |
+| **Sinal de 10 %**                           | calculado sobre o valor **com IVA**                                     |
+| BD (`preco_base`, `agendamento_servico.*`)  | **sem IVA** — inalterado                                                |
+
+**Requisitos:** RF-87 · RF-88 · **Regras:** RN-36 · **Estado:** ✅ implementado (catálogo, wizard de loja,
+wizard de carrinha e "Meus Agendamentos"); ⬜ a **contabilidade** (§24.7) passa a ler a mesma utilidade.

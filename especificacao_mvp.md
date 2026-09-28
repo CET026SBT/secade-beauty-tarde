@@ -7,17 +7,19 @@
 
 ## MAPA — ler só o domínio necessário
 
-| §              | Domínio                                                  | Ficheiro                         |
-| :------------- | :------------------------------------------------------- | :------------------------------- |
-| 1–3            | Núcleo, Regras de Ouro e prevalência, decisões D-01…D-11 | `_dev/docs/spec/core.md`         |
-| 4–5            | Requisitos (RF) e regras de negócio (RN)                 | `_dev/docs/spec/requirements.md` |
-| 6, 7, 10, 16   | Perfis, catálogo, equipa, feedback                       | `_dev/docs/spec/operations.md`   |
-| 8, 9, 12, 20   | Loja, carrinha, rotas, máquina de estados                | `_dev/docs/spec/booking.md`      |
-| 11, 13, 14, 15 | Recibos verdes, fiscal, pagamentos, cancelamentos        | `_dev/docs/spec/finance.md`      |
-| 17, 18, 19     | Modelo de dados, arquitetura, API                        | `_dev/docs/spec/data-api.md`     |
-| 21, 22, 26–28  | Roadmap, limitações, testes, instalação, critérios       | `_dev/docs/spec/delivery.md`     |
-| 24, 25         | Gap (§24) e trabalho futuro (§25)                        | `_dev/docs/spec/backlog.md`      |
-| 23, 29         | Anexos: glossário, mapa documental, manutenção           | `_dev/docs/spec/annex.md`        |
+| §              | Domínio                                                  | Ficheiro                               |
+| :------------- | :------------------------------------------------------- | :------------------------------------- |
+| 1–3            | Núcleo, Regras de Ouro e prevalência, decisões D-01…D-16 | `_dev/docs/spec/core.md`               |
+| 4–5            | Requisitos (RF) e regras de negócio (RN)                 | `_dev/docs/spec/requirements.md`       |
+| 6, 7, 10, 16   | Perfis, catálogo, equipa, feedback                       | `_dev/docs/spec/operations.md`         |
+| 8, 9, 12, 20   | Loja, carrinha, rotas, máquina de estados                | `_dev/docs/spec/booking.md`            |
+| 11, 13, 14, 15 | Recibos verdes, fiscal, pagamentos, cancelamentos        | `_dev/docs/spec/finance.md`            |
+| 17, 18         | Modelo de dados e arquitetura                            | `_dev/docs/spec/data-api.md`           |
+| 19             | Endpoints, códigos HTTP e o que falta implementar        | `_dev/docs/spec/data-api-endpoints.md` |
+| 21, 22, 26–28  | Roadmap, limitações, testes, instalação, critérios       | `_dev/docs/spec/delivery.md`           |
+| 24             | Gap analysis (o que falta e porquê)                      | `_dev/docs/spec/backlog.md`            |
+| 25             | Trabalho futuro priorizado e menus do backoffice         | `_dev/docs/spec/backlog-future.md`     |
+| 23, 29         | Anexos: glossário, mapa documental, manutenção           | `_dev/docs/spec/annex.md`              |
 
 **Regra de leitura:** identificar o domínio → abrir **UM** ficheiro. Nunca carregar `_dev/docs/spec/` inteiro.
 **Convenção de referências:** `§N` = secção **da especificação** (onde quer que esteja em `_dev/docs/spec/`);

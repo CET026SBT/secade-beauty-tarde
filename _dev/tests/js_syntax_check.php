@@ -13,6 +13,8 @@ $files = [
     "modules/common/js/validators/booking.validator.js",
     "modules/common/js/utils/general.utils.js",
     "modules/common/js/utils/bookingStatus.utils.js",
+    "modules/common/js/utils/vat.utils.js",
+    "modules/common/js/utils/siteStats.utils.js",
     "modules/common/js/api/api.js",
     "modules/common/js/api/geocodingApi.js",
     "modules/backoffice/js/bo.js",
