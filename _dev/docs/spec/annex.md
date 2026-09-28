@@ -15,21 +15,24 @@
 
 ### 29.1 Glossário
 
-| Termo Técnico / de Domínio | Significado e Contexto no Projeto                                                                                  |
-| :------------------------- | :----------------------------------------------------------------------------------------------------------------- |
-| **Ambulatório / Carrinha** | Serviço prestado na morada do cliente, utilizando a carrinha como meio de transporte e suporte técnico             |
-| **Loja Física**            | Serviço prestado nas instalações em Évora (horário: Terça a Sábado, 09:00–19:00)                                   |
-| **Consolidação**           | Momento exato em que o **último serviço** pendente é aceite, transitando para `totalmente_aceite_funcionarios`     |
-| **Janela temporal**        | Intervalo (início mais duração total) reservado no sistema após a consolidação                                     |
-| **Rota**                   | Agrupamento lógico de agendamentos de ambulatório por **dia e cidade**, sujeito a aprovação manual do gestor       |
-| **`meetsReference`**       | Indicador **estritamente visual** de que a rentabilidade esperada da rota é ≥ 50 € (não toma decisões automáticas) |
-| **`isSwap`**               | Marcação indicando que a aceitação de um serviço o transferiu de outro funcionário (operação de troca)             |
-| **Dispensa de sinal**      | Isenção temporária do pagamento do sinal na 1.ª marcação em ambulatório                                            |
-| **`quota_parte_cliente`**  | Componente de custo de deslocação partilhado com o cliente — presente na BD, mas mantido a 0 € no MVP              |
-| **Estrutura por pessoa**   | Agrupamento obrigatório de serviços associados a cada Pessoa individual (1..N) no ambulatório                      |
-| **Owl Carousel**           | Biblioteca de carrosséis integrada e disponível para utilização na página de detalhes de serviço (§24.2)           |
-| **jq-preloader**           | Biblioteca interna responsável por gerir overlays, spinners e *skeletons* de carregamento visual                   |
-| **Gate de contrato**       | Verificação estrita de que os atributos `name` dos formulários coincidem com os contratos da API (§18.5)           |
+| Termo Técnico / de Domínio | Significado e Contexto no Projeto                                                                                                                           |
+| :------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Ambulatório / Carrinha** | Serviço prestado na morada do cliente, utilizando a carrinha como meio de transporte e suporte técnico                                                      |
+| **Loja Física**            | Serviço prestado nas instalações em Évora (horário: Terça a Sábado, 09:00–19:00)                                                                            |
+| **Consolidação**           | Momento exato em que o **último serviço** pendente é aceite, transitando para `totalmente_aceite_funcionarios`                                              |
+| **Janela temporal**        | Intervalo (início mais duração total) reservado no sistema após a consolidação                                                                              |
+| **Rota**                   | Agrupamento lógico de agendamentos de ambulatório por **dia e cidade**, sujeito a aprovação manual do gestor                                                |
+| **`meetsReference`**       | Indicador **estritamente visual** de que a rentabilidade esperada da rota é ≥ 50 € (não toma decisões automáticas)                                          |
+| **`isSwap`**               | Marcação indicando que a aceitação de um serviço o transferiu de outro funcionário (operação de troca)                                                      |
+| **Dispensa de sinal**      | Isenção temporária do pagamento do sinal na 1.ª marcação em ambulatório                                                                                     |
+| **`quota_parte_cliente`**  | Componente de custo de deslocação partilhado com o cliente — presente na BD, mas mantido a 0 € no MVP                                                       |
+| **Estrutura por pessoa**   | Agrupamento obrigatório de serviços associados a cada Pessoa individual (1..N) no ambulatório                                                               |
+| **Owl Carousel**           | Biblioteca de carrosséis integrada e disponível para utilização na página de detalhes de serviço (§24.2)                                                    |
+| **jq-preloader**           | Biblioteca interna responsável por gerir overlays, spinners e *skeletons* de carregamento visual                                                            |
+| **Gate de contrato**       | Verificação estrita de que os atributos `name` dos formulários coincidem com os contratos da API (§18.5)                                                    |
+| **Chart.js**               | Biblioteca de gráficos (**v2.9.4**, servida localmente de `modules/common/lib/chartjs/`) — só nos **ecrãs contabilísticos/financeiros** (§1.2 · E-3 · D-13) |
+| **Dashboard**              | Página de entrada do **gestor** em `/gestao`: KPIs no topo e **gráficos** por baixo (RF-77 · §24.7)                                                         |
+| **Agenda (funcionário)**   | **Calendário** com os agendamentos de **rotas confirmadas** pelo gestor, em `/gestao/agenda` (RF-78 · RN-33)                                                |
 
 ### 29.2 Mapa documental
 
@@ -96,6 +99,9 @@ git show <revisão>^:<ficheiro>                # ver o conteúdo original
 | Porque o feedback é público?                   | Simplificação académica assumida (sem moderação) — §16                               |
 | Porque não há CRON?                            | Simplificação assumida; tudo é on-demand — §2.E / §22.1                              |
 | Onde está a lógica de condução da carrinha?    | **Não existe** e não deve existir — §3.8                                             |
+| Porque o Chart.js é servido localmente?        | Para a demonstração **não** depender de internet — §1.2 (E-3)                        |
+| Porque o Chart.js é a **v2** e não a v4?       | É a versão que **já existe no projeto**; os exemplos v4 exigem tradução — §1.2 (E-3) |
+| Porque a agenda é uma rota só do funcionário?  | Cada página serve **um** contexto e **um** perfil — D-14 · §24.7                     |
 | Porque o backoffice não está em `admin/`?      | Instrução de não tocar em `/admin` — `.clinerules` §1 · §25.3                        |
 | Posso commitar em `dev` ou `main`?             | **Não.** Só por merge da branch de contexto — `.clinerules` §4                       |
 | Como devem ser as mensagens de commit?         | Resumidas, tipografia simples, sem emoji/markdown, `-` para bullets — §4             |

@@ -39,19 +39,20 @@ num backoffice único.
 > Registadas por decisão do gestor do projeto (**25/09/2026**). Valem **só** para o que está listado —
 > não abrem a porta a outros pacotes nem a novos frameworks. Justificação: **§3.12 · D-12**.
 
-| #   | Exceção                                                                                                                 | Âmbito                                                                            |
-| :-- | :---------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------- |
-| E-1 | **Bibliotecas do material de formação** (`PhpSpreadsheet`, `TCPDF`, `PHPMailer` + dependências), via Composer `vendor/` | **Devem ser usadas** na importação de ficheiros (CSV/XLSX) e no que dela depender |
-| E-2 | **Extensão PHP `zip`** ativa no Laragon (`php.ini`)                                                                     | Requisito do PhpSpreadsheet para ler `.xlsx`                                      |
-| E-3 | **Chart.js** nos gráficos do backoffice                                                                                 | Só nos gráficos das páginas de gestão                                             |
-| E-4 | **Tabelas novas** na BD para persistir o que é importado (§17.9)                                                        | Só as tabelas de importação; **nenhuma** tabela existente é alterada              |
+| #   | Exceção                                                                                                                     | Âmbito                                                                              |
+| :-- | :-------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------- |
+| E-1 | **Bibliotecas do material de formação** (`PhpSpreadsheet`, `TCPDF`, `PHPMailer` + dependências), via Composer `vendor/`     | **Devem ser usadas** na importação de ficheiros (CSV/XLSX) e no que dela depender   |
+| E-2 | **Extensão PHP `zip`** ativa no Laragon (`php.ini`)                                                                         | Requisito do PhpSpreadsheet para ler `.xlsx`                                        |
+| E-3 | **Chart.js** (v2.9.4, servido **localmente** de `modules/common/lib/chartjs/`) nos **ecrãs contabilísticos/financeiros** do | Painel do gestor e `/gestao/contabilidade` (§4.5 · D-13); **nunca** no site público |
+|     | backoffice                                                                                                                  |                                                                                     |
+| E-4 | **Tabelas novas** na BD para persistir o que é importado (§17.9)                                                            | Só as tabelas de importação; **nenhuma** tabela existente é alterada                |
 
 Fora destas exceções mantém-se a regra geral: **não instalar pacotes nem adotar frameworks externos**
 (`.clinerules` §1).
 
-> **Nota sobre a E-3:** o material de formação carrega o Chart.js por CDN
-> (`cdn.jsdelivr.net/npm/chart.js@4.4.1`), o que exige **internet** na demonstração. Alternativa sem
-> internet: guardar `chart.umd.min.js` em `modules/common/lib/` e servi-lo localmente — **preferível**.
+> **Nota sobre a E-3:** a biblioteca é **servida localmente** de `modules/common/lib/chartjs/` (`Chart.bundle.min.js` — Chart.js **v2.9.4** com o Moment.js embutido), copiada do exemplar que **já existe no projeto** em `admin/vendor/chart.js/`; a demonstração **não depende de internet**.
+> ⚠️ Os exemplos do material de formação usam a **v4** (`cdn.jsdelivr.net/npm/chart.js@4.4.1`) e **não correm** na v2:
+> na v2 as escalas são `options.scales.yAxes`, as legendas `options.legend` e os padrões globais `Chart.defaults.global`; os *demos* do próprio repositório (`admin/js/demo/chart-*.js`) já são v2 e servem de molde.
 
 ## 2. REGRAS DE OURO E PREVALÊNCIA
 
@@ -175,7 +176,7 @@ sugerir loja física ou reagendamento; o cliente **pode cancelar** sem penaliza�
 | :-- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 1   | A leitura usa as **bibliotecas do material de formação (E-1)** — `PhpSpreadsheet` para `.xlsx`, com a **extensão `zip`** ativa (E-2); CSV em `fgetcsv` nativo                 |
 | 2   | A importação **substitui integralmente** a anterior, numa transação (**RN-30**) — nunca soma nem acumula                                                                      |
-| 3   | Os gráficos usam **Chart.js (E-3)**                                                                                                                                           |
+| 3   | Os gráficos usam **Chart.js servido localmente** (E-3), restrito aos ecrãs **contabilísticos/financeiros** (D-13 · §3.13)                                                     |
 | 4   | O **upload funciona na demonstração**; pode haver uma importação prévia, que é substituída por qualquer importação feita ao vivo                                              |
 | 5   | **Origem de cada número:** valores **importados** e valores **calculados na plataforma** (receita de agendamentos, custos de rota, comissões) **não se somam no mesmo total** |
 | 6   | **Novas tabelas** (justificação em §17.9): apenas as necessárias para persistir o importado                                                                                   |
@@ -190,3 +191,16 @@ resposta, **cada widget declara a sua origem** e as somas mistas ficam interdita
 que o cliente entrega o balancete. **Alternativa rejeitada nesta fase:** leitor próprio em PHP puro
 (ZIP por `zlib` + XML por `SimpleXML`) — viável e já testado, mas com mais código para manter e sem o
 tratamento de datas/formatos que a biblioteca já oferece.
+### 3.13 — D-13 · Forma de apresentação: gráficos no financeiro, tabelas e calendários na operação
+**Decisão (28/09/2026):** os **dados contabilísticos/financeiros** apresentam-se **maioritariamente em
+gráficos** (Chart.js · E-3), com **tabelas apenas onde fizer sentido**; a **gestão de operação**
+(agendamentos, rotas, fiscal, serviços) mantém **tabelas** e **calendários** — sem gráficos.
+**Requisitos:** RF-77 · RF-78 · RF-79 · **Estado:** ⬜ por implementar (§24.7).
+
+### 3.14 — D-14 · Entrada e páginas do backoffice por perfil
+**Decisão (28/09/2026):** `/gestao` é o **dashboard do gestor** (substitui o encaminhamento para a lista,
+que se mantém em `/gestao/agendamentos`); o **funcionário** tem como entrada a sua **agenda**
+`/gestao/agenda` (calendário de rotas confirmadas) e a aceitação/descarte continua em `/gestao/servicos`,
+em **listagem**. Cada página serve **um só contexto e um só perfil** — não há páginas partilhadas que
+mudem de conteúdo conforme o perfil.
+**Requisitos:** RF-77 · RF-78 · **Estado:** ⬜ por implementar (§24.7).

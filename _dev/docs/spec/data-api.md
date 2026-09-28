@@ -254,12 +254,12 @@ View (PHP) → JS componente → api.js → api.php (routing) → Controller →
 
 **Backend — novo**
 
-| Camada     | Ficheiros                                                                                                                                                                        |
-| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Mapper     | `RotaMapper`, `ExecutionMapper`, `FiscalObligationMapper`, `FiscalAlertMapper`, `FeedbackMapper`, `GreenReceiptConfigMapper`                                                     |
-| Repository | `RotaRepository`, `ExecutionRepository`, `FiscalObligationRepository`, `FiscalAlertRepository`, `FeedbackRepository`                                                             |
-| Service    | `RotaService`, `ServiceAcceptanceService` (Fase 3), `GreenReceiptService` (Fase 3), `FiscalService` (Fase 4), `ExecutionService`, `FeedbackService` (Fase 2)                     |
-| Controller | `RotaController`, `AdminController`, `CustomerController`, `CustomerAddressController`, `ServiceController` (Fase 3), `FiscalController` (Fase 4), `FeedbackController` (Fase 2) |
+| Camada     | Ficheiros                                                                                                                                                                                               |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Mapper     | `RotaMapper`, `ExecutionMapper`, `FiscalObligationMapper`, `FiscalAlertMapper`, `FeedbackMapper`, `GreenReceiptConfigMapper`                                                                            |
+| Repository | `RotaRepository`, `ExecutionRepository`, `FiscalObligationRepository`, `FiscalAlertRepository`, `FeedbackRepository`                                                                                    |
+| Service    | `RotaService`, `ServiceAcceptanceService` (Fase 3), `GreenReceiptService` (Fase 3), `FiscalService` (Fase 4), `ExecutionService`, `FeedbackService` (Fase 2), **`DashboardService`** (planeado · §24.7) |
+| Controller | `RotaController`, `AdminController`, `CustomerController`, `CustomerAddressController`, `ServiceController` (Fase 3), `FiscalController` (Fase 4), `FeedbackController` (Fase 2)                        |
 
 **Backend — estendido**
 - `BookingRepository`: listagem de backoffice (filtros data/local/estado/cidade + paginação),
@@ -267,7 +267,7 @@ View (PHP) → JS componente → api.js → api.php (routing) → Controller →
 - `BookingService`: `listBookings()`, `cancelBooking()` (guardas 404/409), `listActiveServices()`
 - `api.php`: 9 novos endpoints (`customer-*`, `admin-*`)
 - `index.php`: novas rotas `perfil`, `agendamentos`, `agendar`, `agendamento-sucesso`,
-  `gestao/agendamentos`, `gestao/rotas` (+ `gestao/servicos`, `gestao/fiscal`, `gestao/recibos-verdes`)
+  `gestao/agendamentos`, `gestao/rotas` (+ `gestao/servicos`, `gestao/fiscal`, `gestao/recibos-verdes`; **`gestao`** = dashboard e **`gestao/agenda`** — §24.7)
 
 **Frontend — Main (cliente)**
 - `modules/main/services.php` + `components/services.php` — catálogo com filtros, modal e *skeleton*
@@ -286,7 +286,7 @@ View (PHP) → JS componente → api.js → api.php (routing) → Controller →
 
 **Frontend — Backoffice**
 - `includes/{boHeader,boNavbar,boFooter}.php` + `js/bo.js`, `js/bo.utils.js`
-  — **menu dinâmico por perfil**: funcionário (Serviços, Agendamentos) vs. gestor
+  — **menu dinâmico por perfil**: funcionário (Serviços; + **Agenda** — §24.7) vs. gestor
   (Agendamentos, Rotas, Fiscal, Recibos Verdes)
 - `appointments.php` + `js/components/appointments.js` — tabela, filtros, paginação,
   **detalhe por serviço/funcionário**, execução, cancelamento
@@ -397,4 +397,4 @@ Resposta de sucesso: `{"success":true, …chaves na raiz}`; erro: `{"success":fa
 - `client-alert-*` (lembretes ao cliente — §24.6)
 - `admin-deposit-config` (configuração do sinal — §24.5)
 - `admin-payment-*` (cobrança dos 90 % + método — §24.5)
-- `admin-supplier-*` (**Fornecedores — prioridade máxima entre os futuros** — §25)
+- `admin-supplier-*` (**Fornecedores — prioridade máxima entre os futuros** — §25) · `admin-dashboard-summary` (dashboard do gestor — §24.7) · `admin-employee-agenda-list` (agenda do funcionário — §24.7) · `admin-alert-summary` (sininho — §24.7)

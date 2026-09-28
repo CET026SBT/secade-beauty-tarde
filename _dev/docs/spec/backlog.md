@@ -12,14 +12,16 @@
 
 ### 24.0 Resumo executivo
 
-| #        | Tema                                                 | Estado     | Impacto Principal                 |
-| :------- | :--------------------------------------------------- | :--------- | :-------------------------------- |
-| **24.1** | Re-avaliação dinâmica dos slots                      | 🟡 parcial | UX — prevenção de slots obsoletos |
-| **24.2** | Página de detalhes de serviço + carousel             | ⬜ ausente | Enriquecimento do Catálogo        |
-| **24.3** | Encaminhamento por tipo de contrato                  | ⬜ ausente | Regra de negócio operacional      |
-| **24.4** | Multicidades + flexibilidade horária + alertas       | ⬜ ausente | Gestão de Operação e Logística    |
-| **24.5** | Sinal configurável + 10/90 + métodos de pagamento    | 🟡 parcial | Componente Financeiro             |
-| **24.6** | Regra das 24h + lembrete + cancelamento pelo cliente | ⬜ ausente | **Crítico / Operacional**         |
+| #        | Tema                                                                     | Estado     | Impacto Principal                 |
+| :------- | :----------------------------------------------------------------------- | :--------- | :-------------------------------- |
+| **24.1** | Re-avaliação dinâmica dos slots                                          | 🟡 parcial | UX — prevenção de slots obsoletos |
+| **24.2** | Página de detalhes de serviço + carousel                                 | ⬜ ausente | Enriquecimento do Catálogo        |
+| **24.3** | Encaminhamento por tipo de contrato                                      | ⬜ ausente | Regra de negócio operacional      |
+| **24.4** | Multicidades + flexibilidade horária + alertas                           | ⬜ ausente | Gestão de Operação e Logística    |
+| **24.5** | Sinal configurável + 10/90 + métodos de pagamento                        | 🟡 parcial | Componente Financeiro             |
+| **24.6** | Regra das 24h + lembrete + cancelamento pelo cliente                     | ⬜ ausente | **Crítico / Operacional**         |
+| **24.7** | Backoffice: dashboard, gráficos, agenda do funcionário e regra das rotas | ⬜ ausente | Entrada do backoffice e operação  |
+| **24.8** | Defeito: dropdown do autocomplete visível no canto (`/registo`)          | ⬜ defeito | UI do registo                     |
 
 ### 24.1 — Re-avaliação dinâmica dos slots (D-07)
 **Exigido:** o tempo estimado deve ser re-avaliado sempre que o cliente adiciona/descarta serviços,
@@ -135,6 +137,65 @@ cancelamento pelo cliente sem penalização).
 5. **Lembrete ao cliente:** modelo de notificação + apresentação em `/agendamentos` (e/ou na home),
    com sugestão de **loja física** ou **reagendamento**; notificação **simulada**.
 
+### 24.7 — Backoffice: dashboard, gráficos, agenda do funcionário e regra das rotas
+**Exigido (28/09/2026):** `/gestao` passa a ser o **dashboard do gestor** (KPIs e, por baixo, **gráficos** dos
+dados contabilísticos — D-13 · D-14); o **funcionário** ganha uma **agenda em calendário** com os
+agendamentos de **rotas confirmadas**, mantendo a aceitação em **listagem**; e uma rota **só** se confirma
+com **todos** os serviços aceites.
+
+**Verificado no código:**
+- ❌ **Sem dashboard:** `/gestao` aponta para a lista (`index.php` L30 → `modules/backoffice/appointments.php`);
+  não existe `dashboard.php`, `DashboardService` nem `admin-dashboard-summary`.
+- ❌ **Sem biblioteca de gráficos:** `boFooter.php` L10-15 carrega só jQuery, Bootstrap e jq-preloader;
+  nenhuma página de gestão serve Chart.js.
+- ❌ **Regra das rotas não é imposta:** `BookingRepository::findAmbulatoryGroups` (L194-196) e
+  `findDecidableByCityAndDate` (L266) incluem `pendente_aceitacao_funcionarios`, e `RotaService` L177
+  expõe `awaitingAcceptance` → **é possível aprovar rota com serviços por aceitar** (RN-31).
+- ❌ **Lista "Por aceitar" não separa rotas confirmadas:** `BookingServiceRepository::findPending`
+  (L134-141) inclui pendentes de agendamentos em qualquer estado não terminal — **incluindo `confirmado`**
+  (RN-32).
+- ❌ **Sem agenda:** não existe `/gestao/agenda`, `agenda.php` nem `admin-employee-agenda-list`; o menu do
+  funcionário (`boNavbar.php` L11-14) tem só "Serviços".
+- ✅ **Dados já existem** (§1.2 · §1.7 do planeamento): `agendamento_servico.funcionario_id` +
+  `agendamento.data_hora_pretendida` + `agendamento.estado_reserva` permitem o calendário **sem tabela nova**.
+
+**Trabalho a fazer:**
+1. **Dashboard** (`/gestao`, perfil `gestor`): página nova, `DashboardService` que **delega nos
+   Repositories** (§18.1–§18.2 — **nenhuma query no Service**) e `admin-dashboard-summary`; KPIs no topo
+   (Disponibilidades · Dívidas a receber · Dívidas a pagar · Resultado) e **gráficos por baixo**.
+   O card *Dívidas a Fornecedores* só existe após o módulo Fornecedores (§25.1) — até lá, **estado vazio
+   explicativo** (nunca valor inventado).
+2. **Chart.js local:** copiar `Chart.bundle.min.js` (v2.9.4) de `admin/vendor/chart.js/` para
+   `modules/common/lib/chartjs/` e carregá-lo no `boFooter.php` (**só backoffice**; `/admin` não é tocado).
+3. **Agenda do funcionário** (`/gestao/agenda`, perfil `funcionario`): calendário + `admin-employee-agenda-list`
+   (intervalo de datas) — reutiliza os dados existentes.
+4. **RN-31 — rotas:** `findAmbulatoryGroups`/`findDecidableByCityAndDate` passam a considerar **apenas**
+   `totalmente_aceite_funcionarios`; decidir com pendentes → **409**; a listagem de rotas pode **mostrar**
+   os que aguardam aceitação, mas **não os agrega**.
+5. **RN-32 — lista "Por aceitar":** `findPending` exclui os agendamentos **já em rota confirmada**
+   (`estado_reserva = 'confirmado'`); o acompanhamento desses passa a ser a agenda (RN-33).
+6. **Sininho:** contador de alertas **não lidos** no menu do utilizador (`menuUserBo.php`), reutilizando
+   `alerta_fiscal` + `admin-alert-summary`; leitura **global** enquanto houver um só gestor (§22.2 · C-03).
+
+### 24.8 — Defeito: dropdown do autocomplete visível no canto superior esquerdo (`/registo`)
+**Sintoma:** ao carregar `/registo`, o *dropdown* do autocomplete aparece **vazio no canto superior esquerdo**.
+
+**Causa (verificada):**
+- `modules/common/js/utils/addressAutocomplete.js` **L60-64** cria o `<ul>` com a classe **`show`** e
+  anexa-o ao `<body>`; a regra `display: none` de `.autocomplete-dropdown` (`style.css` **L588**) é
+  **derrotada** por `.dropdown-menu.show { display: block }` do Bootstrap (0,2,0 vs 0,1,0) → fica visível
+  logo no carregamento.
+- O posicionamento depende **só** de CSS Anchor Positioning (`style.css` **L576-583**: `position-anchor`,
+  `anchor()`, `anchor-size()`, `position-try-options`), **sem *fallback***: sem suporte ou sem o *anchor*
+  resolvido, a caixa cai na posição estática do `<body>`.
+
+**Alcance:** 1 sítio — `modules/main/js/components/customerRegister.js` **L64** (só `/registo`).
+
+**Trabalho a fazer:** (1) não incluir `show` na construção e esconder no `#initDOM()`; (2) posicionar por
+`getBoundingClientRect()` com `position: fixed`, sob `CSS.supports('position-anchor: --x')`; (3) *guard* de
+regressão no `asset_test.php`. **Estado:** ⬜ corrigir **depois** do alinhamento — branch de contexto própria
+(`rules §4`).
+
 ## 25. TRABALHO FUTURO PRIORIZADO
 
 > Ordem **vinculativa**: as implementações futuras devem seguir esta prioridade.
@@ -169,19 +230,24 @@ seguindo a **estrutura de menus** existente (§25.5).
   numa utilidade própria (padrão `apiClient.js`/`api.js`).
 
 ### 25.4 Prioridade 4 — Nice-to-have
-- Dashboard com estatísticas consolidadas (ocupação, receita, rotas, alertas).
+- **Notificações centralizadas** (página única de avisos, por perfil) — o *dashboard* deixou de ser nice-to-have: é **RF-77** (§24.7).
 - Histórico/auditoria de decisões e alterações.
 - Anexos/documentos nas obrigações fiscais.
 - Algoritmos/simuladores sobre os dados retidos (agendamentos auto-cancelados — §15.2).
 
 ### 25.5 Estrutura de menus do backoffice (convenção a manter)
 ```
+/gestao                → gestor      (dashboard: KPIs no topo + gráficos + sininho)  (NOVO — §24.7)
 /gestao/agendamentos   → gestor      (lista, filtros, detalhe, execução, cancelamento, pagamentos*)
 /gestao/rotas          → gestor      (dia+cidade, decisão manual, alertas padronizados)
 /gestao/fiscal         → gestor      (calendário, obrigações, alertas progressivos)
 /gestao/recibos-verdes → gestor      (config. de percentagens + [config. do sinal*] + histórico)
-/gestao/servicos       → funcionário (aceitação, desfazer/trocar) — o gestor vê em supervisão
+/gestao/servicos       → funcionário (aceitação/desfazer em **listagem**) — o gestor vê em supervisão
+/gestao/agenda         → funcionário (agenda em **calendário**: rotas confirmadas)   (NOVO — §24.7)
 /gestao/fornecedores*  → gestor      (PRIORIDADE 1 do futuro)
 ```
 `*` = por implementar. **Toda a implementação futura deve encaixar nesta estrutura** (não criar
 menus paralelos).
+**Notas (28/09/2026):** a navbar do backoffice está no limite de lotação — a migração para **sidebar**
+(componente exclusivo do backoffice) fica para a fase do backoffice; a renomeação sugerida
+`/gestao/agendamentos` → `/gestao/reservas` fica **pendente de decisão** e faz-se junto com a sidebar.

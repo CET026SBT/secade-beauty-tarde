@@ -64,13 +64,14 @@ bibliotecas de `modules/common/lib` · Laragon local. Detalhe: `_dev/docs/spec/c
 > Só estas — **nada além delas**. Fonte normativa e justificação: `_dev/docs/spec/core.md` **§1.2** e
 > **§3.12 · D-12**.
 
-| #   | Exceção                                                                                                                                      | Âmbito / onde está registada                 |
-| :-- | :------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------- |
-| E-1 | Bibliotecas do **material de formação** (`PhpSpreadsheet`, `TCPDF`, `PHPMailer`; `vendor/` Composer) — **devem ser usadas** na importação de | `_dev/docs/spec/core.md` §1.2 · §3.12 (D-12) |
-|     | ficheiros                                                                                                                                    |                                              |
-| E-2 | **Extensão PHP `zip`** ativa no Laragon (`php.ini`)                                                                                          | `_dev/docs/spec/core.md` §1.2 (E-2)          |
-| E-3 | **Chart.js** nos gráficos do backoffice                                                                                                      | `_dev/docs/spec/core.md` §1.2 (E-3)          |
-| E-4 | **Tabelas novas** para persistir o que é importado (justificação de BD registada)                                                            | `_dev/docs/spec/data-api.md` §17.9           |
+| #   | Exceção                                                                                                                                   | Âmbito / onde está registada                       |
+| :-- | :---------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------- |
+| E-1 | Bibliotecas do **material de formação** (`PhpSpreadsheet`, `TCPDF`, `PHPMailer`; `vendor/` Composer) — **devem ser usadas** na importação | `_dev/docs/spec/core.md` §1.2 · §3.12 (D-12)       |
+|     | de                                                                                                                                        |                                                    |
+|     | ficheiros                                                                                                                                 |                                                    |
+| E-2 | **Extensão PHP `zip`** ativa no Laragon (`php.ini`)                                                                                       | `_dev/docs/spec/core.md` §1.2 (E-2)                |
+| E-3 | **Chart.js** (v2.9.4, **local** em `modules/common/lib/chartjs/`) nos gráficos dos **ecrãs contabilísticos/financeiros**                  | `_dev/docs/spec/core.md` §1.2 (E-3) · §3.13 (D-13) |
+| E-4 | **Tabelas novas** para persistir o que é importado (justificação de BD registada)                                                         | `_dev/docs/spec/data-api.md` §17.9                 |
 
 Fora destas quatro, a proibição de instalar pacotes e de adotar frameworks externos **mantém-se
 integralmente**. Requisitos e regra associados: **RF-75 · RF-76 · RN-30** (`requirements.md` §4.7 · §5.1).
@@ -194,8 +195,8 @@ revogado**: `_dev/docs/rules/build_history_on_demand.md`.
 ---
 
 **Este ficheiro não deve ser alterado sem aprovação.**
-**Versão:** 3.7 · **Data:** 26/09/2026
-**Histórico:** v3.6 → v3.7 — §5 substitui o limiar único de 3000 linhas por **dois regimes**: o que é
+**Versão:** 3.8 · **Data:** 28/09/2026
+**Histórico:** v3.7 → v3.8 — §1.1 fixa **origem, versão e âmbito** do Chart.js (v2.9.4, servido localmente de `modules/common/lib/chartjs/`, só nos ecrãs contabilísticos/financeiros) e a especificação ganha **§3.13 (D-13)** — gráficos no financeiro, tabelas/calendários na operação — e **§3.14 (D-14)** — `/gestao` = dashboard do gestor e agenda própria do funcionário; gap em **§24.7** e defeito do autocomplete em **§24.8**. v3.6 → v3.7 — §5 substitui o limiar único de 3000 linhas por **dois regimes**: o que é
 **mantido** (incl. `especificacao_mvp.md`, spec, regras, `README`s e este ficheiro) fica **≤ 400 linhas**;
 o que é **gerado sob demanda** (`_dev/docs/out/**`, entradas e análise em `_dev/mapaMentalMVP/`) **não tem
 limite** — é lido por humanos e vale pelo detalhe. Novos **artefactos on-demand** com **nome fixo**

@@ -45,9 +45,13 @@ a recibo verde, na vertente **ambulante**. Esta correspondência **ainda não é
 
 ## 10. DINÂMICA DOS FUNCIONÁRIOS (BACKOFFICE)
 
-### 10.1 Listagem e filtros
-- O funcionário vê os serviços de ambulatório **pendentes**, agrupados por
-  **agendamento → pessoa → serviço**.
+### 10.1 Duas apresentações — listagem (aceitar/desfazer) e calendário (agenda)
+- **Por aceitar/desfazer — listagem** em `/gestao/servicos`, com a lógica actual intacta: o funcionário vê
+  os serviços de ambulatório **pendentes** de agendamentos **ainda não incluídos em rota confirmada**
+  (RN-32), agrupados por **agendamento → pessoa → serviço**.
+- **Agenda — calendário** em `/gestao/agenda` (**só funcionário**): **apenas** agendamentos de **rotas
+  confirmadas** pelo gestor (RN-33); por definição (RN-31) são agendamentos com **todos** os serviços já
+  aceites por funcionários.
 - Filtros: **categoria** e **data** — **apenas visuais/agrupadores** (RN-04).
 
 ### 10.2 Aceitação individual
