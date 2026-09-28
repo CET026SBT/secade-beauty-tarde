@@ -191,11 +191,26 @@ com **todos** os serviços aceites.
 8. **Convenção dos botões de ação (coluna de ações):** sem texto — apenas **ícone + atributo `title`**,
    **fundo transparente** e borda/ícone com a **mesma cor** por tipo de ação: **dourado = detalhes ·
    azul = editar · vermelho = remover**; aplicar **uniformemente** às listagens do backoffice (rotas e
-   agendamentos incluídos).
+   agendamentos incluídos) — **retrofit** às listagens existentes (decisão de 28/09/2026).
+9. **Excluir agendamento de uma rota (RF-80 · RN-34):** **não existe** no código — `RotaRepository`
+   expõe apenas `create` (L77) e `updateDecision` (L104), `BookingRepository::updateEstadoMany` (L235)
+   grava o estado em bloco e a recusa aplica `cancelado` a **todos** (RN-18); a procura por
+   `excluir`/`reverter` em `app/` e `modules/` não devolve resultados. O gestor tem de poder **retirar**
+   um agendamento da rota **antes da decisão** → volta a `totalmente_aceite_funcionarios`; a decisão passa
+   a aplicar-se ao **conjunto** incluído. **Ponto em aberto:** excluir depois de a rota estar `aprovada`
+   (exige desfazer a decisão ou criar rota complementar — decidir na implementação, sem partir a RN-19).
+10. **Página centralizada de avisos (RF-81 · D-15):** `/gestao/avisos`, alcançável no **menu do
+    utilizador** e pelo **clique no sino**; contador de não lidos por `alerta_fiscal` (global) e, quando
+    existirem lembretes não fiscais, ➕ `notificacao` com leitura **por utilizador**.
 
 > **Fases (28/09/2026):** os módulos do backoffice ficam **alinhados na Fase 6** (pedido do gestor, pelo
-> prazo); a **Fase 7** reserva-se à **sidebar** do backoffice e à renomeação de rotas (§25.5). O Chart.js
-> é copiado para `modules/common/lib/chartjs/` na **mesma fase** em que os gráficos forem implementados.
+> prazo); a **Fase 7** reserva-se à **sidebar** do backoffice (a renomeação de `/gestao/agendamentos`
+> **não** avança). O Chart.js é copiado para `modules/common/lib/chartjs/` na **mesma fase** em que os
+> gráficos forem implementados. **Ordem interna (de §1.9, sem conflito bloqueante):** 6.0 painel +
+> autorização por perfil → 6.1 fornecedores → 6.2 contabilidade → 6.3 RH → 6.4 promoções → 6.5 área do
+> funcionário. **Dependências assinaladas:** o card *Dívidas a Fornecedores* do dashboard só existe depois
+> de 6.1 (C-11 — até lá, estado vazio explicativo) e as promoções mexem em preços de referência dos testes
+> (C-08 · C-18 · Q-29).
 
 ### 24.8 — Defeito: dropdown do autocomplete visível no canto superior esquerdo (`/registo`)
 **Sintoma:** ao carregar `/registo`, o *dropdown* do autocomplete aparece **vazio no canto superior esquerdo**.
@@ -269,5 +284,5 @@ seguindo a **estrutura de menus** existente (§25.5).
 `*` = por implementar. **Toda a implementação futura deve encaixar nesta estrutura** (não criar
 menus paralelos).
 **Notas (28/09/2026):** a navbar do backoffice está no limite de lotação — a migração para **sidebar**
-(componente exclusivo do backoffice) fica para a fase do backoffice; a renomeação sugerida
-`/gestao/agendamentos` → `/gestao/reservas` fica **pendente de decisão** e faz-se junto com a sidebar.
+(componente exclusivo do backoffice) fica para a **Fase 7**; a renomeação de `/gestao/agendamentos`
+**não avança** (o nome fica) e a **renomeação** de outras rotas só se fizer com a sidebar.

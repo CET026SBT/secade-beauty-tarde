@@ -1294,8 +1294,8 @@ constante mensal** — é `6,15 € × dias úteis do mês`.
 | #   | Decisão                                                                                                | ID   | Estado |
 | :-- | :----------------------------------------------------------------------------------------------------- | :--- | :----- |
 | 1   | `/gestao` passa a **dashboard** e a lista fica em `/gestao/agendamentos` (**decidido** — D-14)         | C-01 | ⬜     |
-| 2   | Modelo de lembretes (entidade genérica vs extensão do calendário fiscal)                               | C-02 | ⬜     |
-| 3   | Lido dos alertas: global ou por utilizador                                                             | C-03 | ⬜     |
+| 2   | Modelo de lembretes (entidade genérica vs extensão do calendário fiscal) — **decidido** (D-15)         | C-02 | ⬜     |
+| 3   | Lido dos alertas: global ou por utilizador — **decidido** (D-15: global no MVP)                        | C-03 | ⬜     |
 | 4   | **Modelo de despesas**: criar `despesa` (+ fornecedor/fatura) ou alargar `transacao_financeira`        | C-04 | ⬜     |
 | 5   | Simulador fiscal não escreve no calendário fiscal                                                      | C-05 | ⬜     |
 | 6   | Reafirmar que nenhum KPI/indicador bloqueia ou decide rotas                                            | C-06 | ⬜     |
@@ -1304,7 +1304,7 @@ constante mensal** — é `6,15 € × dias úteis do mês`.
 | 9   | Autorização por página + endpoints (403 server-side)                                                   | C-09 | ⬜     |
 | 10  | Fonte única do custo de pessoal (comissões e salários)                                                 | C-10 | ⬜     |
 | 11  | Sequência: Fornecedores antes da contabilidade completa                                                | C-11 | ⬜     |
-| 12  | Âmbito/critérios de aceitação: aceitar os 4 módulos novos como Fase 6 acrescida                        | C-12 | ⬜     |
+| 12  | Âmbito/critérios de aceitação: os 4 módulos novos **alinhados na Fase 6** (**decidido**)               | C-12 | ⬜     |
 | 13  | Plano de testes por fase                                                                               | C-13 | ⬜     |
 | 14  | IRC: 20 % fixo (académico) ou configurável                                                             | C-14 | ⬜     |
 | 15  | Tesouraria antes ou depois de §24.5 (10/90 + métodos)                                                  | C-15 | ⬜     |
@@ -1328,6 +1328,7 @@ constante mensal** — é `6,15 € × dias úteis do mês`.
 | 33  | **IVA nas dívidas a pagar**: posição líquida (como está no ficheiro) ou dívida bruta                   | C-27 | ⬜     |
 | 34  | **Capital em dívida**: plano (**24 016,80 €**) ou conta 25 (**49 354,66 €**)                           | C-26 | ⬜     |
 | 35  | **Subsídio de alimentação variável**: dias úteis por mês vs valor fixo                                 | C-28 | ⬜     |
+| 36  | **Excluir agendamento de uma rota** (volta a qualificado, nunca a cancelado) — **decidido** (RN-34)    | C-31 | ⬜     |
 
 **Depois das decisões:** registar em `especificacao_mvp.md` (é o único documento normativo) como
 `RF-75+`/`RN-30+`/`D-12+` (§1.10) e só então implementar — ciclo de §29.3.

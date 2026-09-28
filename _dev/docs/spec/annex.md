@@ -33,6 +33,7 @@
 | **Chart.js**               | Biblioteca de gráficos (**v2.9.4**, servida localmente de `modules/common/lib/chartjs/`) — só nos **ecrãs contabilísticos/financeiros** (§1.2 · E-3 · D-13) |
 | **Dashboard**              | Página de entrada do **gestor** em `/gestao`: KPIs no topo e **gráficos** por baixo (RF-77 · §24.7)                                                         |
 | **Agenda (funcionário)**   | **Calendário** com os agendamentos de **rotas confirmadas** pelo gestor, em `/gestao/agenda` (RF-78 · RN-33)                                                |
+| **Avisos (sininho)**       | Página centralizada de notificações **por perfil**, com contador de não lidos no menu do utilizador (§3.15 · RF-81)                                         |
 
 ### 29.2 Mapa documental
 

@@ -204,3 +204,13 @@ que se mantém em `/gestao/agendamentos`); o **funcionário** tem como entrada a
 em **listagem**. Cada página serve **um só contexto e um só perfil** — não há páginas partilhadas que
 mudem de conteúdo conforme o perfil.
 **Requisitos:** RF-77 · RF-78 · **Estado:** ⬜ por implementar (§24.7).
+
+### 3.15 — D-15 · Notificações, sininho e leitura (C-02 · C-03 decididos)
+**Decisão (28/09/2026):** o **contador do sininho** usa a tabela existente `alerta_fiscal`
+(`COUNT(*) WHERE visualizado = 0`) e a marcação de lido continua **global** — limitação assumida enquanto
+houver **um** gestor (§22.2). Os lembretes **não fiscais** (fornecedores, operação) e a leitura **por
+utilizador** exigem ➕ tabela `notificacao` com `origem`, alimentada pelo mesmo padrão **on-demand** (sem
+CRON); o **calendário fiscal fica fiscal** e o enum `obrigacao_fiscal.tipo` **não** é alargado (evita
+partir o que existe). A **página centralizada de avisos** é uma por perfil, alcançável pelo **menu do
+utilizador** e pelo **clique no sino** (`/gestao/avisos`).
+**Requisitos:** RF-81 · **Estado:** ⬜ por implementar (§24.7).

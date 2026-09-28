@@ -10,18 +10,18 @@
 > O **cronograma de 7 dias** dos documentos iniciais está **revogado** — substituído por este
 > roadmap por fases, alinhado com as regras finais.
 
-| Fase                                | Âmbito                                                                                                                               | Estado                 |
-| :---------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------- | :--------------------- |
-| **1 — Catálogo e base**             | Catálogo de serviços (filtros, modal), categorias, autenticação, registo, perfil/moradas, preloader, validators                      | ✅ CONCLUÍDA           |
-| **2 — Agendamentos**                | Wizard **Loja** (5 passos) + Wizard **Carrinha** (7 passos + OTP), disponibilidade, conflitos, página de sucesso                     | ✅ CONCLUÍDA           |
-| **3 — Backoffice do Funcionário**   | Aceitação individual, desfazer/trocar, consolidação, bloqueio de janela, **Simulador de Recibos Verdes**                             | ✅ CONCLUÍDA           |
-| **4 — Backoffice do Gestor**        | Agendamentos (filtros, detalhe por serviço/funcionário, execução, cancelamento), **Rotas com decisão manual** (+50 € visual),        | ✅ CONCLUÍDA           |
-|                                     | **Calendário Fiscal** + alertas, config. de recibos verdes                                                                           |                        |
-| **5 — Integração e testes**         | Fluxos end-to-end (cliente → funcionário → gestor), responsividade, notificações simuladas, **293 verificações**                     | ✅ CONCLUÍDA           |
-| **6 — Requisitos adicionais (§24)** | Página de detalhes + carousel; re-avaliação dinâmica de slots; 24 h + lembrete + cancelamento pelo cliente; multicidades + alerta de | ⬜ **A INICIAR** (§24) |
-|                                     | custos; config. do sinal; 10/90 + métodos de pagamento                                                                               |                        |
-|                                     | **+ módulos do backoffice**: dashboard/gráficos, agenda do funcionário, contabilidade, RH, promoções, fornecedores e sininho (§24.7) |                        |
-| **7 — Sidebar e rotas**             | **Sidebar** do backoffice (a navbar atual está no limite) e renomeação de rotas (§24.7 · §25.5)                                      | ⬜ planeada            |
+| Fase                                | Âmbito                                                                                                                                                 | Estado                 |
+| :---------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------- |
+| **1 — Catálogo e base**             | Catálogo de serviços (filtros, modal), categorias, autenticação, registo, perfil/moradas, preloader, validators                                        | ✅ CONCLUÍDA           |
+| **2 — Agendamentos**                | Wizard **Loja** (5 passos) + Wizard **Carrinha** (7 passos + OTP), disponibilidade, conflitos, página de sucesso                                       | ✅ CONCLUÍDA           |
+| **3 — Backoffice do Funcionário**   | Aceitação individual, desfazer/trocar, consolidação, bloqueio de janela, **Simulador de Recibos Verdes**                                               | ✅ CONCLUÍDA           |
+| **4 — Backoffice do Gestor**        | Agendamentos (filtros, detalhe por serviço/funcionário, execução, cancelamento), **Rotas com decisão manual** (+50 € visual),                          | ✅ CONCLUÍDA           |
+|                                     | **Calendário Fiscal** + alertas, config. de recibos verdes                                                                                             |                        |
+| **5 — Integração e testes**         | Fluxos end-to-end (cliente → funcionário → gestor), responsividade, notificações simuladas, **293 verificações**                                       | ✅ CONCLUÍDA           |
+| **6 — Requisitos adicionais (§24)** | Página de detalhes + carousel; re-avaliação dinâmica de slots; 24 h + lembrete + cancelamento pelo cliente; multicidades + alerta de                   | ⬜ **A INICIAR** (§24) |
+|                                     | custos; config. do sinal; 10/90 + métodos de pagamento                                                                                                 |                        |
+|                                     | **+ módulos do backoffice**: dashboard/gráficos, agenda do funcionário, contabilidade, RH, promoções, fornecedores, sininho e página de avisos (§24.7) |                        |
+| **7 — Sidebar e rotas**             | **Sidebar** do backoffice (a navbar atual está no limite) e renomeação de rotas (§24.7 · §25.5)                                                        | ⬜ planeada            |
 
 ### 21.1 Entregáveis
 
@@ -222,6 +222,8 @@ SET FOREIGN_KEY_CHECKS = 1;
 19. ⬜ A **agenda** do funcionário mostra **só** agendamentos de **rotas confirmadas**, em calendário.
 20. ⬜ Uma rota **não** é confirmada com serviços por aceitar (**409**), a lista **"Por aceitar"** deixa de mostrar serviços assim que o agendamento entra em rota confirmada, e a rota expõe o **detalhe dos agendamentos qualificados**.
 21. ⬜ O *dropdown* do autocomplete **não** aparece no carregamento de `/registo` (§24.8).
+22. ⬜ O gestor **exclui** um agendamento de uma rota **não decidida** e ele volta a **qualificado** (nunca `cancelado`).
+23. ⬜ Existe uma página de **avisos** por perfil, com **contador de não lidos** no sino e ligação no menu do utilizador.
 13. ⬜ Cliente recebe **lembrete** com sugestão de loja física ou reagendamento.
 14. ⬜ Sinal **configurável** no backoffice; **90 %** cobrados no término com **método simulado**.
 15. ⬜ **Página de detalhes** por serviço com **carousel**.
