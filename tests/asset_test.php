@@ -49,6 +49,7 @@ $assets = [
     "modules/common/js/validators/user.validator.js",
     "modules/common/js/utils/addressAutocomplete.js",
     "modules/common/js/utils/general.utils.js",
+    "modules/common/js/utils/vat.utils.js",
     "modules/common/js/api/api.js",
     "modules/backoffice/js/bo.utils.js",
     "modules/backoffice/js/components/appointments.js",
