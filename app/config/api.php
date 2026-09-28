@@ -9,6 +9,7 @@ $routes = [
     
         "city-supported" => ["controller" => "CityController", "method" => "findSupportedCities", "http" => "GET"],
         "category-all"   => ["controller" => "CategoryController", "method" => "findAll", "http" => "GET"],
+        "site-stats"     => ["controller" => "StatsController", "method" => "summary", "http" => "GET"],
 
         "booking-services"       => ["controller" => "BookingController", "method" => "serviceList", "http" => "GET"],
         "booking-availability"   => ["controller" => "BookingController", "method" => "availability", "http" => "GET"],
