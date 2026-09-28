@@ -4,12 +4,13 @@
 > **`especificacao_mvp.md`** — que **prevalece** sobre os restantes `.md`.
 > Este README mantém-se como guia de **instalação e uso rápido**. Mapa documental: §29.2 do documento-mestre.
 >
-> ⚠️ **Onde vive o documento-mestre:** `especificacao_mvp.md`, `mapaMentalMVP/`, `tools/` e
-> `.clinerules` **não são versionados nas branches de produto** (`main`, `dev` e restantes) — existem
-> apenas na branch **`agent-workspace`**, que **nunca é integrada**. Ver a secção
-> **Ramos do repositório** mais abaixo.
+> ⚠️ **Onde vive o documento-mestre:** `especificacao_mvp.md`, `.clinerules` e a pasta **`_dev/`**
+> (docs, tools, tests, mapaMentalMVP) **não são versionados nas branches de produto** (`main`, `dev` e
+> restantes) — existem apenas na branch **`agent-workspace`**, que **nunca é integrada**. Exceção:
+> `_dev/tests/`, que é entregável e se versiona no `dev`. As **regras de Git** estão em
+> `.clinerules` §4; o inventário dos ramos, na secção **Ramos do repositório** mais abaixo.
 
-## Projeto Académico | Entrega: 21/09/2026
+## Projeto Académico · CET026 · Turma Tarde
 
 ---
 
@@ -48,7 +49,6 @@ secade-beauty-tarde/
 │   ├── main/             # Páginas públicas (clientes)
 │   └── backoffice/       # Área de gestão (gestor)
 ├── README.md              # Este ficheiro (instalação + uso)
-├── tests/                 # Testes automatizados (CLI + HTTP)
 ├── index.php              # Front Controller
 ├── DataBase_v2.sql        # Schema ATUAL (v2+): 24 tabelas + dados de referência
 ├── database_seed.sql      # Dados de demonstração/teste (utilizadores + morada)
@@ -58,43 +58,35 @@ secade-beauty-tarde/
 ├── DataBase_backup_pre_v2.sql # [arquivo] cópia do estado antes da v2
 └── .htaccess              # Rewrite rules
 
-[existe apenas na branch agent-workspace — ver "Ramos do repositório"]
-especificacao_mvp.md       # Documento-mestre (fonte única de verdade)
-mapaMentalMVP/             # Apoio a testes: guia manual + mapa de fluxo de dados
-tools/                     # Utilitários de manutenção dev-only (encoding, .md)
+[na branch agent-workspace — ver "Ramos do repositório"]
+especificacao_mvp.md       # Documento-mestre (router: mapa § -> ficheiro)
 .clinerules                # Regras permanentes do assistente
+
+_dev/                      # Umbrella do que NÃO é produto (_dev/tests versiona-se no dev)
+├── docs/                  #   Especificação por domínio + regras/moldes on-demand
+├── tools/                 #   Utilitários de manutenção dev-only (encoding, .md)
+├── tests/                 #   Testes automatizados (CLI + HTTP)
+└── mapaMentalMVP/         #   Apoio não normativo: análise, auditoria, mensagem Teams
 ```
 
 ---
 
 ## 🌿 RAMOS DO REPOSITÓRIO (BRANCHES)
 
-### Ramos principais
+> 📌 **Fonte única das regras de Git:** `.clinerules` §4 (modelo de branches, fluxo de integração e a
+> branch `agent-workspace`) — na branch `agent-workspace`. Aqui fica apenas o **inventário dos ramos**,
+> para orientação rápida.
 
-| Branch            | Papel                                                        | Recebe merges/PR de              |
-| ----------------- | ------------------------------------------------------------ | -------------------------------- |
-| `main`            | Código final de qualidade — 100 % funcional de ponta a ponta | apenas de `dev`                  |
-| `dev`             | Desenvolvimento — estado mais avançado do projeto            | branches de contexto e de tarefa |
-| `agent-workspace` | Documento-mestre, `mapaMentalMVP/`, `tools/` e `.clinerules` | — (**nunca é integrada**)        |
-| restantes         | Branches de trabalho (contexto, funcionalidade, correção)    | —                                |
+| Branch            | Papel                                                                  |
+| :---------------- | :--------------------------------------------------------------------- |
+| `main`            | Código final de qualidade — 100 % funcional de ponta a ponta           |
+| `dev`             | Desenvolvimento — estado mais avançado do projeto                      |
+| `agent-workspace` | Documento-mestre, `_dev/mapaMentalMVP/`, `_dev/tools/` e `.clinerules` |
+| restantes         | Branches de trabalho (contexto, funcionalidade, correção)              |
 
-- Nunca se faz commit **direto** em `dev` nem em `main`: o trabalho entra sempre por branch e
-  merge/PR. `main` só aceita merges vindos de `dev`.
-- Mensagens de commit: resumo simples, bullets com `-`, sem emoji nem formatação markdown.
-
-### Branch `agent-workspace` (ferramentas e documentação do assistente)
-
-É a branch **exclusiva do par agente/humano**. Guarda o **documento-mestre**
-(`especificacao_mvp.md`), o **mapa de apoio a testes** (`mapaMentalMVP/`), os **utilitários de
-manutenção** (`tools/`) e as **regras do assistente** (`.clinerules`).
-
-- **Nunca é integrada** em `dev` nem em `main` (o fluxo é no sentido oposto, se necessário).
-- Esses caminhos estão listados no `.gitignore`, por isso **não aparecem nas outras branches**
-  (`git status` fica limpo mesmo com os ficheiros no disco).
-- Um ficheiro já versionado **não** é afetado pelo `.gitignore`; para o voltar a versionar noutra
-  branch usa-se `git add -f <caminho>`.
-- O `README.md`, o `tests/` e todo o código de produto **são versionados normalmente em `dev`**.
-- Se a branch for apagada, os ficheiros **continuam no disco** (apenas deixam de estar versionados).
+- A `agent-workspace` **nunca é integrada** em `dev` nem em `main`.
+- O `README.md`, os testes (`_dev/tests/` depois de a reestruturação ser integrada) e todo o código de
+  produto são versionados **normalmente** em `dev`.
 
 ### Branches de contexto integradas em `dev`
 
@@ -201,7 +193,7 @@ Criadas por `database_seed.sql`:
 - [x] Gestão de sessões e de perfis (cliente / funcionário / gestor)
 - [x] API REST básica (padrão `?action=dominio-acao`)
 
-### ✅ MVP Completo (entrega)
+### ✅ Implementado (Fases 1-5)
 - [x] **Catálogo de serviços** — `/servicos` e `/servicos/<categoria>`, filtros (categoria, preço, duração, pesquisa), modal de detalhes e badge "Apenas Loja"
 - [x] **Wizard de Agendamento LOJA FÍSICA** (5 passos: canal → serviços → data/hora → profissional → resumo) com slots de 30 min e sinal de 10% simulado
 - [x] **Wizard de Agendamento CARRINHA AMBULANTE** (7 passos: canal → serviços/pessoas → morada → OTP → data/hora → sinal → resumo)
@@ -253,35 +245,22 @@ num único ficheiro e removidos, para evitar divergência de informação e redu
    finais, regras de negócio, modelo de dados (com diagrama de relações), arquitetura e convenções,
    API, máquina de estados, testes e instalação. **Prevalece** em caso de conflito.
 2. **`README.md`** — este ficheiro: instalação e uso rápido.
-3. **`mapaMentalMVP/`** — apoio aos testes: `guia_teste_manual.md` (guia passo-a-passo) e
-   `mapa_fluxo_dados.md` (mapa visual do fluxo de dados ponta-a-ponta).
+3. **`_dev/docs/`** — documentação **on-demand**: `_dev/docs/README.md` (mapa e regras), `_dev/docs/spec/`
+   (especificação por domínio), `_dev/docs/rules/` + `_dev/docs/templates/` (guias, mapas e relatórios
+   gerados **só quando pedidos**).
 4. **`.clinerules`** — regras permanentes do projeto.
-5. **`tools/`** — utilitários de manutenção (encoding seguro, formatação/validação dos `.md`); guia próprio em `tools/README.md`.
+5. **`_dev/tools/`** — utilitários de manutenção (encoding seguro, formatação/validação dos `.md`); guia próprio em `_dev/tools/README.md`.
 
 ---
 
 ## 🧪 TESTES
 
-### Suites automatizadas (`tests/`)
-```bash
-# Sintaxe dos ficheiros JavaScript (validação de estrutura, sem Node)
-php tests/js_syntax_check.php
-
-# Testes funcionais das camadas (Services/Repositories, transações, algoritmo)
-php tests/functional_test.php
-
-# Testes end-to-end HTTP (routing, sessões, APIs, backoffice) — requer Apache+MySQL ativos
-php tests/http_test.php
-
-# Assets estáticos + injeção de scripts por página (register_script) — requer Apache ativo
-php tests/asset_test.php
-```
-
-Estado atual: **105 testes funcionais + 119 testes HTTP + 65 verificações de assets + sintaxe JS — todos a passar (289 verificações)**.
-
-> Os testes HTTP incluem o **fluxo end-to-end de registo e login** (§8–§12): registo de cliente,
-> validações (email duplicado, cidade não suportada, termos), login dos 3 perfis, acesso às áreas
-> reservadas e logout. Limpam os dados que criam.
+> 📌 **Fonte única:** **`_dev/tests/README.md`** — suites, âmbito de cada uma, comandos de execução,
+> pré-requisitos (Apache e MySQL) e garantias de repetibilidade. Estado atual: **294 verificações,
+> todas a passar** (105 funcionais + 119 HTTP + 70 de assets + sintaxe JS).
+>
+> Testes **manuais** (fluxos por interface, navegação mobile, responsividade):
+> guia de teste manual **gerado sob demanda** (`_dev/docs/rules/`). Critérios de aceitação: `especificacao_mvp.md` §28.
 
 ### Manual — Criar um Cliente
 1. Aceder a http://localhost/secade-beauty-tarde/registo
@@ -337,17 +316,10 @@ Body: { "email": "teste@test.com", "password": "Test@123" }
 
 ## 🔒 RESTRIÇÕES E SIMPLIFICAÇÕES
 
-### Académicas
-✅ **Pagamentos:** Simulação (sem gateway real)  
-✅ **SMS/Email:** Log ou alert() na tela  
-✅ **OTP:** Código mostrado sem envio real  
-✅ **Rotas:** Validação manual (sem CRON)
-
-### Técnicas
-❌ **Proibido:** Instalar novos pacotes  
-❌ **Proibido:** Usar frameworks externos  
-❌ **Proibido:** Modificar pasta `/admin`  
-✅ **Obrigatório:** Prepared statements (segurança)
+> 📌 **Fonte única:** simplificações académicas e limitações em `especificacao_mvp.md` §22; restrições
+> de execução em `.clinerules` §1 (ambos na branch `agent-workspace`). Resumo: pagamentos, SMS/e-mail
+> e OTP **simulados** · rotas decididas **manualmente** (sem CRON) · **sem** pacotes ou frameworks
+> externos · **sem** tocar em `/admin` · **prepared statements** obrigatórios.
 
 ---
 
@@ -362,9 +334,7 @@ Body: { "email": "teste@test.com", "password": "Test@123" }
 
 ## 📅 ROADMAP POR FASES
 
-> O cronograma de 7 dias do planeamento inicial foi **revogado** (continha o algoritmo automático de
-> 100 €, entretanto substituído por decisão manual). Detalhe em `especificacao_mvp.md` §21
-> (branch `agent-workspace`).
+> Estado e âmbito de cada fase: `especificacao_mvp.md` §21 (branch `agent-workspace`).
 
 | Fase | Âmbito                                                                                 | Estado       |
 | ---- | -------------------------------------------------------------------------------------- | ------------ |
@@ -372,24 +342,17 @@ Body: { "email": "teste@test.com", "password": "Test@123" }
 | 2    | Wizards de agendamento (Loja e Carrinha + OTP)                                         | ✅           |
 | 3    | Backoffice do Funcionário (aceitação, consolidação, recibos verdes)                    | ✅           |
 | 4    | Backoffice do Gestor (agendamentos, rotas **manuais**, fiscal, config. recibos verdes) | ✅           |
-| 5    | Integração e testes (289 verificações)                                                 | ✅           |
-| 6    | Requisitos adicionais (ver §24 do documento-mestre)                                    | ⬜ a iniciar |
-
-**Data de entrega:** 21/09/2026
-
-### 🎯 Funcionalidades OBRIGATÓRIAS para Entrega
-- ✅ Agendamento Loja Física (100%)
-- ✅ **Agendamento Carrinha Ambulante (100%)**
-- ✅ **Decisão de rotas — MANUAL** (50 € como indicador visual; o algoritmo automático foi revogado)
-- ✅ **Backoffice completo (Agendamentos + Rotas + Serviços + Fiscal + Recibos Verdes)**
+| 5    | Integração e testes (294 verificações)                                                 | ✅           |
+| 6    | Requisitos adicionais (ver §24 do documento-mestre)                                    | 🟡 em curso  |
 
 ---
 
 ## 📞 SUPORTE
 
 Para questões sobre o projeto, consultar o **documento-mestre** `especificacao_mvp.md`
-(índice no §0 e anexos no §29). Para testar manualmente, usar `mapaMentalMVP/guia_teste_manual.md`.
-Ambos residem na branch **`agent-workspace`** (nunca integrada em `dev`/`main`).
+(mapa em §0 e anexos em §29). Documentação de apoio — guia de teste manual, mapas de fluxo e
+relatórios — é **gerada sob demanda** por `_dev/docs/rules/` (`_dev/docs/README.md`).
+Reside na branch **`agent-workspace`** (nunca integrada em `dev`/`main`).
 
 ---
 
@@ -399,4 +362,4 @@ Projeto académico - Todos os direitos reservados © 2026
 
 ---
 
-**Versão:** 2.0 | **Data:** 21/09/2026 | **Status:** 🟢 MVP COMPLETO E TESTADO
+**Versão:** 2.1 | **Data:** 24/09/2026 | **Status:** 🟢 Fases 1-5 concluídas · Fase 6 em curso

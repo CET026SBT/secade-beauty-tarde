@@ -74,6 +74,10 @@ const generalUtils = (() => {
             const num = Number(value ?? 0);
             return `${num.toFixed(2).replace('.', ',')} €`;
         },
+        /** Valor formatado com IVA incluído (usa `vatUtils` — D-16 · RN-36). */
+        formatCurrencyWithVat(netValue) {
+            return generalUtils.formatCurrency(vatUtils.gross(netValue));
+        },
         formatDuration(minutes) {
             const total = Number(minutes ?? 0);
             const hours = Math.floor(total / 60);

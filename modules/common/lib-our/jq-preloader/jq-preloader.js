@@ -135,7 +135,11 @@
         batch.$renderedNodes.remove();
 
         if ($target.hasClass('jq-preloader-defer')) {
-            $target.children(':not(.jq-preloader-existing, [preloader-overlay], [preloader-skeleton])').detach().clone(true, true).appendTo($target);
+            // Mover (nunca clonar) os elementos pré-existentes para o fim do container.
+            // Clonar partia a identidade dos nós: as instâncias de widgets (ex.: Owl Carousel)
+            // continuavam a operar sobre os originais destacados, pelo que os clones no DOM
+            // ficavam imóveis — os botões de navegação do carrossel não deslizavam.
+            $target.append($target.children(':not(.jq-preloader-existing, [preloader-overlay], [preloader-skeleton])'));
         }
 
         $target.children('.jq-preloader-existing').removeClass('jq-preloader-existing');
