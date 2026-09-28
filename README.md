@@ -256,8 +256,8 @@ num único ficheiro e removidos, para evitar divergência de informação e redu
 ## 🧪 TESTES
 
 > 📌 **Fonte única:** **`_dev/tests/README.md`** — suites, âmbito de cada uma, comandos de execução,
-> pré-requisitos (Apache e MySQL) e garantias de repetibilidade. Estado atual: **294 verificações,
-> todas a passar** (105 funcionais + 119 HTTP + 70 de assets + sintaxe JS).
+> pré-requisitos (Apache e MySQL) e garantias de repetibilidade. Estado atual: **430 verificações,
+> todas a passar** (153 funcionais + 179 HTTP + 98 de assets + sintaxe JS).
 >
 > Testes **manuais** (fluxos por interface, navegação mobile, responsividade):
 > guia de teste manual **gerado sob demanda** (`_dev/docs/rules/`). Critérios de aceitação: `especificacao_mvp.md` §28.
@@ -336,14 +336,14 @@ Body: { "email": "teste@test.com", "password": "Test@123" }
 
 > Estado e âmbito de cada fase: `especificacao_mvp.md` §21 (branch `agent-workspace`).
 
-| Fase | Âmbito                                                                                 | Estado       |
-| ---- | -------------------------------------------------------------------------------------- | ------------ |
-| 1    | Catálogo, categorias, autenticação, registo, perfil/moradas                            | ✅           |
-| 2    | Wizards de agendamento (Loja e Carrinha + OTP)                                         | ✅           |
-| 3    | Backoffice do Funcionário (aceitação, consolidação, recibos verdes)                    | ✅           |
-| 4    | Backoffice do Gestor (agendamentos, rotas **manuais**, fiscal, config. recibos verdes) | ✅           |
-| 5    | Integração e testes (294 verificações)                                                 | ✅           |
-| 6    | Requisitos adicionais (ver §24 do documento-mestre)                                    | 🟡 em curso  |
+| Fase | Âmbito                                                                                 | Estado      |
+| ---- | -------------------------------------------------------------------------------------- | ----------- |
+| 1    | Catálogo, categorias, autenticação, registo, perfil/moradas                            | ✅          |
+| 2    | Wizards de agendamento (Loja e Carrinha + OTP)                                         | ✅          |
+| 3    | Backoffice do Funcionário (aceitação, consolidação, recibos verdes)                    | ✅          |
+| 4    | Backoffice do Gestor (agendamentos, rotas **manuais**, fiscal, config. recibos verdes) | ✅          |
+| 5    | Integração e testes (430 verificações)                                                 | ✅          |
+| 6    | Requisitos adicionais (ver §24 do documento-mestre)                                    | 🟡 em curso |
 
 ---
 
@@ -362,4 +362,4 @@ Projeto académico - Todos os direitos reservados © 2026
 
 ---
 
-**Versão:** 2.1 | **Data:** 24/09/2026 | **Status:** 🟢 Fases 1-5 concluídas · Fase 6 em curso
+**Versão:** 2.2 | **Data:** 28/09/2026 | **Status:** 🟢 Fases 1-5 concluídas · Fase 6 em curso (`/gestao` = painel do gestor)

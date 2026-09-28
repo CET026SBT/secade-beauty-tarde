@@ -17,6 +17,7 @@ $routes = [
         "booking-create-store"   => ["controller" => "BookingController", "method" => "createStoreBooking", "http" => "POST"],
         "booking-create-amb"     => ["controller" => "BookingController", "method" => "createAmbulatoryBooking", "http" => "POST"],
         "booking-my"             => ["controller" => "BookingController", "method" => "myBookings", "http" => "GET"],
+        "customer-booking-cancel" => ["controller" => "BookingController", "method" => "cancelBooking", "http" => "POST"],
 
         "customer-profile"            => ["controller" => "CustomerController", "method" => "profile", "http" => "GET"],
         "customer-address-list"       => ["controller" => "CustomerAddressController", "method" => "index", "http" => "GET"],
@@ -31,6 +32,22 @@ $routes = [
 
         "admin-routes-list"        => ["controller" => "RotaController", "method" => "routesList", "http" => "GET"],
         "admin-route-decide"       => ["controller" => "RotaController", "method" => "decideRoute", "http" => "POST"],
+
+        // Fase 6.0 / 6.5 — entrada do backoffice (painel, avisos do sino e agenda)
+        "admin-dashboard-summary"    => ["controller" => "DashboardController", "method" => "summary", "http" => "GET"],
+        "admin-alert-summary"        => ["controller" => "AlertController", "method" => "summary", "http" => "GET"],
+        "admin-alert-list"           => ["controller" => "AlertController", "method" => "list", "http" => "GET"],
+        "admin-alert-read"           => ["controller" => "AlertController", "method" => "markRead", "http" => "POST"],
+        "admin-employee-agenda-list" => ["controller" => "AgendaController", "method" => "month", "http" => "GET"],
+
+        // Fase 6.1 — fornecedores (RF-85 · §25.1)
+        "admin-supplier-list"        => ["controller" => "SupplierController", "method" => "list", "http" => "GET"],
+        "admin-supplier-store"       => ["controller" => "SupplierController", "method" => "store", "http" => "POST"],
+        "admin-supplier-update"      => ["controller" => "SupplierController", "method" => "update", "http" => "POST"],
+        "admin-supplier-set-active"  => ["controller" => "SupplierController", "method" => "setActive", "http" => "POST"],
+
+        // Fase 6.4 — comissões (RF-84 · §25.5)
+        "admin-commission-list"      => ["controller" => "CommissionController", "method" => "list", "http" => "GET"],
 
         "admin-service-pending-list" => ["controller" => "ServiceController", "method" => "pendingList", "http" => "GET"],
         "admin-service-accepted-list"=> ["controller" => "ServiceController", "method" => "acceptedList", "http" => "GET"],
