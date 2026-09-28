@@ -22,7 +22,7 @@ const appointments = (() => {
         return services.map(service => {
             const person = service.personName ? ` <span class="badge bg-light text-dark">${generalUtils.escapeHtml(service.personName)}</span>` : "";
             return `<li>${generalUtils.escapeHtml(service.serviceName || "")}${person}
-                        <span class="text-muted">· ${generalUtils.formatCurrency(service.price)}</span></li>`;
+                        <span class="text-muted">· ${generalUtils.formatCurrencyWithVat(service.price)} <small>(IVA incl.)</small></span></li>`;
         }).join("");
     }
 
@@ -42,7 +42,8 @@ const appointments = (() => {
                         ${isAmbulatory ? "Carrinha" : "Loja"}
                     </span>
                 </div>
-                <span class="fw-bold">${generalUtils.formatCurrency(booking.totalAmount)}</span>
+                <span class="fw-bold">${generalUtils.formatCurrencyWithVat(booking.totalAmount)}</span>
+                    <span class="small text-muted ms-1">(IVA incl.)</span>
             </div>
             <p class="text-muted small mb-2">
                 <i class="bi bi-calendar-event me-1"></i>${generalUtils.formatDateTime(booking.dateTime)}
