@@ -44,6 +44,7 @@ include_once ROOT_PATH . "/modules/main/includes/navbar.php";
                     </div>
 
                     <div class="alert alert-danger d-none" id="appointmentsError" role="alert"></div>
+<div class="alert alert-success d-none" id="appointmentsSuccess" role="alert"></div>
                     <div id="appointmentsList"></div>
                 </div>
             </div>

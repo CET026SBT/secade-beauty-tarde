@@ -36,4 +36,16 @@ class BookingController extends BaseController {
         Session::requireProfileApi(["cliente"]);
         return $this->bookingService->findCustomerBookings(Session::userId());
     }
+
+    /**
+     * RF-12 (§24.6): cancelamento pelo cliente, sem penalização.
+     */
+    public function cancelBooking(): array {
+        Session::requireProfileApi(["cliente"]);
+
+        $data = $this->getRequestData();
+        $bookingId = (int)($data["bookingId"] ?? $data["id"] ?? 0);
+
+        return $this->bookingService->cancelCustomerBooking(Session::userId(), $bookingId);
+    }
 }
