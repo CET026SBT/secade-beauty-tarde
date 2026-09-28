@@ -27,12 +27,17 @@ $routes = [
     "agendar"               => ROOT_PATH . "/modules/main/booking.php",
     "agendamento-sucesso"   => ROOT_PATH . "/modules/main/bookingSuccess.php",
 
-    "gestao"                => ROOT_PATH . "/modules/backoffice/appointments.php",
+    // D-14 (§3.14): `/gestao` é o PAINEL do gestor; o funcionário é encaminhado
+    // para a sua agenda pela própria página (ver modules/backoffice/dashboard.php).
+    "gestao"                => ROOT_PATH . "/modules/backoffice/dashboard.php",
+    "gestao/painel"         => ROOT_PATH . "/modules/backoffice/dashboard.php",
     "gestao/agendamentos"   => ROOT_PATH . "/modules/backoffice/appointments.php",
     "gestao/rotas"          => ROOT_PATH . "/modules/backoffice/routes.php",
     "gestao/servicos"       => ROOT_PATH . "/modules/backoffice/services.php",
     "gestao/fiscal"         => ROOT_PATH . "/modules/backoffice/fiscal.php",
-    "gestao/recibos-verdes" => ROOT_PATH . "/modules/backoffice/greenReceipts.php"
+    "gestao/recibos-verdes" => ROOT_PATH . "/modules/backoffice/greenReceipts.php",
+    "gestao/avisos"         => ROOT_PATH . "/modules/backoffice/avisos.php",
+    "gestao/agenda"         => ROOT_PATH . "/modules/backoffice/agenda.php"
 ];
 
 $matchedFile = match_route_and_extract_params($path, $routes);

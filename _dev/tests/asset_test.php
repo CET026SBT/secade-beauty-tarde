@@ -36,6 +36,11 @@ $gestorJar = sys_get_temp_dir() . "/sb_final_gestor.txt";
 @unlink($gestorJar);
 http("{$base}/api?action=auth-login", $gestorJar, ["email" => "gestor@secade.pt", "password" => "Gestor@123"]);
 
+// Funcionário: a agenda (Fase 6.5) é uma página só dele
+$employeeJar = sys_get_temp_dir() . "/sb_final_funcionario.txt";
+@unlink($employeeJar);
+http("{$base}/api?action=auth-login", $employeeJar, ["email" => "funcionario@secade.pt", "password" => "Func@12345"]);
+
 echo "\n=== Assets estáticos (devem ser 200 e servir JS/CSS real) ===\n";
 $assets = [
     "modules/main/js/components/services.js",
@@ -57,6 +62,10 @@ $assets = [
     "modules/backoffice/js/components/services.js",
     "modules/backoffice/js/components/fiscal.js",
     "modules/backoffice/js/components/greenReceipts.js",
+    "modules/backoffice/js/components/dashboard.js",
+    "modules/backoffice/js/components/alerts.js",
+    "modules/backoffice/js/components/agenda.js",
+    "modules/common/lib/chartjs/Chart.bundle.min.js",
     "modules/common/css/ext-bootstrap.css",
     "modules/common/css/style.css"
 ];
@@ -75,8 +84,11 @@ $pages = [
     ["/agendamentos",         $jar,  ["components/appointments.js"]],
     ["/gestao/agendamentos",  $gestorJar, ["components/appointments.js", "bo.utils.js"]],
     ["/gestao/rotas",         $gestorJar, ["components/routes.js", "bo.utils.js"]],
-    ["/gestao/fiscal",        $gestorJar, ["components/fiscal.js", "bo.utils.js"]],
-    ["/gestao/recibos-verdes",$gestorJar, ["components/greenReceipts.js", "bo.utils.js"]]
+    ["/gestao/fiscal",         $gestorJar, ["components/fiscal.js", "bo.utils.js"]],
+    ["/gestao/recibos-verdes",$gestorJar, ["components/greenReceipts.js", "bo.utils.js"]],
+    ["/gestao/painel",         $gestorJar, ["components/dashboard.js", "bo.utils.js"]],
+    ["/gestao/avisos",         $gestorJar, ["components/alerts.js", "bo.utils.js"]],
+    ["/gestao/agenda",         $employeeJar, ["components/agenda.js", "bo.utils.js"]]
 ];
 
 foreach ($pages as [$path, $cookieJar, $expectedScripts]) {
@@ -100,6 +112,18 @@ check("página fiscal tem formulário de obrigação", str_contains($fiscalPage[
 
 $servicesPage = http("{$base}/gestao/servicos", $gestorJar);
 check("página de serviços do funcionário carrega", str_contains($servicesPage["body"], "pendingList") && str_contains($servicesPage["body"], "acceptedList"));
+
+echo "\n=== Elementos-chave da entrada do backoffice (Fase 6.0 · 6.5) ===\n";
+
+$painelPage = http("{$base}/gestao/painel", $gestorJar);
+check("painel carrega o Chart.js servido localmente (E-3)", str_contains($painelPage["body"], "modules/common/lib/chartjs/Chart.bundle.min.js"));
+check("painel reserva as áreas dos gráficos", str_contains($painelPage["body"], "chartBookingsByState") && str_contains($painelPage["body"], "chartFiscalByType"));
+check("backoffice tem a sidebar como menu principal", str_contains($painelPage["body"], "bo-sidebar") && str_contains($painelPage["body"], "bo-sidebar-link"));
+check("backoffice tem o sino com contador de avisos", str_contains($painelPage["body"], "boBellCount"));
+
+$agendaPage = http("{$base}/gestao/agenda", $employeeJar);
+check("agenda do funcionário traz a grelha do calendário", str_contains($agendaPage["body"], "agendaCalendar"));
+check("sidebar do funcionário não mostra o painel do gestor", !str_contains($agendaPage["body"], "/gestao/painel"));
 
 echo "\n=== Contrato de nomes do formulário de registo (alinhado com os mappers) ===\n";
 

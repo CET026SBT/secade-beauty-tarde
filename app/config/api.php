@@ -32,6 +32,13 @@ $routes = [
         "admin-routes-list"        => ["controller" => "RotaController", "method" => "routesList", "http" => "GET"],
         "admin-route-decide"       => ["controller" => "RotaController", "method" => "decideRoute", "http" => "POST"],
 
+        // Fase 6.0 / 6.5 — entrada do backoffice (painel, avisos do sino e agenda)
+        "admin-dashboard-summary"    => ["controller" => "DashboardController", "method" => "summary", "http" => "GET"],
+        "admin-alert-summary"        => ["controller" => "AlertController", "method" => "summary", "http" => "GET"],
+        "admin-alert-list"           => ["controller" => "AlertController", "method" => "list", "http" => "GET"],
+        "admin-alert-read"           => ["controller" => "AlertController", "method" => "markRead", "http" => "POST"],
+        "admin-employee-agenda-list" => ["controller" => "AgendaController", "method" => "month", "http" => "GET"],
+
         "admin-service-pending-list" => ["controller" => "ServiceController", "method" => "pendingList", "http" => "GET"],
         "admin-service-accepted-list"=> ["controller" => "ServiceController", "method" => "acceptedList", "http" => "GET"],
         "admin-service-accept"       => ["controller" => "ServiceController", "method" => "accept", "http" => "POST"],

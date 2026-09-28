@@ -482,6 +482,73 @@ $managerArea = request("{$base}/api?action=admin-routes-list", "GET", null, $e2e
 check("gestor acede a area de rotas (200)", $managerArea["status"] === 200, (string)$managerArea["status"]);
 
 // ---------------------------------------------------------------------------
+section("11.1 Fase 6.0/6.5: painel, avisos, agenda e encaminhamento de /gestao");
+
+$dashboardRes = request("{$base}/api?action=admin-dashboard-summary", "GET", null, $e2eManagerJar);
+check("gestor acede ao painel (200)", $dashboardRes["status"] === 200, (string)$dashboardRes["status"]);
+check("painel devolve kpis e graficos", isset($dashboardRes["json"]["kpis"], $dashboardRes["json"]["charts"]), json_encode(array_keys($dashboardRes["json"] ?? [])));
+check("painel conta os servicos ativos da BD", (int)($dashboardRes["json"]["kpis"]["activeServices"] ?? 0) >= 1, json_encode($dashboardRes["json"]["kpis"]["activeServices"] ?? null));
+check("painel traz serie dos proximos 7 dias", count($dashboardRes["json"]["charts"]["bookingsPerDay"]["data"] ?? []) === 7, json_encode($dashboardRes["json"]["charts"]["bookingsPerDay"] ?? []));
+check("contabilidade assume estado vazio (sem numero inventado)", ($dashboardRes["json"]["accounting"]["available"] ?? true) === false, json_encode($dashboardRes["json"]["accounting"] ?? []));
+
+$dashboardEmployee = request("{$base}/api?action=admin-dashboard-summary", "GET", null, $e2eEmployeeJar);
+check("painel negado ao funcionario (403)", $dashboardEmployee["status"] === 403, (string)$dashboardEmployee["status"]);
+
+$dashboardClient = request("{$base}/api?action=admin-dashboard-summary", "GET", null, $clientJar);
+check("painel negado ao cliente (403)", $dashboardClient["status"] === 403, (string)$dashboardClient["status"]);
+
+$alertSummary = request("{$base}/api?action=admin-alert-summary", "GET", null, $e2eManagerJar);
+check("sino devolve o contador ao gestor (200)", $alertSummary["status"] === 200 && is_numeric($alertSummary["json"]["count"] ?? null), json_encode($alertSummary["json"] ?? []));
+
+$alertList = request("{$base}/api?action=admin-alert-list", "GET", null, $e2eManagerJar);
+check("pagina de avisos devolve grupos", count($alertList["json"]["groups"] ?? []) >= 2, json_encode(array_keys($alertList["json"] ?? [])));
+check("avisos do gestor incluem a origem fiscal", in_array("fiscal", array_column($alertList["json"]["groups"] ?? [], "key"), true), json_encode(array_column($alertList["json"]["groups"] ?? [], "key")));
+check("avisos do gestor incluem os servicos por aceitar", in_array("servicos_pendentes", array_column($alertList["json"]["groups"] ?? [], "key"), true), json_encode(array_column($alertList["json"]["groups"] ?? [], "key")));
+
+$alertListEmployee = request("{$base}/api?action=admin-alert-list", "GET", null, $e2eEmployeeJar);
+check("funcionario tem avisos proprios (200)", $alertListEmployee["status"] === 200, (string)$alertListEmployee["status"]);
+check("avisos do funcionario nao mostram o grupo fiscal", !in_array("fiscal", array_column($alertListEmployee["json"]["groups"] ?? [], "key"), true), json_encode(array_column($alertListEmployee["json"]["groups"] ?? [], "key")));
+
+$alertListClient = request("{$base}/api?action=admin-alert-list", "GET", null, $clientJar);
+check("avisos negados ao cliente (403)", $alertListClient["status"] === 403, (string)$alertListClient["status"]);
+
+$alertRead = request("{$base}/api?action=admin-alert-read", "POST", [], $e2eManagerJar);
+check("marcar avisos fiscais como lidos (200)", $alertRead["status"] === 200 && isset($alertRead["json"]["updated"]), json_encode($alertRead["json"] ?? []));
+
+$alertReadEmployee = request("{$base}/api?action=admin-alert-read", "POST", [], $e2eEmployeeJar);
+check("funcionario nao marca os alertas fiscais (403)", $alertReadEmployee["status"] === 403, (string)$alertReadEmployee["status"]);
+
+$agendaRes = request("{$base}/api?action=admin-employee-agenda-list", "GET", null, $e2eEmployeeJar);
+check("funcionario acede a agenda (200)", $agendaRes["status"] === 200, (string)$agendaRes["status"]);
+check("agenda mostra so rotas confirmadas", ($agendaRes["json"]["filter"] ?? "") === "rotas_confirmadas", json_encode($agendaRes["json"]["filter"] ?? null));
+check("agenda normaliza o mes pedido", ($agendaRes["json"]["month"] ?? "") === date("Y-m"), json_encode($agendaRes["json"]["month"] ?? null));
+
+$agendaBadMonth = request("{$base}/api?action=admin-employee-agenda-list&month=nao-e-um-mes", "GET", null, $e2eEmployeeJar);
+check("mes invalido cai no mes atual", ($agendaBadMonth["json"]["month"] ?? "") === date("Y-m"), json_encode($agendaBadMonth["json"]["month"] ?? null));
+
+$agendaManager = request("{$base}/api?action=admin-employee-agenda-list", "GET", null, $e2eManagerJar);
+check("agenda negada ao gestor (403)", $agendaManager["status"] === 403, (string)$agendaManager["status"]);
+
+// D-14 (§3.14): `/gestao` passa a ser o painel do gestor e a agenda do funcionario.
+$gestaoAsManager = request("{$base}/gestao", "GET", null, $e2eManagerJar);
+check("gestor ve o painel em /gestao (200)", $gestaoAsManager["status"] === 200 && str_contains($gestaoAsManager["body"] ?? "", "chartBookingsByState"), (string)$gestaoAsManager["status"]);
+
+$gestaoAsEmployee = request("{$base}/gestao", "GET", null, $e2eEmployeeJar);
+check("funcionario e encaminhado de /gestao para a agenda", str_contains($gestaoAsEmployee["location"] ?? "", "/gestao/agenda"), (string)($gestaoAsEmployee["location"] ?? ""));
+
+$painelPage = request("{$base}/gestao/painel", "GET", null, $e2eManagerJar);
+check("pagina do painel responde 200 ao gestor", $painelPage["status"] === 200, (string)$painelPage["status"]);
+
+$agendaPage = request("{$base}/gestao/agenda", "GET", null, $e2eEmployeeJar);
+check("pagina da agenda responde 200 ao funcionario", $agendaPage["status"] === 200, (string)$agendaPage["status"]);
+
+$agendaPageManager = request("{$base}/gestao/agenda", "GET", null, $e2eManagerJar);
+check("pagina da agenda desvia o gestor (302)", $agendaPageManager["status"] === 302, (string)$agendaPageManager["status"]);
+
+$avisosPage = request("{$base}/gestao/avisos", "GET", null, $e2eEmployeeJar);
+check("pagina de avisos responde 200 ao funcionario", $avisosPage["status"] === 200, (string)$avisosPage["status"]);
+
+// ---------------------------------------------------------------------------
 section("12. Limpeza dos dados E2E");
 
 // O ON DELETE CASCADE remove as linhas de `cliente` e `cliente_morada`

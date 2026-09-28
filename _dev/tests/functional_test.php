@@ -532,6 +532,62 @@ $regLeftovers = (int)$conn->query("SELECT COUNT(*) FROM utilizador WHERE id = {$
 check("registo de teste removido (limpeza)", $regLeftovers === 0, (string)$regLeftovers);
 
 // ---------------------------------------------------------------------------
+section("13. Fase 6.0/6.5 - Painel do gestor, avisos e agenda do funcionario");
+
+require_once APP_PATH . "/services/DashboardService.php";
+require_once APP_PATH . "/services/AlertService.php";
+require_once APP_PATH . "/services/EmployeeAgendaService.php";
+require_once APP_PATH . "/repositories/DashboardRepository.php";
+
+$dashboardService = new DashboardService();
+$dashboard = $dashboardService->summary();
+check("painel devolve kpis e graficos", isset($dashboard["kpis"], $dashboard["charts"]), json_encode(array_keys($dashboard)));
+check("painel preenche a serie dos 7 dias", count($dashboard["charts"]["bookingsPerDay"]["data"] ?? []) === 7, json_encode($dashboard["charts"]["bookingsPerDay"] ?? []));
+check("painel conta os servicos do catalogo", (int)($dashboard["kpis"]["activeServices"] ?? 0) >= 35, json_encode($dashboard["kpis"]["activeServices"] ?? null));
+check("painel conta os fornecedores carregados (v4)", (int)($dashboard["kpis"]["activeSuppliers"] ?? 0) >= 43, json_encode($dashboard["kpis"]["activeSuppliers"] ?? null));
+check("painel conta os clientes carregados (v4)", (int)($dashboard["kpis"]["customers"] ?? 0) >= 65, json_encode($dashboard["kpis"]["customers"] ?? null));
+check("painel nao inventa valores de contabilidade", ($dashboard["accounting"]["available"] ?? true) === false, json_encode($dashboard["accounting"] ?? []));
+check(
+    "indicadores do painel sao numericos",
+    is_int($dashboard["kpis"]["routesAwaitingDecision"] ?? null)
+        && is_int($dashboard["kpis"]["servicesPending"] ?? null)
+        && is_int($dashboard["kpis"]["alertsUnread"] ?? null),
+    json_encode($dashboard["kpis"] ?? [])
+);
+
+$agendaService = new EmployeeAgendaService();
+$agenda = $agendaService->findMonth(1, ["month" => "2026-01"]);
+check("agenda respeita o mes pedido", ($agenda["month"] ?? "") === "2026-01" && ($agenda["from"] ?? "") === "2026-01-01" && ($agenda["to"] ?? "") === "2026-01-31", json_encode([$agenda["month"] ?? null, $agenda["from"] ?? null, $agenda["to"] ?? null]));
+check("agenda assume rotas confirmadas como criterio", ($agenda["filter"] ?? "") === "rotas_confirmadas", json_encode($agenda["filter"] ?? null));
+
+$agendaInvalid = $agendaService->findMonth(1, ["month" => "13/2026"]);
+check("agenda normaliza mes invalido", ($agendaInvalid["month"] ?? "") === date("Y-m"), json_encode($agendaInvalid["month"] ?? null));
+
+// RN-33: nenhuma linha da agenda pode vir de um agendamento que nao esteja confirmado
+$agendaRows = $bookingServiceRepo->findByEmployeeAndRange(1, "2000-01-01", "2100-12-31");
+$agendaStates = array_unique(array_column($agendaRows, "estado_reserva"));
+check("agenda so devolve agendamentos confirmados (RN-33)", count(array_diff($agendaStates, ["confirmado"])) === 0, json_encode(array_values($agendaStates)));
+
+$alertService = new AlertService();
+$alertList = $alertService->list();
+$alertKeys = array_column($alertList["groups"] ?? [], "key");
+check("avisos incluem o grupo dos servicos por aceitar", in_array("servicos_pendentes", $alertKeys, true), json_encode($alertKeys));
+check("contador de avisos e numerico", is_int($alertService->count()), json_encode($alertService->count()));
+
+// O grupo fiscal e do GESTOR: a mesma service, com sessao de funcionario, nao o pode expor
+Session::createLoginSession(["id" => 2, "name" => "Funcionario Teste", "email" => "funcionario@secade.pt", "profileType" => "funcionario"]);
+$employeeAlerts = (new AlertService())->list();
+$employeeAlertKeys = array_column($employeeAlerts["groups"] ?? [], "key");
+check("avisos do funcionario nao incluem a origem fiscal", !in_array("fiscal", $employeeAlertKeys, true), json_encode($employeeAlertKeys));
+check("avisos do funcionario identificam o perfil", ($employeeAlerts["profile"] ?? "") === "funcionario", json_encode($employeeAlerts["profile"] ?? null));
+
+Session::createLoginSession(["id" => 1, "name" => "Gestor Teste", "email" => "gestor@secade.pt", "profileType" => "gestor"]);
+$managerAlerts = (new AlertService())->list();
+$managerAlertKeys = array_column($managerAlerts["groups"] ?? [], "key");
+check("avisos do gestor incluem a origem fiscal", in_array("fiscal", $managerAlertKeys, true), json_encode($managerAlertKeys));
+check("avisos do gestor identificam o perfil", ($managerAlerts["profile"] ?? "") === "gestor", json_encode($managerAlerts["profile"] ?? null));
+
+// ---------------------------------------------------------------------------
 section("RESULTADO FINAL");
 echo ($failed === 0 ? "TODOS OS TESTES PASSARAM" : "EXISTEM FALHAS") . " => {$passed} pass, {$failed} fail\n";
 exit($failed === 0 ? 0 : 1);

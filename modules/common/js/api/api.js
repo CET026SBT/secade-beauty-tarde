@@ -35,6 +35,15 @@ const API = ((baseApi) => ({
         executeAppointment: (bookingId) => baseApi.post('?action=admin-appointment-execute', { bookingId }),
         routes: (params = {}) => baseApi.get(`?action=admin-routes-list&${$.param(params)}`, 0),
         decideRoute: (data) => baseApi.post('?action=admin-route-decide', data),
+        dashboard: () => baseApi.get('?action=admin-dashboard-summary', 0),
+        alerts: {
+            summary: () => baseApi.get('?action=admin-alert-summary', 0),
+            list: () => baseApi.get('?action=admin-alert-list', 0),
+            markRead: () => baseApi.post('?action=admin-alert-read', {})
+        },
+        agenda: {
+            month: (month) => baseApi.get(`?action=admin-employee-agenda-list&month=${month}`, 0)
+        },
         services: {
             pending: (params = {}) => baseApi.get(`?action=admin-service-pending-list&${$.param(params)}`, 0),
             accepted: (params = {}) => baseApi.get(`?action=admin-service-accepted-list&${$.param(params)}`, 0),
