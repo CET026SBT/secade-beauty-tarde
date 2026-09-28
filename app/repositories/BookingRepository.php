@@ -187,12 +187,15 @@ class BookingRepository extends BaseRepository {
 
     /**
      * Agrupa os agendamentos de ambulatório por data + cidade.
-     * Por omissão considera os estados que podem receber decisão manual do gestor
-     * (Fase 4): aguardam aceitação e totalmente aceites.
+     *
+     * RN-31 (§24.7): a rota só agrega agendamentos com **todos** os serviços aceites
+     * (`totalmente_aceite_funcionarios`). Os que aguardam aceitação **não** entram na
+     * agregação — aparecem apenas como aviso na listagem (não se agrega o que não
+     * está qualificado).
      */
     public function findAmbulatoryGroups(?string $date = null, ?int $cityId = null, array $states = []): array {
         if (empty($states)) {
-            $states = ["pendente_aceitacao_funcionarios", "totalmente_aceite_funcionarios"];
+            $states = ["totalmente_aceite_funcionarios"];
         }
 
         $placeholders = [];
@@ -252,9 +255,12 @@ class BookingRepository extends BaseRepository {
     }
 
     /**
-     * Agendamentos de ambulatório de uma cidade+data que estão em condições
-     * de receber a decisão MANUAL do gestor (Fase 4 — sem limiar automático).
-     * Inclui os consolidados e os que aguardam aceitação (recusa antecipada).
+     * Agendamentos de ambulatório de uma cidade+data em condições de receber a
+     * decisão MANUAL do gestor (Fase 4 — sem limiar automático).
+     *
+     * RN-31 (§24.7): só os **qualificados** (`totalmente_aceite_funcionarios`), ou
+     * seja com todos os serviços aceites. Um grupo com serviços pendentes é
+     * recusado com 409 por `RotaService::decideRoute` (ver `countPendingByCityAndDate`).
      */
     public function findDecidableByCityAndDate(string $date, int $cityId): array {
         $sql = "SELECT a.id, a.estado_reserva, a.valor_total
@@ -263,9 +269,62 @@ class BookingRepository extends BaseRepository {
                 WHERE a.local_prestacao = 'carrinha_ambulante'
                   AND cm.cidade_id = :cidade_id
                   AND DATE(a.data_hora_pretendida) = :data_rota
-                  AND a.estado_reserva IN ('pendente_aceitacao_funcionarios','totalmente_aceite_funcionarios')
+                  AND a.estado_reserva = 'totalmente_aceite_funcionarios'
                 ORDER BY a.id ASC";
 
         return $this->fetchAllRaw($sql, ["cidade_id" => $cityId, "data_rota" => $date]);
+    }
+
+    /**
+     * Agendamentos de ambulatório de uma cidade+data que ainda aguardam aceitação
+     * de serviços (RN-31) — mostrados na listagem, nunca agregados na rota.
+     */
+    public function countPendingByCityAndDate(string $date, int $cityId): int {
+        $sql = "SELECT COUNT(*)
+                FROM agendamento a
+                INNER JOIN cliente_morada cm ON a.cliente_morada_id = cm.id
+                WHERE a.local_prestacao = 'carrinha_ambulante'
+                  AND cm.cidade_id = :cidade_id
+                  AND DATE(a.data_hora_pretendida) = :data_rota
+                  AND a.estado_reserva = 'pendente_aceitacao_funcionarios'";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(["cidade_id" => $cityId, "data_rota" => $date]);
+
+        return (int)$stmt->fetchColumn();
+    }
+
+    /**
+     * Detalhe dos agendamentos de ambulatório de uma cidade+data (RN-34): serve o
+     * diálogo "Ver detalhes" da rota, onde o gestor inclui/exclui cada agendamento
+     * antes de decidir. Sem coleções filhas: os serviços são lidos pelo Service
+     * (`BookingServiceRepository`), como manda a §18.2.
+     */
+    public function findAmbulatoryBookingsByCityAndDate(string $date, int $cityId, array $states = []): array {
+        if (empty($states)) {
+            $states = ["totalmente_aceite_funcionarios"];
+        }
+
+        $placeholders = [];
+        $params = ["cidade_id" => $cityId, "data_rota" => $date];
+
+        foreach (array_values($states) as $i => $state) {
+            $placeholders[] = ":estado{$i}";
+            $params["estado{$i}"] = $state;
+        }
+
+        $sql = "SELECT a.id, a.data_hora_pretendida, a.estado_reserva, a.valor_total, a.local_prestacao,
+                       u.nome AS cliente_nome, u.telemovel AS cliente_telemovel
+                FROM agendamento a
+                INNER JOIN cliente c ON a.cliente_id = c.id
+                INNER JOIN utilizador u ON c.id = u.id
+                INNER JOIN cliente_morada cm ON a.cliente_morada_id = cm.id
+                WHERE a.local_prestacao = 'carrinha_ambulante'
+                  AND cm.cidade_id = :cidade_id
+                  AND DATE(a.data_hora_pretendida) = :data_rota
+                  AND a.estado_reserva IN (" . implode(",", $placeholders) . ")
+                ORDER BY a.data_hora_pretendida ASC, a.id ASC";
+
+        return $this->fetchAllRaw($sql, $params);
     }
 }
