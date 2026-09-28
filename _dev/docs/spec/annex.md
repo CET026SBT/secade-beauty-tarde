@@ -108,6 +108,6 @@ git show <revisão>^:<ficheiro>                # ver o conteúdo original
 
 ---
 
-**Versão:** 2.0 · **Data:** 24/09/2026 · **Estado:** ✅ Fases 1-5 concluídas e validadas (289 verificações) ·
+**Versão:** 2.0 · **Data:** 24/09/2026 · **Estado:** ✅ Fases 1-5 concluídas e validadas (293 verificações) ·
 ⬜ Fase 6 (requisitos adicionais — §24) em curso
 **Prevalência:** este documento é a **única** fonte de requisitos. As fontes anteriores estão revogadas — arquivo no Git (§29.2)

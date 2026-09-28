@@ -302,7 +302,7 @@ View (PHP) → JS componente → api.js → api.php (routing) → Controller →
 - `DataBase.sql` / `DataBase_v2.sql`: alinhados com `ativo`; `DataBase_v2.sql` sem `funcionario_categoria`
 
 **Testes**
-- `_dev/tests/{functional_test,http_test,asset_test,js_syntax_check}.php` — **289 verificações** (§26)
+- `_dev/tests/{functional_test,http_test,asset_test,js_syntax_check}.php` — **293 verificações** (§26)
 
 **Ferramentas de desenvolvimento**
 - `_dev/tools/` — utilitários de manutenção dev-only (encoding, formatação/validação de `.md`,

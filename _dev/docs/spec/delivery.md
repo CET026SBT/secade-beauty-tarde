@@ -17,7 +17,7 @@
 | **3 — Backoffice do Funcionário**   | Aceitação individual, desfazer/trocar, consolidação, bloqueio de janela, **Simulador de Recibos Verdes**                                              | ✅ CONCLUÍDA           |
 | **4 — Backoffice do Gestor**        | Agendamentos (filtros, detalhe por serviço/funcionário, execução, cancelamento), **Rotas com decisão manual** (+50 € visual),                         | ✅ CONCLUÍDA           |
 |                                     | **Calendário Fiscal** + alertas, config. de recibos verdes                                                                                            |                        |
-| **5 — Integração e testes**         | Fluxos end-to-end (cliente → funcionário → gestor), responsividade, notificações simuladas, **289 verificações**                                      | ✅ CONCLUÍDA           |
+| **5 — Integração e testes**         | Fluxos end-to-end (cliente → funcionário → gestor), responsividade, notificações simuladas, **293 verificações**                                      | ✅ CONCLUÍDA           |
 | **6 — Requisitos adicionais (§24)** | Página de detalhes + carousel; re-avaliação dinâmica de slots; 24 h + lembrete + cancelamento pelo cliente; multicidades + alerta de                  | ⬜ **A INICIAR** (§24) |
 |                                     | custos; config. do sinal; 10/90 + métodos de pagamento                                                                                                |                        |
 | **7 — Módulos do backoffice**       | **Dashboard** (`/gestao`: KPIs + **gráficos** Chart.js) · **agenda do funcionário** (`/gestao/agenda`, calendário) · contabilidade · RH · promoções · | ⬜ A INICIAR (§24.7)   |
@@ -30,7 +30,7 @@
 3. **Documentação**: `especificacao_mvp.md` (mestre) + `_dev/docs/spec/` (por domínio) + `README.md`
    + `_dev/docs/` (regras e moldes on-demand)
 4. **Diagrama de BD**: §17.8 (relações + consulta SQL para regenerar)
-5. **Testes automatizados** em `_dev/tests/` — 289 verificações (§26)
+5. **Testes automatizados** em `_dev/tests/` — 293 verificações (§26)
 
 ## 22. SIMPLIFICAÇÕES ACADÉMICAS E LIMITAÇÕES
 
@@ -70,7 +70,7 @@ pasta raiz `admin/` · **motorista dedicado / logística de condução** (explic
 
 ## 26. TESTES E VALIDAÇÃO
 
-### 26.1 Suites automatizadas — **289 verificações, todas a passar**
+### 26.1 Suites automatizadas — **293 verificações** (pré-requisito de BD em `_dev/tests/README.md`)
 
 | Suíte de Testes                  | Verificações | Âmbito Coberto Principal                                                                                                                               |
 | :------------------------------- | :----------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -212,7 +212,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 7. ✅ **Calendário fiscal** centralizado com alertas 30/15/7/3/1/atraso para IVA, IRC, SS e Seguros.
 8. ✅ **Nenhum acesso do cliente ao backoffice**; perfis respeitados em todos os endpoints `admin-*`.
 9. ✅ **Feedback do cliente** após execução, com reflexo público nos testemunhos.
-10. ✅ Validações em client e server; **testes automatizados a passar** (289).
+10. ✅ Validações em client e server; **testes automatizados a passar** (293).
 
 ### 28.2 Critérios da Fase 6 (a cumprir com a §24)
 11. ⬜ Cliente consegue **cancelar** o seu agendamento pela plataforma, **sem penalização**.
