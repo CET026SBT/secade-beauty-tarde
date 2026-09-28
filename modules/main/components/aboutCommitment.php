@@ -21,8 +21,8 @@
                     carrinha, promoções por período e uma gestão de fornecedores ligada aos custos reais da operação,
                     sempre com o mesmo cuidado — <strong>menos tempo perdido para o cliente</strong>.</p>
             </div>
-            <div class="col-lg-6 wow fadeIn" data-wow-delay="0.3s">
-                <img class="img-fluid w-100" src="<?= BASE_URL ?>/modules/common/img/about-commitment.svg"
+            <div class="col-lg-6 wow fadeIn" data-wow-delay="0.3s sb-img-container">
+                <img class="img-fluid w-100" src="<?= BASE_URL ?>/modules/common/img/about-images/about-commitment.png"
                      alt="Compromisso da Secade Beauty com o cliente">
             </div>
         </div>

@@ -5,8 +5,8 @@
 <div class="container-fluid py-5">
     <div class="container">
         <div class="row g-5 align-items-center">
-            <div class="col-lg-6 wow fadeIn" data-wow-delay="0.1s">
-                <img class="img-fluid w-100" src="<?= BASE_URL ?>/modules/common/img/about-team.svg"
+            <div class="col-lg-6 wow fadeIn" data-wow-delay="0.1s sb-img-container">
+                <img class="img-fluid w-100" src="<?= BASE_URL ?>/modules/common/img/about-images/about-team.png"
                      alt="Equipa da Secade Beauty">
             </div>
             <div class="col-lg-6 wow fadeIn" data-wow-delay="0.3s">

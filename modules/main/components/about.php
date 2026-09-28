@@ -9,7 +9,7 @@ $statsFallback = SITE_STATS_FALLBACK;
 <div class="container-fluid py-5">
     <div class="container">
         <div class="row g-5">
-            <div class="col-lg-6 wow fadeIn" data-wow-delay="0.2s">
+            <div class="col-lg-6 wow fadeIn" data-wow-delay="0.2s sb-img-container">
                 <img class="img-fluid mb-3" src="<?= BASE_URL ?>/modules/common/img/about.jpg" alt="Sobre nós">
                 <div class="d-flex align-items-center bg-light">
                     <div class="btn-phone btn-square flex-shrink-0 bg-primary">

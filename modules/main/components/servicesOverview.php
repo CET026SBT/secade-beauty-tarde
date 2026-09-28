@@ -8,7 +8,7 @@ $statsFallback = SITE_STATS_FALLBACK;
 
 $overviewCards = [
     [
-        "image"   => "overview-catalogo.svg",
+        "image"   => "about-images/overview-catalogo.png",
         "title"   => "Catálogo por áreas",
         "text"    => "Cabeleireiro, barbearia e estética. Filtre por preço, duração ou pesquisa e veja quanto tempo demora antes de marcar.",
         "highlights" => [
@@ -17,7 +17,7 @@ $overviewCards = [
         ]
     ],
     [
-        "image"   => "overview-loja.svg",
+        "image"   => "about-images/overview-loja.png",
         "title"   => "Marcação na loja",
         "text"    => "Escolha serviços, data e hora e confirme em segundos. Terça a sábado, das 09:00 às 19:00, em marcações de 30 minutos.",
         "highlights" => [
@@ -26,7 +26,7 @@ $overviewCards = [
         ]
     ],
     [
-        "image"   => "overview-carrinha.svg",
+        "image"   => "about-images/overview-carrinha.png",
         "title"   => "Carrinha ao domicílio",
         "text"    => "Vamos até à sua morada com os serviços organizados por pessoa, com duração e valor calculados para cada uma.",
         "highlights" => [
@@ -34,7 +34,7 @@ $overviewCards = [
         ]
     ],
     [
-        "image"   => "overview-acompanhamento.svg",
+        "image"   => "about-images/overview-acompanhamento.png",
         "title"   => "Acompanhamento do pedido",
         "text"    => "Cada serviço aceite pela equipa fica registado: consulte o estado em \"Meus Agendamentos\" e avalie no fim.",
         "highlights" => [
@@ -58,8 +58,8 @@ $overviewCards = [
             <?php foreach ($overviewCards as $index => $card): ?>
                 <div class="col-md-6 col-lg-3 wow fadeIn" data-wow-delay="<?= 0.2 + $index * 0.1 ?>s">
                     <div class="service-item h-100 bg-light border-bottom border-end">
-                        <div class="ratio ratio-4x3">
-                            <img class="img-fluid" style="object-fit: cover;"
+                        <div class="ratio ratio-4x3 sb-img-container">
+                            <img class="img-fluid"
                                  src="<?= BASE_URL ?>/modules/common/img/<?= htmlspecialchars($card["image"]) ?>"
                                  alt="<?= htmlspecialchars($card["title"]) ?>">
                         </div>

@@ -23,8 +23,8 @@
                     agendamento, o cliente acompanha o estado em <strong>"Meus Agendamentos"</strong> e, no fim, avalia
                     o atendimento.</p>
             </div>
-            <div class="col-lg-6 wow fadeIn" data-wow-delay="0.3s">
-                <img class="img-fluid w-100" src="<?= BASE_URL ?>/modules/common/img/about-story.svg"
+            <div class="col-lg-6 wow fadeIn" data-wow-delay="0.3s sb-img-container">
+                <img class="img-fluid w-100" src="<?= BASE_URL ?>/modules/common/img/about-images/about-story.png"
                      alt="História da Secade Beauty">
             </div>
         </div>

@@ -340,6 +340,19 @@ form .row > *:has([aria-invalid="true"])*/ {
 }
 
 
+/* About */
+.sb-img-container {
+    position: relative;
+}
+
+.sb-img-container > img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1.2);
+}
+
+
 /* Service */
 @media (max-width: 768px) {
     .service .service-item {
