@@ -22,4 +22,8 @@ class CategoryRepository extends BaseRepository {
         $sql .= " ORDER BY cp.nome ASC";
         return $this->fetchAll($sql, $params);
     }
+
+    public function countAll(): int {
+        return (int)$this->fetchRaw("SELECT COUNT(*) AS total FROM categoria_profissional")["total"];
+    }
 }
