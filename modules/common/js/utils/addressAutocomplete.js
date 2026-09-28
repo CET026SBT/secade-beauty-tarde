@@ -57,11 +57,16 @@ class AddressAutocomplete {
             .add(this.$city)
             .add(this.$district);
 
+        // ⚠️ A classe `show` NÃO entra na construção: `.dropdown-menu.show` do Bootstrap
+        // (0,2,0) vence o `display: none` de `.autocomplete-dropdown` (0,1,0) e o dropdown
+        // vazio ficava visível no carregamento da página, no canto superior esquerdo.
+        // A visibilidade passa a ser controlada por `hide()`/`show()` (estilo inline).
         this.$dropdown = $(`<ul>`)
-            .addClass('autocomplete-dropdown dropdown-menu show')
+            .addClass('autocomplete-dropdown dropdown-menu')
             .css('--current-anchor', anchorName);
 
         $('body').append(this.$dropdown);
+        this.$dropdown.hide();
     }
 
     #initEvents() {
@@ -179,6 +184,36 @@ class AddressAutocomplete {
             this.$dropdown.append($li);
         }
 
+        this.#positionDropdown();
         this.$dropdown.show();
+    }
+
+    /**
+     * Reposiciona o dropdown por baixo do campo de rua.
+     *
+     * O CSS (`style.css`) usa CSS Anchor Positioning, que só existe em browsers recentes.
+     * Quando essa via não está disponível — ou o anchor não resolve — o `top`/`left`/
+     * `width` do CSS ficam inválidos e a caixa cai na posição estática do `<body>`.
+     * Este cálculo garante a posição em qualquer browser, ficando o CSS como melhoria
+     * progressiva.
+     */
+    #positionDropdown() {
+        const supportsAnchorPositioning = typeof CSS !== 'undefined'
+            && typeof CSS.supports === 'function'
+            && CSS.supports('position-anchor: --x');
+
+        if (supportsAnchorPositioning) return;
+
+        const field = this.$street[0];
+        if (!field) return;
+
+        const rect = field.getBoundingClientRect();
+
+        this.$dropdown.css({
+            position: 'fixed',
+            top: `${rect.bottom}px`,
+            left: `${rect.left}px`,
+            width: `${rect.width}px`
+        });
     }
 }

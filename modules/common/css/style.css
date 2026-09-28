@@ -588,6 +588,13 @@ form .row > *:has([aria-invalid="true"])*/ {
     display: none;
 }
 
+/* O Bootstrap define `.dropdown-menu.show { display: block }` com a mesma especificidade,
+   mas este ficheiro é carregado depois; sem esta regra o dropdown vazio ficava visível no
+   carregamento da página. A visibilidade depende do `show`/`hide` (estilo inline). */
+.autocomplete-dropdown:not(.show) {
+    display: none;
+}
+
 .autocomplete-dropdown .dropdown-item {
     white-space: normal !important;
     line-height: 1.4;
