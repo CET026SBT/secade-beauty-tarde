@@ -146,10 +146,12 @@ $richAddress = $addressService->createAddress($customerId, [
 ]);
 check("moradas criadas para o algoritmo", !empty($poorAddress["addressId"]) && !empty($richAddress["addressId"]), json_encode([$poorAddress, $richAddress]));
 
+// Os dois agendamentos têm de ficar em janelas distintas: o bloqueio da janela
+// temporal (uma consolidação por janela de ambulatório) impediria a 2.ª aceitação.
 $otp1 = $bookingService->requestOtp($customerId);
 $poorBooking = $bookingService->createAmbulatoryBooking($customerId, [
     "addressId" => $poorAddress["addressId"], "otpCode" => $otp1["otpCode"],
-    "date" => $routeDate, "time" => "10:00",
+    "date" => $routeDate, "time" => "17:00",
     "people" => [["name" => "João Cliente", "serviceIds" => [29]]]
 ]);
 
@@ -160,6 +162,28 @@ $richBooking = $bookingService->createAmbulatoryBooking($customerId, [
     "people" => [["name" => "João Cliente", "serviceIds" => [20, 18, 23, 21, 9, 2, 27]]]
 ]);
 check("agendamentos de teste criados", !empty($poorBooking["bookingId"]) && !empty($richBooking["bookingId"]), json_encode([$poorBooking, $richBooking]));
+
+// RN-31 (§24.7): enquanto houver serviços por aceitar, a rota não se agrega nem se decide
+$pendingRouteError = null;
+try {
+    $rotaService->decideRoute(["cityId" => (int)$cityPoor["id"], "date" => $routeDate, "decision" => "aprovada"]);
+} catch (Exception $e) { $pendingRouteError = $e->getMessage(); }
+check("rota com servicos por aceitar recusada (RN-31)", $pendingRouteError !== null, "decisao aceite sem todos os servicos");
+
+$pendingRows = $rotaService->findRouteSummaries(["date" => $routeDate])["routes"];
+check("rota nao agrega agendamentos por aceitar (RN-31)", count($pendingRows) === 0, json_encode($pendingRows));
+
+// Aceitação de todos os serviços (funcionário 2 = Ana Técnica do seed), como um
+// funcionário faria na área de Serviços antes de o gestor decidir a rota.
+$routeAcceptanceService = new ServiceAcceptanceService();
+$routeBookingServiceRepo = new BookingServiceRepository();
+$routeEmployeeId = 2;
+
+foreach ([$poorBooking["bookingId"], $richBooking["bookingId"]] as $routeBookingToAccept) {
+    foreach ($routeBookingServiceRepo->findByBooking((int)$routeBookingToAccept) as $routeServiceRow) {
+        $routeAcceptanceService->acceptService($routeEmployeeId, (int)$routeServiceRow["id"], (int)$routeBookingToAccept);
+    }
+}
 
 $summaryBefore = $rotaService->findRouteSummaries(["date" => $routeDate]);
 check("listagem de rotas mostra 2 candidatas", count($summaryBefore["routes"]) === 2, json_encode($summaryBefore["routes"]));
@@ -530,6 +554,178 @@ if ($regUserId > 0) {
 $regLeftovers = (int)$conn->query("SELECT COUNT(*) FROM utilizador WHERE id = {$regUserId}")->fetchColumn()
               + (int)$conn->query("SELECT COUNT(*) FROM cliente_morada WHERE cliente_id = {$regUserId}")->fetchColumn();
 check("registo de teste removido (limpeza)", $regLeftovers === 0, (string)$regLeftovers);
+
+// ---------------------------------------------------------------------------
+section("13. Fase 6.0/6.5 - Painel do gestor, avisos e agenda do funcionario");
+
+require_once APP_PATH . "/services/DashboardService.php";
+require_once APP_PATH . "/services/AlertService.php";
+require_once APP_PATH . "/services/EmployeeAgendaService.php";
+require_once APP_PATH . "/repositories/DashboardRepository.php";
+
+$dashboardService = new DashboardService();
+$dashboard = $dashboardService->summary();
+check("painel devolve kpis e graficos", isset($dashboard["kpis"], $dashboard["charts"]), json_encode(array_keys($dashboard)));
+check("painel preenche a serie dos 7 dias", count($dashboard["charts"]["bookingsPerDay"]["data"] ?? []) === 7, json_encode($dashboard["charts"]["bookingsPerDay"] ?? []));
+check("painel conta os servicos do catalogo", (int)($dashboard["kpis"]["activeServices"] ?? 0) >= 35, json_encode($dashboard["kpis"]["activeServices"] ?? null));
+check("painel conta os fornecedores carregados (v4)", (int)($dashboard["kpis"]["activeSuppliers"] ?? 0) >= 43, json_encode($dashboard["kpis"]["activeSuppliers"] ?? null));
+check("painel conta os clientes carregados (v4)", (int)($dashboard["kpis"]["customers"] ?? 0) >= 65, json_encode($dashboard["kpis"]["customers"] ?? null));
+check("painel nao inventa valores de contabilidade", ($dashboard["accounting"]["available"] ?? true) === false, json_encode($dashboard["accounting"] ?? []));
+check(
+    "indicadores do painel sao numericos",
+    is_int($dashboard["kpis"]["routesAwaitingDecision"] ?? null)
+        && is_int($dashboard["kpis"]["servicesPending"] ?? null)
+        && is_int($dashboard["kpis"]["alertsUnread"] ?? null),
+    json_encode($dashboard["kpis"] ?? [])
+);
+
+$agendaService = new EmployeeAgendaService();
+$agenda = $agendaService->findMonth(1, ["month" => "2026-01"]);
+check("agenda respeita o mes pedido", ($agenda["month"] ?? "") === "2026-01" && ($agenda["from"] ?? "") === "2026-01-01" && ($agenda["to"] ?? "") === "2026-01-31", json_encode([$agenda["month"] ?? null, $agenda["from"] ?? null, $agenda["to"] ?? null]));
+check("agenda assume rotas confirmadas como criterio", ($agenda["filter"] ?? "") === "rotas_confirmadas", json_encode($agenda["filter"] ?? null));
+
+$agendaInvalid = $agendaService->findMonth(1, ["month" => "13/2026"]);
+check("agenda normaliza mes invalido", ($agendaInvalid["month"] ?? "") === date("Y-m"), json_encode($agendaInvalid["month"] ?? null));
+
+// RN-33: nenhuma linha da agenda pode vir de um agendamento que nao esteja confirmado
+$agendaRows = $bookingServiceRepo->findByEmployeeAndRange(1, "2000-01-01", "2100-12-31");
+$agendaStates = array_unique(array_column($agendaRows, "estado_reserva"));
+check("agenda so devolve agendamentos confirmados (RN-33)", count(array_diff($agendaStates, ["confirmado"])) === 0, json_encode(array_values($agendaStates)));
+
+$alertService = new AlertService();
+$alertList = $alertService->list();
+$alertKeys = array_column($alertList["groups"] ?? [], "key");
+check("avisos incluem o grupo dos servicos por aceitar", in_array("servicos_pendentes", $alertKeys, true), json_encode($alertKeys));
+check("contador de avisos e numerico", is_int($alertService->count()), json_encode($alertService->count()));
+
+// O grupo fiscal e do GESTOR: a mesma service, com sessao de funcionario, nao o pode expor
+Session::createLoginSession(["id" => 2, "name" => "Funcionario Teste", "email" => "funcionario@secade.pt", "profileType" => "funcionario"]);
+$employeeAlerts = (new AlertService())->list();
+$employeeAlertKeys = array_column($employeeAlerts["groups"] ?? [], "key");
+check("avisos do funcionario nao incluem a origem fiscal", !in_array("fiscal", $employeeAlertKeys, true), json_encode($employeeAlertKeys));
+check("avisos do funcionario identificam o perfil", ($employeeAlerts["profile"] ?? "") === "funcionario", json_encode($employeeAlerts["profile"] ?? null));
+
+Session::createLoginSession(["id" => 1, "name" => "Gestor Teste", "email" => "gestor@secade.pt", "profileType" => "gestor"]);
+$managerAlerts = (new AlertService())->list();
+$managerAlertKeys = array_column($managerAlerts["groups"] ?? [], "key");
+check("avisos do gestor incluem a origem fiscal", in_array("fiscal", $managerAlertKeys, true), json_encode($managerAlertKeys));
+check("avisos do gestor identificam o perfil", ($managerAlerts["profile"] ?? "") === "gestor", json_encode($managerAlerts["profile"] ?? null));
+
+// ---------------------------------------------------------------------------
+section("14. Fase 6.1 - Fornecedores (RF-85)");
+
+require_once APP_PATH . "/services/SupplierService.php";
+require_once APP_PATH . "/repositories/SupplierRepository.php";
+
+$supplierService = new SupplierService();
+$supplierRepo    = new SupplierRepository();
+
+$supplierCatalog = $supplierService->listSuppliers([]);
+check("catalogo de fornecedores carregado (43 da v4)", (int)($supplierCatalog["summary"]["total"] ?? 0) >= 43, json_encode($supplierCatalog["summary"] ?? null));
+check("fornecedores sem NIF contabilizados (5 na fonte)", (int)($supplierCatalog["summary"]["withoutNif"] ?? 0) >= 5, json_encode($supplierCatalog["summary"] ?? null));
+
+$supplierSearch = $supplierService->listSuppliers(["term" => "Worten"]);
+check("pesquisa por nome devolve o fornecedor real", count(array_filter($supplierSearch["suppliers"], fn($row) => ($row["name"] ?? "") === "Worten")) === 1, json_encode($supplierSearch["suppliers"] ?? []));
+
+$supplierCreated = $supplierService->createSupplier([
+    "name" => "Fornecedor Teste Fase 6", "nif" => "999999990",
+    "email" => "teste@fornecedor.pt", "phone" => "+351911111100",
+    "active" => 1, "notes" => "criado pelo teste"
+]);
+$supplierId = (int)($supplierCreated["supplierId"] ?? 0);
+check("fornecedor criado", $supplierId > 0, json_encode($supplierCreated));
+
+$supplierService->updateSupplier($supplierId, ["name" => "Fornecedor Teste Fase 6 (editado)", "nif" => "999999990"]);
+$updatedSupplier = $supplierRepo->find($supplierId);
+check("fornecedor atualizado", ($updatedSupplier["name"] ?? "") === "Fornecedor Teste Fase 6 (editado)", json_encode($updatedSupplier));
+check("edicao sem estado mantem o fornecedor ativo", ($updatedSupplier["active"] ?? false) === true, json_encode($updatedSupplier));
+
+$deactivated = $supplierService->setActive($supplierId, false);
+$deactivatedSupplier = $supplierRepo->find($supplierId);
+check("desativar mantem o registo no catalogo", ($deactivatedSupplier["active"] ?? true) === false && !empty($deactivatedSupplier["id"]), json_encode($deactivatedSupplier));
+check("mensagem explica que o registo se mantem", str_contains((string)($deactivated["message"] ?? ""), "mantém-se"), json_encode($deactivated));
+
+$supplierMissingName = null;
+try { $supplierService->createSupplier(["name" => ""]); } catch (Exception $e) { $supplierMissingName = $e->getMessage(); }
+check("nome obrigatorio (422)", $supplierMissingName !== null, "sem erro");
+
+$supplierBadEmail = null;
+try { $supplierService->createSupplier(["name" => "Fornecedor Email", "email" => "invalido"]); } catch (Exception $e) { $supplierBadEmail = $e->getMessage(); }
+check("email invalido rejeitado (422)", $supplierBadEmail !== null, "sem erro");
+
+$supplierBadPhone = null;
+try { $supplierService->createSupplier(["name" => "Fornecedor Telefone", "phone" => "abc"]); } catch (Exception $e) { $supplierBadPhone = $e->getMessage(); }
+check("telemovel invalido rejeitado (422)", $supplierBadPhone !== null, "sem erro");
+
+$supplierNotFound = null;
+try { $supplierService->updateSupplier(999999, ["name" => "Inexistente"]); } catch (Exception $e) { $supplierNotFound = $e->getMessage(); }
+check("atualizar fornecedor inexistente (404)", $supplierNotFound !== null, "sem erro");
+
+if ($supplierId > 0) {
+    $conn->exec("DELETE FROM fornecedor WHERE id = " . $supplierId);
+}
+check("fornecedor de teste removido (limpeza)", (int)$conn->query("SELECT COUNT(*) FROM fornecedor WHERE id = {$supplierId}")->fetchColumn() === 0, "residuo");
+
+// ---------------------------------------------------------------------------
+section("15. Fase 6.4 - Comissoes por funcionario (RF-84)");
+
+require_once APP_PATH . "/services/CommissionService.php";
+require_once APP_PATH . "/repositories/CommissionRepository.php";
+
+$commissionService = new CommissionService();
+
+// Sem sessao de funcionario, a abrangencia e "todos" (visao do gestor)
+$commissionAll = $commissionService->summary([]);
+check("comissoes do mes devolvem o resumo", ($commissionAll["scope"] ?? "") === "todos" && isset($commissionAll["totals"], $commissionAll["commissions"]), json_encode(array_keys($commissionAll)));
+check("aceitacoes do teste entram nas comissoes", (int)($commissionAll["totals"]["services"] ?? 0) >= 1, json_encode($commissionAll["totals"] ?? null));
+check("comissao gravada e um valor da aceitacao (nao recalculado)", (float)($commissionAll["totals"]["employeeValue"] ?? 0) > 0, json_encode($commissionAll["totals"] ?? null));
+
+$commissionEmployeeRow = $commissionAll["employees"][0] ?? [];
+check("percentagem aplicada vem do snapshot da aceitacao", (float)($commissionEmployeeRow["averagePercentage"] ?? 0) > 0, json_encode($commissionEmployeeRow));
+
+$commissionFirst = $commissionAll["commissions"][0] ?? [];
+check(
+    "comissao + plataforma = valor do servico (70/30)",
+    abs(((float)($commissionFirst["employeeValue"] ?? 0) + (float)($commissionFirst["platformValue"] ?? 0)) - (float)($commissionFirst["price"] ?? 0)) < 0.02,
+    json_encode($commissionFirst)
+);
+
+$commissionInvalidMonth = $commissionService->summary(["month" => "99/2026"]);
+check("mes invalido nas comissoes cai no mes atual", ($commissionInvalidMonth["month"] ?? "") === date("Y-m"), json_encode($commissionInvalidMonth["month"] ?? null));
+
+// Com sessao de funcionario a abrangencia passa a ser o proprio
+Session::createLoginSession(["id" => 2, "name" => "Ana Tecnica", "email" => "funcionario@secade.pt", "profileType" => "funcionario"]);
+$commissionOwn = $commissionService->summary([]);
+check("funcionario ve apenas as suas comissoes", ($commissionOwn["scope"] ?? "") === "proprio", json_encode($commissionOwn["scope"] ?? null));
+check("funcionario tem no maximo uma linha de totais", count($commissionOwn["employees"] ?? []) <= 1, json_encode($commissionOwn["employees"] ?? []));
+check("linhas do funcionario sao todas dele", count(array_filter($commissionOwn["commissions"] ?? [], fn($row) => (int)$row["employeeId"] !== 2)) === 0, json_encode(array_column($commissionOwn["commissions"] ?? [], "employeeId")));
+
+// ---------------------------------------------------------------------------
+section("16. Fase 6 (§24.6) - Cancelamento pelo cliente (RF-12)");
+
+$cancelDate = nextWorkingDate(11);
+$cancelTarget = $bookingService->createStoreBooking($customerId, [
+    "serviceIds" => [30], "date" => $cancelDate, "time" => "15:30"
+]);
+$cancelTargetId = (int)($cancelTarget["bookingId"] ?? 0);
+check("agendamento criado para o cancelamento", $cancelTargetId > 0, json_encode($cancelTarget));
+
+$cancelResult = $bookingService->cancelCustomerBooking($customerId, $cancelTargetId);
+check("cliente cancela o proprio agendamento", ($cancelResult["status"] ?? "") === "cancelado", json_encode($cancelResult));
+check("cancelamento e sem penalizacao", str_contains((string)($cancelResult["message"] ?? ""), "penalização"), json_encode($cancelResult));
+check("estado na BD passa a cancelado", ((new BookingRepository())->find($cancelTargetId)["status"] ?? "") === "cancelado");
+
+$cancelAgain = null;
+try { $bookingService->cancelCustomerBooking($customerId, $cancelTargetId); } catch (Exception $e) { $cancelAgain = $e->getMessage(); }
+check("cancelar duas vezes devolve 409", $cancelAgain !== null, "sem erro");
+
+$cancelForeign = null;
+try { $bookingService->cancelCustomerBooking($customerId + 1, $cancelTargetId); } catch (Exception $e) { $cancelForeign = $e->getMessage(); }
+check("cancelar agendamento de outro cliente devolve 403", $cancelForeign !== null, "sem erro");
+
+$cancelMissing = null;
+try { $bookingService->cancelCustomerBooking($customerId, 999999); } catch (Exception $e) { $cancelMissing = $e->getMessage(); }
+check("cancelar agendamento inexistente devolve 404", $cancelMissing !== null, "sem erro");
 
 // ---------------------------------------------------------------------------
 section("RESULTADO FINAL");
