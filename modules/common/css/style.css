@@ -762,12 +762,14 @@ form .row > *:has([aria-invalid="true"])*/ {
     min-height: 100vh;
 }
 
-.bo-navbar {
-    background-color: #212529;
-}
-
 .bo-navbar .nav-link {
     color: rgba(255, 255, 255, .75);
+}
+
+@media (min-width: 992px) {
+    .bo-sidebar + main {
+        padding-left: 250px;
+    }
 }
 
 .bo-navbar .nav-link.active,
@@ -812,16 +814,10 @@ form .row > *:has([aria-invalid="true"])*/ {
    `collapse d-lg-block`.
 ------------------------------------------------------------------ */
 .bo-sidebar {
-    background-color: #212529;
+    position: sticky;
+    top: 58px;
     padding: .75rem 0 1.5rem;
-}
-
-.bo-sidebar-brand {
-    display: flex;
-    align-items: center;
-    gap: .5rem;
-    padding: .25rem 1rem 1rem;
-    text-decoration: none;
+    z-index: 10;
 }
 
 .bo-sidebar-group {
@@ -869,17 +865,12 @@ form .row > *:has([aria-invalid="true"])*/ {
 @media (min-width: 992px) {
     .bo-sidebar {
         position: fixed;
-        top: 0;
+        top: 70px;
         left: 0;
         bottom: 0;
         width: 250px;
         overflow-y: auto;
         z-index: 1030;
-    }
-
-    .bo-navbar,
-    .bo-body main.container-fluid {
-        margin-left: 250px;
     }
 }
 

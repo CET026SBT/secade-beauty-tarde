@@ -41,12 +41,7 @@ $boSidebarGroups = Session::isEmployee()
         ]]
       ];
 ?>
-<aside class="bo-sidebar collapse d-lg-block" id="boSidebar">
-    <a class="bo-sidebar-brand" href="<?= $boHomeUrl ?? BASE_URL . "/gestao/painel" ?>">
-        <img src="<?= BASE_URL ?>/modules/common/img/sb-logo-primary.svg" alt="Secade Beauty" height="32" class="user-select-none" draggable="false">
-        <span class="fw-bold text-white">Backoffice</span>
-    </a>
-
+<aside class="bo-sidebar collapse d-lg-block bg-dark" id="boSidebar">
     <?php foreach ($boSidebarGroups as $group): ?>
         <span class="bo-sidebar-group"><?= htmlspecialchars($group["label"]) ?></span>
         <ul class="bo-sidebar-nav">
