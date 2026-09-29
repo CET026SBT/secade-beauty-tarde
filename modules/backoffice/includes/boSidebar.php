@@ -12,9 +12,7 @@
  * continua a ser a autoridade — aqui só não se mostram links que falhariam.
  */
 $boSidebarPage = $boCurrentPage ?? "dashboard";
-$boSidebarIsEmployee = Session::isEmployee();
-
-$boSidebarGroups = $boSidebarIsEmployee
+$boSidebarGroups = Session::isEmployee()
     ? [
         ["label" => "A minha operação", "links" => [
             ["page" => "agenda",     "url" => "/gestao/agenda",     "icon" => "bi-calendar3",     "label" => "Agenda"],
