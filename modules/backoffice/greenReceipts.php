@@ -13,7 +13,7 @@ $boCurrentPage = "greenReceipts";
 include_once ROOT_PATH . "/modules/backoffice/includes/boHeader.php";
 include_once ROOT_PATH . "/modules/backoffice/includes/boNavbar.php";
 ?>
-<main class="container-fluid py-4">
+<main class="py-4">
     <div class="mb-4">
         <h2 class="mb-1"><i class="bi bi-cash-stack text-primary me-2"></i>Simulador de Recibos Verdes</h2>
         <p class="text-muted small mb-0">

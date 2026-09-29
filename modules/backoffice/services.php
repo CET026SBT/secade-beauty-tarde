@@ -13,7 +13,7 @@ $boCurrentPage = "services";
 include_once ROOT_PATH . "/modules/backoffice/includes/boHeader.php";
 include_once ROOT_PATH . "/modules/backoffice/includes/boNavbar.php";
 ?>
-<main class="container-fluid py-4">
+<main class="py-4">
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
         <div>
             <h2 class="mb-1"><i class="bi bi-list-check text-primary me-2"></i>Serviços de Ambulatório</h2>
