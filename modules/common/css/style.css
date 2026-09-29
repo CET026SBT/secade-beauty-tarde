@@ -4,9 +4,14 @@
     --bs-primary: #c9aa55;
     --bs-primary-light: #dbc17b;
     --bs-primary-lighter: #dec47e;
+    --bs-glow: #d4a574;
     --bs-secondary: #444444;
     --bs-secondary-dark: #3a3a3a;
     --bs-secondary-darker: #363636;
+    --bs-accent: #0d6efd;
+    --bs-muted: #6c757d;
+    --bs-surface: #dee2e6;
+    --bs-whisper: #e9ecef;
 }
 
 body {
@@ -363,7 +368,7 @@ form .row > *:has([aria-invalid="true"])*/ {
 
 @media (min-width: 992px) {
     .service .service-item.border-lg-end {
-        border-right: 1px solid #dee2e6;
+        border-right: 1px solid var(--bs-surface);
     }
 
     .service .service-item.border-lg-end-0 {
@@ -656,9 +661,9 @@ form .row > *:has([aria-invalid="true"])*/ {
 }
 
 .service-filter.active {
-    background-color: #d4a574;
-    border-color: #d4a574;
-    color: #fff;
+    background-color: var(--bs-glow);
+    border-color: var(--bs-glow);
+    color: var(--bs-light);
 }
 
 /* ------------------------------------------------------------------
@@ -677,10 +682,10 @@ form .row > *:has([aria-invalid="true"])*/ {
     gap: .5rem;
     padding: .4rem .85rem;
     border-radius: 999px;
-    background: #fff;
-    border: 1px solid #e9ecef;
+    background: var(--bs-light);
+    border: 1px solid var(--bs-whisper);
     font-size: .8rem;
-    color: #6c757d;
+    color: var(--bs-muted);
 }
 
 .booking-step-index {
@@ -696,19 +701,19 @@ form .row > *:has([aria-invalid="true"])*/ {
 }
 
 .booking-step.active {
-    border-color: #d4a574;
+    border-color: var(--bs-glow);
     color: #212529;
     box-shadow: 0 .25rem .75rem rgba(212, 165, 116, .25);
 }
 
 .booking-step.active .booking-step-index {
-    background: #d4a574;
-    color: #fff;
+    background: var(--bs-glow);
+    color: var(--bs-light);
 }
 
 .booking-step.done .booking-step-index {
     background: #198754;
-    color: #fff;
+    color: var(--bs-light);
 }
 
 .form-step {
@@ -739,14 +744,14 @@ form .row > *:has([aria-invalid="true"])*/ {
 }
 
 .service-option-card:has(.booking-service-checkbox:checked) {
-    border-color: #d4a574 !important;
+    border-color: var(--bs-glow) !important;
     box-shadow: 0 .25rem .75rem rgba(212, 165, 116, .25);
 }
 
 .slot-btn.active {
-    background-color: #d4a574;
-    border-color: #d4a574;
-    color: #fff;
+    background-color: var(--bs-glow);
+    border-color: var(--bs-glow);
+    color: var(--bs-light);
 }
 
 /* ------------------------------------------------------------------
@@ -767,14 +772,14 @@ form .row > *:has([aria-invalid="true"])*/ {
 
 .bo-navbar .nav-link.active,
 .bo-navbar .nav-link:hover {
-    color: #fff;
+    color: var(--bs-light);
 }
 
 .bo-table thead th {
     font-size: .75rem;
     text-transform: uppercase;
     letter-spacing: .03em;
-    color: #6c757d;
+    color: var(--bs-muted);
     background-color: #f8f9fa;
     white-space: nowrap;
 }
@@ -846,12 +851,12 @@ form .row > *:has([aria-invalid="true"])*/ {
 
 .bo-sidebar-link:hover,
 .bo-sidebar-link:focus {
-    color: #fff;
+    color: var(--bs-light);
     background-color: rgba(255, 255, 255, .06);
 }
 
 .bo-sidebar-link.active {
-    color: #fff;
+    color: var(--bs-light);
     background-color: rgba(201, 170, 85, .18);
     border-left-color: var(--bs-primary);
 }
@@ -907,21 +912,21 @@ form .row > *:has([aria-invalid="true"])*/ {
 }
 
 .bo-action--edit {
-    color: #0d6efd;
+    color: var(--bs-accent);
 }
 
 .bo-action--remove {
-    color: #dc3545;
+    color: var(--bs-danger);
 }
 
 /* Decisão da rota (aprovar/recusar): mesma família visual dos botões de ação,
    porque também são ícone + `title` sem texto. */
 .bo-action--approve {
-    color: #198754;
+    color: var(--bs-success);
 }
 
 .bo-action--refuse {
-    color: #dc3545;
+    color: var(--bs-danger);
 }
 
 .bo-action:hover,
@@ -945,7 +950,7 @@ form .row > *:has([aria-invalid="true"])*/ {
     font-size: .7rem;
     text-transform: uppercase;
     letter-spacing: .04em;
-    color: #6c757d;
+    color: var(--bs-muted);
     padding-bottom: .25rem;
 }
 
@@ -953,9 +958,9 @@ form .row > *:has([aria-invalid="true"])*/ {
     position: relative;
     min-height: 62px;
     padding: .35rem;
-    border: 1px solid #e9ecef;
+    border: 1px solid var(--bs-whisper);
     border-radius: .35rem;
-    background-color: #fff;
+    background-color: var(--bs-light);
     text-align: left;
     font-size: .85rem;
     color: #212529;
