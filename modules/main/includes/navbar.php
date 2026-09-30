@@ -1,6 +1,7 @@
 <?php
-$currentPage = isset($currentPage) ? $currentPage : basename($_SERVER["PHP_SELF"]);
-$isAuthPage = in_array($currentPage, ["login.php", "login", "customerRegister.php", "registo"]);
+$isAuthPage = isset($isAuthPage) ? $isAuthPage : in_array($currentPage, ["login", "registar"]);
+
+require_once ROOT_PATH . "/modules/main/includes/_navigation.php";
 ?>
 
 <div class="container-fluid bg-dark sticky-top p-0">
@@ -12,19 +13,20 @@ $isAuthPage = in_array($currentPage, ["login.php", "login", "customerRegister.ph
 
         <?php if (!$isAuthPage) include ROOT_PATH . "/modules/main/components/menuUser.php" ?>
 
-        <button type="button" class="navbar-toggler mx-2" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+        <button type="button" class="navbar-toggler me-2 d-none d-lg-block" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="collapse navbar-collapse p-3" id="navbarCollapse">
+        <div class="collapse navbar-collapse p-3 d-lg-block" id="navbarCollapse">
             <div class="navbar-nav me-auto">
-                <a href="<?= BASE_URL ?>/" class="nav-item nav-link py-sm-1 <?php echo in_array($currentPage, ["home.php", "home", ""]) ? "active" : ""; ?>">Home</a>
-                <?php if (!$isAuthPage): ?>
-                    <a href="<?= BASE_URL ?>/sobre" class="nav-item nav-link py-sm-1 <?php echo in_array($currentPage, ["about.php", "about", "sobre"]) ? "active" : ""; ?>">Acerca</a>
-                    <a href="<?= BASE_URL ?>/servicos" class="nav-item nav-link py-sm-1 <?php echo in_array($currentPage, ["serviceCategories.php", "service", "servicos"]) ? "active" : ""; ?>">Servicos</a>
-                    <a href="<?= BASE_URL ?>/agendar" class="nav-item nav-link py-sm-1 <?php echo in_array($currentPage, ["booking.php", "bookingSuccess.php", "agendar", "agendamento-sucesso"]) ? "active" : ""; ?>">Agendar</a>
-                    <a href="<?= BASE_URL ?>/contacto" class="nav-item nav-link py-sm-1 <?php echo in_array($currentPage, ["contact.php", "contact", "contacto"]) ? "active" : ""; ?>">Contactos</a>
-                <?php endif; ?>
+                <?php foreach ($navigationLinks as $link): ?>
+                    <?php if (!isset($link["profile"]) || in_array(Session::getUserProfile(), $link["profile"], true)): ?>
+                        <a class="nav-item nav-link py-sm-1 <?= $currentPage === $link["page"] ? "active" : ""; ?>"
+                           href="<?= BASE_URL . $link["url"] ?>">
+                            <span><?= htmlspecialchars($link["label"]) ?></span>
+                        </a>
+                    <?php endif; ?>
+                <?php endforeach; ?>
             </div>
         </div>
     </nav>

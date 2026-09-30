@@ -52,7 +52,7 @@ include_once ROOT_PATH . "/modules/backoffice/includes/boNavbar.php";
                             <div class="alert alert-light border small mb-0" id="grPreview">Soma atual: 100%</div>
                         </div>
                         <div class="col-12">
-                            <button type="button" class="btn btn-sm btn-primary" id="saveGreenReceiptConfigBtn">
+                            <button type="button" class="btn btn-sm btn-primary extended-border" id="saveGreenReceiptConfigBtn">
                                 <i class="bi bi-check2 me-1"></i> Guardar configuração
                             </button>
                         </div>

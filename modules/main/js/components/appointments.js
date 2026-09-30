@@ -106,7 +106,7 @@ const appointments = (() => {
                 <textarea class="form-control form-control-sm" rows="2" maxlength="500"
                           placeholder="Deixe o seu comentário (opcional)" data-comment="${booking.id}"></textarea>
             </div>
-            <button type="button" class="btn btn-sm btn-primary" data-submit-feedback="${booking.id}">
+            <button type="button" class="btn btn-sm btn-primary extended-border" data-submit-feedback="${booking.id}">
                 <i class="bi bi-envelope me-1"></i> Enviar avaliação
             </button>
             <div class="invalid-feedback d-block text-danger small" data-feedback-error="${booking.id}"></div>
@@ -140,7 +140,7 @@ const appointments = (() => {
             $list.html(`<div class="text-center py-5">
                 <i class="bi bi-calendar-x fs-1 text-muted d-block mb-3"></i>
                 <p class="text-muted mb-3">Ainda não existem agendamentos para este filtro.</p>
-                <a href="${BASE_URL ?? ''}/agendar" class="btn btn-primary">Fazer uma marcação</a>
+                <a href="${BASE_URL ?? ''}/agendar" class="btn btn-primary extended-border">Fazer uma marcação</a>
             </div>`);
             return;
         }

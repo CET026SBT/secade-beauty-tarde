@@ -81,7 +81,7 @@ $overviewCards = [
             <?php endforeach; ?>
         </div>
         <div class="text-center mt-5 wow fadeIn" data-wow-delay="0.6s">
-            <a class="btn btn-primary text-uppercase px-5 py-3" href="<?= BASE_URL ?>/agendar">Marcar agora <i class="bi bi-arrow-right ms-1"></i></a>
+            <a class="btn btn-primary extended-border text-uppercase px-5 py-3" href="<?= BASE_URL ?>/agendar">Marcar agora <i class="bi bi-arrow-right ms-1"></i></a>
         </div>
     </div>
 </div>

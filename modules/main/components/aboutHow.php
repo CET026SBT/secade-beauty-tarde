@@ -22,7 +22,7 @@ $passos = [
             <?php foreach ($passos as $index => $passo): ?>
                 <div class="col-md-6 col-lg-3 wow fadeIn" data-wow-delay="<?= 0.2 + $index * 0.1 ?>s">
                     <div class="service-item h-100 bg-light border-bottom border-end text-center p-4">
-                        <div class="btn-lg-square bg-primary mx-auto mb-3">
+                        <div class="btn-square-lg bg-primary mx-auto mb-3">
                             <span class="h4 mb-0 text-dark"><?= $index + 1 ?></span>
                         </div>
                         <i class="<?= htmlspecialchars($passo["icon"]) ?> fa-3x text-primary mb-3"></i>

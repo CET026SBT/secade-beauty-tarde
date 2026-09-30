@@ -21,6 +21,7 @@ include_once ROOT_PATH . "/modules/main/includes/header.php";
 include_once ROOT_PATH . "/modules/main/includes/navbar.php";
 ?>
 
+<main>
     <!-- Page Header -->
     <div class="container-fluid page-header py-5 mb-5">
         <div class="container text-center py-5">
@@ -117,7 +118,7 @@ include_once ROOT_PATH . "/modules/main/includes/navbar.php";
                                     <input type="text" class="form-control form-control-sm" id="profileAddressDoor" placeholder="Nº da porta">
                                 </div>
                                 <div class="col-12 d-flex gap-2">
-                                    <button type="button" class="btn btn-sm btn-primary" id="saveAddressBtn">
+                                    <button type="button" class="btn btn-sm btn-primary extended-border" id="saveAddressBtn">
                                         <i class="bi bi-check2 me-1"></i> Guardar morada
                                     </button>
                                     <button type="button" class="btn btn-sm btn-outline-secondary" id="cancelAddressBtn">
@@ -142,7 +143,7 @@ include_once ROOT_PATH . "/modules/main/includes/navbar.php";
                         </p>
                         <div class="d-flex flex-wrap gap-2">
                             <?php if (Session::isManager()): ?>
-                                <a class="btn btn-sm btn-primary" href="<?= BASE_URL ?>/gestao/agendamentos">
+                                <a class="btn btn-sm btn-primary extended-border" href="<?= BASE_URL ?>/gestao/agendamentos">
                                     <i class="bi bi-calendar-check me-1"></i> Agendamentos
                                 </a>
                                 <a class="btn btn-sm btn-outline-primary" href="<?= BASE_URL ?>/gestao/rotas">
@@ -155,7 +156,7 @@ include_once ROOT_PATH . "/modules/main/includes/navbar.php";
                                     <i class="bi bi-cash-stack me-1"></i> Recibos Verdes
                                 </a>
                             <?php else: ?>
-                                <a class="btn btn-sm btn-primary" href="<?= BASE_URL ?>/gestao/servicos">
+                                <a class="btn btn-sm btn-primary extended-border" href="<?= BASE_URL ?>/gestao/servicos">
                                     <i class="bi bi-list-check me-1"></i> Aceitação de Serviços
                                 </a>
                             <?php endif; ?>
@@ -168,5 +169,6 @@ include_once ROOT_PATH . "/modules/main/includes/navbar.php";
     </div>
 
     <div preloader-overlay class="jq-overlay-process-lg"></div>
+</main>
 
 <?php include_once ROOT_PATH . "/modules/main/includes/footer.php"; ?>

@@ -45,7 +45,7 @@ class Session {
 
     public static function getUserProfile(): ?string {
         self::init();
-        return $_SESSION["user_profile"] ?? null;
+        return $_SESSION["user_profile"] ?? "guest";
     }
 
     /** Id do utilizador em sessão, ou `null`. Evita desestruturar o array de `user()`. */
@@ -63,6 +63,10 @@ class Session {
 
     public static function isCustomer(): bool {
         return self::getUserProfile() === "cliente";
+    }
+
+    public static function isGuest(): bool {
+        return self::getUserProfile() === "guest";
     }
 
     public static function requireLogin($redirectUrl = null) {

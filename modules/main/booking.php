@@ -10,5 +10,10 @@ $currentPage = "agendar";
 
 include_once ROOT_PATH . "/modules/main/includes/header.php";
 include_once ROOT_PATH . "/modules/main/includes/navbar.php";
-include_once ROOT_PATH . "/modules/main/components/bookingWizard.php";
-include_once ROOT_PATH . "/modules/main/includes/footer.php";
+?>
+
+<main>
+    <?php include_once ROOT_PATH . "/modules/main/components/bookingWizard.php"; ?>
+</main>
+
+<?php include_once ROOT_PATH . "/modules/main/includes/footer.php"; ?>

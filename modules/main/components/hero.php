@@ -11,7 +11,7 @@ register_script("components/hero", "main");
                     <img class="h1 mb-4 img-fluid animated slideInLeft" src="<?= BASE_URL ?>/modules/common/img/sb-title.svg" alt="Site name">
                     <div class="d-flex flex-column flex-md-row flex-lg-column animated slideInLeft">
                         <div class="d-flex align-items-center mb-2">
-                            <div class="btn-square btn btn-primary flex-shrink-0">
+                            <div class="btn-square btn btn-primary extended-border flex-shrink-0">
                                 <i class="fa fa-phone text-dark"></i>
                             </div>
                             <div class="px-3">
@@ -20,7 +20,7 @@ register_script("components/hero", "main");
                             </div>
                         </div>
                         <div class="d-flex align-items-center">
-                            <div class="btn-square btn btn-primary flex-shrink-0">
+                            <div class="btn-square btn btn-primary extended-border flex-shrink-0">
                                 <i class="fa fa-envelope text-dark"></i>
                             </div>
                             <div class="px-3">

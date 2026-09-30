@@ -50,7 +50,7 @@ register_script("components/services", "main");
             <div class="modal-body" id="serviceModalBody"></div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fechar</button>
-                <a href="#" id="serviceModalBook" class="btn btn-primary">
+                <a href="#" id="serviceModalBook" class="btn btn-primary extended-border">
                     <i class="bi bi-calendar-plus me-1"></i> Agendar
                 </a>
             </div>

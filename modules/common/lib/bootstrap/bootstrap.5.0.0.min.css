@@ -216,6 +216,10 @@ small,
     font-size: 0.875em
 }
 
+.smallest {
+    font-size: 0.75rem;
+}
+
 mark,
 .mark {
     padding: .2em;
@@ -12676,4 +12680,32 @@ fieldset:disabled .btn {
     .placeholder-wave {
         animation: none;
     }
+}
+
+.extended-border {
+    margin: 10px;
+}
+
+.extended-border::before,
+.extended-border::after {
+    position: absolute;
+    content: "";
+    width: calc(100% + 10px);
+    height: calc(100% + 10px);
+    top: -5px;
+    left: -5px;
+}
+
+.extended-border::before {
+    top: -10px;
+    height: calc(100% + 20px);
+    border-left: 2px solid var(--bs-primary);
+    border-right: 2px solid var(--bs-primary);
+}
+
+.extended-border::after {
+    left: -10px;
+    width: calc(100% + 20px);
+    border-top: 2px solid var(--bs-primary);
+    border-bottom: 2px solid var(--bs-primary);
 }

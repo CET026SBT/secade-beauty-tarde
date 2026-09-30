@@ -32,7 +32,7 @@ $espaco = [
             <?php endforeach; ?>
         </div>
         <div class="text-center mt-5 wow fadeIn" data-wow-delay="0.8s">
-            <a class="btn btn-primary text-uppercase px-5 py-3" href="<?= BASE_URL ?>/servicos">
+            <a class="btn btn-primary extended-border text-uppercase px-5 py-3" href="<?= BASE_URL ?>/servicos">
                 Ver o catálogo <i class="bi bi-arrow-right ms-1"></i>
             </a>
         </div>

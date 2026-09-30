@@ -5,17 +5,18 @@
         </div>
     </div>
 
-    <!-- Preloader templates + Main footer markup -->
-    <?php
-    include ROOT_PATH . "/modules/common/lib-our/jq-preloader/templates.php";
+    <!-- Preloader templates -->
+    <?php include ROOT_PATH . "/modules/common/lib-our/jq-preloader/templates.php"; ?>
 
+    <!-- Main footer markup -->
+    <?php
     if (!isset($showMainFooter) || $showMainFooter === true) {
         include ROOT_PATH . "/modules/main/components/mainFooter.php";
     }
     ?>
 
     <!-- Copyright -->
-    <div class="container-fluid bg-dark text-white border-top border-secondary py-4 wow fadeIn" data-wow-delay="0.1s">
+    <div class="container-fluid bg-dark text-white border-top border-secondary py-4 wow fadeIn d-none d-lg-block" data-wow-delay="0.1s">
         <div class="container">
             <div class="row">
                 <div class="col-md-12 text-center text-md-start mb-3 mb-md-0">
@@ -25,8 +26,11 @@
         </div>
     </div>
 
+    <!-- Footer navbar -->
+    <?php include ROOT_PATH . "/modules/main/components/footerNavbar.php" ?>
+
     <!-- Back to Top -->
-    <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    <a href="#" class="btn btn-lg btn-primary extended-border btn-square-lg back-to-top d-none d-lg-flex"><i class="bi bi-arrow-up"></i></a>
 
     <!-- Third-party Libraries Javascript -->
     <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/lib/jquery/jquery.3.6.1.min.js"></script>

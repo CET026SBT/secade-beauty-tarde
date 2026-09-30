@@ -24,7 +24,7 @@ include_once ROOT_PATH . "/modules/backoffice/includes/boNavbar.php";
                 «remover» <strong>desativa</strong> o fornecedor, porque pode estar citado em despesas.
             </p>
         </div>
-        <button type="button" class="btn btn-primary" id="newSupplierBtn">
+        <button type="button" class="btn btn-primary extended-border" id="newSupplierBtn">
             <i class="bi bi-plus-lg me-1"></i> Novo fornecedor
         </button>
     </div>
@@ -139,7 +139,7 @@ include_once ROOT_PATH . "/modules/backoffice/includes/boNavbar.php";
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary" id="saveSupplierBtn">
+                    <button type="submit" class="btn btn-primary extended-border" id="saveSupplierBtn">
                         <i class="bi bi-check2 me-1"></i> Guardar
                     </button>
                 </div>
