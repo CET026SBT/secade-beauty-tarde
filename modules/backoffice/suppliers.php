@@ -86,6 +86,8 @@ include_once ROOT_PATH . "/modules/backoffice/includes/boNavbar.php";
             </div>
         </div>
     </div>
+</main>
+
 <!-- Modal: criar/editar fornecedor -->
 <div class="modal fade" id="supplierFormModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
