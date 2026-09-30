@@ -1,6 +1,8 @@
 <?php
 $isAuthPage = isset($isAuthPage) ? $isAuthPage : in_array($currentPage, ["login", "registar"]);
 
+register_script("components/navbar", "main");
+
 require_once ROOT_PATH . "/modules/main/includes/_navigation.php";
 ?>
 
@@ -13,11 +15,11 @@ require_once ROOT_PATH . "/modules/main/includes/_navigation.php";
 
         <?php if (!$isAuthPage) include ROOT_PATH . "/modules/main/components/menuUser.php" ?>
 
-        <button type="button" class="navbar-toggler me-2 d-none d-lg-block" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+        <button type="button" class="navbar-toggler me-2 d-none d-lg-block d-xl-none" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="collapse navbar-collapse p-3 d-lg-block" id="navbarCollapse">
+        <div class="collapse navbar-collapse p-3" id="navbarCollapse">
             <div class="navbar-nav me-auto">
                 <?php foreach ($navigationLinks as $link): ?>
                     <?php if (!isset($link["profile"]) || in_array(Session::getUserProfile(), $link["profile"], true)): ?>

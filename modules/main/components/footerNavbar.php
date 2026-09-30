@@ -9,7 +9,7 @@ require_once ROOT_PATH . "/modules/main/includes/_navigation.php";
         <?php foreach ($navigationLinks as $link): ?>
             <?php if (!isset($link["profile"]) || in_array(Session::getUserProfile(), $link["profile"], true)): ?>
                 <li class="nav-item">
-                    <a class="nav-link text-center d-flex flex-column align-items-center p-1 <?= $currentPage === $link["page"] ? "active" : ""; ?>"
+                    <a class="nav-link text-center d-flex flex-column align-items-center p-1 mx-0 <?= $currentPage === $link["page"] ? "active" : ""; ?>"
                        href="<?= BASE_URL . $link["url"] ?>">
                         <i class="<?= htmlspecialchars($link["icon"]) ?> fs-5"></i>
                         <span class="smallest"><?= htmlspecialchars($link["label"]) ?></span>

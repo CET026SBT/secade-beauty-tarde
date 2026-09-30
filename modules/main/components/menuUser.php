@@ -77,7 +77,8 @@ if ($isLoggedIn && $user):
     </ul>
 </div>
 <?php else: ?>
-<a href="<?= BASE_URL ?>/login" class="btn btn-sm btn-primary extended-border no-bg px-3 py-2 m-0 ms-auto me-2 me-xl-4 order-xl-last">
-    <i class="fa fa-user-lock me-2"></i>Iniciar Sessão
+<a href="<?= BASE_URL ?>/login" class="btn btn-sm btn-primary extended-border-xl no-bg px-3 py-2 m-0 ms-auto me-3 me-xl-4 order-xl-last">
+    <i class="fa fa-user-lock me-2"></i>
+    <span class="d-none d-md-inline">Iniciar Sessão</span>
 </a>
 <?php endif; ?>

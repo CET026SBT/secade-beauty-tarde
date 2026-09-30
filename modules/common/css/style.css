@@ -324,6 +324,10 @@ form .row > *:has([aria-invalid="true"])*/ {
     background: var(--bs-primary);
 }
 
+.service .service-item > img {
+    max-width: 80px;
+}
+
 
 /* Team */
 .team {
@@ -383,6 +387,27 @@ form .row > *:has([aria-invalid="true"])*/ {
 
 
 /* Testimonial */
+.testimonial-carousel::before,
+.testimonial-carousel::after {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1.2rem;
+    z-index: 1;
+}
+
+.testimonial-carousel::before {
+    left: 0;
+    background-image: linear-gradient(to right, #fff, transparent);
+}
+
+.testimonial-carousel::after {
+    right: 0;
+    background-image: linear-gradient(to left, #fff, transparent);
+}
+
 .testimonial-carousel .owl-item {
     position: relative;
 }
