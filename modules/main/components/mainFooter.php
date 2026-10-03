@@ -1,5 +1,5 @@
     <!-- Footer -->
-    <div class="container-fluid footer position-relative bg-dark text-white-50 py-5 mt-5 wow fadeIn" data-wow-delay="0.2s">
+    <div class="container-fluid footer position-relative bg-dark text-white-50 py-5 mt-5 wow fadeIn d-none d-lg-block" data-wow-delay="0.2s">
         <div class="container py-5">
             <div class="row g-5">
                 <div class="col-lg-6 pe-lg-5">
@@ -12,10 +12,10 @@
                     <p class="mb-2"><i class="fa fa-phone-alt me-2"></i><?php echo htmlspecialchars(SITE_PHONE); ?></p>
                     <p><i class="fa fa-envelope me-2"></i><?php echo htmlspecialchars(SITE_EMAIL); ?></p>
                     <div class="d-flex justify-content-start mt-4">
-                        <a class="btn btn-sm-square btn-primary me-3" href="#"><i class="fab fa-twitter"></i></a>
-                        <a class="btn btn-sm-square btn-primary me-3" href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a class="btn btn-sm-square btn-primary me-3" href="#"><i class="fab fa-linkedin-in"></i></a>
-                        <a class="btn btn-sm-square btn-primary me-3" href="#"><i class="fab fa-instagram"></i></a>
+                        <a class="btn btn-square-sm btn-primary extended-border me-3" href="#"><i class="fab fa-twitter"></i></a>
+                        <a class="btn btn-square-sm btn-primary extended-border me-3" href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a class="btn btn-square-sm btn-primary extended-border me-3" href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a class="btn btn-square-sm btn-primary extended-border me-3" href="#"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
                 <div class="col-lg-6 ps-lg-5">
