@@ -45,7 +45,7 @@ class Session {
 
     public static function getUserProfile(): ?string {
         self::init();
-        return $_SESSION["user_profile"] ?? null;
+        return $_SESSION["user_profile"] ?? "guest";
     }
 
     /** Id do utilizador em sessão, ou `null`. Evita desestruturar o array de `user()`. */
@@ -65,7 +65,11 @@ class Session {
         return self::getUserProfile() === "cliente";
     }
 
-    public static function requireLogin($redirectUrl = null) {
+    public static function isGuest(): bool {
+        return self::getUserProfile() === "guest";
+    }
+
+    public static function requireLogin(?string $redirectUrl=null) {
         $url = $redirectUrl ?? (defined("BASE_URL") ? BASE_URL . "/login" : "/login");
         if (!self::isLoggedIn()) {
             header("Location: {$url}");
@@ -85,11 +89,16 @@ class Session {
      * Substitui o bloco `requireLogin() + if (!isX()) { header(...); exit; }` que estava
      * repetido em cada página do backoffice.
      */
-    public static function requireProfile(array $profiles, ?string $redirectUrl = null): void {
-        self::requireLogin($redirectUrl);
+    public static function requireProfile(array $profiles, mixed $redirectUrl=null): void {
+        if (!in_array("guest", $profiles)) {
+            self::requireLogin();
+        }
 
-        if (!in_array(self::getUserProfile(), $profiles, true)) {
-            $url = $redirectUrl ?? (defined("BASE_URL") ? BASE_URL . "/" : "/");
+        $userProfile = self::getUserProfile();
+
+        if (!in_array($userProfile, $profiles, true)) {
+            $url = is_array($redirectUrl) ? ($redirectUrl[$userProfile] ?? null) : $redirectUrl;
+            $url = $url ?? (defined("BASE_URL") ? BASE_URL . "/" : "/");        
             header("Location: {$url}");
             exit;
         }

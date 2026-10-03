@@ -14,21 +14,16 @@ abstract class BaseRepository {
         $this->db = $conn;
     }
 
-    protected function fetchAll(string $sql, array $params=[]): mixed {
+    /**
+     * Fetch de resultados agregados/relatórios: NÃO aplica o mapper da entidade
+     * (as linhas não representam a entidade principal do repository).
+     */
+    protected function fetchAllRaw(string $sql, array $params=[]): array {
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        return $this->transform($result);
-    }
 
-    protected function fetch(string $sql, array $params=[]): mixed {
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute($params);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        $row = $result !== false ? $result : null;
-
-        return $this->transform($row);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return is_array($rows) ? $rows : [];
     }
 
     /**
@@ -42,16 +37,14 @@ abstract class BaseRepository {
         return $row !== false ? $row : null;
     }
 
-    /**
-     * Fetch de resultados agregados/relatórios: NÃO aplica o mapper da entidade
-     * (as linhas não representam a entidade principal do repository).
-     */
-    protected function fetchAllRaw(string $sql, array $params=[]): array {
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute($params);
+    protected function fetchAll(string $sql, array $params=[]): mixed {
+        $rows = $this->fetchAllRaw($sql, $params);
+        return $this->transform($rows);
+    }
 
-        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return is_array($rows) ? $rows : [];
+    protected function fetch(string $sql, array $params=[]): mixed {
+        $row = $this->fetchRaw($sql, $params);
+        return $this->transform($row);
     }
 
     private function transform(mixed $data): mixed {
