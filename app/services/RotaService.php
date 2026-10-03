@@ -91,7 +91,7 @@ class RotaService extends BaseService {
             if ($pending > 0) {
                 throw new Exception(
                     "Esta rota tem " . $pending . " agendamento(s) com serviços por aceitar. "
-                    . "Aceite (ou desfaça) todos os serviços na área de Serviços antes de decidir a rota (RN-31).",
+                    . "Aceite (ou desfaça) todos os serviços na área de Serviços antes de decidir a rota.",
                     409
                 );
             }
@@ -184,7 +184,7 @@ class RotaService extends BaseService {
                     ? "Rota aprovada. " . count($bookingIds) . " agendamento(s) confirmado(s); clientes notificados (simulado)."
                     : "Rota recusada. " . count($bookingIds) . " agendamento(s) cancelado(s); clientes notificados com alternativas (simulado).")
                     . (count($excludedIds) > 0
-                        ? " " . count($excludedIds) . " agendamento(s) ficaram fora da rota e continuam qualificados (RN-34)."
+                        ? " " . count($excludedIds) . " agendamento(s) ficaram fora da rota e continuam qualificados."
                         : "")
             ];
         });
@@ -246,7 +246,7 @@ class RotaService extends BaseService {
                 "meetsReference" => $profitability >= self::REFERENCE_PROFITABILITY,
                 "canDecide"      => $canDecide,
                 "decideBlockReason" => $awaitingAcceptance > 0
-                    ? $awaitingAcceptance . " agendamento(s) com serviços por aceitar (RN-31)"
+                    ? $awaitingAcceptance . " agendamento(s) com serviços por aceitar"
                     : null,
                 "status"         => $status,
                 "decidedAt"      => $route["decidedAt"] ?? null,
