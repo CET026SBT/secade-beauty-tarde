@@ -705,7 +705,8 @@ if ($httpSupplierId > 0) {
 
 $e2eLeftoverUsers    = (int)$pdo->query("SELECT COUNT(*) FROM utilizador WHERE email LIKE 'e2e.%@secade.pt'")->fetchColumn();
 // ⚠️ A tabela `cliente_morada` tem agora moradas de clientes REAIS importados (clientes com id ≥ 100 —
-// §24.11 · `database_migration_v4.sql`), pelo que a asserção olha **só** para o que o teste criou
+// §24.11 · os 65 clientes reais entram pelo dump `DataBase.sql`), pelo que a asserção olha **só** para
+// o que o teste criou
 // (o cliente E2E), e não para o total da tabela.
 $e2eLeftoverAddress = $e2eCustomerId > 0
     ? (int)$pdo->query("SELECT COUNT(*) FROM cliente_morada WHERE cliente_id = {$e2eCustomerId}")->fetchColumn()
