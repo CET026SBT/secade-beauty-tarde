@@ -171,7 +171,7 @@ const boRoutes = (() => {
                ${generalUtils.formatDateTime(route.routeDate)}</p>
             <p class="mb-0 small text-muted">
                 ${canDecide
-                    ? "Escolha os agendamentos que entram na rota. Os que ficarem de fora continuam qualificados (RN-34)."
+                    ? "Escolha os agendamentos que entram na rota. Os que ficarem de fora continuam qualificados."
                     : generalUtils.escapeHtml(route.decideBlockReason || "Esta rota já não pode ser decidida.")}
             </p>`);
 
