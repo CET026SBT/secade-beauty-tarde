@@ -62,7 +62,7 @@ register_script("components/customerRegister", "main");
                                 </div>
                             </div>
 
-                            <button type="button" class="btn btn-primary w-100 py-2 m-0 fw-bold text-uppercase" onclick="customerRegister.form.nextStep()">Seguinte</button>
+                            <button type="button" class="btn btn-primary extended-border w-100 py-2 m-0 fw-bold text-uppercase" onclick="customerRegister.form.nextStep()">Seguinte</button>
                         </div>
 
                         <div class="form-step">
@@ -137,8 +137,8 @@ register_script("components/customerRegister", "main");
                             </div>
 
                             <div class="d-flex gap-4">
-                                <button type="button" class="btn btn-primary no-bg w-50 py-2 m-0 fw-bold text-uppercase" onclick="customerRegister.form.prevStep()">Voltar</button>
-                                <button type="button" class="btn btn-primary w-50 py-2 m-0 fw-bold text-uppercase" onclick="customerRegister.form.submit()">Registar</button>
+                                <button type="button" class="btn btn-primary extended-border no-bg w-50 py-2 m-0 fw-bold text-uppercase" onclick="customerRegister.form.prevStep()">Voltar</button>
+                                <button type="button" class="btn btn-primary extended-border w-50 py-2 m-0 fw-bold text-uppercase" onclick="customerRegister.form.submit()">Registar</button>
                             </div>
                         </div>
                     </div>

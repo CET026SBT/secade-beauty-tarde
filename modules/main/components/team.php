@@ -47,17 +47,17 @@ $teamMembers = [
                             <h4><?php echo htmlspecialchars($member["name"]); ?></h4>
                             <div class="d-flex justify-content-center">
                                 <?php if (!empty($member["social"]["facebook"])): ?>
-                                    <a class="btn btn-dark btn-sm-square border-2 me-3" href="<?php echo htmlspecialchars($member["social"]["facebook"]); ?>">
+                                    <a class="btn btn-dark btn-square-sm extended-border border-2 me-3" href="<?php echo htmlspecialchars($member["social"]["facebook"]); ?>">
                                         <i class="fab fa-facebook-f"></i>
                                     </a>
                                 <?php endif; ?>
                                 <?php if (!empty($member["social"]["instagram"])): ?>
-                                    <a class="btn btn-dark btn-sm-square border-2 me-3" href="<?php echo htmlspecialchars($member["social"]["instagram"]); ?>">
+                                    <a class="btn btn-dark btn-square-sm extended-border border-2 me-3" href="<?php echo htmlspecialchars($member["social"]["instagram"]); ?>">
                                         <i class="fab fa-instagram"></i>
                                     </a>
                                 <?php endif; ?>
                                 <?php if (!empty($member["social"]["linkedin"])): ?>
-                                    <a class="btn btn-dark btn-sm-square border-2" href="<?php echo htmlspecialchars($member["social"]["linkedin"]); ?>">
+                                    <a class="btn btn-dark btn-square-sm extended-border border-2" href="<?php echo htmlspecialchars($member["social"]["linkedin"]); ?>">
                                         <i class="fab fa-linkedin-in"></i>
                                     </a>
                                 <?php endif; ?>

@@ -9,10 +9,12 @@ $statsFallback = SITE_STATS_FALLBACK;
 <div class="container-fluid py-5">
     <div class="container">
         <div class="row g-5">
-            <div class="col-lg-6 wow fadeIn" data-wow-delay="0.2s">
-                <img class="img-fluid mb-3" src="<?= BASE_URL ?>/modules/common/img/about.jpg" alt="Sobre nós">
+            <div class="col-lg-6 wow fadeIn d-flex flex-column" data-wow-delay="0.2s">
+                <div class="img-container flex-grow-1 mb-3">
+                    <img src="<?= BASE_URL ?>/modules/common/img/about.png" alt="Sobre nós">
+                </div>
                 <div class="d-flex align-items-center bg-light">
-                    <div class="btn-phone btn-square flex-shrink-0 bg-primary">
+                    <div class="btn-square-100 btn-square flex-shrink-0 bg-primary">
                         <i class="fa fa-phone fa-2x text-dark"></i>
                     </div>
                     <div class="px-3">
@@ -21,7 +23,7 @@ $statsFallback = SITE_STATS_FALLBACK;
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
+            <div class="col-lg-6 wow fadeIn info-container" data-wow-delay="0.5s">
                 <h1 class="font-dancing-script text-primary">Sobre nós</h1>
                 <h1 class="mb-5">Beleza em Évora, no salão ou à sua porta</h1>
                 <p class="mb-4">A <strong>Secade Beauty</strong> junta, no mesmo serviço, o <strong>salão</strong> e a
@@ -55,7 +57,7 @@ $statsFallback = SITE_STATS_FALLBACK;
                 </div>
                 <?php
                 if ($currentPage != "about.php" && $currentPage != "sobre") {
-                    echo '<a class="btn btn-primary text-uppercase px-5 py-3" href="' . BASE_URL . '/sobre">Mais sobre nós</a>';
+                    echo '<a class="btn btn-primary extended-border text-uppercase px-5 py-3" href="' . BASE_URL . '/sobre">Mais sobre nós</a>';
                 }
                 ?>
             </div>

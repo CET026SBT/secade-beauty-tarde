@@ -38,7 +38,7 @@ register_script("components/contact", "main");
                                 </div>
                             </div>
                             <div class="col-12 text-center">
-                                <button class="btn btn-primary py-3 px-5 text-uppercase" type="submit">Enviar Mensagem</button>
+                                <button class="btn btn-primary extended-border py-3 px-5 text-uppercase" type="submit">Enviar Mensagem</button>
                             </div>
                         </div>
                     </form>
