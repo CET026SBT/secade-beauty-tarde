@@ -50,12 +50,8 @@ secade-beauty-tarde/
 │   └── backoffice/       # Área de gestão (gestor)
 ├── README.md              # Este ficheiro (instalação + uso)
 ├── index.php              # Front Controller
-├── DataBase_v2.sql        # Schema ATUAL (v2+): 24 tabelas + dados de referência
-├── database_seed.sql      # Dados de demonstração/teste (utilizadores + morada)
-├── database_migration_v2.sql  # Migração incremental v1 -> v2 (uso único)
-├── database_migration_v3.sql  # Migração incremental v2 -> v3 (idempotente)
-├── DataBase.sql           # [legado] dump v1 — não usar em instalações novas
-├── DataBase_backup_pre_v2.sql # [arquivo] cópia do estado antes da v2
+├── DataBase.sql           # Schema + dados ATUAIS (dump único): 25 tabelas
+├── DataBase_clean.sql     # Versão simplificada de leitura do mesmo dump
 └── .htaccess              # Rewrite rules
 
 [na branch agent-workspace — ver "Ramos do repositório"]
@@ -120,35 +116,27 @@ _dev/                      # Umbrella do que NÃO é produto (_dev/tests version
    C:\laragon\www\secade-beauty-tarde
    ```
 
-2. **Criar a base de dados (opção A — instalação limpa):**
+2. **Criar a base de dados:**
    - Abrir HeidiSQL (ou usar a linha de comandos, ver abaixo)
-   - Executar **`DataBase_v2.sql`** — cria a BD `secade_beauty`, as 24 tabelas e os dados de
-     referência (categorias, cidades, base de partida, matriz de deslocação, 35 serviços)
-   - Executar **`database_seed.sql`** — dados de demonstração (3 utilizadores, 1 morada)
+   - Executar **`DataBase.sql`** — cria a BD `secade_beauty`, as **25 tabelas** e **todos os dados**
+     (catálogo, cidades, base de partida, matriz de deslocação, utilizadores de demonstração,
+     43 fornecedores e os clientes reais)
 
-   > ✅ **Não é preciso correr as migrações na opção A.** O `DataBase_v2.sql` já inclui tudo o
-   > que elas fazem (a coluna `servico.ativo`, a correção do legado `cliente.morada` e a
-   > ausência da tabela `funcionario_categoria`).
-   > Correr a `database_migration_v3.sql` é **inofensivo** (é idempotente), mas desnecessário.
-
-   **Opção B — BD já existente (atualização, preserva dados):**
-   - Executar `database_migration_v2.sql` (só se a BD ainda estiver na **v1**; é de uso único)
-   - Executar `database_migration_v3.sql` (idempotente — pode correr em qualquer schema)
-     - além de `servico.ativo` e `cliente.morada`, **remove a tabela `funcionario_categoria`**
-       (relação N:N eliminada — as categorias são apenas filtros visuais)
-   - Executar `database_seed.sql`
+   > ℹ️ **Um só ficheiro.** As antigas migrações incrementais (`DataBase_v2/v3.sql`,
+   > `database_migration_v2/v3/v4.sql`) e o `database_seed.sql` foram **consolidados** neste dump
+   > único — o histórico delas fica no Git. O **`DataBase_clean.sql`** é o mesmo conteúdo num
+   > formato simplificado (só para leitura); **não** é preciso para instalar.
 
    **Alternativa por linha de comandos (Laragon / PowerShell):**
    ```powershell
    $mysql = 'C:\laragon\bin\mysql\mysql-8.4.3-winx64\bin\mysql.exe'
 
-   & $mysql -u root --default-character-set=utf8mb4 -e "source DataBase_v2.sql"
-   & $mysql -u root --default-character-set=utf8mb4 -e "source database_seed.sql"
+   & $mysql -u root --default-character-set=utf8mb4 -e "source DataBase.sql"
    ```
    > ⚠️ Em PowerShell a redireção `<` não funciona (`mysql -u root < ficheiro.sql` falha).
-   > Use `-e "source ficheiro.sql"`.
+   > Use `-e "source ficheiro.sql"`. Alternativa: Laragon → phpMyAdmin → *Import*.
 
-   **Confirmar a importação** (esperado: 24 / 35 / 10 / 3):
+   **Confirmar a importação** (esperado: 25 / 35 / 10 / 69):
    ```sql
    USE secade_beauty;
    SELECT
@@ -172,7 +160,7 @@ _dev/                      # Umbrella do que NÃO é produto (_dev/tests version
 
 ## 🔑 CREDENCIAIS DE DEMONSTRAÇÃO
 
-Criadas por `database_seed.sql`:
+Incluídas no `DataBase.sql`:
 
 | Perfil      | E-mail                  | Password      | Acesso                                                                   |
 | ----------- | ----------------------- | ------------- | ------------------------------------------------------------------------ |
