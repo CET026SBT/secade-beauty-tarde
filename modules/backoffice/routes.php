@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . "/../../app/config/config.php";
+require_once APP_PATH . "/config/config.php";
 require_once APP_PATH . "/utils/Session.php";
 
 // Backoffice: acesso restrito a gestores
@@ -14,7 +14,7 @@ $boDefaultRouteDate = date("Y-m-d", strtotime("+1 day"));
 include_once ROOT_PATH . "/modules/backoffice/includes/boHeader.php";
 include_once ROOT_PATH . "/modules/backoffice/includes/boNavbar.php";
 ?>
-<main class="container-fluid py-4">
+<main class="p-4">
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
         <div>
             <h2 class="mb-1"><i class="bi bi-signpost-split text-primary me-2"></i>Gestão de Rotas</h2>
@@ -62,9 +62,9 @@ include_once ROOT_PATH . "/modules/backoffice/includes/boNavbar.php";
             </div>
             <div class="alert alert-warning border small mb-0 mt-3">
                 <i class="bi bi-shield-exclamation me-1"></i>
-                <strong>Regra da rota (RN-31):</strong> uma rota só agrega agendamentos com <strong>todos os
+                <strong>Regra da rota:</strong> uma rota só agrega agendamentos com <strong>todos os
                 serviços aceites</strong>. Grupos com serviços por aceitar aparecem aqui como aviso, mas
-                <strong>não</strong> podem ser decididos — a decisão devolve <strong>409</strong>.
+                <strong>não</strong> podem ser decididos enquanto tiverem serviços pendentes.
             </div>
         </div>
     </div>
