@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . "/../../app/config/config.php";
+require_once APP_PATH . "/config/config.php";
 require_once APP_PATH . "/utils/Session.php";
 
 // Backoffice do GESTOR
@@ -13,7 +13,7 @@ $boCurrentPage = "fiscal";
 include_once ROOT_PATH . "/modules/backoffice/includes/boHeader.php";
 include_once ROOT_PATH . "/modules/backoffice/includes/boNavbar.php";
 ?>
-<main class="container-fluid py-4">
+<main class="p-4">
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
         <div>
             <h2 class="mb-1"><i class="bi bi-receipt-cutoff text-primary me-2"></i>Calendário Fiscal</h2>
@@ -22,7 +22,7 @@ include_once ROOT_PATH . "/modules/backoffice/includes/boNavbar.php";
                 <strong>30 / 15 / 7 / 3 / 1 dia</strong> e alertas <strong>diários em atraso</strong>.
             </p>
         </div>
-        <button type="button" class="btn btn-primary" id="toggleObligationFormBtn">
+        <button type="button" class="btn btn-primary extended-border" id="toggleObligationFormBtn">
             <i class="bi bi-plus me-1"></i> Nova obrigação
         </button>
     </div>
@@ -88,7 +88,7 @@ include_once ROOT_PATH . "/modules/backoffice/includes/boNavbar.php";
                     <input type="date" id="obDueDate" class="form-control form-control-sm">
                 </div>
                 <div class="col-12">
-                    <button type="button" class="btn btn-sm btn-primary" id="saveObligationBtn">
+                    <button type="button" class="btn btn-sm btn-primary extended-border" id="saveObligationBtn">
                         <i class="bi bi-check2 me-1"></i> Guardar obrigação
                     </button>
                     <button type="button" class="btn btn-sm btn-outline-secondary ms-2" id="cancelObligationBtn">Cancelar</button>

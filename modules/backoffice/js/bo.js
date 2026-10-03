@@ -2,6 +2,7 @@
     "use strict";
 
     // Spinner principal da área de gestão
+    window._oldPreloader = $.fn.preloader;
     $('body').preloader(new Promise(resolve => {
         $(resolve);
     }));

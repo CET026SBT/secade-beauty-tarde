@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . "/../../app/config/config.php";
+require_once APP_PATH . "/config/config.php";
 require_once APP_PATH . "/utils/Session.php";
 
 // Backoffice: acesso restrito a gestores
@@ -14,17 +14,17 @@ $boCurrentPage = "suppliers";
 include_once ROOT_PATH . "/modules/backoffice/includes/boHeader.php";
 include_once ROOT_PATH . "/modules/backoffice/includes/boNavbar.php";
 ?>
-<main class="container-fluid py-4">
+<main class="p-4">
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
         <div>
             <h2 class="mb-1"><i class="bi bi-truck text-primary me-2"></i>Fornecedores</h2>
             <p class="text-muted small mb-0">
                 Registo dos fornecedores do espaço. Os <strong>43 fornecedores reais</strong> entregues pelo
-                cliente já cá estão (migração <code>database_migration_v4.sql</code>). Não há eliminação:
+                cliente já estão registados. Não há eliminação:
                 «remover» <strong>desativa</strong> o fornecedor, porque pode estar citado em despesas.
             </p>
         </div>
-        <button type="button" class="btn btn-primary" id="newSupplierBtn">
+        <button type="button" class="btn btn-primary extended-border" id="newSupplierBtn">
             <i class="bi bi-plus-lg me-1"></i> Novo fornecedor
         </button>
     </div>
@@ -86,6 +86,8 @@ include_once ROOT_PATH . "/modules/backoffice/includes/boNavbar.php";
             </div>
         </div>
     </div>
+</main>
+
 <!-- Modal: criar/editar fornecedor -->
 <div class="modal fade" id="supplierFormModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -139,7 +141,7 @@ include_once ROOT_PATH . "/modules/backoffice/includes/boNavbar.php";
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary" id="saveSupplierBtn">
+                    <button type="submit" class="btn btn-primary extended-border" id="saveSupplierBtn">
                         <i class="bi bi-check2 me-1"></i> Guardar
                     </button>
                 </div>
