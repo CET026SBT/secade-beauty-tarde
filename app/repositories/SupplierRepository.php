@@ -6,9 +6,9 @@ require_once APP_PATH . "/mappers/SupplierMapper.php";
 /**
  * Acesso à tabela `fornecedor` (Fase 6.1 · RF-85 · §17.9).
  *
- * A tabela entrou com a migração v4 (`database_migration_v4.sql`) já com os
- * **43 fornecedores reais** entregues pelo cliente — esta camada só lê e escreve
- * na própria tabela (nunca por JOIN — §18.2).
+ * A tabela já vem no dump de dados (`DataBase.sql`) com os **43 fornecedores reais**
+ * entregues pelo cliente — esta camada só lê e escreve na própria tabela
+ * (nunca por JOIN — §18.2).
  */
 class SupplierRepository extends BaseRepository {
 

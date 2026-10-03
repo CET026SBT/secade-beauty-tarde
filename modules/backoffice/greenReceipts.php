@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . "/../../app/config/config.php";
+require_once APP_PATH . "/config/config.php";
 require_once APP_PATH . "/utils/Session.php";
 
 // Backoffice do GESTOR
@@ -13,7 +13,7 @@ $boCurrentPage = "greenReceipts";
 include_once ROOT_PATH . "/modules/backoffice/includes/boHeader.php";
 include_once ROOT_PATH . "/modules/backoffice/includes/boNavbar.php";
 ?>
-<main class="py-4">
+<main class="p-4">
     <div class="mb-4">
         <h2 class="mb-1"><i class="bi bi-cash-stack text-primary me-2"></i>Simulador de Recibos Verdes</h2>
         <p class="text-muted small mb-0">

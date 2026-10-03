@@ -23,9 +23,8 @@ $espaco = [
         <div class="row g-4">
             <?php foreach ($espaco as $index => $item): ?>
                 <div class="col-md-6 col-lg-4 wow fadeIn" data-wow-delay="<?= 0.2 + $index * 0.1 ?>s">
-                    <div class="ratio ratio-4x3 bg-light border-bottom border-end sb-img-container">
-                        <img class="img-fluid" style="object-fit: cover;"
-                             src="<?= BASE_URL ?>/modules/common/img/<?= htmlspecialchars($item["image"]) ?>"
+                    <div class="ratio ratio-4x3 bg-light border-bottom border-end img-container">
+                        <img src="<?= BASE_URL ?>/modules/common/img/<?= htmlspecialchars($item["image"]) ?>"
                              alt="<?= htmlspecialchars($item["alt"]) ?>">
                     </div>
                 </div>

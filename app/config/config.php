@@ -42,7 +42,7 @@ if (!defined("IVA_RATE")) {
 // Indicadores públicos do site (contadores do "Sobre nós" e apresentação de serviços).
 // Leitura: valor CONTADO na BD (`?action=site-stats`) e, quando ainda não há dados,
 // o valor documental abaixo — nunca um número inventado.
-// Fontes: catálogo `DataBase_v2.sql`/`database_migration_v4.sql` (35 serviços · 3 categorias ·
+// Fontes: catálogo `DataBase.sql` (35 serviços · 3 categorias ·
 // 10 cidades do distrito de Évora) e a folha de salários oficial do 1.º trimestre de 2026
 // (6 trabalhadores — `Contabilidade Secade Beauty.xlsx`, folha «Custos Funcionários»).
 if (!defined("SITE_STATS_FALLBACK")) {

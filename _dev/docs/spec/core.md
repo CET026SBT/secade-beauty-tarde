@@ -111,7 +111,7 @@ apoio visual, **sem bloqueio automático**.
 ### 3.2 — D-02 · Funcionários ↔ categorias profissionais
 **Decisão:** categorias são **apenas filtros e agrupadores visuais**; qualquer profissional aceita
 qualquer serviço.
-**Regras:** RN-04 · **Estado:** ✅ — tabela `funcionario_categoria` **removida** (schema com 24 tabelas).
+**Regras:** RN-04 · **Estado:** ✅ — tabela `funcionario_categoria` **removida** (schema atual com 25 tabelas, incl. `fornecedor`).
 
 ### 3.3 — D-03 · Política salarial vs. recibos verdes
 **Decisão:** efetivos atuam **predominantemente na loja**; recibos verdes na vertente **ambulante**,

@@ -5,11 +5,13 @@
 <div class="container-fluid py-5">
     <div class="container">
         <div class="row g-5 align-items-center">
-            <div class="col-lg-6 wow fadeIn" data-wow-delay="0.1s sb-img-container">
-                <img class="img-fluid w-100" src="<?= BASE_URL ?>/modules/common/img/about-images/about-team.png"
-                     alt="Equipa da Secade Beauty">
+            <div class="col-lg-6 wow fadeIn align-self-stretch d-flex flex-column" data-wow-delay="0.1s">
+                <div class="img-container flex-grow-1">
+                    <img src="<?= BASE_URL ?>/modules/common/img/about-images/about-team.png"
+                        alt="Equipa da Secade Beauty">
+                </div>
             </div>
-            <div class="col-lg-6 wow fadeIn" data-wow-delay="0.3s">
+            <div class="col-lg-6 wow fadeIn info-container" data-wow-delay="0.3s">
                 <h1 class="font-dancing-script text-primary">A equipa</h1>
                 <h1 class="mb-4">Quem executa o serviço que marcou</h1>
                 <p class="mb-4">Por trás de cada marcação está uma equipa de

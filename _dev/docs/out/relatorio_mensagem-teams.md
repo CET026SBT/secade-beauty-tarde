@@ -4,7 +4,7 @@
 
 **Data:** 2026-09-26 · **Âmbito:** `_dev/mapaMentalMVP/mensagem_teams.txt` (5.ª versão, 25/09/2026) — as
 3 secções (estrutura proposta, o que já recebemos, 36 dúvidas) — confrontada com `especificacao_mvp.md`,
-`_dev/docs/spec/`, o schema (`DataBase_v3.sql`), `index.php` e `app/config/api.php`.
+`_dev/docs/spec/`, o schema (`DataBase.sql`), `index.php` e `app/config/api.php`.
 **Autor:** agente · **Artefacto:** `_dev/docs/out/relatorio_mensagem-teams.md` · **Natureza:** apoio (não
 normativo) · **Autoridade:** `especificacao_mvp.md` + `_dev/docs/spec/`
 **Regenerável:** este ficheiro **substitui-se em bloco** quando a mensagem mudar (DOUTRINA 8) — não se
@@ -95,7 +95,7 @@ existente) e **(b)** painel em `/gestao/painel` — é o **C-01**; registar a es
 (*"Prioridade 1 — Fornecedores ⭐"*), `data-api.md` **§19.5** (`admin-supplier-*` na lista de *endpoints
 previstos e não implementados*) e `backlog.md` L184 (`/gestao/fornecedores* → gestor (PRIORIDADE 1 do
 futuro)`). No código **não existe** nada: `app/config/api.php` não tem qualquer `admin-supplier-*`;
-`DataBase_v3.sql` tem **23 tabelas** e nenhuma é de fornecedores; e a única ocorrência de *"fornecedor"*
+`DataBase.sql` tem **23 tabelas** e nenhuma é de fornecedores; e a única ocorrência de *"fornecedor"*
 no produto é outra coisa — o *fornecedor de geocodificação* (`modules/common/js/api/geocodingApi.js`
 L7 · L12 · L26 · L38).
 **Porque é problema:** *«em andamento»* sugere trabalho iniciado; o cliente pode planear a demonstração
@@ -236,18 +236,18 @@ Tudo o que a mensagem afirma sobre **o que já existe** confere com o código �
 | :---------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------- | :--------- |
 | «Agendamentos (JÁ EXISTE)»                                  | `app/config/api.php` L26-29 (`admin-appointments-*`) · `index.php` L30-31                                            | 2026-09-26 |
 | «Rotas (JÁ EXISTE)»                                         | `api.php` L31-32 (`admin-routes-*`) · `index.php` L32                                                                | 2026-09-26 |
-| «Fiscal (JÁ EXISTE: IVA, IRC, SS, Seguros)»                 | `api.php` L39-46 · `DataBase_v3.sql` L394: `tipo enum('iva','irc','seguranca_social','seguros')`                     | 2026-09-26 |
+| «Fiscal (JÁ EXISTE: IVA, IRC, SS, Seguros)»                 | `api.php` L39-46 · `DataBase.sql` (tabela `obrigacao_fiscal`): `tipo enum('iva','irc','seguranca_social','seguros')` | 2026-09-26 |
 | «Recibos verdes (JÁ EXISTE: percentagens + simulador)»      | `api.php` L44-46 (`admin-green-receipt-*`) · `index.php` L36                                                         | 2026-09-26 |
 | «Serviços (JÁ EXISTE, em modo supervisão)»                  | `index.php` L34 (`/gestao/servicos`)                                                                                 | 2026-09-26 |
 | «Funcionário — aceitar, desfazer, trocar (JÁ EXISTE)»       | `api.php` L34-37 · `data-api.md` §19.2                                                                               | 2026-09-26 |
-| «NÃO EXISTE: ativos, depreciações, empréstimos, rácios»     | `DataBase_v3.sql`: **23 tabelas**, nenhuma delas (`promocao`/`depreciacao`/`emprestimo`/`racio` = **0** ocorrências) | 2026-09-26 |
+| «NÃO EXISTE: ativos, depreciações, empréstimos, rácios»     | `DataBase.sql`: **23 tabelas**, nenhuma delas (`promocao`/`depreciacao`/`emprestimo`/`racio` = **0** ocorrências)    | 2026-09-26 |
 | «NÃO EXISTE: fornecedores e despesas externas»              | 0 tabelas; previsto em `data-api.md` §19.5 e `backlog.md` §25.1                                                      | 2026-09-26 |
-| «NÃO EXISTE: retenção de IRS na fonte, por trabalhador»     | `DataBase_v3.sql`: `irs` e `retenc` = **0** ocorrências                                                              | 2026-09-26 |
+| «NÃO EXISTE: retenção de IRS na fonte, por trabalhador»     | `DataBase.sql`: `irs` e `retenc` = **0** ocorrências                                                                 | 2026-09-26 |
 | «Promoções (NOVO)», «Contabilidade (NOVO)», «Equipa (NOVO)» | 0 tabelas, 0 rotas (`index.php` L30-36), 0 endpoints (`api.php` L5-51)                                               | 2026-09-26 |
 | «Os ficheiros novos substituem os antigos»                  | `annex.md` §29.2 (L49-52: *Menu Dashboard.docx* ↔ *Menu APOIO 3.docx*, etc.)                                         | 2026-09-26 |
-| Sino com contador **global** (base do `C-03`)               | `DataBase_v3.sql`: `alerta_fiscal.visualizado` é `tinyint(1)` **sem** coluna de utilizador                           | 2026-09-26 |
-| Receita só existe no livro de recebimentos (base do `C-04`) | `DataBase_v3.sql`: `transacao_financeira.agendamento_id` **NOT NULL** + 4 tipos de recebimento                       | 2026-09-26 |
-| Custo de pessoal fixo vem do salário base                   | `DataBase_v3.sql` L330-331: `tipo_contrato enum('efetivo_contratado','recibo_verde')` · `salario_base`               | 2026-09-26 |
+| Sino com contador **global** (base do `C-03`)               | `DataBase.sql`: `alerta_fiscal.visualizado` é `tinyint(1)` **sem** coluna de utilizador                              | 2026-09-26 |
+| Receita só existe no livro de recebimentos (base do `C-04`) | `DataBase.sql`: `transacao_financeira.agendamento_id` **NOT NULL** + 4 tipos de recebimento                          | 2026-09-26 |
+| Custo de pessoal fixo vem do salário base                   | `DataBase.sql` (tabela `funcionario`): `tipo_contrato enum('efetivo_contratado','recibo_verde')` · `salario_base`    | 2026-09-26 |
 
 ## 5. LIMITES DO TRABALHO
 

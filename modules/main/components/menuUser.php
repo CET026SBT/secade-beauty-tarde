@@ -33,9 +33,10 @@ if ($isLoggedIn && $user):
         $managementLinks[] = ["url" => "/gestao/recibos-verdes", "icon" => "bi-cash-stack", "label" => "Recibos Verdes"];
     }
 ?>
-<div class="menuUser dropdown ms-auto me-2 me-xl-4 order-xl-last">
-    <button class="btn btn-link dropdown-toggle d-flex align-items-center text-decoration-none p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-        <span class="text-white me-2 d-none d-lg-inline"><?= htmlspecialchars($userName) ?></span>
+<div class="menuUser dropdown ms-auto order-xl-last">
+    <button class="btn btn-link dropdown-toggle d-flex align-items-center text-decoration-none p-0" 
+            type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <span class="text-white me-2 d-none d-md-inline"><?= htmlspecialchars($userName) ?></span>
         <img src="<?= BASE_URL ?>/modules/common/img/testimonial-1.jpg"
             alt="<?= htmlspecialchars($userName) ?>"
             class="wh-40 rounded-circle object-fit-cover border border-2 border-primary">
@@ -77,8 +78,8 @@ if ($isLoggedIn && $user):
     </ul>
 </div>
 <?php else: ?>
-<a href="<?= BASE_URL ?>/login" class="btn btn-sm btn-primary extended-border-xl no-bg px-3 py-2 m-0 ms-auto me-3 me-xl-4 order-xl-last">
-    <i class="fa fa-user-lock me-2"></i>
-    <span class="d-none d-md-inline">Iniciar Sessão</span>
+<a href="<?= BASE_URL ?>/login" class="btn btn-sm btn-primary extended-border-xl no-bg px-3 py-2 m-0 ms-auto order-xl-last">
+    <i class="fa fa-user-lock" title="Iniciar Sessão"></i>
+    <span class="d-none d-md-inline ms-2">Iniciar Sessão</span>
 </a>
 <?php endif; ?>

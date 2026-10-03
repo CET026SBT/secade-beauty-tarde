@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . "/../../app/config/config.php";
+require_once APP_PATH . "/config/config.php";
 require_once APP_PATH . "/utils/Session.php";
 
 // Backoffice: acesso restrito a gestores
@@ -14,13 +14,13 @@ $boCurrentPage = "suppliers";
 include_once ROOT_PATH . "/modules/backoffice/includes/boHeader.php";
 include_once ROOT_PATH . "/modules/backoffice/includes/boNavbar.php";
 ?>
-<main class="py-4">
+<main class="p-4">
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
         <div>
             <h2 class="mb-1"><i class="bi bi-truck text-primary me-2"></i>Fornecedores</h2>
             <p class="text-muted small mb-0">
                 Registo dos fornecedores do espaço. Os <strong>43 fornecedores reais</strong> entregues pelo
-                cliente já cá estão (migração <code>database_migration_v4.sql</code>). Não há eliminação:
+                cliente já estão registados. Não há eliminação:
                 «remover» <strong>desativa</strong> o fornecedor, porque pode estar citado em despesas.
             </p>
         </div>

@@ -326,8 +326,8 @@ conta e final) · IES/DA.
 **Entregues:** `Secade Duração Serviços 1.ods` (durações reais dos serviços) e
 `Serviços, Clientes e Fornecedores.xlsx` (43 fornecedores + 65 clientes reais).
 
-**Feito — `database_migration_v4.sql`** (idempotente, ids explícitos + `ON DUPLICATE KEY UPDATE`;
-aplicada **duas vezes** sem erro):
+**Feito — no dump `DataBase.sql`** (as 43 linhas de `fornecedor` e os 65 clientes entram pelo dump único;
+histórico: a antiga `database_migration_v4.sql` era idempotente, ids explícitos + `ON DUPLICATE KEY UPDATE`):
 
 | Carga                                                              | Resultado verificado                                                                                                                     |
 | :----------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------- |
@@ -352,8 +352,8 @@ aplicada **duas vezes** sem erro):
    `Tranças Box Braids`→**Box Braids** (id 1), cidade `Arraiaolos`→**Arraiolos** (5 registos).
    ⚠️ **A confirmar com o cliente** — foram correções por semelhança, não por evidência documental.
 
-**Natureza dos dados:** é **dados reais de cliente**, não demonstração — numa instalação de raiz entra pela
-migração **v4** (§27.2) e **não** pelo `database_seed.sql`.
+**Natureza dos dados:** é **dados reais de cliente**, não demonstração — entram pelo dump único
+`DataBase.sql` (§27.2) juntamente com o esquema.
 
 ### 24.12 — Ficheiro de faturas de vendas: cruzamento pendente (28/09/2026)
 

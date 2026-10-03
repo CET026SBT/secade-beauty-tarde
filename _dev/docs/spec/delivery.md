@@ -28,7 +28,7 @@
 | **7 — Promoções**                   | Módulo de **promoções e campanhas** — adiado; avaliar antes o risco de **retro-atualização** de histórico e agendamentos passados (§24.7)               | ⬜ adiada             |
 
 > **Já feito dentro da Fase 6:** a **carga dos dados reais** entregues pelo cliente
-> (`database_migration_v4.sql` — durações, 43 fornecedores, 65 clientes) — **RF-86** ✅ · §24.11.
+> (durações, 43 fornecedores, 65 clientes — hoje no dump `DataBase.sql`) — **RF-86** ✅ · §24.11.
 > É a base de dados do módulo de **fornecedores**, que é a prioridade 1 do trabalho futuro (§25.1).
 > **Chart.js (E-3):** entra na **Fase 6**, junto com os gráficos do dashboard — **não** fica para depois.
 > A biblioteca continua **local** em `modules/common/lib/chartjs/` (nunca por CDN) e **só** carregada no
@@ -38,7 +38,7 @@
 ### 21.1 Entregáveis
 
 1. **Código-fonte completo** (`app/`, `modules/`, `index.php`, assets)
-2. **Base de dados**: `DataBase_v2.sql` + `database_seed.sql` (+ migrações `v2`/`v3`) — ordem em §27
+2. **Base de dados**: `DataBase.sql` (dump único — schema + dados) · `DataBase_clean.sql` (versão de leitura) — ordem em §27
 3. **Documentação**: `especificacao_mvp.md` (mestre) + `_dev/docs/spec/` (por domínio) + `README.md`
    + `_dev/docs/` (regras e moldes on-demand)
 4. **Diagrama de BD**: §17.8 (relações + consulta SQL para regenerar)
@@ -141,66 +141,50 @@ elementos-chave do backoffice (sidebar, sino, calendário, formulário de fornec
 Laragon com **Apache + MySQL** ativos · projeto em `C:\laragon\www\secade-beauty-tarde` ·
 **internet** (o autocomplete de morada usa a API Nominatim) · browser com DevTools.
 
-### 27.2 Importação (instalação de raiz) — 2 ficheiros + migrações de dados
+### 27.2 Importação (instalação de raiz) — dump único
 ```powershell
 $mysql = 'C:\laragon\bin\mysql\mysql-8.4.3-winx64\bin\mysql.exe'
 cd C:\laragon\www\secade-beauty-tarde
 
-# 1) Esquema completo + catálogo  (⚠️ APAGA a base secade_beauty existente)
-& $mysql -u root --default-character-set=utf8mb4 -e "source DataBase_v2.sql"
-
-# 2) Utilizadores de teste + morada de demonstração   ← OBRIGATÓRIO
-& $mysql -u root --default-character-set=utf8mb4 -e "source database_seed.sql"
-
-# 3) Dados REAIS entregues pelo cliente (durações · 43 fornecedores · 65 clientes)
-& $mysql -u root --default-character-set=utf8mb4 -e "source database_migration_v4.sql"
+# Esquema completo + TODOS os dados  (⚠️ APAGA a base secade_beauty existente)
+& $mysql -u root --default-character-set=utf8mb4 -e "source DataBase.sql"
 ```
 > ⚠️ Em **PowerShell** a redireção `<` não funciona — usar sempre `-e "source ficheiro.sql"`.
 > Alternativa: painel do Laragon → phpMyAdmin → *Import*.
-> **Não** são precisas as migrações v2/v3: o `DataBase_v2.sql` já inclui tudo o que elas fazem.
-> O passo **3** é **dados reais de cliente** (§24.11), não demonstração — é o que dá conteúdo à gestão de
-> **fornecedores** (§25.1) e às **durações** reais do catálogo. É **idempotente**: pode repetir-se.
+> O **`DataBase.sql` é um só ficheiro**: traz as **25 tabelas**, o catálogo, os utilizadores de
+> demonstração (§27.5), os **43 fornecedores** e os **65 clientes reais** (§24.11). As antigas migrações
+> `v2`/`v3`/`v4` e o `database_seed.sql` foram **consolidados** aqui — o histórico deles fica no Git.
+> O **`DataBase_clean.sql`** é o **mesmo conteúdo** num formato simplificado (só leitura); não é
+> preciso para instalar.
 
-### 27.3 Migração de uma BD antiga (preserva dados)
-```powershell
-& $mysql -u root --default-character-set=utf8mb4 -e "source database_migration_v2.sql"  # só se BD v1
-& $mysql -u root --default-character-set=utf8mb4 -e "source database_migration_v3.sql"  # idempotente
-& $mysql -u root --default-character-set=utf8mb4 -e "source database_migration_v4.sql"  # idempotente
-& $mysql -u root --default-character-set=utf8mb4 -e "source database_seed.sql"          # opcional
-```
-- `database_migration_v2.sql` é de **uso único** (falha com `Duplicate column` se repetido).
-- `database_migration_v3.sql` e `database_migration_v4.sql` são **idempotentes**
-  (a v4 usa ids explícitos + `ON DUPLICATE KEY UPDATE`) e podem correr em qualquer schema.
-- A **v4** traz **dados reais** (§24.11): durações, `fornecedor` (43) e clientes (65) — em produção é
-  **obrigatória**, numa instalação de demonstração é opcional.
+### 27.3 Migração de uma BD antiga
+> ⚠️ **Revogada.** As migrações incrementais (`database_migration_v2/v3/v4.sql`) e o `database_seed.sql`
+> foram **consolidados** no `DataBase.sql`, que já representa o estado final. Para atualizar uma BD antiga,
+> reimportar o `DataBase.sql` (recria a base do zero). O histórico das migrações fica no Git.
 
 ### 27.4 Confirmar a importação
 ```sql
 USE secade_beauty;
 SELECT
  (SELECT COUNT(*) FROM information_schema.tables
-   WHERE table_schema = 'secade_beauty')        AS tabelas,        -- esperado: 25 (24 + fornecedor)
+   WHERE table_schema = 'secade_beauty')        AS tabelas,        -- esperado: 25
  (SELECT COUNT(*) FROM servico)                 AS servicos,       -- esperado: 35
  (SELECT COUNT(*) FROM servico WHERE ativo = 1) AS servicos_ativos,-- esperado: 35
  (SELECT COUNT(*) FROM categoria_profissional)  AS categorias,     -- esperado: 3
  (SELECT COUNT(*) FROM cidade)                  AS cidades,        -- esperado: 10
  (SELECT COUNT(*) FROM matriz_deslocacao)       AS deslocacoes,    -- esperado: 9
- (SELECT COUNT(*) FROM utilizador)              AS utilizadores,   -- 3 (só seed) ou 68 (com a v4)
- (SELECT COUNT(*) FROM cliente_morada)          AS moradas,        -- 1 (só seed) ou 66 (com a v4)
- (SELECT COUNT(*) FROM fornecedor)              AS fornecedores;   -- esperado: 43 (só com a v4)
+ (SELECT COUNT(*) FROM utilizador)              AS utilizadores,   -- esperado: 69 (3 demo + 65 reais + 1)
+ (SELECT COUNT(*) FROM cliente_morada)          AS moradas,        -- esperado: 69
+ (SELECT COUNT(*) FROM fornecedor)              AS fornecedores;   -- esperado: 43
 ```
-> ⚠️ **Diagnóstico rápido:** **24 tabelas + catálogo completo** mas **0 utilizadores** = importou o
-> esquema **sem** o `database_seed.sql`. Basta correr o passo 2 de §27.2 (não é preciso reimportar).
-> Consequência: não consegue fazer login e os testes HTTP falham com *foreign key* em
-> `agendamento.cliente_id` (falta o cliente de teste #3).
-> ⚠️ **Esperados diferentes conforme a BD:** numa instalação **de demonstração** (sem o passo 3) são
-> **3 utilizadores · 1 morada · 0 fornecedores**; com a **v4** (§24.11) são **68 utilizadores ·
-> 66 moradas · 43 fornecedores** e **25 tabelas**.
+> ⚠️ **Diagnóstico rápido:** se o número de tabelas for **0**, o `DataBase.sql` não chegou a correr; se
+> `utilizador` for **0**, a importação parou a meio. Sem o cliente de teste (#3) não consegue fazer login
+> e os testes HTTP falham com *foreign key* em `agendamento.cliente_id`.
 
 ### 27.5 Configuração e acesso
 - Conexão: `app/config/connection.php` (default: `localhost`, `root`, sem password, DB `secade_beauty`).
 - Acesso: **`http://localhost/secade-beauty-tarde`**
-- **Credenciais de demonstração** (criadas por `database_seed.sql`):
+- **Credenciais de demonstração** (incluídas no `DataBase.sql`):
 
 | Perfil          | E-mail de Teste         | Password de Teste | Destino por Omissão Pós-Login |
 | :-------------- | :---------------------- | :---------------- | :---------------------------- |
@@ -266,7 +250,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 24. ✅ Existe página das **comissões** por funcionário, com os valores **já gravados na aceitação**.
 25. ✅ O backoffice tem **sidebar** (a navbar atual está no limite) e as páginas `/gestao/*` mantêm a autorização por perfil.
 26. ✅ Existe **gestão de fornecedores** em `/gestao/fornecedores` sobre a tabela `fornecedor` **já carregada** com os 43 fornecedores reais (RF-85 · §25.1).
-27. ✅ As **durações reais dos 35 serviços**, os **43 fornecedores** e os **65 clientes** entregues pelo cliente estão na BD por **migração idempotente** gerada a partir do ficheiro (`database_migration_v4.sql` — RF-86 · §24.11).
+27. ✅ As **durações reais dos 35 serviços**, os **43 fornecedores** e os **65 clientes** entregues pelo cliente estão na BD, no dump `DataBase.sql` (RF-86 · §24.11).
 28. ✅ Os **contadores públicos** (`site-stats`) nunca publicam número **inventado** nem **sabidamente incompleto**: contagem da BD → valor documental → chaves de `SITE_STATS_DOCUMENTAL` (§3.12).
 
 > **Em falta na Fase 6 (por ordem da §24.7):** 6.2 contabilidade/gráficos dos dados importados

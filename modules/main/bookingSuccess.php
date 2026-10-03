@@ -1,8 +1,8 @@
 <?php
-require_once __DIR__ . "/../../app/config/config.php";
+require_once APP_PATH . "/config/config.php";
 require_once APP_PATH . "/utils/Session.php";
 
-Session::requireLogin(BASE_URL . "/login");
+Session::requireProfile(["cliente"]);
 
 $bookingId = (int)($_GET["id"] ?? 0);
 $local     = $_GET["local"] ?? "loja_fisica";

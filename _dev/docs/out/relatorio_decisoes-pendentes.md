@@ -135,7 +135,7 @@ guarda **só** as percentagens dos recibos verdes). Uma tabela chave/valor resol
 aberto de uma só vez, e segue o **padrão já provado** de `config_recibo_verde` (percentagem + vigência +
 `configurado_por`). A alternativa — constantes em código — foi explicitamente rejeitada por **RF-25**
 (*"substituir constante"*) e por **RF-62**.
-**Impacto:** `DataBase_v3.sql`/migração (**1 tabela nova** — registar em §17 + §17.9) ·
+**Impacto:** `DataBase.sql`/migração (**1 tabela nova** — registar em §17 + §17.9) ·
 `ConfigRepository`/`ConfigService` · `BookingService` (deixa de usar a constante) · `FiscalController`
 (taxa de IRC) · `app/config/api.php` (`admin-config-*`, `admin-payment-collect`) · UI de execução
 (90 % + método + caso *offline*) · §17 · §24.5 · RF-25/62/71/72/73 → ✅ · §28.2 #14 → ✅ · testes.
@@ -249,7 +249,7 @@ tabelas justificadas em §17.9) e `C-29` **já foi fechado** (*"a via é a impor
 de células"*). `Q-43`/`C-19`/`C-30` caíram: o `.xlsx` **é** tratável — a limitação que os originou era
 **falsa** (`analise` §F.7: 26/26 entradas). O que **não** está decidido é só a prioridade entre fontes
 (**P-13**).
-**Impacto:** `DataBase_v3.sql` (**2 tabelas** — §17 + §17.9) · `ImportRepository`/`ImportService` (novo) ·
+**Impacto:** `DataBase.sql` (**2 tabelas** — §17 + §17.9) · `ImportRepository`/`ImportService` (novo) ·
 `ImportController` + `admin-import-upload`/`admin-import-status` · `modules/backoffice/import.php` + JS
 (upload) · `vendor` (PhpSpreadsheet — E-1) · RF-75 → ✅ · Q-43/C-19/C-30 → arquivados · `C-29` → confirmado.
 **Esforço:** ~5 h · **Se decidires o contrário:** sem importação **não existe** contabilidade (RF-76), nem

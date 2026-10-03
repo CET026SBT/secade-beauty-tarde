@@ -7,13 +7,13 @@ include_once ROOT_PATH . "/modules/main/includes/navbar.php";
 ?>
 
 <main>
-<?php
+    <?php
     include_once ROOT_PATH . "/modules/main/components/hero.php";
     include_once ROOT_PATH . "/modules/main/components/about.php";
     include_once ROOT_PATH . "/modules/main/components/servicesOverview.php";
     include_once ROOT_PATH . "/modules/main/components/serviceCategories.php";
     include_once ROOT_PATH . "/modules/main/components/testimonial.php";
-?>
+    ?>
 </main>
 
 <?php include_once ROOT_PATH . "/modules/main/includes/footer.php";

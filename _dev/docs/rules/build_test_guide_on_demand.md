@@ -25,7 +25,7 @@ antigo é **mentira** — apagar e regenerar é mais barato que corrigir.
 | o que já está testado | `_dev/tests/README.md` · §26 (`delivery.md`)                           |
 | arrancar do zero      | `_dev/docs/spec/delivery.md` §27 (instalação/importação)               |
 | verdade do código     | ler o **Controller/Service/JS** do fluxo em causa                      |
-| dados de apoio        | `DataBase_v3.sql` (contagens) — **contar, não presumir**               |
+| dados de apoio        | `DataBase.sql` (contagens) — **contar, não presumir**                  |
 
 ## 3. ESTRUTURA OBRIGATÓRIA
 

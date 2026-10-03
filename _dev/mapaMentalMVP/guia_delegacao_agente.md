@@ -31,7 +31,7 @@ contido na `agent-workspace`).
 | `main`            | ❌ **Intocado**                                                                                               |
 
 > ⚠️ **Consequência a resolver na próxima sessão:** as alterações de **produto** (`app/**`, `modules/**`,
-> `database_migration_v4.sql`) estão agora **nesta branch**, mas o `.clinerules` §4 exige que cheguem ao
+> `DataBase.sql`) estão agora **nesta branch**, mas o `.clinerules` §4 exige que cheguem ao
 > `dev` por **branches de contexto** (criadas a partir do `dev`, levando só caminhos de produto:
 > `git checkout -b <contexto> dev` + `git checkout agent-workspace -- app/ modules/ …`), e só depois o
 > **merge** em `dev`. **A ordem de integração é:** schema → core/infra → higiene → frontend → domínios →
@@ -75,7 +75,7 @@ As 4 imagens `exemplo-layout-individual-components--*.png` dão **conceito e org
 ficheiros do Chart.js. O componente de testemunhos **não** se replica. Conteúdo = **Secade Beauty**
 (nada de *LavaFacil*).
 
-### 3.3 Dados — `database_migration_v4.sql` (novo, na raiz do repositório)
+### 3.3 Dados — `DataBase.sql` (novo, na raiz do repositório)
 
 Migração **idempotente** (ids explícitos + `ON DUPLICATE KEY UPDATE`), **gerada** a partir dos ficheiros
 ### 3.4 Especificação (atualizada na mesma alteração — ciclo fechado)
@@ -84,7 +84,7 @@ Migração **idempotente** (ids explícitos + `ON DUPLICATE KEY UPDATE`), **gera
 | :---------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------- |
 | `_dev/docs/spec/core.md`                        | **§3.16 · D-16** (IVA: a BD guarda o líquido, o cliente vê com IVA) e a **regra dos números publicados** (§3.12)                             |
 | `_dev/docs/spec/requirements.md`                | **RF-85** (fornecedores) · **RF-86** (carga dos ficheiros) · **RF-87/88** (IVA) · **RN-36**                                                  |
-| `_dev/docs/spec/data-api.md`                    | `database_migration_v4.sql` na ordem de importação (§17.7) e a **justificação de BD** da tabela `fornecedor` (§17.9)                         |
+| `_dev/docs/spec/data-api.md`                    | `DataBase.sql` na ordem de importação (§17.7) e a **justificação de BD** da tabela `fornecedor` (§17.9)                                      |
 | `_dev/docs/spec/finance.md`                     | **2.º documento do calendário fiscal** (`imagem (2).png`) com prazos e **responsáveis**, e a **divergência** entre os dois documentos (§13)  |
 | `_dev/docs/spec/backlog.md`                     | **§24.11** (carga dos ficheiros + decisões tomadas) e **§24.12** (faturas de vendas: cruzamento pendente)                                    |
 | `_dev/docs/spec/backlog-future.md` *(novo)*     | **§25** — extraído do `backlog.md` (este passou das 400 linhas; corte na fronteira de `§N`)                                                  |
@@ -122,7 +122,7 @@ do cliente (nunca transcrita à mão). Aplicada **duas vezes** sem erro.
 
 | Facto                   | Valor (verificado por consulta em 28/09/2026)                                     |
 | :---------------------- | :-------------------------------------------------------------------------------- |
-| Esquema                 | `secade_beauty` · **25 tabelas** (24 do `DataBase_v2.sql` + **`fornecedor`**)     |
+| Esquema                 | `secade_beauty` · **25 tabelas** (24 do `DataBase.sql` + **`fornecedor`**)        |
 | Catálogo                | 35 serviços (todos `ativo=1`) · 3 categorias · 10 cidades · 9 deslocações         |
 | **Fornecedores**        | **43** (tabela criada pela v4)                                                    |
 | **Clientes importados** | **65** (`cliente.id` ≥ 100; `utilizador.id` 100–164; `cliente_morada.id` 200–264) |
@@ -135,7 +135,7 @@ do cliente (nunca transcrita à mão). Aplicada **duas vezes** sem erro.
 ```powershell
 $mysql = 'C:\laragon\bin\mysql\mysql-8.4.3-winx64\bin\mysql.exe'
 cd C:\laragon\www\secade-beauty-tarde
-& $mysql -u root --default-character-set=utf8mb4 -e "source database_migration_v4.sql"
+& $mysql -u root --default-character-set=utf8mb4 -e "source DataBase.sql"
 ```
 
 **Verificar** (deve dar 25 · 43 · 65 · 65 · 65 · 65 · 3103):
@@ -152,7 +152,7 @@ SELECT (SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='secad
 
 > ⚠️ **Esta BD tem dados reais de cliente.** As suites de teste assumem que ela está importada; as
 > asserções que contavam tabelas inteiras tiveram de ser limitadas (§3.5). **Nunca** correr
-> `DataBase_v2.sql` sobre esta BD de trabalho sem querer (ele **apaga** a base) — é o passo 1 de §27.2.
+> `DataBase.sql` sobre esta BD de trabalho sem querer (ele **apaga** a base) — é o passo 1 de §27.2.
 
 ### 4.1 Detalhes da carga que importam a quem continuar
 
@@ -239,15 +239,13 @@ critério em `delivery.md` §28 · testes em `delivery.md` §26 (+ `_dev/tests/R
 
 **Evidência (medida nesta sessão):**
 
-| Onde                                          | Valor encontrado                                                                                       |
-| :-------------------------------------------- | :----------------------------------------------------------------------------------------------------- |
-| `secade_beauty.base_partida` (id 1, Évora)    | `morada = 'Rua do Centro de Formação'` ← **obsoleto**                                                  |
-| `DataBase_v2.sql` (baseline do projeto)       | linha 161 — o mesmo texto                                                                              |
-| `DataBase_v3.sql`                             | linha 165 — o mesmo texto                                                                              |
-| `DataBase.sql` / `DataBase_backup_pre_v2.sql` | linhas 80 / 118 — **não usar** (dumps antigos)                                                         |
-| `app/config/config.php` · **`SITE_ADDRESS`**  | ✅ **já corrigido** para *"Espaço comercial, Praça Joaquim António de Aguiar, 12 a 19, U-5-ag, Évora"* |
+| Onde                                         | Valor encontrado                                                                                       |
+| :------------------------------------------- | :----------------------------------------------------------------------------------------------------- |
+| `secade_beauty.base_partida` (id 1, Évora)   | `morada = 'Rua do Centro de Formação'` ← **obsoleto**                                                  |
+| `DataBase.sql` (baseline do projeto)         | contém o mesmo texto obsoleto em `base_partida.morada`                                                 |
+| `app/config/config.php` · **`SITE_ADDRESS`** | ✅ **já corrigido** para *"Espaço comercial, Praça Joaquim António de Aguiar, 12 a 19, U-5-ag, Évora"* |
 
-**A fazer:** (1) corrigir o valor na BD e no esquema (`DataBase_v2.sql` e/ou numa migração **v5**
+**A fazer:** (1) corrigir o valor na BD e no esquema (`DataBase.sql` e/ou numa migração **v5**
 idempotente — preferir a migração, para não reescrever a baseline já entregue); (2) correr a busca em todo
 o produto (`app/**`, `modules/**`, `*.sql`) pelo texto antigo; (3) confirmar
 `modules/main/components/contact.php` e o rodapé; (4) **perguntar** o **código postal** e as
@@ -330,7 +328,7 @@ cd _dev/mapaMentalMVP
 & $php .tmp-ods-dump.php  'Ficheiro.ods'                                              # .ods -> texto
 & $php .tmp-docx-text.php 'Ficheiro.docx'                                             # .docx -> texto
 & $php .tmp-odt-dump.php  'Ficheiro.odt'                                              # .odt -> texto
-& $php .tmp-gen-v4.php                                                                # regenera database_migration_v4.sql
+& $php .tmp-gen-v4.php                                                                # regenera o dump da BD (v4)
 ```
 
 > ❌ **Nunca** usar `Get-Content` + `Set-Content` do PowerShell 5.1 para escrever ficheiros: introduz
@@ -345,7 +343,7 @@ está **na especificação** e **na BD**.
 
 | Ficheiro (local)                                                       | Conteúdo                                               | Já aproveitado em                                      |
 | :--------------------------------------------------------------------- | :----------------------------------------------------- | :----------------------------------------------------- |
-| `Serviços, Clientes e Fornecedores.xlsx`                               | 43 fornecedores + 65 clientes                          | ✅ BD (`database_migration_v4.sql` · §24.11)           |
+| `Serviços, Clientes e Fornecedores.xlsx`                               | 43 fornecedores + 65 clientes                          | ✅ BD (`DataBase.sql` · §24.11)                        |
 | `Secade Duração Serviços 1.ods`                                        | durações + preços dos 35 serviços                      | ✅ BD (durações; preços já coincidiam)                 |
 | `Faturas de vendas SECADE BEAUTY,Lda.xlsx`                             | vendas por serviço, loja + ambulante                   | 🟡 §24.12 (cruzamento pendente)                        |
 | `Contabilidade Secade Beauty.xlsx` (9 folhas)                          | balancete, DR, inventários, depreciações, RH, DMR      | ✅ §24.9 · §3.12 (conferência da conta 63)             |
@@ -475,5 +473,5 @@ mesma disciplina de evidência (caminho:linha ou comando executado).
 
 **Verificação final, já na branch `dev`:** as **4 suites** passam
 (`153 + 179 + 98 = 430`, sintaxe JS OK) e a paridade de produto entre `dev` e `agent-workspace` é
-**total** (`git diff dev agent-workspace -- app modules index.php database_migration_v4.sql README.md`
+**total** (`git diff dev agent-workspace -- app modules index.php DataBase.sql README.md`
 não devolve nada).

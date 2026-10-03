@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . "/../../app/config/config.php";
+require_once APP_PATH . "/config/config.php";
 require_once APP_PATH . "/utils/Session.php";
 
 // Require login to access this page

@@ -193,10 +193,10 @@ o varrimento inicial era de linha única. Registado como armadilha em
 | **`asset_test` voltou a correr** (66 checks)                                | faltava uma **vírgula** no array (L59-60) — corrigida no `dev`       |
 | **Gate:** `md-verify` **TUDO OK (27 ficheiros)** · pipeline **idempotente** | `_dev/tools/health-check.php` → **TUDO OK**                          |
 | `js_syntax_check` **OK** com **17** ficheiros                               | lista fixa (A-12)                                                    |
-| `servico` tem **35** registos; só **1** com `requer_espaco_fisico = 1`      | `DataBase_v3.sql` L477 (só o id 34 termina em `, 1)`)                |
+| `servico` tem **35** registos; só **1** com `requer_espaco_fisico = 1`      | `DataBase.sql` (tabela `servico`, coluna `requer_espaco_fisico`)     |
 | **24 tabelas** na BD (v2 e v3); v1 = 21                                     | `CREATE TABLE`                                                       |
 | `servico_foto` existe, está **vazia** e **sem uso** em código               | 0 referências em `*.php`/`*.js`                                      |
-| `funcionario.ativo` **existe**; `utilizador` **não** tem `ativo`            | `DataBase_v3.sql` L333                                               |
+| `funcionario.ativo` **existe**; `utilizador` **não** tem `ativo`            | `DataBase.sql` (tabela `funcionario`, coluna `ativo`)                |
 | `transacao_financeira` só tem **recebimentos** (**gap** B.2 / C-04)         | `agendamento_id`/`funcionario_id` **NOT NULL**                       |
 | `promocao` **não existe** (é ➕, não ✚)                                    | 0 `CREATE TABLE promocao`                                            |
 | **0** endpoints novos em `api.php`: `admin-alert-*` · `admin-supplier-*` ·  | `app/config/api.php` L34-46 · `admin-supplier-*` previsto em §19.5   |

@@ -7,7 +7,7 @@
 
 ## 17. MODELO DE DADOS
 
-**Total: 24 tabelas** na base `secade_beauty` (`DataBase_v2.sql`).
+**Total: 25 tabelas** na base `secade_beauty` (`DataBase.sql` — dump único, schema + dados).
 
 ### 17.1 Núcleo — utilizadores e perfis
 | Tabela                      | Notas                                                                |
@@ -70,24 +70,24 @@
 | `fecho_caixa_diario`   | Auditoria de caixa — **sem UI no MVP**                                                        |
 | `gorjeta`              | Registos de gorjeta — **sem UI no MVP**                                                       |
 
-### 17.7 Ficheiros SQL e ordem de importação
-| Ficheiro                         | Função                                                                                                                                                                           |
-| :------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`DataBase_v2.sql`**            | Dump **completo** (24 tabelas + dados de referência) — **1.º**                                                                                                                   |
-| **`database_seed.sql`**          | Utilizadores de teste + morada — **2.º (obrigatório)**                                                                                                                           |
-| `database_migration_v2.sql`      | Migração v1→v2 (**uso único**, só em BD v1 com dados)                                                                                                                            |
-| `database_migration_v3.sql`      | Migração v2→v3 (**idempotente**): `servico.ativo`, `cliente.morada` anulável, **drop de `funcionario_categoria`**                                                                |
-| `database_migration_v4.sql`      | Migração v3→v4 (**idempotente**): **corrige as 35 durações** do catálogo, cria a tabela **`fornecedor`** (43 fornecedores) e carrega os **65 clientes** entregues pelo cliente — |
-|                                  | **§24.11**                                                                                                                                                                       |
-| ~~`DataBase.sql`~~               | Dump v1 (21 tabelas) — ❌ não usar                                                                                                                                               |
-| ~~`DataBase_backup_pre_v2.sql`~~ | Arquivo histórico — ❌ não usar. ⚠️ Está em **UTF-16 LE** (dump legado do HeidiSQL); reconverter para UTF-8 (`iconv -f UTF-16LE -t UTF-8`) se for necessário no                  |
-|                                  | futuro                                                                                                                                                                           |
+### 17.7 Ficheiro SQL (dump único)
+| Ficheiro                              | Função                                                                                                                                                                      |
+| :------------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`DataBase.sql`**                    | **Único** dump do estado atual: cria a BD, as **25 tabelas** e **todos os dados** (catálogo, geografia, utilizadores de demonstração, 43 fornecedores e os clientes reais). |
+|                                       | Importar **uma só vez** — cria/recria a base do zero.                                                                                                                       |
+| `DataBase_clean.sql`                  | **Versão simplificada de leitura** do mesmo dump (sem comentários de ferramenta, sem `AUTO_INCREMENT` nem charset por coluna). Conteúdo fiel (`CHECKSUM` igual); **não** é  |
+|                                       | preciso para instalar.                                                                                                                                                      |
+| ~~`DataBase_v2/v3.sql`~~              | ❌ **consolidados** no `DataBase.sql` — o histórico fica no Git (`git log --diff-filter=D -- "*.sql"`).                                                                     |
+| ~~`database_seed.sql`~~               | ❌ **consolidado**: os utilizadores de teste + morada já entram pelo `DataBase.sql`.                                                                                        |
+| ~~`database_migration_v2/v3/v4.sql`~~ | ❌ **consolidadas** (o estado final é o do `DataBase.sql`): `servico.ativo`, `cliente.morada` anulável, **drop de `funcionario_categoria`**, durações do catálogo, tabela   |
+|                                       | **`fornecedor`** (43) e os **65 clientes** — §24.11.                                                                                                                        |
+| ~~`DataBase_backup_pre_v2.sql`~~      | ❌ arquivo histórico (dump do HeidiSQL em **UTF-16 LE**) — o histórico fica no Git.                                                                                         |
 
 Detalhe operacional de importação em **§27**.
 
 ### 17.8 Diagrama de relações (BD exportada)
 
-> Gerado a partir das **30 chaves estrangeiras reais** (`information_schema.KEY_COLUMN_USAGE`).
+> Gerado a partir das **31 chaves estrangeiras reais** (`information_schema.KEY_COLUMN_USAGE`).
 > Serve de *diagrama de BD exportado* (documentação obrigatória). Para regenerar:
 > ```sql
 > SELECT TABLE_NAME, COLUMN_NAME, REFERENCED_TABLE_NAME
@@ -178,7 +178,7 @@ erDiagram
 | :-------------- | :------------------------------------------------------------- | :------------------------------------------------------------------------------------ |
 | ✅ `fornecedor` | Fornecedores (produtos/consumíveis, rendas, serviços externos) | `id` · `nome` · `nif` · `email` · `telemovel` · `ativo` · `observacoes` · `criado_em` |
 
-- **Estado:** ✅ tabela criada e **43 fornecedores carregados** (`database_migration_v4.sql`).
+- **Estado:** ✅ tabela criada e **43 fornecedores carregados** (no `DataBase.sql`).
 - ⬜ **Falta:** o módulo do backoffice (`/gestao/fornecedores`) e os endpoints `admin-supplier-*` (§25.1).
 - ⚠️ **5 fornecedores vinham sem NIF válido** (rótulo de canal/observação, não NIF) → `nif` fica `NULL`
   e o rótulo passa para `observacoes` (§24.11).
@@ -314,10 +314,10 @@ View (PHP) → JS componente → api.js → api.php (routing) → Controller →
 - `greenReceipts.php` + `js/components/greenReceipts.js` — **Fase 3**: configuração do simulador
 
 **Base de dados**
-- `database_migration_v3.sql` (novo, **idempotente**): `servico.ativo`; `cliente.morada` opcional;
-  **remoção de `funcionario_categoria`** (passo 3)
-- `database_seed.sql` (novo, **idempotente**): gestor, funcionário, cliente + morada em Évora (*bcrypt*)
-- `DataBase.sql` / `DataBase_v2.sql`: alinhados com `ativo`; `DataBase_v2.sql` sem `funcionario_categoria`
+- `DataBase.sql` — dump **único** (schema + dados) alinhado com `servico.ativo`, sem
+  `funcionario_categoria`, com as 35 durações corrigidas, a tabela `fornecedor` (43) e os 65 clientes
+- Utilizadores de teste (gestor, funcionário, cliente) + morada em Évora (*bcrypt*) incluídos no dump
+- `DataBase_clean.sql` — versão simplificada de leitura do mesmo conteúdo
 
 **Testes**
 - `_dev/tests/{functional_test,http_test,asset_test,js_syntax_check}.php` — **430 verificações** (§26)

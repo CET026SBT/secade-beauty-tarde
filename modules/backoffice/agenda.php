@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . "/../../app/config/config.php";
+require_once APP_PATH . "/config/config.php";
 require_once APP_PATH . "/utils/Session.php";
 
 // Fase 6.5 — agenda do FUNCIONÁRIO (RF-78 · RN-33): a aceitação continua em
@@ -14,12 +14,12 @@ $boCurrentPage = "agenda";
 include_once ROOT_PATH . "/modules/backoffice/includes/boHeader.php";
 include_once ROOT_PATH . "/modules/backoffice/includes/boNavbar.php";
 ?>
-<main class="py-4">
+<main class="p-4">
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
         <div>
             <h2 class="mb-1"><i class="bi bi-calendar3 text-primary me-2"></i>A minha agenda</h2>
             <p class="text-muted small mb-0">
-                Agendamentos de <strong>rotas confirmadas</strong> (RN-33). O que ainda está por aceitar
+                Agendamentos de <strong>rotas confirmadas</strong>. O que ainda está por aceitar
                 ou em rota por decidir aparece na listagem de
                 <a href="<?= BASE_URL ?>/gestao/servicos">Serviços</a>.
             </p>

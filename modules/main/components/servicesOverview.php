@@ -49,7 +49,7 @@ $overviewCards = [
         <div class="text-center wow fadeIn" data-wow-delay="0.1s">
             <h1 class="font-dancing-script text-primary">A nossa plataforma</h1>
             <h1 class="mb-3">Tudo o que o Secade Beauty oferece</h1>
-            <p class="text-muted mx-auto mb-5" style="max-width: 720px;">
+            <p class="text-muted mx-auto mb-5 info-container" style="max-width: 720px;">
                 Do primeiro clique ao resultado final, tudo se resolve aqui: escolher o serviço, marcar a hora,
                 ir ao salão ou esperar pela carrinha e acompanhar cada passo da marcação.
             </p>
@@ -58,9 +58,8 @@ $overviewCards = [
             <?php foreach ($overviewCards as $index => $card): ?>
                 <div class="col-md-6 col-lg-3 wow fadeIn" data-wow-delay="<?= 0.2 + $index * 0.1 ?>s">
                     <div class="service-item h-100 bg-light border-bottom border-end">
-                        <div class="ratio ratio-4x3 sb-img-container">
-                            <img class="img-fluid"
-                                 src="<?= BASE_URL ?>/modules/common/img/<?= htmlspecialchars($card["image"]) ?>"
+                        <div class="ratio ratio-4x3 img-container">
+                            <img src="<?= BASE_URL ?>/modules/common/img/<?= htmlspecialchars($card["image"]) ?>"
                                  alt="<?= htmlspecialchars($card["title"]) ?>">
                         </div>
                         <div class="p-4">

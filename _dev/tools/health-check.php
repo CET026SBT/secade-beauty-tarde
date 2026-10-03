@@ -41,10 +41,6 @@ function run(string $php, string $script, array $args, bool $capture): array
 $steps = [
     ["encoding-check", "encoding-check.php", [
         "--include-tools",
-        // Excecoes conhecidas: ficheiros que por natureza nao sao UTF-8.
-        // DataBase_backup_pre_v2.sql = dump legado do HeidiSQL em UTF-16 LE (arquivo,
-        // ver especificacao_mvp.md §17.7) - NAO deve ser convertido sem decisao explicita.
-        "--ignore=DataBase_backup_pre_v2.sql",
     ]],
     ["md-verify",      "md-verify.php",      []],
     ["md-align-tables", "md-align-tables.php", []],

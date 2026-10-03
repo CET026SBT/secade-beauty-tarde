@@ -5,7 +5,7 @@
 <div class="container-fluid py-5">
     <div class="container">
         <div class="row g-5 align-items-center">
-            <div class="col-lg-6 wow fadeIn" data-wow-delay="0.1s">
+            <div class="col-lg-6 wow fadeIn info-container" data-wow-delay="0.1s">
                 <h1 class="font-dancing-script text-primary">O nosso compromisso</h1>
                 <h1 class="mb-4">O que prometemos a quem marca</h1>
                 <p class="mb-4">Comprometemo-nos a <strong>não deixar nenhuma marcação sem resposta</strong>: os
@@ -21,9 +21,11 @@
                     carrinha, promoções por período e uma gestão de fornecedores ligada aos custos reais da operação,
                     sempre com o mesmo cuidado — <strong>menos tempo perdido para o cliente</strong>.</p>
             </div>
-            <div class="col-lg-6 wow fadeIn" data-wow-delay="0.3s sb-img-container">
-                <img class="img-fluid w-100" src="<?= BASE_URL ?>/modules/common/img/about-images/about-commitment.png"
-                     alt="Compromisso da Secade Beauty com o cliente">
+            <div class="col-lg-6 wow fadeIn align-self-stretch d-flex flex-column" data-wow-delay="0.3s">
+                <div class="img-container flex-grow-1">
+                    <img src="<?= BASE_URL ?>/modules/common/img/about-images/about-commitment.png"
+                        alt="Compromisso da Secade Beauty com o cliente">
+                </div>
             </div>
         </div>
     </div>

@@ -35,7 +35,7 @@ e a correção, em **`_dev/mapaMentalMVP/auditoria_plataforma.md`** — casos **
 **Cruzado com:** `especificacao_mvp.md` v1.1 (§2–§5, §11–§13, §17–§19, §22, §24–§26, §28, §29), os
 **ficheiros da iteração 4** (`Menu Dashboard.docx` · `Contabilidade Secade Beauty.xlsx`) e o código/BD reais
 (`index.php`, `app/config/api.php`, `app/{controllers,services,repositories}`, `modules/main/`,
-`modules/backoffice/`, `DataBase_v2.sql` · `DataBase_v3.sql`).
+`modules/backoffice/`, `DataBase.sql`).
 
 > ⚠️ **Âmbito:** fase **estritamente de análise e proposta de fusão**. **Nenhum requisito existente foi
 > alterado, revogado ou sobrescrito.** A fonte única de verdade continua a ser `especificacao_mvp.md`
@@ -153,7 +153,7 @@ e a correção, em **`_dev/mapaMentalMVP/auditoria_plataforma.md`** — casos **
 |                          |                                                                        | **C-03**                                                              |
 
 > 📌 **Divergência detetada (especificação ↔ BD).** §17.6 descreve `alerta_fiscal` com `mensagem` e `lido`,
-> mas a tabela real (`DataBase_v2.sql`, L549) tem **`visualizado`** e **não tem `mensagem`**. O contador do
+> mas a tabela real (`DataBase.sql`, tabela `alerta_fiscal`) tem **`visualizado`** e **não tem `mensagem`**. O contador do
 > sininho deve usar `visualizado`; se os alertas precisarem de texto próprio, é preciso ➕ coluna (hoje a
 > mensagem é composta na apresentação, a partir do tipo/prazo). Ideia para a lista de limpezas técnicas.
 
@@ -167,7 +167,7 @@ e a correção, em **`_dev/mapaMentalMVP/auditoria_plataforma.md`** — casos **
 
 ### 1.4 Módulo B — Contabilidade e Gestão Financeira
 
-**B.1 O que o sistema já consegue alimentar (verificado em `DataBase_v2.sql`)**
+**B.1 O que o sistema já consegue alimentar (verificado em `DataBase.sql`)**
 
 | Indicador pedido               | Fonte real já existente                                                                | Nota                                                                 |
 | :----------------------------- | :------------------------------------------------------------------------------------- | :------------------------------------------------------------------- |
@@ -256,7 +256,7 @@ aquela limitação, mas convém confirmá-lo explicitamente → **C-07**.
 ### 1.6 Módulo D — Promoções e Campanhas (módulo totalmente novo)
 
 Verificação: **não existe** tabela, página, endpoint, Service, Repository ou JS de promoções (24 tabelas em
-`DataBase_v2.sql`; rotas em `index.php` L30-35; 37 endpoints em `app/config/api.php`).
+`DataBase.sql`; rotas em `index.php` L30-35; 37 endpoints em `app/config/api.php`).
 
 **Modelo proposto (➕ 4 tabelas — está em `.clinerules` que alterações de BD exigem justificação, ver `.clinerules` §1)**
 
@@ -1404,7 +1404,7 @@ Racios: Liquidez / Fundo de Maneio / Autonomia            OK   (3 identidades, e
 ### 4.4 Varrimento de inexistência (o que **não** existe na BD)
 
 ```text
-DataBase_v3.sql -> 24 tabelas: agendamento, agendamento_pessoa, agendamento_servico, alerta_fiscal,
+DataBase.sql -> 24 tabelas: agendamento, agendamento_pessoa, agendamento_servico, alerta_fiscal,
   base_partida, categoria_profissional, cidade, cliente, cliente_morada, config_recibo_verde,
   execucao_agendamento, fecho_caixa_diario, feedback_cliente, funcionario, gorjeta, matriz_deslocacao,
   obrigacao_fiscal, rota_ambulante, rota_funcionario, servico, servico_foto, servico_local,

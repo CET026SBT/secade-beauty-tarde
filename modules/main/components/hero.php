@@ -5,7 +5,7 @@ register_script("components/hero", "main");
 <div class="container-fluid p-0 hero-header bg-light mb-5">
     <div class="container p-0">
         <div class="row g-0 align-items-center">
-            <div class="col-lg-6 py-5 text-center">
+            <div class="col-lg-6 py-5 text-center overflow-hidden">
                 <div class="py-5 px-3 text-start d-inline-block">
                     <h1 class="font-dancing-script text-primary animated slideInLeft">Bem Vindos</h1>
                     <img class="h1 mb-4 img-fluid animated slideInLeft" src="<?= BASE_URL ?>/modules/common/img/sb-title.svg" alt="Site name">
