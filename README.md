@@ -48,9 +48,12 @@ secade-beauty-tarde/
 │   ├── common/           # Recursos partilhados (JS, CSS, libs)
 │   ├── main/             # Páginas públicas (clientes)
 │   └── backoffice/       # Área de gestão (gestor)
+├── uploads/               # Ficheiros do utilizador (fotos), escritos em runtime
+│   ├── .htaccess         # Nega execução de scripts nesta árvore
+│   └── services/         # Fotos dos serviços (servico_foto)
 ├── README.md              # Este ficheiro (instalação + uso)
 ├── index.php              # Front Controller
-├── DataBase.sql           # Schema + dados ATUAIS (dump único): 25 tabelas
+├── DataBase.sql           # Schema + dados ATUAIS (dump único): 27 tabelas
 ├── DataBase_clean.sql     # Versão simplificada de leitura do mesmo dump
 └── .htaccess              # Rewrite rules
 
@@ -118,7 +121,7 @@ _dev/                      # Umbrella do que NÃO é produto (_dev/tests version
 
 2. **Criar a base de dados:**
    - Abrir HeidiSQL (ou usar a linha de comandos, ver abaixo)
-   - Executar **`DataBase.sql`** — cria a BD `secade_beauty`, as **25 tabelas** e **todos os dados**
+   - Executar **`DataBase.sql`** — cria a BD `secade_beauty`, as **27 tabelas** e **todos os dados**
      (catálogo, cidades, base de partida, matriz de deslocação, utilizadores de demonstração,
      43 fornecedores e os clientes reais)
 

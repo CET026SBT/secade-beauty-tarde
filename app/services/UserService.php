@@ -43,4 +43,16 @@ class UserService extends BaseService {
             "message" => "Utilizador criado com sucesso!"
         ];
     }
+
+    /** Edita os dados de contacto do próprio utilizador (nome, telemóvel e NIF). */
+    public function updateContactDetails(int $userId, array $data): array {
+        $this->userRepository->updateContact(
+            $userId,
+            (string)$data["name"],
+            (string)$data["phone"],
+            isset($data["nif"]) && $data["nif"] !== "" ? (string)$data["nif"] : null
+        );
+
+        return ["id" => $userId, "message" => "Dados atualizados com sucesso."];
+    }
 }

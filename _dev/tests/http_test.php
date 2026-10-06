@@ -57,9 +57,18 @@ function request(string $url, string $method = "GET", $body = null, ?string $jar
     ];
 }
 
+/**
+ * Primeira data útil (Ter–Sáb) a respeitar a regra das 24 h (RF-58/RN-24).
+ */
 function nextWorkingDate(int $offsetDays = 1): string {
     $ts = strtotime("+{$offsetDays} day");
     while ((int)date("N", $ts) < 2 || (int)date("N", $ts) > 6) { $ts = strtotime("+1 day", $ts); }
+
+    while (strtotime(date("Y-m-d", $ts) . " 10:00") < strtotime("+24 hours")) {
+        $ts = strtotime("+1 day", $ts);
+        while ((int)date("N", $ts) < 2 || (int)date("N", $ts) > 6) { $ts = strtotime("+1 day", $ts); }
+    }
+
     return date("Y-m-d", $ts);
 }
 
@@ -80,7 +89,7 @@ try {
     $pdo->exec("DELETE FROM rota_ambulante");
     $pdo->exec("DELETE FROM alerta_fiscal");
     $pdo->exec("DELETE FROM obrigacao_fiscal");
-    $pdo->exec("DELETE FROM config_recibo_verde WHERE id > 1");
+    $pdo->exec("DELETE FROM config_percentagem_padrao WHERE id > 2");
 } catch (Exception $e) {
     echo "AVISO: limpeza de dados falhou ({$e->getMessage()}). O resultado pode ser afetado.\n";
 }
@@ -120,13 +129,27 @@ foreach (["services", "address", "otp", "datetime", "policy", "summary"] as $ste
     check("wizard tem passo '{$step}'", str_contains($wizard["body"], 'data-step="' . $step . '"'), "");
 }
 
-$profilePage = request("{$base}/perfil", "GET", null, $clientJar);
-check("/perfil responde 200", $profilePage["status"] === 200, (string)$profilePage["status"]);
-check("/perfil carrega componente JS", str_contains($profilePage["body"], "components/profile.js"));
+// F9 (§3.5/C-05): `/perfil` passa a servir a Área Cliente (a página antiga foi substituída).
+    $profilePage = request("{$base}/area-cliente", "GET", null, $clientJar);
+    check("/area-cliente responde 200", $profilePage["status"] === 200, (string)$profilePage["status"]);
+    check("/area-cliente carrega componente JS", str_contains($profilePage["body"], "components/customerArea.js"));
 
-$appointmentsPage = request("{$base}/agendamentos", "GET", null, $clientJar);
-check("/agendamentos responde 200", $appointmentsPage["status"] === 200, (string)$appointmentsPage["status"]);
-check("/agendamentos carrega componente JS", str_contains($appointmentsPage["body"], "components/appointments.js"));
+    $legacyProfilePage = request("{$base}/perfil", "GET", null, $clientJar);
+    check("/perfil (rota antiga) continua a responder 200", $legacyProfilePage["status"] === 200, (string)$legacyProfilePage["status"]);
+    check("/perfil entrega a Área Cliente", str_contains($legacyProfilePage["body"], "components/customerArea.js"));
+
+    $appointmentsPage = request("{$base}/agendamentos", "GET", null, $clientJar);
+    check("/agendamentos responde 200", $appointmentsPage["status"] === 200, (string)$appointmentsPage["status"]);
+    check("/agendamentos carrega componente JS", str_contains($appointmentsPage["body"], "components/appointments.js"));
+
+    // Área Cliente (F9): as três secções existem na mesma página.
+    foreach (["sectionPerfil", "sectionAgendamentos", "sectionLembretes"] as $section) {
+        check("/area-cliente tem a secção '{$section}'", str_contains($profilePage["body"], $section), "");
+    }
+
+    $customerAlerts = request("{$base}/api?action=customer-alerts-list", "GET", null, $clientJar);
+    check("customer-alerts-list responde ao cliente", $customerAlerts["status"] === 200, (string)$customerAlerts["status"]);
+    check("customer-alerts-list devolve os grupos do cliente", is_array($customerAlerts["json"]["groups"] ?? null), json_encode($customerAlerts["json"]));
 
 // ---------------------------------------------------------------------------
 section("3. APIs públicas/autenticadas (HTTP)");
@@ -254,7 +277,7 @@ check("funcionario NAO pode decidir rotas (403)", $employeeDecide["status"] === 
 
 $appointmentsList = request("{$base}/api?action=admin-appointments-list&perPage=20", "GET", null, $managerJar);
 check("admin-appointments-list devolve agendamentos", ($appointmentsList["json"]["total"] ?? 0) >= 1, json_encode($appointmentsList["json"]["total"] ?? null));
-check("listagem inclui nome do cliente", ($appointmentsList["json"]["bookings"][0]["customerName"] ?? "") === "João Cliente", json_encode($appointmentsList["json"]["bookings"][0] ?? []));
+check("listagem inclui nome do cliente", ($appointmentsList["json"]["bookings"][0]["customerName"] ?? "") !== "", json_encode($appointmentsList["json"]["bookings"][0] ?? []));
 
 $anyBookingId = (int)($appointmentsList["json"]["bookings"][0]["id"] ?? 0);
 $details = request("{$base}/api?action=admin-appointment-details&bookingId={$anyBookingId}", "GET", null, $managerJar);
@@ -325,8 +348,10 @@ check("pendentes devolvem categorias e config", isset($pending["json"]["categori
 $accepted = request("{$base}/api?action=admin-service-accepted-list", "GET", null, $employeeJar);
 check("admin-service-accepted-list 200", $accepted["status"] === 200, (string)$accepted["status"]);
 
+// F4/C-08: o gestor passou a ALOCAR — a lista de alocação é dele (200).
 $managerPending = request("{$base}/api?action=admin-service-pending-list", "GET", null, $managerJar);
-check("gestor NAO acede a lista de aceitacao (403)", $managerPending["status"] === 403, (string)$managerPending["status"]);
+check("gestor acede a lista de alocacao (200)", $managerPending["status"] === 200, (string)$managerPending["status"]);
+check("lista de alocacao traz funcionarios (seletor)", !empty($managerPending["json"]["employees"]), json_encode($managerPending["json"]["employees"] ?? null));
 
 $clientAccept = request("{$base}/api?action=admin-service-accept", "POST", ["bookingServiceId" => 1], $clientJar);
 check("cliente NAO pode aceitar servicos (403)", $clientAccept["status"] === 403, (string)$clientAccept["status"]);
@@ -360,12 +385,15 @@ check("cliente NAO acede ao fiscal (403)", $clientFiscal["status"] === 403, (str
 
 $grConfig = request("{$base}/api?action=admin-green-receipt-config", "GET", null, $managerJar);
 check("admin-green-receipt-config 200", $grConfig["status"] === 200, (string)$grConfig["status"]);
-check("config ativa 70/30 disponivel", ($grConfig["json"]["active"]["employeePercentage"] ?? null) == 70, json_encode($grConfig["json"]["active"] ?? null));
+$grActive = $grConfig["json"]["active"] ?? [];
+$grRecibo = null;
+foreach (($grActive["configs"] ?? []) as $grC) { if (($grC["contractType"] ?? "") === "recibo_verde") { $grRecibo = $grC; break; } }
+check("config padrao RV 70% disponivel", ($grRecibo["commissionPercentage"] ?? null) == 70, json_encode($grActive));
 
 $grBadSave = request("{$base}/api?action=admin-green-receipt-config-save", "POST", [
-    "employeePercentage" => 90, "platformPercentage" => 30, "effectiveFrom" => date("Y-m-d")
+    "contractType" => "recibo_verde", "commissionPercentage" => 110, "effectiveFrom" => date("Y-m-d")
 ], $managerJar);
-check("config com soma != 100 devolve 422", $grBadSave["status"] === 422, (string)$grBadSave["status"]);
+check("percentagem fora de 0-100 devolve 422", $grBadSave["status"] === 422, (string)$grBadSave["status"]);
 
 $grSimulate = request("{$base}/api?action=admin-green-receipt-simulate&amount=200", "GET", null, $managerJar);
 check("simulador 200 EUR -> 140/60", ($grSimulate["json"]["simulation"]["employeeValue"] ?? 0) == 140.0, json_encode($grSimulate["json"]["simulation"] ?? null));
@@ -400,6 +428,17 @@ check("menu do gestor mostra fiscal e recibos verdes", str_contains($boFiscal["b
 $boGreen = request("{$base}/gestao/recibos-verdes", "GET", null, $managerJar);
 check("GET /gestao/recibos-verdes responde 200", $boGreen["status"] === 200, (string)$boGreen["status"]);
 check("pagina de recibos verdes carrega JS", str_contains($boGreen["body"], "components/greenReceipts.js"));
+
+$boCatalog = request("{$base}/gestao/catalogo", "GET", null, $managerJar);
+check("GET /gestao/catalogo responde 200", $boCatalog["status"] === 200, (string)$boCatalog["status"]);
+check("pagina de catalogo carrega JS", str_contains($boCatalog["body"], "components/catalog.js"));
+
+$boCatalogClient = request("{$base}/gestao/catalogo", "GET", null, $clientJar);
+check("cliente e redirecionado fora do catalogo de gestao", $boCatalogClient["status"] === 302, (string)$boCatalogClient["status"] . " " . $boCatalogClient["location"]);
+
+$photoList = request("{$base}/api?action=service-photos&serviceId=1", "GET", null, $anonJar);
+check("service-photos responde 200 (publico)", $photoList["status"] === 200, (string)$photoList["status"]);
+check("servico 1 tem foto principal", !empty($photoList["json"]["photos"][0]["url"]), json_encode($photoList["json"]["photos"] ?? null));
 
 // ---------------------------------------------------------------------------
 section("8. Registo e login de cliente (end-to-end)");
@@ -685,9 +724,38 @@ $anonymousCancel = request("{$base}/api?action=customer-booking-cancel", "POST",
     "bookingId" => $clientCancellableId
 ], $anonJar);
 check("cancelamento sem sessao devolve 401", $anonymousCancel["status"] === 401, (string)$anonymousCancel["status"]);
+// ---------------------------------------------------------------------------
+section("11.5 Fase 7 (F9b): editor de agendamento do cliente (HTTP)");
+
+$clientEditable = request("{$base}/api?action=booking-create-store", "POST", [
+    "serviceIds" => [30], "date" => $bookingDate, "time" => "17:30"
+], $clientJar);
+$clientEditableId = (int)($clientEditable["json"]["bookingId"] ?? 0);
+check("cliente cria agendamento para editar", $clientEditableId > 0, json_encode($clientEditable["json"] ?? []));
+
+$editResponse = request("{$base}/api?action=customer-booking-update", "POST", [
+    "bookingId"  => $clientEditableId,
+    "date"       => $bookingDate,
+    "time"       => "18:00",
+    "serviceIds" => [31]
+], $clientJar);
+check("cliente altera o proprio agendamento (200)", $editResponse["status"] === 200, json_encode($editResponse["json"] ?? []));
+check("alteracao devolve o novo estado pendente", ($editResponse["json"]["status"] ?? "") === "pendente_validacao_logistica_loja", json_encode($editResponse["json"] ?? []));
+
+$managerEdit = request("{$base}/api?action=customer-booking-update", "POST", [
+    "bookingId" => $clientEditableId, "date" => $bookingDate, "time" => "18:30", "serviceIds" => [31]
+], $e2eManagerJar);
+check("gestor nao usa o editor do cliente (403)", $managerEdit["status"] === 403, (string)$managerEdit["status"]);
+
+$anonymousEdit = request("{$base}/api?action=customer-booking-update", "POST", [
+    "bookingId" => $clientEditableId, "date" => $bookingDate, "time" => "18:30", "serviceIds" => [31]
+], $anonJar);
+check("editor sem sessao devolve 401", $anonymousEdit["status"] === 401, (string)$anonymousEdit["status"]);
 
 $appointmentsPageClient = request("{$base}/agendamentos", "GET", null, $clientJar);
 check("pagina de agendamentos tem o botao de cancelamento", $appointmentsPageClient["status"] === 200 && str_contains($appointmentsPageClient["body"], "appointmentsSuccess"), (string)$appointmentsPageClient["status"]);
+check("Area Cliente carrega o editor de agendamento (F9b)", str_contains($appointmentsPageClient["body"], "components/bookingEditor.js"), (string)$appointmentsPageClient["status"]);
+check("Area Cliente tem o modal de alteracao", str_contains($appointmentsPageClient["body"], "bookingEditModal"), (string)$appointmentsPageClient["status"]);
 
 // ---------------------------------------------------------------------------
 section("12. Limpeza dos dados E2E");

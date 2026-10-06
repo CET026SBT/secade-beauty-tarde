@@ -15,15 +15,20 @@ $routes = [
     "home"                  => ROOT_PATH . "/modules/main/home.php",
     "sobre"                 => ROOT_PATH . "/modules/main/about.php",
     "contacto"              => ROOT_PATH . "/modules/main/contact.php",
-    "servicos"              => ROOT_PATH . "/modules/main/serviceCategories.php",
+    // §3.4.1: `/servicos` serve o CATÁLOGO (com filtro de categoria opcional);
+    // a grelha de categorias (`serviceCategories`) vive só na Home.
+    "servicos"              => ROOT_PATH . "/modules/main/services.php",
     "servicos/:category"    => ROOT_PATH . "/modules/main/services.php",
 
     "login"                 => ROOT_PATH . "/modules/main/login.php",
     "registo"               => ROOT_PATH . "/modules/main/customerRegister.php",
     "recuperar-passe"       => ROOT_PATH . "/modules/main/recoverPassword.php",
 
-    "perfil"                => ROOT_PATH . "/modules/main/profile.php",
-    "agendamentos"          => ROOT_PATH . "/modules/main/appointments.php",
+    // F9 (§3.5/C-05): a Área Cliente substitui as antigas páginas «Perfil» e
+    // «Histórico». As rotas antigas ficam como atalhos para não quebrar links.
+    "area-cliente"          => ROOT_PATH . "/modules/main/customerArea.php",
+    "perfil"                => ROOT_PATH . "/modules/main/customerArea.php",
+    "agendamentos"          => ROOT_PATH . "/modules/main/customerArea.php",
     "agendar"               => ROOT_PATH . "/modules/main/booking.php",
     "agendamento-sucesso"   => ROOT_PATH . "/modules/main/bookingSuccess.php",
 
@@ -39,7 +44,9 @@ $routes = [
     "gestao/avisos"         => ROOT_PATH . "/modules/backoffice/avisos.php",
     "gestao/agenda"         => ROOT_PATH . "/modules/backoffice/agenda.php",
     "gestao/fornecedores"   => ROOT_PATH . "/modules/backoffice/suppliers.php",
-    "gestao/comissoes"      => ROOT_PATH . "/modules/backoffice/commissions.php"
+    "gestao/comissoes"      => ROOT_PATH . "/modules/backoffice/commissions.php",
+    "gestao/catalogo"       => ROOT_PATH . "/modules/backoffice/catalog.php",
+    "gestao/rh"             => ROOT_PATH . "/modules/backoffice/employees.php"
 ];
 
 $matchedFile = match_route_and_extract_params($path, $routes);

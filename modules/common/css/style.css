@@ -4,6 +4,7 @@
     --bs-primary: #c9aa55;
     --bs-primary-light: #dbc17b;
     --bs-primary-lighter: #dec47e;
+    --bs-primary-lightest: #f5e2b4;
     --bs-glow: #d4a574;
     --bs-secondary: #444444;
     --bs-secondary-dark: #3a3a3a;
@@ -325,7 +326,7 @@ form .row > *:has([aria-invalid="true"])*/ {
 
 .navbar .dropdown-menu .dropdown-item:hover,
 .navbar .dropdown-menu .dropdown-item.active {
-    background: var(--bs-primary);
+    background: var(--bs-primary-lightest);
 }
 
 .navbar .btn {
@@ -362,6 +363,16 @@ form .row > *:has([aria-invalid="true"])*/ {
 .hero-header {
     background: url(../../common/img/hero-bg.jpg) top left no-repeat;
     background-size: cover;
+    /* §3.4.3: a hero ocupa, no máximo, a altura do viewport (menos a navbar). */
+    min-height: calc(100vh - 76px);
+    display: flex;
+    align-items: center;
+}
+
+@supports (height: 100dvh) {
+    .hero-header {
+        min-height: calc(100dvh - 76px);
+    }
 }
 
 @media (min-width: 992px) {
@@ -823,6 +834,66 @@ form .row > *:has([aria-invalid="true"])*/ {
     background-color: var(--bs-glow);
     border-color: var(--bs-glow);
     color: var(--bs-light);
+}
+
+/* Grelha dos horários: colunas iguais, alinhadas mesmo quando a linha «quebra»
+   (antes os botões ficavam desalinhados em `flex-wrap`). */
+.slots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+    gap: .5rem;
+}
+
+.slots-grid .slot-btn {
+    width: 100%;
+}
+
+/* Imagem do card de serviço: altura estável em todos os cards (§3.4.4). */
+.service-card-img {
+    aspect-ratio: 4 / 3;
+    width: 100%;
+    height: auto;
+}
+
+/* Gestão do catálogo (backoffice) — F3.1 */
+.bo-catalog-thumb {
+    width: 56px;
+    height: 56px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.bo-catalog-photo {
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+}
+
+/* Galeria do modal de detalhes (carousel de fotos). */
+.service-gallery-thumb {
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: .25rem;
+}
+
+.service-gallery-thumb.active {
+    border-color: var(--bs-primary);
+}
+
+/* RH (F7) — avatar do funcionário */
+.bo-employee-photo {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border: 2px solid var(--bs-primary-light, #dbc17b);
+}
+
+.bo-employee-thumb {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
 }
 
 /* ------------------------------------------------------------------

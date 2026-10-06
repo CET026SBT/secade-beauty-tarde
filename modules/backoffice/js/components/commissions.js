@@ -2,14 +2,20 @@ const boCommissions = (() => {
     const state = { data: null };
 
     function renderKpis(data) {
+        const isOwn = data?.scope === "proprio";
+
         const cards = [
-            { label: "Serviços aceites", value: String(Number(data?.totals?.services || 0)), icon: "bi-list-check" },
-            { label: "Comissões do mês", value: generalUtils.formatCurrencyWithVat(data?.totals?.employeeValue || 0), icon: "bi-cash-stack" },
-            { label: "Funcionários com aceitações", value: String((data?.employees || []).length), icon: "bi-people" }
+            { label: "Serviços prestados", value: String(Number(data?.totals?.services || 0)), icon: "bi-list-check" },
+            { label: isOwn ? "As minhas comissões" : "Comissões do mês", value: generalUtils.formatCurrencyWithVat(data?.totals?.employeeValue || 0), icon: "bi-cash-stack" },
+            { label: isOwn ? "Valor que gerei" : "Parte da Empresa", value: generalUtils.formatCurrencyWithVat(isOwn ? (data?.totals?.platformValue || 0) + (data?.totals?.employeeValue || 0) : (data?.totals?.platformValue || 0)), icon: "bi-graph-up-arrow" }
         ];
 
+        if (!isOwn) {
+            cards.push({ label: "Funcionários com prestações", value: String((data?.employees || []).length), icon: "bi-people" });
+        }
+
         $("#commissionKpis").html(cards.map((card) => `
-            <div class="col-sm-6 col-xl-4">
+            <div class="col-sm-6 col-xl-3">
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body d-flex align-items-center gap-3">
                         <span class="bo-kpi-icon"><i class="bi ${card.icon}"></i></span>
@@ -20,10 +26,19 @@ const boCommissions = (() => {
                     </div>
                 </div>
             </div>`).join(""));
+
+        // D-07.1/D-07.2: o salário base só aparece (e só ao próprio) num cartão separado.
+        if (data?.fixedSalary?.applicable) {
+            $("#commissionSalaryValue").text(generalUtils.formatCurrencyWithVat(data.fixedSalary.value));
+            $("#commissionSalaryCard").removeClass("d-none");
+        } else {
+            $("#commissionSalaryCard").addClass("d-none");
+        }
     }
 
     function renderEmployees(employees) {
-        if (!employees || employees.length === 0) {
+        // O funcionário não vê a tabela de totais por colega (só as suas linhas).
+        if (!employees || employees.length === 0 || state.data?.scope === "proprio") {
             $("#commissionEmployeesCard").addClass("d-none");
             return;
         }
@@ -41,19 +56,19 @@ const boCommissions = (() => {
     }
 
     function renderCommissions(commissions) {
-        $("#commissionsCount").text(`${commissions.length} serviço(s) aceite(s)`);
+        $("#commissionsCount").text(`${commissions.length} serviço(s) prestado(s)`);
 
         $("#commissionsTableBody").html(
             commissions.length === 0
                 ? `<tr><td colspan="7" class="text-center text-muted py-5">
-                       <i class="bi bi-cash-stack fs-3 d-block mb-2"></i>Sem serviços aceites neste mês.
+                       <i class="bi bi-cash-stack fs-3 d-block mb-2"></i>Sem serviços prestados neste mês.
                    </td></tr>`
                 : commissions.map((commission) => `
                     <tr>
                         <td class="fw-bold">#${commission.bookingId}</td>
                         <td class="small">${generalUtils.escapeHtml(commission.serviceName)}</td>
                         <td class="small">${generalUtils.escapeHtml(commission.employeeName)}</td>
-                        <td class="small">${generalUtils.formatDateTime(commission.acceptedAt)}</td>
+                        <td class="small">${generalUtils.formatDateTime(commission.dateTime)}</td>
                         <td class="text-end">${generalUtils.formatCurrencyWithVat(commission.price)}</td>
                         <td class="text-center">${Number(commission.percentage).toFixed(2).replace(".", ",")} %</td>
                         <td class="text-end fw-bold">${generalUtils.formatCurrencyWithVat(commission.employeeValue)}</td>

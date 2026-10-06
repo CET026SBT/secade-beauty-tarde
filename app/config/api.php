@@ -12,14 +12,19 @@ $routes = [
     "site-stats"     => ["controller" => "StatsController", "method" => "summary", "http" => "GET"],
 
     "booking-services"       => ["controller" => "BookingController", "method" => "serviceList", "http" => "GET"],
+    "service-photos"         => ["controller" => "ServicePhotoController", "method" => "publicList", "http" => "GET"],
     "booking-availability"   => ["controller" => "BookingController", "method" => "availability", "http" => "GET"],
     "booking-otp-request"    => ["controller" => "BookingController", "method" => "otpRequest", "http" => "POST"],
     "booking-create-store"   => ["controller" => "BookingController", "method" => "createStoreBooking", "http" => "POST"],
     "booking-create-amb"     => ["controller" => "BookingController", "method" => "createAmbulatoryBooking", "http" => "POST"],
     "booking-my"             => ["controller" => "BookingController", "method" => "myBookings", "http" => "GET"],
     "customer-booking-cancel" => ["controller" => "BookingController", "method" => "cancelBooking", "http" => "POST"],
+    "customer-booking-update" => ["controller" => "BookingController", "method" => "updateBooking", "http" => "POST"],
 
     "customer-profile"            => ["controller" => "CustomerController", "method" => "profile", "http" => "GET"],
+    "customer-profile-update"     => ["controller" => "CustomerController", "method" => "update", "http" => "POST"],
+    "user-photo-upload"           => ["controller" => "UserPhotoController", "method" => "upload", "http" => "POST"],
+    "user-photo-remove"           => ["controller" => "UserPhotoController", "method" => "remove", "http" => "POST"],
     "customer-address-list"       => ["controller" => "CustomerAddressController", "method" => "index", "http" => "GET"],
     "customer-address-store"      => ["controller" => "CustomerAddressController", "method" => "store", "http" => "POST"],
     "customer-address-set-principal" => ["controller" => "CustomerAddressController", "method" => "setPrincipal", "http" => "POST"],
@@ -38,6 +43,11 @@ $routes = [
     "admin-alert-summary"        => ["controller" => "AlertController", "method" => "summary", "http" => "GET"],
     "admin-alert-list"           => ["controller" => "AlertController", "method" => "list", "http" => "GET"],
     "admin-alert-read"           => ["controller" => "AlertController", "method" => "markRead", "http" => "POST"],
+
+    // Fase 7 (F9) — Área Cliente (avisos com o âmbito do cliente)
+    "customer-alerts-summary"    => ["controller" => "AlertController", "method" => "customerSummary", "http" => "GET"],
+    "customer-alerts-list"       => ["controller" => "AlertController", "method" => "customerList", "http" => "GET"],
+    "customer-alerts-read"       => ["controller" => "AlertController", "method" => "customerMarkRead", "http" => "POST"],
     "admin-employee-agenda-list" => ["controller" => "AgendaController", "method" => "month", "http" => "GET"],
 
     // Fase 6.1 — fornecedores (RF-85 · §25.1)
@@ -46,6 +56,16 @@ $routes = [
     "admin-supplier-update"      => ["controller" => "SupplierController", "method" => "update", "http" => "POST"],
     "admin-supplier-set-active"  => ["controller" => "SupplierController", "method" => "setActive", "http" => "POST"],
 
+    // Fase 7 (F7) — Recursos Humanos (só o gestor)
+    "admin-employee-list"        => ["controller" => "EmployeeController", "method" => "list", "http" => "GET"],
+    "admin-employee-create"      => ["controller" => "EmployeeController", "method" => "create", "http" => "POST"],
+    "admin-employee-update"      => ["controller" => "EmployeeController", "method" => "update", "http" => "POST"],
+    "admin-employee-impact"      => ["controller" => "EmployeeController", "method" => "impact", "http" => "GET"],
+    "admin-employee-deactivate"  => ["controller" => "EmployeeController", "method" => "deactivate", "http" => "POST"],
+    "admin-employee-activate"    => ["controller" => "EmployeeController", "method" => "activate", "http" => "POST"],
+    "admin-employee-photo-upload"=> ["controller" => "EmployeeController", "method" => "uploadPhoto", "http" => "POST"],
+    "admin-employee-photo-remove"=> ["controller" => "EmployeeController", "method" => "removePhoto", "http" => "POST"],
+
     // Fase 6.4 — comissões (RF-84 · §25.5)
     "admin-commission-list"      => ["controller" => "CommissionController", "method" => "list", "http" => "GET"],
 
@@ -53,6 +73,12 @@ $routes = [
     "admin-service-accepted-list"=> ["controller" => "ServiceController", "method" => "acceptedList", "http" => "GET"],
     "admin-service-accept"       => ["controller" => "ServiceController", "method" => "accept", "http" => "POST"],
     "admin-service-unaccept"     => ["controller" => "ServiceController", "method" => "unaccept", "http" => "POST"],
+
+    // Fase 7 (F3.1) — fotos do catálogo (só o gestor)
+    "admin-service-photo-list"     => ["controller" => "ServicePhotoController", "method" => "list", "http" => "GET"],
+    "admin-service-photo-upload"   => ["controller" => "ServicePhotoController", "method" => "upload", "http" => "POST"],
+    "admin-service-photo-featured" => ["controller" => "ServicePhotoController", "method" => "setFeatured", "http" => "POST"],
+    "admin-service-photo-remove"   => ["controller" => "ServicePhotoController", "method" => "remove", "http" => "POST"],
 
     "admin-fiscal-calendar-list" => ["controller" => "FiscalController", "method" => "calendar", "http" => "GET"],
     "admin-fiscal-alert-list"    => ["controller" => "FiscalController", "method" => "alerts", "http" => "GET"],

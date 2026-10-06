@@ -15,6 +15,9 @@
          Carregado SÓ na área de gestão — o site público não precisa dele. -->
     <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/lib/chartjs/Chart.bundle.min.js"></script>
 
+    <!-- Sweetalert2 local (Q-05): diálogos de confirmação/alerta da aplicação -->
+    <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/lib/sweetalert/sweetalert.js"></script>
+
     <!-- Our Libraries Javascript -->
     <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/lib-our/jq-preloader/jq-preloader.js"></script>
 

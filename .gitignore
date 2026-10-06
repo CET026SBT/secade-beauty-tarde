@@ -30,8 +30,16 @@ error_log
 
 # --- Uploads (dados de execução) ---
 # As fotos carregadas em runtime NÃO se versionam; a pasta, a proteção (.htaccess)
-# e os marcadores (.gitkeep) mantêm-se no repositório (ver dev/main).
+# e os marcadores (.gitkeep) mantêm-se no repositório.
 /uploads/*
+!/uploads/.htaccess
+!/uploads/.gitkeep
+!/uploads/users/
+/uploads/users/*
+!/uploads/users/.gitkeep
+!/uploads/services/
+/uploads/services/*
+!/uploads/services/.gitkeep
 
 # --- Ficheiros temporários de servidores locais (XAMPP/WAMP) ---
 nbproject/

@@ -12,6 +12,7 @@ class UserMapper extends BaseMapper {
                     ->cast("telemovel",     "phone",        "string")
                     ->cast("nif",           "nif",          "string")
                     ->cast("tipo_perfil",   "profileType",  "string")
+                    ->cast("foto",          "photo",        "string")
                     ->cast("criado_em",     "createdAt",    "string")
                     ->toArray();
     }

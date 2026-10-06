@@ -45,10 +45,48 @@ const generalUtils = (() => {
                 behavior: 'smooth'
             });
         },
+        /**
+         * Salta para um elemento e destaca-o temporariamente (moldura dourada
+         * de largura variável). Utilitário único do `#rotaDinamica` e de outros
+         * «aponta para aqui» (§24.7). Sem dependências de CSS — usa estilos inline.
+         */
+        highlightAndScroll(selectorOrElement, { offset = 90, duration = 2400 } = {}) {
+            const el = getElement(selectorOrElement);
+            if (!el) return;
+
+            generalUtils.scrollToElement(el, offset);
+
+            const previous = {
+                boxShadow: el.style.boxShadow,
+                transition: el.style.transition,
+                borderRadius: el.style.borderRadius
+            };
+
+            el.style.transition = 'box-shadow .35s ease';
+            el.style.borderRadius = '6px';
+            el.style.boxShadow = '0 0 0 3px var(--bs-primary, #c9aa55)';
+
+            window.setTimeout(() => {
+                el.style.boxShadow = previous.boxShadow;
+                window.setTimeout(() => {
+                    el.style.transition = previous.transition;
+                    el.style.borderRadius = previous.borderRadius;
+                }, 400);
+            }, duration);
+        },
         removeAccents(str) {
             return String(str ?? '')
                 .normalize("NFD")
                 .replace(/[\u0300-\u036f]/g, "");
+        },
+        /**
+         * Lê um valor técnico (enum/chave) e devolve-o legível: `pendente_alocacao`
+         * -> `Pendente alocacao`. Fonte única da apresentação de estados (substitui
+         * os `replace('_',' ')` espalhados pelo código).
+         */
+        humanize(value) {
+            const text = String(value ?? '').replace(/_+/g, ' ').trim();
+            return text.charAt(0).toUpperCase() + text.slice(1);
         },
         camelCase(str) {
             return generalUtils.removeAccents(str)
@@ -94,6 +132,52 @@ const generalUtils = (() => {
 
             return date.toLocaleString('pt-PT', {
                 day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+            });
+        },
+        /**
+         * Diálogo de confirmação (Q-05). Usa o Sweetalert2 servido localmente
+         * (`modules/common/lib/sweetalert`) e cai no `window.confirm` se a lib não
+         * estiver carregada. Devolve `Promise<boolean>`.
+         */
+        confirmDialog(options = {}) {
+            const config = typeof options === 'string' ? { text: options } : (options || {});
+            const swal = window.Sweetalert2;
+
+            if (!swal) {
+                return Promise.resolve(window.confirm(config.text || config.title || ''));
+            }
+
+            return swal.fire({
+                icon: config.icon || 'question',
+                title: config.title || undefined,
+                text: config.text || '',
+                confirmButtonText: config.confirmButtonText || 'Confirmar',
+                cancelButtonText: config.cancelButtonText || 'Cancelar',
+                showCancelButton: true,
+                confirmButtonColor: '#c9a227',
+                cancelButtonColor: '#6c757d',
+                reverseButtons: true
+            }).then((result) => Boolean(result.isConfirmed));
+        },
+        /**
+         * Diálogo informativo/erro (Q-05). Mesma política do `confirmDialog`.
+         * Devolve `Promise` resolvida quando o utilizador fecha.
+         */
+        alertDialog(options = {}) {
+            const config = typeof options === 'string' ? { text: options } : (options || {});
+            const swal = window.Sweetalert2;
+
+            if (!swal) {
+                window.alert(config.text || config.title || '');
+                return Promise.resolve();
+            }
+
+            return swal.fire({
+                icon: config.icon || 'info',
+                title: config.title || undefined,
+                text: config.text || '',
+                confirmButtonText: config.confirmButtonText || 'OK',
+                confirmButtonColor: '#c9a227'
             });
         }
     };
