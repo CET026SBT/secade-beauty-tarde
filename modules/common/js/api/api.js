@@ -15,6 +15,7 @@ const API = ((baseApi) => ({
     },
     booking: {
         services: () => baseApi.get('?action=booking-services'),
+        servicePhotos: (serviceId) => baseApi.get(`?action=service-photos&serviceId=${serviceId}`),
         availability: (params) => baseApi.get(`?action=booking-availability&${$.param(params)}`, 0),
         requestOtp: () => baseApi.post('?action=booking-otp-request', {}),
         createStore: (data) => baseApi.post('?action=booking-create-store', data),
@@ -59,6 +60,14 @@ const API = ((baseApi) => ({
             accepted: (params = {}) => baseApi.get(`?action=admin-service-accepted-list&${$.param(params)}`, 0),
             accept: (bookingServiceId, bookingId = null) => baseApi.post('?action=admin-service-accept', { bookingServiceId, bookingId }),
             unaccept: (bookingServiceId, bookingId = null) => baseApi.post('?action=admin-service-unaccept', { bookingServiceId, bookingId })
+        },
+        catalog: {
+            // O catálogo público já traz `photoUrl` (destaque) por serviço.
+            list: () => baseApi.get('?action=booking-services', 0),
+            photos: (serviceId) => baseApi.get(`?action=admin-service-photo-list&serviceId=${serviceId}`, 0),
+            uploadPhoto: (formData) => baseApi.post('?action=admin-service-photo-upload', formData),
+            setPhotoFeatured: (photoId) => baseApi.post('?action=admin-service-photo-featured', { photoId }),
+            removePhoto: (photoId) => baseApi.post('?action=admin-service-photo-remove', { photoId })
         },
         fiscal: {
             calendar: (params = {}) => baseApi.get(`?action=admin-fiscal-calendar-list&${$.param(params)}`, 0),

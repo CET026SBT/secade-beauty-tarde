@@ -855,6 +855,33 @@ form .row > *:has([aria-invalid="true"])*/ {
     height: auto;
 }
 
+/* Gestão do catálogo (backoffice) — F3.1 */
+.bo-catalog-thumb {
+    width: 56px;
+    height: 56px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.bo-catalog-photo {
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+}
+
+/* Galeria do modal de detalhes (carousel de fotos). */
+.service-gallery-thumb {
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: .25rem;
+}
+
+.service-gallery-thumb.active {
+    border-color: var(--bs-primary);
+}
+
 /* ------------------------------------------------------------------
    Backoffice (gestão)
 ------------------------------------------------------------------ */

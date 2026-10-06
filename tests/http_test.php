@@ -404,6 +404,17 @@ $boGreen = request("{$base}/gestao/recibos-verdes", "GET", null, $managerJar);
 check("GET /gestao/recibos-verdes responde 200", $boGreen["status"] === 200, (string)$boGreen["status"]);
 check("pagina de recibos verdes carrega JS", str_contains($boGreen["body"], "components/greenReceipts.js"));
 
+$boCatalog = request("{$base}/gestao/catalogo", "GET", null, $managerJar);
+check("GET /gestao/catalogo responde 200", $boCatalog["status"] === 200, (string)$boCatalog["status"]);
+check("pagina de catalogo carrega JS", str_contains($boCatalog["body"], "components/catalog.js"));
+
+$boCatalogClient = request("{$base}/gestao/catalogo", "GET", null, $clientJar);
+check("cliente e redirecionado fora do catalogo de gestao", $boCatalogClient["status"] === 302, (string)$boCatalogClient["status"] . " " . $boCatalogClient["location"]);
+
+$photoList = request("{$base}/api?action=service-photos&serviceId=1", "GET", null, $anonJar);
+check("service-photos responde 200 (publico)", $photoList["status"] === 200, (string)$photoList["status"]);
+check("servico 1 tem foto principal", !empty($photoList["json"]["photos"][0]["url"]), json_encode($photoList["json"]["photos"] ?? null));
+
 // ---------------------------------------------------------------------------
 section("8. Registo e login de cliente (end-to-end)");
 

@@ -53,6 +53,11 @@ const services = (() => {
 
             $('#serviceModalTitle').text(service.name);
             $('#serviceModalBody').html(`
+                <div id="serviceGallery" class="mb-3">
+                    <img id="serviceGalleryMain" class="img-fluid rounded w-100 service-card-img"
+                         src="${cardsUI.imageFor(service)}" alt="${generalUtils.escapeHtml(service.name)}">
+                    <div id="serviceGalleryThumbs" class="d-flex gap-2 mt-2 flex-wrap"></div>
+                </div>
                 <p class="text-muted mb-3">${generalUtils.escapeHtml(service.description || '')}</p>
                 <ul class="list-unstyled mb-0">
                     <li class="mb-2"><i class="bi bi-tag me-2 text-primary"></i><strong>Preço:</strong> ${generalUtils.formatCurrencyWithVat(service.basePrice)} <small class="text-muted">(IVA incl.)</small></li>
@@ -64,6 +69,8 @@ const services = (() => {
             $('#serviceModalBook').attr('href', `${BASE_URL ?? ''}/agendar?services=${service.id}`);
 
             bootstrap.Modal.getOrCreateInstance($('#serviceDetailsModal')[0]).show();
+
+            loadGallery(service);
         }
     };
 
@@ -119,6 +126,35 @@ const services = (() => {
                 </div>
             </div>
         </div>`);
+    }
+
+    /**
+     * Preenche a galeria do modal com TODAS as fotos do serviço (F3.1). Se o serviço
+     * não tiver fotos, mantém-se o placeholder da categoria como imagem única.
+     */
+    async function loadGallery(service) {
+        let photos = [];
+
+        try {
+            const response = await API.booking.servicePhotos(service.id);
+            photos = response?.photos || [];
+        } catch (error) {
+            photos = [];
+        }
+
+        if (photos.length === 0) {
+            $('#serviceGalleryThumbs').empty();
+            return;
+        }
+
+        const url = (photo) => `${BASE_URL ?? ''}/${String(photo.url).replace(/^\//, '')}`;
+        const ordered = [...photos].sort((a, b) => Number(b.featured) - Number(a.featured));
+
+        $('#serviceGalleryMain').attr('src', url(ordered[0]));
+
+        $('#serviceGalleryThumbs').html(ordered.map((photo, index) => `
+            <img class="service-gallery-thumb ${index === 0 ? 'active' : ''}"
+                 src="${url(photo)}" alt="" data-gallery-src="${url(photo)}">`).join(''));
     }
 
     function filteredServices() {
@@ -177,6 +213,16 @@ const services = (() => {
 
         $(document).on('click', '[data-details]', function () {
             cardsUI.openDetails($(this).data('details'));
+        });
+
+        // Galeria do modal: clicar numa miniatura troca a imagem principal.
+        $(document).on('click', '.service-gallery-thumb', function () {
+            const src = $(this).data('gallery-src');
+            if (!src) return;
+
+            $('#serviceGalleryMain').attr('src', src);
+            $('.service-gallery-thumb').removeClass('active');
+            $(this).addClass('active');
         });
 
         $('#serviceSearch').on('input', function () {

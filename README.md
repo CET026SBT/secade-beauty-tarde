@@ -48,6 +48,9 @@ secade-beauty-tarde/
 │   ├── common/           # Recursos partilhados (JS, CSS, libs)
 │   ├── main/             # Páginas públicas (clientes)
 │   └── backoffice/       # Área de gestão (gestor)
+├── uploads/               # Ficheiros do utilizador (fotos), escritos em runtime
+│   ├── .htaccess         # Nega execução de scripts nesta árvore
+│   └── services/         # Fotos dos serviços (servico_foto)
 ├── README.md              # Este ficheiro (instalação + uso)
 ├── index.php              # Front Controller
 ├── DataBase.sql           # Schema + dados ATUAIS (dump único): 26 tabelas
