@@ -70,7 +70,7 @@ const customerArea = (() => {
         $("#customerInputPhone").val(state.profile?.phone || "");
         $("#customerInputNif").val(state.profile?.nif || "");
 
-        bootstrap.Modal.getOrCreateInstance($("#customerProfileModal")[0]).show();
+        generalUtils.bsModalGetOrCreateInstance($("#customerProfileModal")[0]).show();
     }
 
     async function saveProfile() {
@@ -106,7 +106,7 @@ const customerArea = (() => {
             const image = document.getElementById("customerCropImage");
             image.src = event.target.result;
 
-            bootstrap.Modal.getOrCreateInstance($("#customerCropModal")[0]).show();
+            generalUtils.bsModalGetOrCreateInstance($("#customerCropModal")[0]).show();
         };
         reader.readAsDataURL(file);
     }
@@ -236,7 +236,7 @@ const customerArea = (() => {
         clearMessages();
         $("#customerAddressForm").trigger("reset");
 
-        bootstrap.Modal.getOrCreateInstance($("#customerAddressModal")[0]).show();
+        generalUtils.bsModalGetOrCreateInstance($("#customerAddressModal")[0]).show();
     }
 
     async function saveAddress() {

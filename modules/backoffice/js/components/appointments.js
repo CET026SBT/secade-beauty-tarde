@@ -108,15 +108,6 @@ const boAppointments = (() => {
         return state.bookings.find(booking => Number(booking.id) === Number(id));
     }
 
-    // A modal de Bootstrap 5.0 não tem `getOrCreateInstance` (só existe a partir da 5.1);
-    // usar esta função evita o erro ao abrir o detalhe do agendamento.
-    function modalInstance() {
-        const element = $("#appointmentDetailsModal")[0];
-        if (!element) return null;
-
-        return bootstrap.Modal.getInstance(element) || new bootstrap.Modal(element);
-    }
-
     async function openDetails(id) {
         const booking = bookingById(id);
         if (!booking) return;
@@ -126,7 +117,7 @@ const boAppointments = (() => {
         const promise = API.admin.appointmentDetails(Number(id));
         const preloader = $("#appointmentDetailsBody").preloader(".jq-overlay-process", promise);
 
-        modalInstance()?.show();
+        generalUtils.bsModalGetOrCreateInstance()?.show();
 
         try {
             const response = await promise;

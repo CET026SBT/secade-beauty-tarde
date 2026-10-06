@@ -179,6 +179,12 @@ const generalUtils = (() => {
                 confirmButtonText: config.confirmButtonText || 'OK',
                 confirmButtonColor: '#c9a227'
             });
+        },
+        bsModalGetOrCreateInstance() {
+            const element = $("#appointmentDetailsModal")[0];
+            if (!element) return null;
+
+            return bootstrap.Modal.getInstance(element) || new bootstrap.Modal(element);
         }
     };
 })();

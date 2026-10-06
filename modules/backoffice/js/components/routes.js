@@ -164,7 +164,7 @@ const boRoutes = (() => {
         state.details = route;
         renderDetails(route);
 
-        bootstrap.Modal.getOrCreateInstance(document.getElementById("routeDetailsModal")).show();
+        generalUtils.bsModalGetOrCreateInstance(document.getElementById("routeDetailsModal")).show();
     }
 
     function renderDetails(route) {

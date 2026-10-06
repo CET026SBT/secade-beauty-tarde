@@ -138,7 +138,7 @@ const boEmployees = (() => {
         $("#employeePhotoFile").prop("disabled", !isEdit);
 
         applyContractMode();
-        bootstrap.Modal.getOrCreateInstance($("#employeeFormModal")[0]).show();
+        generalUtils.bsModalGetOrCreateInstance($("#employeeFormModal")[0]).show();
     }
 
     /** C-10: os RV não têm salário base; a % sugerida vem do tipo de contrato. */

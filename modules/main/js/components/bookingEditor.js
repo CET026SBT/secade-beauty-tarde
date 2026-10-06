@@ -257,7 +257,7 @@ const bookingEditor = (() => {
             renderStoreServices((booking.services || []).map(service => Number(service.serviceId)));
         }
 
-        bootstrap.Modal.getOrCreateInstance($("#bookingEditModal")[0]).show();
+        generalUtils.bsModalGetOrCreateInstance($("#bookingEditModal")[0]).show();
 
         await loadSlots();
     }
