@@ -25,7 +25,7 @@ CREATE TABLE `agendamento` (
   `cliente_morada_id` int DEFAULT NULL,
   `local_prestacao` enum('loja_fisica','carrinha_ambulante') NOT NULL,
   `data_hora_pretendida` datetime NOT NULL,
-  `estado_reserva` enum('pendente_aceitacao_funcionarios','pendente_validacao_logistica_loja','totalmente_aceite_funcionarios','confirmado','recusado','cancelado','executado','concluido') DEFAULT 'pendente_aceitacao_funcionarios',
+  `estado_reserva` enum('pendente_alocacao','pendente_validacao_logistica_loja','totalmente_alocado','confirmado','recusado','cancelado','executado','concluido') DEFAULT 'pendente_alocacao',
   `modo_urgencia` tinyint(1) DEFAULT '0',
   `valor_total` decimal(10,2) NOT NULL,
   `sinal_pago` tinyint(1) DEFAULT '0',
@@ -38,16 +38,16 @@ CREATE TABLE `agendamento` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `agendamento` (`id`, `cliente_id`, `cliente_morada_id`, `local_prestacao`, `data_hora_pretendida`, `estado_reserva`, `modo_urgencia`, `valor_total`, `sinal_pago`, `valor_sinal`, `validado_logistica_loja`, `criado_em`) VALUES
-  (190, 53, 75, 'carrinha_ambulante', '2026-09-24 09:00:00', 'totalmente_aceite_funcionarios', 0, 32.52, 0, 0.00, 0, '2026-09-22 13:37:26'),
+  (190, 53, 75, 'carrinha_ambulante', '2026-09-24 09:00:00', 'totalmente_alocado', 0, 32.52, 0, 0.00, 0, '2026-09-22 13:37:26'),
   (191, 53, NULL, 'loja_fisica', '2026-09-23 09:00:00', 'pendente_validacao_logistica_loja', 0, 28.46, 0, 2.85, 0, '2026-09-22 13:40:10'),
   (210, 3, NULL, 'loja_fisica', '2026-09-23 10:00:00', 'pendente_validacao_logistica_loja', 0, 16.27, 0, 1.63, 0, '2026-09-22 14:33:27'),
-  (211, 3, 1, 'carrinha_ambulante', '2026-09-23 09:00:00', 'pendente_aceitacao_funcionarios', 0, 16.27, 0, 0.00, 0, '2026-09-22 14:33:27'),
+  (211, 3, 1, 'carrinha_ambulante', '2026-09-23 09:00:00', 'pendente_alocacao', 0, 16.27, 0, 0.00, 0, '2026-09-22 14:33:27'),
   (212, 3, NULL, 'carrinha_ambulante', '2026-09-29 10:00:00', 'confirmado', 0, 4.07, 0, 0.00, 0, '2026-09-22 14:33:27'),
   (213, 3, 98, 'carrinha_ambulante', '2026-09-29 09:00:00', 'cancelado', 0, 199.20, 0, 0.00, 0, '2026-09-22 14:33:27'),
   (214, 3, NULL, 'loja_fisica', '2026-09-23 16:00:00', 'cancelado', 0, 12.20, 0, 1.22, 0, '2026-09-22 14:33:27'),
   (215, 3, 99, 'carrinha_ambulante', '2026-10-01 09:00:00', 'executado', 0, 12.20, 0, 0.00, 0, '2026-09-22 14:33:27'),
   (216, 3, NULL, 'loja_fisica', '2026-09-23 17:00:00', 'pendente_validacao_logistica_loja', 0, 40.65, 0, 4.07, 0, '2026-09-22 14:33:27'),
-  (217, 3, 99, 'carrinha_ambulante', '2026-10-06 10:00:00', 'pendente_aceitacao_funcionarios', 0, 12.20, 0, 0.00, 0, '2026-09-22 14:33:27');
+  (217, 3, 99, 'carrinha_ambulante', '2026-10-06 10:00:00', 'pendente_alocacao', 0, 12.20, 0, 0.00, 0, '2026-09-22 14:33:27');
 
 -- ------------------------------------------------------------
 -- Tabela: agendamento_pessoa
@@ -87,8 +87,6 @@ CREATE TABLE `agendamento_servico` (
   `estado_aceitacao` enum('pendente','aceite') DEFAULT 'aceite',
   `aceito_em` datetime DEFAULT NULL,
   `percentagem_funcionario_aplicada` decimal(5,2) DEFAULT NULL,
-  `valor_recibo_verde_funcionario` decimal(10,2) DEFAULT NULL,
-  `valor_recibo_verde_plataforma` decimal(10,2) DEFAULT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_agend_serv_agendamento` FOREIGN KEY (`agendamento_id`) REFERENCES `agendamento` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_agend_serv_funcionario` FOREIGN KEY (`funcionario_id`) REFERENCES `funcionario` (`id`) ON DELETE SET NULL,
@@ -96,27 +94,27 @@ CREATE TABLE `agendamento_servico` (
   CONSTRAINT `fk_agend_serv_servico` FOREIGN KEY (`servico_id`) REFERENCES `servico` (`id`) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `agendamento_servico` (`id`, `agendamento_id`, `agendamento_pessoa_id`, `servico_id`, `funcionario_id`, `preco_praticado`, `duracao_minutos`, `estado_aceitacao`, `aceito_em`, `percentagem_funcionario_aplicada`, `valor_recibo_verde_funcionario`, `valor_recibo_verde_plataforma`) VALUES
-  (394, 190, 148, 1, 2, 32.52, 240, 'aceite', '2026-09-22 15:06:33', 70.00, 22.76, 9.76),
-  (395, 191, NULL, 4, NULL, 28.46, 150, 'aceite', NULL, NULL, NULL, NULL),
-  (435, 210, NULL, 28, NULL, 12.20, 30, 'aceite', NULL, NULL, NULL, NULL),
-  (436, 210, NULL, 29, NULL, 4.07, 20, 'aceite', NULL, NULL, NULL, NULL),
-  (437, 211, 164, 29, NULL, 4.07, 20, 'pendente', NULL, NULL, NULL, NULL),
-  (438, 211, 165, 29, NULL, 4.07, 20, 'pendente', NULL, NULL, NULL, NULL),
-  (439, 211, 165, 35, NULL, 8.13, 30, 'pendente', NULL, NULL, NULL, NULL),
-  (440, 212, 166, 29, NULL, 4.07, 20, 'pendente', NULL, NULL, NULL, NULL),
-  (441, 213, 167, 20, NULL, 36.59, 60, 'pendente', NULL, NULL, NULL, NULL),
-  (442, 213, 167, 18, NULL, 24.39, 60, 'pendente', NULL, NULL, NULL, NULL),
-  (443, 213, 167, 23, NULL, 28.46, 60, 'pendente', NULL, NULL, NULL, NULL),
-  (444, 213, 167, 21, NULL, 16.26, 60, 'pendente', NULL, NULL, NULL, NULL),
-  (445, 213, 167, 9, NULL, 24.39, 60, 'pendente', NULL, NULL, NULL, NULL),
-  (446, 213, 167, 2, NULL, 48.78, 180, 'pendente', NULL, NULL, NULL, NULL),
-  (447, 213, 167, 27, NULL, 20.33, 60, 'pendente', NULL, NULL, NULL, NULL),
-  (448, 214, NULL, 33, NULL, 12.20, 45, 'aceite', NULL, NULL, NULL, NULL),
-  (449, 215, 168, 29, 2, 4.07, 20, 'aceite', '2026-09-22 15:33:27', 70.00, 2.85, 1.22),
-  (450, 215, 169, 35, 2, 8.13, 30, 'aceite', '2026-09-22 15:33:27', 70.00, 5.69, 2.44),
-  (451, 216, NULL, 30, NULL, 40.65, 120, 'aceite', NULL, NULL, NULL, NULL),
-  (452, 217, 170, 33, NULL, 12.20, 45, 'pendente', NULL, NULL, NULL, NULL);
+INSERT INTO `agendamento_servico` (`id`, `agendamento_id`, `agendamento_pessoa_id`, `servico_id`, `funcionario_id`, `preco_praticado`, `duracao_minutos`, `estado_aceitacao`, `aceito_em`, `percentagem_funcionario_aplicada`) VALUES
+  (394, 190, 148, 1, 2, 32.52, 240, 'aceite', '2026-09-22 15:06:33', 70.00),
+  (395, 191, NULL, 4, NULL, 28.46, 150, 'aceite', NULL, NULL),
+  (435, 210, NULL, 28, NULL, 12.20, 30, 'aceite', NULL, NULL),
+  (436, 210, NULL, 29, NULL, 4.07, 20, 'aceite', NULL, NULL),
+  (437, 211, 164, 29, NULL, 4.07, 20, 'pendente', NULL, NULL),
+  (438, 211, 165, 29, NULL, 4.07, 20, 'pendente', NULL, NULL),
+  (439, 211, 165, 35, NULL, 8.13, 30, 'pendente', NULL, NULL),
+  (440, 212, 166, 29, NULL, 4.07, 20, 'pendente', NULL, NULL),
+  (441, 213, 167, 20, NULL, 36.59, 60, 'pendente', NULL, NULL),
+  (442, 213, 167, 18, NULL, 24.39, 60, 'pendente', NULL, NULL),
+  (443, 213, 167, 23, NULL, 28.46, 60, 'pendente', NULL, NULL),
+  (444, 213, 167, 21, NULL, 16.26, 60, 'pendente', NULL, NULL),
+  (445, 213, 167, 9, NULL, 24.39, 60, 'pendente', NULL, NULL),
+  (446, 213, 167, 2, NULL, 48.78, 180, 'pendente', NULL, NULL),
+  (447, 213, 167, 27, NULL, 20.33, 60, 'pendente', NULL, NULL),
+  (448, 214, NULL, 33, NULL, 12.20, 45, 'aceite', NULL, NULL),
+  (449, 215, 168, 29, 2, 4.07, 20, 'aceite', '2026-09-22 15:33:27', 70.00),
+  (450, 215, 169, 35, 2, 8.13, 30, 'aceite', '2026-09-22 15:33:27', 70.00),
+  (451, 216, NULL, 30, NULL, 40.65, 120, 'aceite', NULL, NULL),
+  (452, 217, 170, 33, NULL, 12.20, 45, 'pendente', NULL, NULL);
 
 -- ------------------------------------------------------------
 -- Tabela: alerta_fiscal
@@ -153,10 +151,10 @@ INSERT INTO `base_partida` (`id`, `nome`, `morada`) VALUES
   (1, 'Évora', 'Rua do Centro de Formação');
 
 -- ------------------------------------------------------------
--- Tabela: categoria_profissional
+-- Tabela: categoria_servico
 -- ------------------------------------------------------------
-DROP TABLE IF EXISTS `categoria_profissional`;
-CREATE TABLE `categoria_profissional` (
+DROP TABLE IF EXISTS `categoria_servico`;
+CREATE TABLE `categoria_servico` (
   `id` int NOT NULL AUTO_INCREMENT,
   `nome` varchar(100) NOT NULL,
   `descricao` text,
@@ -164,7 +162,7 @@ CREATE TABLE `categoria_profissional` (
   UNIQUE KEY `nome` (`nome`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `categoria_profissional` (`id`, `nome`, `descricao`) VALUES
+INSERT INTO `categoria_servico` (`id`, `nome`, `descricao`) VALUES
   (1, 'Cabelereiro', 'Tranças e Penteados'),
   (2, 'Barbearia', 'Cortes'),
   (3, 'Estética', 'Maquiagem, Manicure e limpeza facial');
@@ -364,19 +362,23 @@ INSERT INTO `cliente_morada` (`id`, `cliente_id`, `cidade_id`, `designacao`, `ru
   (264, 164, 1, 'Casa', '', NULL, NULL, NULL, 1);
 
 -- ------------------------------------------------------------
--- Tabela: config_recibo_verde
+-- Tabela: config_percentagem_padrao
 -- ------------------------------------------------------------
-DROP TABLE IF EXISTS `config_recibo_verde`;
-CREATE TABLE `config_recibo_verde` (
+DROP TABLE IF EXISTS `config_percentagem_padrao`;
+CREATE TABLE `config_percentagem_padrao` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `percentagem_funcionario` decimal(5,2) NOT NULL DEFAULT '70.00',
-  `percentagem_plataforma` decimal(5,2) NOT NULL DEFAULT '30.00',
+  `tipo_contrato` enum('efetivo_contratado','recibo_verde') NOT NULL,
+  `percentagem_comissao` decimal(5,2) NOT NULL DEFAULT '0.00',
   `data_vigencia` date NOT NULL,
   `configurado_por` int DEFAULT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `fk_config_rv_utilizador` FOREIGN KEY (`configurado_por`) REFERENCES `utilizador` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `ck_config_rv_soma` CHECK (((`percentagem_funcionario` + `percentagem_plataforma`) = 100))
+  UNIQUE KEY `uk_config_pct_tipo_vig` (`tipo_contrato`,`data_vigencia`),
+  CONSTRAINT `fk_config_pct_utilizador` FOREIGN KEY (`configurado_por`) REFERENCES `utilizador` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `config_percentagem_padrao` (`id`, `tipo_contrato`, `percentagem_comissao`, `data_vigencia`, `configurado_por`) VALUES
+  (1, 'efetivo_contratado', 0.00, '2026-01-01', NULL),
+  (2, 'recibo_verde', 70.00, '2026-01-01', NULL);
 
 -- ------------------------------------------------------------
 -- Tabela: execucao_agendamento
@@ -503,15 +505,16 @@ DROP TABLE IF EXISTS `funcionario`;
 CREATE TABLE `funcionario` (
   `id` int NOT NULL,
   `tipo_contrato` enum('efetivo_contratado','recibo_verde') NOT NULL,
-  `salario_base` decimal(10,2) NOT NULL,
+  `percentagem_comissao` decimal(5,2) NOT NULL DEFAULT '0.00',
+  `salario_base` decimal(10,2) NOT NULL DEFAULT '0.00',
   `cc` varchar(20) DEFAULT NULL,
   `ativo` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_funcionario_utilizador` FOREIGN KEY (`id`) REFERENCES `utilizador` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `funcionario` (`id`, `tipo_contrato`, `salario_base`, `cc`, `ativo`) VALUES
-  (2, 'recibo_verde', 900.00, '999999990Z7R', 1);
+INSERT INTO `funcionario` (`id`, `tipo_contrato`, `percentagem_comissao`, `salario_base`, `cc`, `ativo`) VALUES
+  (2, 'recibo_verde', 70.00, 900.00, '999999990Z7R', 1);
 
 -- ------------------------------------------------------------
 -- Tabela: gorjeta
@@ -555,6 +558,21 @@ INSERT INTO `matriz_deslocacao` (`id`, `base_partida_id`, `cidade_id`, `distanci
   (7, 1, 7, 95.00, 70, 14.23),
   (8, 1, 8, 115.00, 85, 17.24),
   (9, 1, 9, 110.00, 90, 16.42);
+
+-- ------------------------------------------------------------
+-- Tabela: notificacao
+-- ------------------------------------------------------------
+DROP TABLE IF EXISTS `notificacao`;
+CREATE TABLE `notificacao` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `utilizador_id` int NOT NULL,
+  `tipo` enum('agendamento_confirmado','agendamento_recusado','agendamento_cancelado','lembrete_24h','logistica','sistema') NOT NULL,
+  `mensagem` varchar(500) NOT NULL,
+  `lida` tinyint(1) DEFAULT '0',
+  `criado_em` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_notificacao_utilizador` FOREIGN KEY (`utilizador_id`) REFERENCES `utilizador` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ------------------------------------------------------------
 -- Tabela: obrigacao_fiscal
@@ -634,7 +652,7 @@ CREATE TABLE `servico` (
   `requer_espaco_fisico` tinyint(1) DEFAULT '0',
   `ativo` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
-  CONSTRAINT `fk_servico_categoria` FOREIGN KEY (`categoria_id`) REFERENCES `categoria_profissional` (`id`) ON DELETE RESTRICT
+  CONSTRAINT `fk_servico_categoria` FOREIGN KEY (`categoria_id`) REFERENCES `categoria_servico` (`id`) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `servico` (`id`, `nome`, `descricao`, `categoria_id`, `duracao_estimada_minutos`, `preco_base`, `requer_espaco_fisico`, `ativo`) VALUES
@@ -734,6 +752,7 @@ CREATE TABLE `utilizador` (
   `telemovel` varchar(20) NOT NULL,
   `nif` varchar(20) DEFAULT NULL,
   `tipo_perfil` enum('cliente','funcionario','gestor') NOT NULL,
+  `foto` varchar(255) DEFAULT NULL,
   `criado_em` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)

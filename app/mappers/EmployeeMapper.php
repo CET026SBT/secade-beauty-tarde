@@ -7,6 +7,7 @@ class EmployeeMapper extends BaseMapper {
     protected function mapRow(): array {
         return $this->cast("id",             "id",          "int")
                     ->cast("tipo_contrato",  "contractType","string")
+                    ->cast("percentagem_comissao", "commissionPercentage", "float")
                     ->cast("salario_base",   "salary",      "float")
                     ->cast("cc",             "cc",          "string")
                     ->cast("ativo",          "isActive",    "bool")

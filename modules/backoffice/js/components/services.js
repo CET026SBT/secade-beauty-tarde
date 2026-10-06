@@ -55,7 +55,7 @@ const boServices = (() => {
                     <span class="fw-bold text-success">${money(service.greenReceiptEmployee)}</span>
                 </div>
                 <div class="col-6">
-                    <span class="text-muted d-block">Plataforma</span>
+                    <span class="text-muted d-block">Empresa</span>
                     <span class="fw-bold">${money(service.greenReceiptPlatform)}</span>
                 </div>
             </div>
@@ -102,10 +102,11 @@ const boServices = (() => {
 
     function renderGreenReceiptInfo() {
         const config = state.config || {};
-        const percentage = config.employeePercentage ?? 70;
-        const platform = config.platformPercentage ?? 30;
+        const configs = Array.isArray(config.configs) ? config.configs : [];
+        const recibo = configs.find(c => c.contractType === "recibo_verde");
+        const percentage = recibo?.commissionPercentage ?? config.reciboVerde ?? 70;
 
-        $("#greenReceiptInfo").text(`Simulador de recibos verdes: ${percentage}% / ${platform}%`);
+        $("#greenReceiptInfo").text(`Repartição do serviço: ${percentage}% funcionário · ${Math.round((100 - percentage) * 100) / 100}% empresa`);
     }
 
     function fillCategories() {

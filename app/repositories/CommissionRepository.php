@@ -5,11 +5,10 @@ require_once __DIR__ . "/BaseRepository.php";
 /**
  * Comissões do funcionário — Fase 6.4 (RF-84 · §25.5 · §11).
  *
- * Os valores são **snapshot da aceitação**: `agendamento_servico` guarda
- * `percentagem_funcionario_aplicada`, `valor_recibo_verde_funcionario` e
- * `valor_recibo_verde_plataforma` no momento em que o serviço é aceite. Esta
- * camada só **lê** — nada é recalculado aqui (a percentagem pode mudar com o
- * tempo e o histórico não se reescreve).
+ * Os valores são **calculados na leitura** a partir de `percentagem_funcionario_aplicada`
+ * (que é o *snapshot* gravado na aceitação): `agendamento_servico` guarda a percentagem,
+ * e o valor por funcionário/empresa deriva de `preco_praticado × percentagem` (C-03/D-10).
+ * Esta camada só **lê** — a percentagem pode mudar com o tempo e o histórico não se reescreve.
  *
  * Leitura de relatório: agregações com `fetchAllRaw` (sem mapper).
  */
@@ -23,8 +22,8 @@ class CommissionRepository extends BaseRepository {
                        u.nome AS funcionario_nome,
                        COUNT(*) AS servicos,
                        COALESCE(SUM(s.preco_praticado), 0) AS valor_servicos,
-                       COALESCE(SUM(s.valor_recibo_verde_funcionario), 0) AS valor_funcionario,
-                       COALESCE(SUM(s.valor_recibo_verde_plataforma), 0) AS valor_plataforma,
+                       COALESCE(SUM(ROUND(s.preco_praticado * s.percentagem_funcionario_aplicada / 100, 2)), 0) AS valor_funcionario,
+                       COALESCE(SUM(s.preco_praticado - ROUND(s.preco_praticado * s.percentagem_funcionario_aplicada / 100, 2)), 0) AS valor_plataforma,
                        COALESCE(AVG(s.percentagem_funcionario_aplicada), 0) AS percentagem_media
                 FROM agendamento_servico s
                 INNER JOIN utilizador u ON s.funcionario_id = u.id
@@ -43,7 +42,8 @@ class CommissionRepository extends BaseRepository {
     public function listAccepted(?int $employeeId, string $dateFrom, string $dateTo): array {
         $sql = "SELECT s.id, s.agendamento_id, s.funcionario_id, s.preco_praticado,
                        s.duracao_minutos, s.aceito_em, s.percentagem_funcionario_aplicada,
-                       s.valor_recibo_verde_funcionario, s.valor_recibo_verde_plataforma,
+                       ROUND(s.preco_praticado * s.percentagem_funcionario_aplicada / 100, 2) AS valor_recibo_verde_funcionario,
+                       ROUND(s.preco_praticado - ROUND(s.preco_praticado * s.percentagem_funcionario_aplicada / 100, 2), 2) AS valor_recibo_verde_plataforma,
                        sv.nome AS servico_nome, u.nome AS funcionario_nome,
                        a.data_hora_pretendida, a.local_prestacao
                 FROM agendamento_servico s

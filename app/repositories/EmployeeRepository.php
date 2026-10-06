@@ -8,7 +8,7 @@ class EmployeeRepository extends BaseRepository {
     protected ?string $mapper = EmployeeMapper::class;
 
     public function find(?int $id = null): mixed {
-        $sql = "SELECT f.id, f.tipo_contrato, f.salario_base, f.cc, f.ativo,
+        $sql = "SELECT f.id, f.tipo_contrato, f.percentagem_comissao, f.salario_base, f.cc, f.ativo,
                        u.nome, u.email, u.telemovel, u.nif
                 FROM funcionario f
                 INNER JOIN utilizador u ON f.id = u.id
@@ -31,14 +31,15 @@ class EmployeeRepository extends BaseRepository {
     }
 
     public function create(array $data): int {
-        $sql = "INSERT INTO funcionario (id, tipo_contrato, salario_base, cc, ativo)
-                VALUES (:id, :tipo_contrato, :salario_base, :cc, 1)";
+        $sql = "INSERT INTO funcionario (id, tipo_contrato, percentagem_comissao, salario_base, cc, ativo)
+                VALUES (:id, :tipo_contrato, :percentagem_comissao, :salario_base, :cc, 1)";
 
         $this->execute($sql, [
-            "id"            => $data["userId"],
-            "tipo_contrato" => $data["contractType"],
-            "salario_base"  => (float)($data["salary"] ?? 0),
-            "cc"            => $data["cc"] ?? null
+            "id"                   => $data["userId"],
+            "tipo_contrato"        => $data["contractType"],
+            "percentagem_comissao" => (float)($data["commissionPercentage"] ?? 0),
+            "salario_base"         => (float)($data["salary"] ?? 0),
+            "cc"                   => $data["cc"] ?? null
         ]);
 
         return $data["userId"];
