@@ -92,6 +92,9 @@ $txt = [System.IO.File]::ReadAllText($path, $enc)
 |                         | com `[OK]`/`[!!]`                                                                                                                                                          |
 | `refresh-dump-data.php` | Regenera as secções de **dados** de `DataBase.sql` e `DataBase_clean.sql` a partir da BD viva, preservando os `CREATE TABLE` (F11). Evita reexportar tudo à mão            |
 | `seed-fase7.sql`        | **Dados de demonstração** (F11): limpa os dados operacionais e semeia cenários realistas (comissões, rotas, avisos, fiscal). `mysql -u root secade_beauty < …`             |
+| `html-balance.php`      | Diagnóstico: percorre uma página e conta `<div>`/`</div>`, denunciando as **tags a mais** (com nº de linha) e as que ficam **por fechar**. Ignora blocos PHP e comentários |
+|                         | HTML                                                                                                                                                                       |
+| `tab-content-check.php` | Diagnóstico: isola o bloco `.tab-content` por balanceamento de `<div>` e diz se as **panes** ficaram **dentro** do contentor — o defeito que as deixa **sempre visíveis**  |
 
 ### 2.1 `agent-files.php` — os ficheiros do agente fora do `agent-workspace`
 

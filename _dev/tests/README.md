@@ -9,7 +9,7 @@ especificação §26.
 | `functional_test.php` | **202**      | MySQL              | Camadas Service/Repository: catálogo, disponibilidade, conflitos, OTP, decisão manual de rotas, backoffice, perfil/moradas, Fase 3/4, |
 |                       |              |                    | painel/avisos/                                                                                                                        |
 |                       |              |                    | agenda, fornecedores, comissões, transações e integridade relacional                                                                  |
-| `http_test.php`       | **199**      | **Apache + MySQL** | Stack real (roteamento + sessões): autenticação dos 3 perfis, APIs REST, códigos de erro, fluxo end-to-end de carrinha, cancelamento  |
+| `http_test.php`       | **201**      | **Apache + MySQL** | Stack real (roteamento + sessões): autenticação dos 3 perfis, APIs REST, códigos de erro, fluxo end-to-end de carrinha, cancelamento  |
 |                       |              |                    | pelo cliente e                                                                                                                        |
 |                       |              |                    | registo/login                                                                                                                         |
 | `asset_test.php`      | **100**      | **Apache + MySQL** | Assets (HTTP 200), injeção de scripts por página e contrato de nomes do formulário de registo                                         |
@@ -22,14 +22,14 @@ especificação §26.
 ```bash
 php _dev/tests/js_syntax_check.php   # SINTAXE JS: OK                        (sem dependências)
 php _dev/tests/functional_test.php   # 202 pass, 0 fail                     (requer MySQL)
-php _dev/tests/http_test.php         # 199 pass, 0 fail                     (requer Apache + MySQL)
+php _dev/tests/http_test.php         # 201 pass, 0 fail                     (requer Apache + MySQL)
 php _dev/tests/asset_test.php        # 100 pass, 0 fail                     (requer Apache + MySQL)
 ```
 
 Cada suite imprime o resumo final (`N pass, M fail`) e termina com *exit code* `0` (tudo a passar)
 ou `1` (existe falha).
 > ✅ **Medição de 28/09/2026 (ambiente local, já com a BD importada — §27.2):** as **4 suites passam**
-> (`202 + 199 + 100 = 501`, sintaxe JS OK). As verificações do `asset_test` que abrem **páginas
+> (`202 + 201 + 100 = 503`, sintaxe JS OK). As verificações do `asset_test` que abrem **páginas
 > autenticadas** exigem sessão → requerem a BD importada; com a base de testes carregada passam todas.
 > ⚠️ **Cuidado ao contar registos:** a BD de desenvolvimento tem **dados reais de cliente** (clientes com
 > **id ≥ 100**, moradas **≥ 200** — §24.11) — as asserções que contam uma tabela inteira têm de se
