@@ -25,10 +25,18 @@ const API = ((baseApi) => ({
     },
     customer: {
         profile: () => baseApi.get('?action=customer-profile', 0),
+        update: (data) => baseApi.post('?action=customer-profile-update', data),
         addresses: () => baseApi.get('?action=customer-address-list', 0),
         createAddress: (data) => baseApi.post('?action=customer-address-store', data),
         setPrincipalAddress: (addressId) => baseApi.post('?action=customer-address-set-principal', { addressId }),
-        deleteAddress: (addressId) => baseApi.post('?action=customer-address-delete', { addressId })
+        deleteAddress: (addressId) => baseApi.post('?action=customer-address-delete', { addressId }),
+        alerts: () => baseApi.get('?action=customer-alerts-list', 0),
+        alertsCount: () => baseApi.get('?action=customer-alerts-summary', 0),
+        markAlertsRead: () => baseApi.post('?action=customer-alerts-read', {})
+    },
+    user: {
+        uploadPhoto: (formData) => baseApi.post('?action=user-photo-upload', formData),
+        removePhoto: () => baseApi.post('?action=user-photo-remove', {})
     },
     admin: {
         appointments: (params = {}) => baseApi.get(`?action=admin-appointments-list&${$.param(params)}`, 0),

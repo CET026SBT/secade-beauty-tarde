@@ -12,5 +12,30 @@ const menuUser = (() => {
             });
     }
 
-    return { logout };
+    /**
+     * Badge dos lembretes no menu do cliente (C-07 · F9).
+     *
+     * Só corre para clientes — a API do cliente responde 403 a gestor/funcionário,
+     * e aqui não se fazem pedidos que se sabem falhados.
+     */
+    async function loadClientAlertsBadge() {
+        const badge = document.getElementById("menuUserAlertsBadge");
+        if (!badge) return;
+
+        try {
+            const response = await API.customer.alertsCount();
+            const count = Number(response?.count || 0);
+
+            badge.textContent = count;
+            badge.classList.toggle("d-none", count === 0);
+        } catch (error) {
+            badge.classList.add("d-none");
+        }
+    }
+
+    $(() => {
+        loadClientAlertsBadge();
+    });
+
+    return { logout, loadClientAlertsBadge };
 })();

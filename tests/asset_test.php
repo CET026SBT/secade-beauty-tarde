@@ -84,7 +84,8 @@ echo "\n=== Injeção de scripts por página (register_script) ===\n";
 $pages = [
     ["/servicos/cabelereiro", null,  ["components/services.js"]],
     ["/agendar",              $jar,  ["components/bookingWizard.js", "validators/booking.validator.js"]],
-    ["/perfil",               $jar,  ["components/profile.js"]],
+    ["/area-cliente",         $jar,  ["components/customerArea.js"]],
+        ["/perfil",               $jar,  ["components/customerArea.js"]],
     ["/agendamentos",         $jar,  ["components/appointments.js"]],
     ["/gestao/agendamentos",  $gestorJar, ["components/appointments.js", "bo.utils.js"]],
     ["/gestao/rotas",         $gestorJar, ["components/routes.js", "bo.utils.js"]],
