@@ -21,6 +21,12 @@ body {
     min-height: 100vh;
 }
 
+body > main {
+    flex-grow: 1;
+    display: flex;
+    flex-flow: column;
+}
+
 /* > Arrange room for footer menu in smaller screens */
 @media (max-width: 991.98px) {
     body:not(.bo-body) > main {
@@ -565,6 +571,15 @@ form .row > *:has([aria-invalid="true"])*/ {
 
 .testimonial-carousel .owl-item span {
     letter-spacing: 2px;
+}
+
+.testimonial-carousel .owl-item p {
+    height: 3em;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .testimonial-carousel .owl-item.center .bg-light {

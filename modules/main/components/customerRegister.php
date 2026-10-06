@@ -6,7 +6,7 @@ register_script("utils/addressAutocomplete", "common");
 register_script("components/customerRegister", "main");
 ?>
 
-<div class="container-fluid px-0 d-flex flex-fill h-100">
+<div class="container-fluid px-0 d-flex flex-fill">
     <div class="row align-items-center flex-fill m-0 w-100">
         <div class="col-xl-5 h-100 d-none d-xl-flex text-white position-relative align-items-center justify-content-center p-0 overflow-hidden">
             <img src="<?= BASE_URL ?>/modules/common/img/bg-login.png" alt="Imagem Lateral" class="auth-left-img user-select-none" draggable="false">
