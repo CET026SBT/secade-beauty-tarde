@@ -11,8 +11,9 @@ class BookingServiceRepository extends BaseRepository {
         $sql = "SELECT s.id, s.agendamento_id, s.agendamento_pessoa_id, s.servico_id,
                        s.funcionario_id, s.preco_praticado, s.duracao_minutos,
                        s.estado_aceitacao, s.aceito_em,
-                       s.percentagem_funcionario_aplicada, s.valor_recibo_verde_funcionario,
-                       s.valor_recibo_verde_plataforma,
+                       s.percentagem_funcionario_aplicada,
+                       ROUND(s.preco_praticado * s.percentagem_funcionario_aplicada / 100, 2) AS valor_recibo_verde_funcionario,
+                       ROUND(s.preco_praticado - ROUND(s.preco_praticado * s.percentagem_funcionario_aplicada / 100, 2), 2) AS valor_recibo_verde_plataforma,
                        sv.nome AS servico_nome, sv.duracao_estimada_minutos,
                        p.nome_pessoa, p.observacoes,
                        u.nome AS funcionario_nome
@@ -93,13 +94,13 @@ class BookingServiceRepository extends BaseRepository {
     }
 
     public function accept(int $id, int $funcionarioId, float $percentagemFuncionario): bool {
+        // C-03/D-10: os valores por funcionário/empresa deixam de ser gravados —
+        // calculam-se na leitura a partir de `preco_praticado × percentagem`.
         $sql = "UPDATE agendamento_servico
                 SET funcionario_id = :funcionario_id,
                     estado_aceitacao = 'aceite',
                     aceito_em = NOW(),
-                    percentagem_funcionario_aplicada = :percentagem,
-                    valor_recibo_verde_funcionario = ROUND(preco_praticado * :percentagem / 100, 2),
-                    valor_recibo_verde_plataforma = ROUND(preco_praticado * (100 - :percentagem) / 100, 2)
+                    percentagem_funcionario_aplicada = :percentagem
                 WHERE id = :id";
 
         return $this->execute($sql, [
@@ -112,8 +113,7 @@ class BookingServiceRepository extends BaseRepository {
     public function unaccept(int $id): bool {
         $sql = "UPDATE agendamento_servico
                 SET funcionario_id = NULL, estado_aceitacao = 'pendente', aceito_em = NULL,
-                    percentagem_funcionario_aplicada = NULL,
-                    valor_recibo_verde_funcionario = NULL, valor_recibo_verde_plataforma = NULL
+                    percentagem_funcionario_aplicada = NULL
                 WHERE id = :id";
 
         return $this->execute($sql, ["id" => $id]) > 0;
@@ -128,7 +128,7 @@ class BookingServiceRepository extends BaseRepository {
                        a.cliente_id
                 FROM agendamento_servico s
                 INNER JOIN servico sv ON s.servico_id = sv.id
-                INNER JOIN categoria_profissional cat ON sv.categoria_id = cat.id
+                INNER JOIN categoria_servico cat ON sv.categoria_id = cat.id
                 INNER JOIN agendamento a ON s.agendamento_id = a.id
                 LEFT JOIN agendamento_pessoa p ON s.agendamento_pessoa_id = p.id
                 WHERE s.estado_aceitacao = 'pendente'
@@ -177,14 +177,15 @@ class BookingServiceRepository extends BaseRepository {
         $sql = "SELECT s.id, s.agendamento_id, s.agendamento_pessoa_id, s.servico_id,
                        s.funcionario_id, s.preco_praticado, s.duracao_minutos, s.estado_aceitacao,
                        s.aceito_em, s.percentagem_funcionario_aplicada,
-                       s.valor_recibo_verde_funcionario, s.valor_recibo_verde_plataforma,
+                       ROUND(s.preco_praticado * s.percentagem_funcionario_aplicada / 100, 2) AS valor_recibo_verde_funcionario,
+                       ROUND(s.preco_praticado - ROUND(s.preco_praticado * s.percentagem_funcionario_aplicada / 100, 2), 2) AS valor_recibo_verde_plataforma,
                        sv.nome AS servico_nome, sv.categoria_id, cat.nome AS categoria_nome,
                        p.nome_pessoa,
                        a.data_hora_pretendida, a.local_prestacao, a.estado_reserva,
                        a.cliente_id, u.nome AS cliente_nome
                 FROM agendamento_servico s
                 INNER JOIN servico sv ON s.servico_id = sv.id
-                INNER JOIN categoria_profissional cat ON sv.categoria_id = cat.id
+                INNER JOIN categoria_servico cat ON sv.categoria_id = cat.id
                 INNER JOIN agendamento a ON s.agendamento_id = a.id
                 INNER JOIN cliente c ON a.cliente_id = c.id
                 INNER JOIN utilizador u ON c.id = u.id
@@ -256,7 +257,7 @@ class BookingServiceRepository extends BaseRepository {
                        cm.cidade_id, cid.nome AS cidade_nome
                 FROM agendamento_servico s
                 INNER JOIN servico sv ON s.servico_id = sv.id
-                INNER JOIN categoria_profissional cat ON sv.categoria_id = cat.id
+                INNER JOIN categoria_servico cat ON sv.categoria_id = cat.id
                 INNER JOIN agendamento a ON s.agendamento_id = a.id
                 INNER JOIN cliente c ON a.cliente_id = c.id
                 INNER JOIN utilizador u ON c.id = u.id

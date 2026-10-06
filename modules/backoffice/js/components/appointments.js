@@ -198,7 +198,7 @@ const boAppointments = (() => {
                 <span class="d-block small text-muted">${generalUtils.formatDateTime(execution.startedAt)}</span>`)
             : "";
 
-        const canExecute = ["totalmente_aceite_funcionarios", "confirmado", "pendente_validacao_logistica_loja"].includes(booking.status) && !execution;
+        const canExecute = ["totalmente_alocado", "confirmado", "pendente_validacao_logistica_loja"].includes(booking.status) && !execution;
 
         return `
             <div class="row g-4">

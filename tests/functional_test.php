@@ -64,7 +64,7 @@ $conn->exec("DELETE FROM cliente_morada WHERE cliente_id = " . (int)$customerId 
 $conn->exec("DELETE FROM rota_ambulante");
 $conn->exec("DELETE FROM alerta_fiscal");
 $conn->exec("DELETE FROM obrigacao_fiscal");
-$conn->exec("DELETE FROM config_recibo_verde WHERE id > 1");
+$conn->exec("DELETE FROM config_percentagem_padrao WHERE id > 2");
 
 // ---------------------------------------------------------------------------
 section("1. Catálogo de serviços");
@@ -117,7 +117,7 @@ $ambResult = $bookingService->createAmbulatoryBooking($customerId, [
 ]);
 check("agendamento ambulatório criado", !empty($ambResult["bookingId"]), json_encode($ambResult));
 $ambBooking = (new BookingRepository())->find((int)$ambResult["bookingId"]);
-check("estado = pendente_aceitacao_funcionarios", ($ambBooking["status"] ?? "") === "pendente_aceitacao_funcionarios", $ambBooking["status"] ?? "null");
+check("estado = pendente_alocacao", ($ambBooking["status"] ?? "") === "pendente_alocacao", $ambBooking["status"] ?? "null");
 check("valor reflete pessoas (3 serviços)", abs((float)($ambBooking["totalAmount"] ?? 0) - (4.07 + 4.07 + 8.13)) < 0.01, (string)($ambBooking["totalAmount"] ?? "null"));
 
 $badOtp = null;
@@ -304,7 +304,7 @@ check("agendamento para aceitacao criado", $acceptBookingId > 0, json_encode($ac
 $pendingList = $acceptanceService->listPendingServices(["data" => $acceptDate]);
 check("fase 3: lista de pendentes tem 2 servicos", count($pendingList["services"]) === 2, (string)count($pendingList["services"]));
 check("fase 3: categorias como filtros visuais", count($pendingList["categories"]) === 3, (string)count($pendingList["categories"]));
-check("fase 3: config de recibos verdes em vigor", isset($pendingList["config"]["employeePercentage"]), json_encode($pendingList["config"]));
+check("fase 3: config de percentagens em vigor", isset($pendingList["config"]["configs"]), json_encode($pendingList["config"]));
 
 $firstServiceId  = (int)$pendingList["services"][0]["id"];
 $secondServiceId = (int)$pendingList["services"][1]["id"];
@@ -312,7 +312,7 @@ $secondServiceId = (int)$pendingList["services"][1]["id"];
 $accept1 = $acceptanceService->acceptService($employeeId, $firstServiceId, $acceptBookingId);
 check("fase 3: 1o servico aceite (nao consolida)", ($accept1["consolidated"] ?? true) === false, json_encode($accept1));
 check("fase 3: recibo verde simulado devolvido", isset($accept1["greenReceipt"]["employeeValue"], $accept1["greenReceipt"]["platformValue"]), json_encode($accept1["greenReceipt"] ?? null));
-check("fase 3: agendamento ainda NAO consolidado", ($bookingRepository->find($acceptBookingId)["status"] ?? "") === "pendente_aceitacao_funcionarios");
+check("fase 3: agendamento ainda NAO consolidado", ($bookingRepository->find($acceptBookingId)["status"] ?? "") === "pendente_alocacao");
 
 $acceptanceService->unacceptService($employeeId, $firstServiceId, $acceptBookingId);
 check("fase 3: desfazer funciona antes da consolidacao", ($bookingServiceRepo->findById($firstServiceId)["acceptanceStatus"] ?? "") === "pendente");
@@ -320,7 +320,7 @@ check("fase 3: desfazer funciona antes da consolidacao", ($bookingServiceRepo->f
 $acceptanceService->acceptService($employeeId, $firstServiceId, $acceptBookingId);
 $accept2 = $acceptanceService->acceptService($employeeId, $secondServiceId, $acceptBookingId);
 check("fase 3: ultimo servico consolidou", ($accept2["consolidated"] ?? false) === true, json_encode($accept2));
-check("fase 3: estado = totalmente_aceite_funcionarios", ($bookingRepository->find($acceptBookingId)["status"] ?? "") === "totalmente_aceite_funcionarios");
+check("fase 3: estado = totalmente_alocado", ($bookingRepository->find($acceptBookingId)["status"] ?? "") === "totalmente_alocado");
 
 $blockedUnaccept = null;
 try { $acceptanceService->unacceptService($employeeId, $firstServiceId, $acceptBookingId); } catch (Exception $e) { $blockedUnaccept = $e->getMessage(); }
@@ -334,8 +334,8 @@ $simulation = $greenReceiptService->simulate(100.0);
 check("fase 3: simulador 100 EUR -> 70/30", $simulation["employeeValue"] === 70.0 && $simulation["platformValue"] === 30.0, json_encode($simulation));
 
 $badConfig = null;
-try { $greenReceiptService->createConfig(["employeePercentage" => 80, "platformPercentage" => 30, "effectiveFrom" => date("Y-m-d")]); } catch (Exception $e) { $badConfig = $e->getMessage(); }
-check("fase 3: config com soma != 100 rejeitada (422)", $badConfig !== null, "sem erro");
+try { $greenReceiptService->createConfig(["contractType" => "recibo_verde", "commissionPercentage" => 110, "effectiveFrom" => date("Y-m-d")]); } catch (Exception $e) { $badConfig = $e->getMessage(); }
+check("fase 3: percentagem fora de 0-100 rejeitada (422)", $badConfig !== null, "sem erro");
 
 $storeService = $bookingService->createStoreBooking($customerId, ["serviceIds" => [30], "date" => $date, "time" => "17:00"]);
 $storeServiceId = (int)$bookingServiceRepo->findByBooking((int)$storeService["bookingId"])[0]["id"];
@@ -469,7 +469,7 @@ $employeeRepository = new EmployeeRepository();
 check("EmployeeRepository sem createCategory", !method_exists($employeeRepository, "createCategory"));
 check("EmployeeRepository sem deleteCategories", !method_exists($employeeRepository, "deleteCategories"));
 
-// 3. O filtro visual de categorias continua a usar categoria_profissional completa
+// 3. O filtro visual de categorias continua a usar categoria_servico completa
 $pendingListing = (new ServiceAcceptanceService())->listPendingServices();
 check("filtro de categorias continua alimentado (3 categorias)", count($pendingListing["categories"] ?? []) === 3, (string)count($pendingListing["categories"] ?? []));
 check("listagem de pendentes continua a devolver 'services'", isset($pendingListing["services"]), json_encode(array_keys($pendingListing)));

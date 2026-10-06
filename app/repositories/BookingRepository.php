@@ -64,7 +64,7 @@ class BookingRepository extends BaseRepository {
     public function countByDateWindow(string $dateTimeStart, int $durationMinutes, string $local, array $excludeIds = []): int {
         $sql = "SELECT COUNT(*) FROM agendamento
                 WHERE local_prestacao = :local
-                  AND estado_reserva IN ('pendente_validacao_logistica_loja','totalmente_aceite_funcionarios','confirmado')
+                  AND estado_reserva IN ('pendente_validacao_logistica_loja','totalmente_alocado','confirmado')
                   AND data_hora_pretendida < :fim
                   AND DATE_ADD(data_hora_pretendida, INTERVAL :duracao MINUTE) > :inicio";
         $params = [
@@ -189,13 +189,13 @@ class BookingRepository extends BaseRepository {
      * Agrupa os agendamentos de ambulatório por data + cidade.
      *
      * RN-31 (§24.7): a rota só agrega agendamentos com **todos** os serviços aceites
-     * (`totalmente_aceite_funcionarios`). Os que aguardam aceitação **não** entram na
+     * (`totalmente_alocado`). Os que aguardam aceitação **não** entram na
      * agregação — aparecem apenas como aviso na listagem (não se agrega o que não
      * está qualificado).
      */
     public function findAmbulatoryGroups(?string $date = null, ?int $cityId = null, array $states = []): array {
         if (empty($states)) {
-            $states = ["totalmente_aceite_funcionarios"];
+            $states = ["totalmente_alocado"];
         }
 
         $placeholders = [];
@@ -211,7 +211,7 @@ class BookingRepository extends BaseRepository {
                        cid.distrito,
                        SUM(a.valor_total) AS receita_prevista,
                        COUNT(a.id) AS total_agendamentos,
-                       SUM(a.estado_reserva = 'totalmente_aceite_funcionarios') AS total_consolidados,
+                       SUM(a.estado_reserva = 'totalmente_alocado') AS total_consolidados,
                        GROUP_CONCAT(a.id) AS agendamentos_ids
                 FROM agendamento a
                 INNER JOIN cliente_morada cm ON a.cliente_morada_id = cm.id
@@ -258,7 +258,7 @@ class BookingRepository extends BaseRepository {
      * Agendamentos de ambulatório de uma cidade+data em condições de receber a
      * decisão MANUAL do gestor (Fase 4 — sem limiar automático).
      *
-     * RN-31 (§24.7): só os **qualificados** (`totalmente_aceite_funcionarios`), ou
+     * RN-31 (§24.7): só os **qualificados** (`totalmente_alocado`), ou
      * seja com todos os serviços aceites. Um grupo com serviços pendentes é
      * recusado com 409 por `RotaService::decideRoute` (ver `countPendingByCityAndDate`).
      */
@@ -269,7 +269,7 @@ class BookingRepository extends BaseRepository {
                 WHERE a.local_prestacao = 'carrinha_ambulante'
                   AND cm.cidade_id = :cidade_id
                   AND DATE(a.data_hora_pretendida) = :data_rota
-                  AND a.estado_reserva = 'totalmente_aceite_funcionarios'
+                  AND a.estado_reserva = 'totalmente_alocado'
                 ORDER BY a.id ASC";
 
         return $this->fetchAllRaw($sql, ["cidade_id" => $cityId, "data_rota" => $date]);
@@ -286,7 +286,7 @@ class BookingRepository extends BaseRepository {
                 WHERE a.local_prestacao = 'carrinha_ambulante'
                   AND cm.cidade_id = :cidade_id
                   AND DATE(a.data_hora_pretendida) = :data_rota
-                  AND a.estado_reserva = 'pendente_aceitacao_funcionarios'";
+                  AND a.estado_reserva = 'pendente_alocacao'";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute(["cidade_id" => $cityId, "data_rota" => $date]);
@@ -302,7 +302,7 @@ class BookingRepository extends BaseRepository {
      */
     public function findAmbulatoryBookingsByCityAndDate(string $date, int $cityId, array $states = []): array {
         if (empty($states)) {
-            $states = ["totalmente_aceite_funcionarios"];
+            $states = ["totalmente_alocado"];
         }
 
         $placeholders = [];
