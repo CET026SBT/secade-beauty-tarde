@@ -142,10 +142,50 @@ foreach (["services", "address", "otp", "datetime", "policy", "summary"] as $ste
     check("/agendamentos responde 200", $appointmentsPage["status"] === 200, (string)$appointmentsPage["status"]);
     check("/agendamentos carrega componente JS", str_contains($appointmentsPage["body"], "components/appointments.js"));
 
-    // Área Cliente (F9): as três secções existem na mesma página.
+    // Área Cliente (F9): as três secções têm de estar **dentro** de `.tab-content`.
+    //
+    // Regressão: o Bootstrap 5 só esconde `.tab-content > .tab-pane` (seletor de
+    // filho direto). Se uma pane sair do contentor, fica **sempre visível** — foi o
+    // defeito encontrado (as três abas todas à mostra e o layout desfigurado).
+    $sliceDiv = function (string $html, string $needle): ?string {
+        $start = strpos($html, $needle);
+        if ($start === false) {
+            return null;
+        }
+
+        if (!preg_match_all('/<div\b[^>]*>|<\/div>/', substr($html, $start), $tags, PREG_OFFSET_CAPTURE)) {
+            return null;
+        }
+
+        $depth = 0;
+
+        foreach ($tags[0] as [$tag, $offset]) {
+            $depth += str_starts_with($tag, "</") ? -1 : 1;
+
+            if ($depth === 0) {
+                return substr($html, $start, $offset + strlen($tag));
+            }
+        }
+
+        return null;
+    };
+
+    $tabContent = $sliceDiv($profilePage["body"], '<div class="tab-content">');
+    check("/area-cliente tem um `.tab-content`", $tabContent !== null);
+
     foreach (["sectionPerfil", "sectionAgendamentos", "sectionLembretes"] as $section) {
-        check("/area-cliente tem a secção '{$section}'", str_contains($profilePage["body"], $section), "");
+        check(
+            "'{$section}' é filha direta de .tab-content",
+            $tabContent !== null && str_contains($tabContent, 'id="' . $section . '"'),
+            ""
+        );
     }
+
+    check(
+        "só uma pane está ativa (as restantes ficam escondidas)",
+        $tabContent !== null && substr_count($tabContent, "show active") === 1,
+        "show active x" . substr_count($tabContent ?? "", "show active")
+    );
 
     $customerAlerts = request("{$base}/api?action=customer-alerts-list", "GET", null, $clientJar);
     check("customer-alerts-list responde ao cliente", $customerAlerts["status"] === 200, (string)$customerAlerts["status"]);

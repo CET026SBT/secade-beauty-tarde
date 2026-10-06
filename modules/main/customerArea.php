@@ -48,7 +48,7 @@ include_once ROOT_PATH . "/modules/main/includes/navbar.php";
 ?>
 
 <main>
-    <div class="container-fluid bg-light page-header py-5 mb-5">
+    <div class="container-fluid bg-light page-header py-5">
         <div class="container text-center py-4">
             <h1 class="display-4 animated slideInDown mb-3">Área Cliente</h1>
             <nav aria-label="breadcrumb">
@@ -82,7 +82,7 @@ include_once ROOT_PATH . "/modules/main/includes/navbar.php";
                 </button>
             </li>
         </ul>
-    <div class="tab-content">
+        <div class="tab-content">
             <!-- PERFIL -->
             <div class="tab-pane fade show active" id="sectionPerfil" role="tabpanel">
                 <div class="row g-4">
@@ -152,7 +152,6 @@ include_once ROOT_PATH . "/modules/main/includes/navbar.php";
                     </div>
                 </div>
             </div>
-        </div>
 
             <!-- AGENDAMENTOS -->
             <div class="tab-pane fade" id="sectionAgendamentos" role="tabpanel">
@@ -166,10 +165,6 @@ include_once ROOT_PATH . "/modules/main/includes/navbar.php";
                     <div class="card-body" id="appointmentsPage">
                         <div class="d-flex flex-wrap gap-2 mb-4">
                             <button type="button" class="btn btn-sm btn-outline-primary appt-filter active" data-status="">Todos</button>
-                            <button type="button" class="btn btn-sm btn-outline-primary appt-filter" data-status="pendente_alocacao">Pendentes</button>
-                            <button type="button" class="btn btn-sm btn-outline-primary appt-filter" data-status="confirmado">Confirmados</button>
-                            <button type="button" class="btn btn-sm btn-outline-primary appt-filter" data-status="cancelado">Cancelados</button>
-                        </div>
                             <button type="button" class="btn btn-sm btn-outline-primary appt-filter" data-status="pendente_alocacao">Pendentes</button>
                             <button type="button" class="btn btn-sm btn-outline-primary appt-filter" data-status="confirmado">Confirmados</button>
                             <button type="button" class="btn btn-sm btn-outline-primary appt-filter" data-status="cancelado">Cancelados</button>
