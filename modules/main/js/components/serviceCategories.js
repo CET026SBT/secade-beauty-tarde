@@ -18,12 +18,14 @@ const serviceCategories = (() => {
                     const delay = `${(i * 2 + 1) / 10}s`;
                     const slugifiedName = generalUtils.slugify(category.name).toLowerCase();
                     const iconPath = `${BASE_URL ?? ''}/modules/common/img/${generalUtils.escapeHtml(slugifiedName)}.png`;
+                    // §3.4.1: o botão leva ao CATÁLOGO já filtrado por esta categoria.
+                    const catalogUrl = `${BASE_URL ?? ''}/servicos/${encodeURIComponent(slugifiedName)}`;
                     $content = $content.add(`<div class="col-md-4">
                             <div class="service-item h-100 p-4 border-bottom border-end wow fadeIn" data-wow-delay="${delay}">
                                 <img class="img-fluid" src="${iconPath}" alt="${generalUtils.escapeHtml(category.name)}">
                                 <h3 class="mb-3">${generalUtils.escapeHtml(category.name)}</h3>
                                 <p class="mb-3">${generalUtils.escapeHtml(category.description)}</p>
-                                <a class="btn btn-sm btn-primary extended-border text-uppercase" href="${BASE_URL ?? ''}/agendar">agendar <i class="bi bi-arrow-right"></i></a>
+                                <a class="btn btn-sm btn-primary extended-border text-uppercase" href="${catalogUrl}">ver serviços <i class="bi bi-arrow-right"></i></a>
                             </div>
                         </div>`);
                 });

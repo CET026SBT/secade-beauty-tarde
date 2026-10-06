@@ -29,6 +29,13 @@ const login = (() => {
         }
     });
 
+    // Enter submete (o `Form` não liga ao evento `submit`; o botão passou a
+    // `type="submit"` e o formulário tem de o encaminhar para o handler).
+    $('#loginForm').on('submit', function (event) {
+        event.preventDefault();
+        form.submit();
+    });
+
     return { form, homeUrlFor };
 })();
 

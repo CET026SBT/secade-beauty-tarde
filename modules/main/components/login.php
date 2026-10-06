@@ -18,7 +18,7 @@ register_script("components/login", "main");
                     <div class="text-muted small px-lg-3">Bem-vindo de volta! Aceda à sua conta.</div>
                 </div>
 
-                <form id="loginForm">
+                <form id="loginForm" onsubmit="event.preventDefault()">
                     <div class="row g-4 mb-4">
                         <div class="col-12">
                             <div class="form-floating">
@@ -49,7 +49,7 @@ register_script("components/login", "main");
                         -->
                     </div>
 
-                    <button type="button" class="btn btn-primary extended-border w-100 py-2 m-0 fw-bold text-uppercase" onclick="login.form.submit()">Entrar</button>
+                    <button type="submit" class="btn btn-primary extended-border w-100 py-2 m-0 fw-bold text-uppercase">Entrar</button>
                 </form>
 
                 <div class="text-center mt-4">

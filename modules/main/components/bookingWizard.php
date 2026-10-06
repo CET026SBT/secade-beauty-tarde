@@ -239,7 +239,7 @@ $bookingUserName = Session::user()["name"] ?? "";
                                                 <label>Data pretendida*</label>
                                                 <div class="invalid-feedback"></div>
                                             </div>
-                                            <div class="alert alert-light border small mb-0">
+                                            <div class="alert alert-light border small mb-0 d-none" id="channelScheduleNote">
                                                 <i class="bi bi-info-circle me-1"></i> Atendimento de Terça a Sábado, das 09:00 às 19:00.
                                             </div>
                                         </div>

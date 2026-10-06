@@ -7,7 +7,7 @@ Session::requireProfile(["cliente"]);
 register_script("components/appointments", "main");
 
 $user = Session::user();
-$currentPage = "appointments";
+$currentPage = "agendamentos";
 
 include_once ROOT_PATH . "/modules/main/includes/header.php";
 include_once ROOT_PATH . "/modules/main/includes/navbar.php";
