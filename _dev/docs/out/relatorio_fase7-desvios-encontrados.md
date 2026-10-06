@@ -271,3 +271,47 @@ menos do que nada: dá falsa segurança.
 git show fase7-completa-2026-10-06:<caminho>         # um ficheiro
 git diff ec17fe9 fase7-completa-2026-10-06 -- <dir>   # uma área
 ```
+---
+
+## 9. Verificação após a reversão
+
+| Verificação                                                            | Resultado                                                                                    |
+| :--------------------------------------------------------------------- | :------------------------------------------------------------------------------------------- |
+| `main` · `dev` (local e remoto)                                        | `ec17fe9` — os três iguais                                                                   |
+| `MaintenanceService.php`, `customerArea.php`, `EmployeeController.php` | **ausentes** (só existiam na Fase 7)                                                         |
+| `DataBase.sql`                                                         | enum com `pendente_aceitacao_funcionarios`/`totalmente_aceite_funcionarios` · **25 tabelas** |
+| BD local                                                               | reimportada do dump pré-Fase 7: 25 tabelas, 3 obrigações, 3 alertas                          |
+| `functional_test`                                                      | **153 pass, 0 fail** (era 202 — a diferença são os testes que a Fase 7 acrescentou)          |
+| `asset_test`                                                           | 98 pass, 0 fail                                                                              |
+| `js_syntax_check`                                                      | OK                                                                                           |
+| `http_test`                                                            | 178 pass, **1 fail** — ver §9.1                                                              |
+
+### 9.1 A falha do `http_test` **não** vem da reversão
+
+`alertas progressivos gerados (3 dias)` falha porque **o CLI e o Apache discordam num dia
+inteiro** neste ambiente:
+
+| Processo                                                | Data observada                       |
+| :------------------------------------------------------ | :----------------------------------- |
+| PHP CLI (`date("+3 day")`)                              | `2026-10-09` → o CLI pensa **06/10** |
+| Apache (`admin-fiscal-calendar-list` → `summary.today`) | `2026-10-07`                         |
+| MySQL (`NOW()`, medido no mesmo instante)               | `00:45` contra `23:46` do CLI        |
+
+O teste calcula o prazo **no CLI** e o servidor avalia-o com a **sua** data: `daysLeft = 2`, pelo
+que o alerta `3_dias` nunca é gerado. Reproduzido à mão, o mesmo fluxo **funciona** quando os dois
+processos usam a mesma data (testado por CLI e por HTTP).
+
+É uma dependência de data do **ambiente** — o teste está acoplado ao `date()` de dois processos
+diferentes. Não é defeito da Fase 7 nem da reversão; já existia em `ec17fe9`.
+
+---
+
+## 10. Nota sobre a `agent-workspace`
+
+Esta branch **não** foi revertida: continua com as decisões (D-01…D-26), o plano, os utilitários e
+este relatório. A especificação (`_dev/docs/spec/*`) ainda **descreve a Fase 7** — incluindo as
+três afirmações falsas de §4. Antes de recomeçar, convém decidir um de dois caminhos:
+
+1. **Reverter também a especificação** para o estado pré-Fase 7 (perde-se o registo das decisões); ou
+2. **Manter a especificação** e corrigir as afirmações falsas, usando-a como base do recomeço
+   (recomendado — é onde está o valor do trabalho de análise).
