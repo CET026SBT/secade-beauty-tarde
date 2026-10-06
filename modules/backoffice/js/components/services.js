@@ -3,20 +3,51 @@ const boServices = (() => {
         pending: [],
         accepted: [],
         categories: [],
+        employees: [],
         totals: { employee: 0, platform: 0, count: 0 },
         config: null
     };
 
+    const IS_MANAGER = Boolean(window.BO_IS_MANAGER);
+
     function money(value) { return generalUtils.formatCurrency(value); }
 
+    /** Opções do seletor de alocação; desativa quem está ocupado noutra cidade (R-ALOC). */
+    function employeeOptions(service) {
+        const busy = (service.busyEmployeeIds || []).map(Number);
+
+        if (state.employees.length === 0) {
+            return `<option value="">Sem funcionários ativos</option>`;
+        }
+
+        return state.employees.map((employee) => {
+            const isBusy = busy.includes(Number(employee.id));
+            return `<option value="${employee.id}" ${isBusy ? "disabled" : ""}>
+                ${generalUtils.escapeHtml(employee.name)}${isBusy ? " (noutra cidade)" : ""}
+            </option>`;
+        }).join("");
+    }
+
     function pendingCard(service) {
-        // A API devolve as chaves já mapeadas (camelCase) — ver BookingServiceMapper.
-        const person = service.personName ? ` <span class="badge bg-light text-dark">${generalUtils.escapeHtml(service.personName)}</span>` : "";
+        // F4: o gestor ALOCA (escolhe o funcionário); o funcionário ACEITA o serviço.
+        const action = IS_MANAGER
+            ? `<div class="d-flex flex-wrap gap-2 align-items-center">
+                   <select class="form-select form-select-sm w-auto" data-employee-select="${service.id}">
+                       ${employeeOptions(service)}
+                   </select>
+                   <button type="button" class="btn btn-sm btn-primary extended-border"
+                           data-allocate="${service.id}" data-booking="${service.bookingId}">
+                       <i class="bi bi-person-plus me-1"></i> Alocar
+                   </button>
+               </div>`
+            : `<button type="button" class="btn btn-sm btn-success" data-accept="${service.id}" data-booking="${service.bookingId}">
+                   <i class="bi bi-hand-thumbs-up me-1"></i> Aceitar serviço
+               </button>`;
 
         return `<div class="border rounded p-3 mb-3">
             <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
                 <div>
-                    <span class="fw-bold">${generalUtils.escapeHtml(service.serviceName || "")}</span>${person}
+                    <span class="fw-bold">${generalUtils.escapeHtml(service.serviceName || "")}</span>
                     <div class="small text-muted">
                         <i class="bi bi-tag me-1"></i>${generalUtils.escapeHtml(service.categoryName || "")}
                         · ${generalUtils.formatDateTime(service.dateTime)}
@@ -29,33 +60,38 @@ const boServices = (() => {
                     <i class="bi bi-person-badge me-1"></i>Agendamento #${service.bookingId}
                     · ${generalUtils.formatDuration(service.durationMinutes)}
                 </span>
-                <button type="button" class="btn btn-sm btn-success"
-                        data-accept="${service.id}" data-booking="${service.bookingId}">
-                    <i class="bi bi-hand-thumbs-up me-1"></i> Aceitar serviço
-                </button>
+                ${action}
             </div>
         </div>`;
     }
 
     function acceptedCard(service) {
-        const person = service.personName ? ` <span class="badge bg-light text-dark">${generalUtils.escapeHtml(service.personName)}</span>` : "";
+        // F4: o gestor vê quem ficou alocado; o funcionário vê só a sua linha.
+        const employee = !IS_MANAGER || !service.employeeName
+            ? ""
+            : `<div class="small text-muted"><i class="bi bi-person-check me-1"></i>${generalUtils.escapeHtml(service.employeeName)}</div>`;
+
+        const tag = IS_MANAGER
+            ? '<span class="badge bg-primary">Alocado</span>'
+            : '<span class="badge bg-success">Aceite</span>';
 
         return `<div class="border rounded p-3 mb-3">
             <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
                 <div>
-                    <span class="fw-bold">${generalUtils.escapeHtml(service.serviceName || "")}</span>${person}
+                    <span class="fw-bold">${generalUtils.escapeHtml(service.serviceName || "")}</span>
                     <div class="small text-muted">${generalUtils.formatDateTime(service.dateTime)}
                         · ${generalUtils.escapeHtml(service.customerName || "")}</div>
+                    ${employee}
                 </div>
-                <span class="badge bg-success">Aceite</span>
+                ${tag}
             </div>
             <div class="row g-2 small mb-2">
                 <div class="col-6">
-                    <span class="text-muted d-block">A receber (${service.employeePercentage ?? "-"}%)</span>
+                    <span class="text-muted d-block">Funcionário (${service.employeePercentage ?? "-"}%)</span>
                     <span class="fw-bold text-success">${money(service.greenReceiptEmployee)}</span>
                 </div>
                 <div class="col-6">
-                    <span class="text-muted d-block">Plataforma</span>
+                    <span class="text-muted d-block">Empresa</span>
                     <span class="fw-bold">${money(service.greenReceiptPlatform)}</span>
                 </div>
             </div>
@@ -87,12 +123,12 @@ const boServices = (() => {
         $list.empty();
 
         $("#acceptedTotals").text(
-            `${state.totals.count} aceite(s) · ${money(state.totals.employee)} a receber`
+            `${state.totals.count} ${IS_MANAGER ? "alocado(s)" : "aceite(s)"} · ${money(state.totals.employee)} ${IS_MANAGER ? "a pagar" : "a receber"}`
         );
 
         if (state.accepted.length === 0) {
             $list.html(`<div class="text-center text-muted py-4">
-                <i class="bi bi-inbox fs-3 d-block mb-2"></i>Ainda não aceitou serviços.
+                <i class="bi bi-inbox fs-3 d-block mb-2"></i>${IS_MANAGER ? "Ainda não há serviços alocados." : "Ainda não aceitou serviços."}
             </div>`);
             return;
         }
@@ -102,10 +138,11 @@ const boServices = (() => {
 
     function renderGreenReceiptInfo() {
         const config = state.config || {};
-        const percentage = config.employeePercentage ?? 70;
-        const platform = config.platformPercentage ?? 30;
+        const configs = Array.isArray(config.configs) ? config.configs : [];
+        const recibo = configs.find(c => c.contractType === "recibo_verde");
+        const percentage = recibo?.commissionPercentage ?? config.reciboVerde ?? 70;
 
-        $("#greenReceiptInfo").text(`Simulador de recibos verdes: ${percentage}% / ${platform}%`);
+        $("#greenReceiptInfo").text(`Repartição do serviço: ${percentage}% funcionário · ${Math.round((100 - percentage) * 100) / 100}% empresa`);
     }
 
     function fillCategories() {
@@ -132,6 +169,7 @@ const boServices = (() => {
 
             state.pending = response?.services || [];
             state.categories = response?.categories || [];
+            state.employees = response?.employees || state.employees;
             state.config = response?.config || state.config;
 
             if ($("#pendingCategory option").length <= 1) fillCategories();
@@ -172,37 +210,49 @@ const boServices = (() => {
         setTimeout(() => $("#servicesSuccess").addClass("d-none"), 6000);
     }
 
-    async function acceptService(bookingServiceId, bookingId) {
+    async function acceptService(bookingServiceId, bookingId, employeeId = null) {
         $("#servicesError, #servicesSuccess").addClass("d-none");
 
-        const promise = API.admin.services.accept(Number(bookingServiceId), Number(bookingId));
+        const promise = API.admin.services.accept(Number(bookingServiceId), Number(bookingId), employeeId ? Number(employeeId) : null);
         const preloader = $("#pendingList").preloader(".jq-overlay-process", promise);
 
         try {
             const response = await promise;
 
             const simulation = response?.greenReceipt;
-            let message = response?.message || "Serviço aceite.";
+            let message = response?.message || (IS_MANAGER ? "Serviço alocado." : "Serviço aceite.");
 
             if (simulation) {
-                message += ` Recibo verde simulado: ${money(simulation.employeeValue)} para si e ${money(simulation.platformValue)} para a plataforma.`;
+                message += ` Repartição: ${money(simulation.employeeValue)} para o funcionário e ${money(simulation.platformValue)} para a empresa.`;
             }
             if (response?.consolidated) {
-                message += " Agendamento TOTALMENTE ACEITE (janela temporal bloqueada).";
+                message += " Agendamento TOTALMENTE ALOCADO (pronto para a rota).";
             }
 
             showSuccess(message);
 
             await Promise.all([loadPending(), loadAccepted()]);
         } catch (error) {
-            showError(error?.responseJSON?.message || "Não foi possível aceitar o serviço.");
+            showError(error?.responseJSON?.message || "Não foi possível alocar o serviço.");
         } finally {
             await preloader;
         }
     }
 
+    /** F4: o gestor escolhe o funcionário no seletor e aloca. */
+    async function allocateService(bookingServiceId, bookingId) {
+        const employeeId = $(`[data-employee-select="${bookingServiceId}"]`).val();
+
+        if (!employeeId) {
+            showError("Escolha o funcionário a alocar.");
+            return;
+        }
+
+        await acceptService(bookingServiceId, bookingId, employeeId);
+    }
+
     async function unacceptService(bookingServiceId, bookingId) {
-        if (!confirm("Desfazer a aceitação deste serviço?")) return;
+        if (!await generalUtils.confirmDialog({ text: "Desfazer a aceitação deste serviço?" })) return;
 
         $("#servicesError, #servicesSuccess").addClass("d-none");
 
@@ -226,6 +276,10 @@ const boServices = (() => {
             acceptService($(this).data("accept"), $(this).data("booking"));
         });
 
+        $(document).on("click", "[data-allocate]", function () {
+            allocateService($(this).data("allocate"), $(this).data("booking"));
+        });
+
         $(document).on("click", "[data-unaccept]", function () {
             unacceptService($(this).data("unaccept"), $(this).data("booking"));
         });
@@ -242,5 +296,5 @@ const boServices = (() => {
         loadAccepted();
     });
 
-    return { state, loadPending, loadAccepted, acceptService, unacceptService };
+    return { state, loadPending, loadAccepted, acceptService, allocateService, unacceptService };
 })();

@@ -10,7 +10,7 @@ class ServiceRepository extends BaseRepository {
     public function find(?int $id=null): mixed {
         $sql = "SELECT s.*, c.nome AS categoria_nome 
                 FROM servico s 
-                LEFT JOIN categoria_profissional c ON s.categoria_id = c.id
+                LEFT JOIN categoria_servico c ON s.categoria_id = c.id
                 WHERE 1=1";
         $params = [];
 
@@ -27,7 +27,7 @@ class ServiceRepository extends BaseRepository {
     public function search(array $filters=[]): array {
         $sql = "SELECT s.*, c.nome AS categoria_nome 
                 FROM servico s 
-                LEFT JOIN categoria_profissional c ON s.categoria_id = c.id 
+                LEFT JOIN categoria_servico c ON s.categoria_id = c.id 
                 WHERE 1=1";
         $params = [];
 
@@ -68,9 +68,14 @@ class ServiceRepository extends BaseRepository {
             }
 
             public function findActive(?int $categoryId = null): array {
-        $sql = "SELECT s.*, c.nome AS categoria_nome
+        $sql = "SELECT s.*, c.nome AS categoria_nome,
+                       (SELECT sf.url_foto
+                        FROM servico_foto sf
+                        WHERE sf.servico_id = s.id
+                        ORDER BY sf.destaque DESC, sf.ordem_exibicao ASC, sf.id ASC
+                        LIMIT 1) AS foto_destaque_url
                 FROM servico s
-                LEFT JOIN categoria_profissional c ON s.categoria_id = c.id
+                LEFT JOIN categoria_servico c ON s.categoria_id = c.id
                 WHERE s.ativo = 1";
         $params = [];
 

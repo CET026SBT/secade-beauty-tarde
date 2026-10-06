@@ -48,4 +48,13 @@ class BookingController extends BaseController {
 
         return $this->bookingService->cancelCustomerBooking(Session::userId(), $bookingId);
     }
+
+    /**
+     * F9b (C-06 · §4.5): o cliente reprograma o seu agendamento — serviços/pessoas,
+     * morada (carrinha) e data/hora. O canal é imutável e o OTP saiu do fluxo (D-04).
+     */
+    public function updateBooking(): array {
+        Session::requireProfileApi(["cliente"]);
+        return $this->bookingService->updateCustomerBooking(Session::userId(), $this->getRequestData());
+    }
 }

@@ -41,9 +41,35 @@ class CustomerService extends BaseService {
             "email"         => $user["email"],
             "phone"         => $user["phone"],
             "nif"           => $user["nif"] ?? null,
+            "photo"         => $user["photo"] ?? null,
             "profileType"   => $user["profileType"],
             "addresses"     => $addressesData["addresses"] ?? []
         ];
+    }
+
+    /**
+     * Edição dos dados de contacto do próprio cliente (Área Cliente · F9).
+     *
+     * Só se edita o que é do cliente: nome, telemóvel e NIF. O **e-mail** é a
+     * identidade de sessão e a palavra-passe tem fluxo próprio — não se mexem aqui.
+     */
+    public function updateProfile(int $userId, array $data): array {
+        return $this->executeTransactional(function() use ($userId, $data) {
+            $user = $this->userService->find($userId);
+            if (!$user || ($user["profileType"] ?? "") !== "cliente") {
+                throw new Exception("Perfil não encontrado.", 404);
+            }
+
+            $this->validate($data, function($v) use ($data) {
+                $v  ->required("name", "O nome completo é obrigatório.")
+                    ->required("phone", "O número de telemóvel é obrigatório.")
+                    ->phone("phone", "Insira um número de telemóvel válido.");
+            });
+
+            $this->userService->updateContactDetails($userId, $data);
+
+            return ["id" => $userId, "message" => "Dados atualizados com sucesso."];
+        });
     }
 
     public function createCustomer(array $data): array {

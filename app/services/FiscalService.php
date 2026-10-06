@@ -188,8 +188,13 @@ class FiscalService extends BaseService {
     /**
      * Cria os alertas em falta para as obrigações pendentes. Idempotente
      * graças à chave única (obrigacao, tipo_alerta, data_alerta).
+     *
+     * F6 (§9.3): passa a **público** — o `MaintenanceService` também o invoca,
+     * para que os alertas existam mesmo quando ninguém abre o calendário.
      */
-    private function generateAlerts(string $today): void {
+    public function generateAlerts(?string $today = null): int {
+        $today = $today ?? date("Y-m-d");
+        $created = 0;
         $obligations = $this->obligationRepository->find(null, ["status" => "pendente"]);
 
         foreach ($obligations as $obligation) {
@@ -197,16 +202,18 @@ class FiscalService extends BaseService {
 
             if ($daysLeft < 0) {
                 // Alerta diário enquanto se mantiver em atraso
-                $this->alertRepository->createIfAbsent((int)$obligation["id"], "em_atraso", $today);
+                $created += $this->alertRepository->createIfAbsent((int)$obligation["id"], "em_atraso", $today);
                 continue;
             }
 
             foreach (self::ALERT_OFFSETS as $type => $offset) {
                 if ($daysLeft === $offset) {
-                    $this->alertRepository->createIfAbsent((int)$obligation["id"], $type, $today);
+                    $created += $this->alertRepository->createIfAbsent((int)$obligation["id"], $type, $today);
                 }
             }
         }
+
+        return $created;
     }
 
     private function buildSummary(array $rows, string $today): array {
