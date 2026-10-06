@@ -104,7 +104,7 @@ const boDashboard = (() => {
         renderChart(canvasId, emptyId, {
             type: "doughnut",
             data: {
-                labels: chart?.labels || [],
+                labels: (chart?.labels || []).map((label) => generalUtils.humanize(label)),
                 datasets: [{ data: chart?.data || [], backgroundColor: COLORS.palette }]
             },
             options: { legend: { position: "right" } }
@@ -134,7 +134,7 @@ const boDashboard = (() => {
         renderDoughnut("chartServicesByAcceptance", "#chartServicesByAcceptanceEmpty", dashboard?.charts?.servicesByAcceptance);
 
         renderBar("chartFiscalByType", "#chartFiscalByTypeEmpty", dashboard?.charts?.fiscalByType, function (label) {
-            return String(label).replace(/_/g, " ");
+            return generalUtils.humanize(label);
         });
 
         renderAccounting(dashboard?.accounting);

@@ -158,7 +158,7 @@ const profile = (() => {
     }
 
     async function removeAddress(addressId) {
-        if (!confirm("Remover esta morada?")) return;
+        if (!await generalUtils.confirmDialog({ icon: "warning", text: "Remover esta morada?" })) return;
 
         const promise = API.customer.deleteAddress(Number(addressId));
         const preloader = $("#profileAddressesList").preloader(".jq-overlay-process", promise);
