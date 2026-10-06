@@ -42,13 +42,16 @@
   `periodicidade` (mensal / trimestral / anual), data de prazo, estado (pendente / pago),
   histórico e observações.
 - **Alertas progressivos:** **30, 15, 7, 3 e 1 dia** antes do prazo + **diário em atraso**.
-- **Geração on-demand e idempotente** (`generateAlerts()` ao abrir o calendário/alertas) — **sem CRON**.
+- **Geração on-demand e idempotente** (`FiscalService::generateAlerts()`), **sem CRON**: corre ao abrir o
+  calendário/alertas **e** pelo `MaintenanceService` (login + leitura dos avisos), com **guard de tempo**
+  (`manutencao_execucao`, F6 · §9.3).
 - **Regra de nível de alerta (atenção à ordem):** iterar do **mais urgente para o mais largo**
   (menor nº de dias primeiro). `daysLeft < 0` → `em_atraso`; senão o **menor limiar** que satisfaz
   `daysLeft ≤ limiar`. *(Um defeito fazia 7 dias reportar como 30 dias.)*
 - **Marcar como pago:** grava `data_pagamento` + observações; **sem anexos**. Se já estiver pago → **409**.
 - **Tabelas:** `obrigacao_fiscal` e `alerta_fiscal`.
-- **Estado inicial:** as tabelas ficam **vazias** no seed — o calendário enche-se ao criar obrigações.
+- **Estado inicial:** o seed traz obrigações do ano corrente (IVA, IRC, SS e Seguros) para o calendário
+  e os avisos terem conteúdo; criar obrigações continua manual (F11).
 - **Calendário de 2026 entregue pelo cliente** (`Obrigações Fiscais.xlsx`, 28/09/2026) — **substitui** a lista
   anterior e fixa **8 famílias** de obrigações: **SAF-T** (comunicação de faturas) · **DMR** (declaração
   mensal de remunerações) · **Retenções na fonte IRS/IRC** · **Segurança Social** · **IVA-declaração

@@ -67,28 +67,31 @@ $txt = [System.IO.File]::ReadAllText($path, $enc)
 
 ## 2. FERRAMENTAS
 
-| Ficheiro              | Para que serve                                                                                                                                                              |
-| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `agent-files.php`     | Mantém os ficheiros do agente no disco **noutras branches**: `status` / `install` / `exclude` / `restore`. Ver §2.1                                                         |
-| `referer.php`         | Abre uma **referência** (`§18.2`, `D-12`, `RF-75`) no editor, no **ficheiro e linha exatos**, e volta atrás em pilha (`back` / `forward`). Ver §2.2                         |
-| `_common.php`         | Módulo comum: I/O UTF-8 seguro, CLI, largura de texto/emoji, deteção de encoding. **Não executar directamente**                                                             |
-| `encoding-check.php`  | Deteta BOM, mojibake, UTF-8 inválido, **UTF-16** e fins de linha mistos. Aceita `--ignore=` (exceções conhecidas)                                                           |
-| `encoding-fix.php`    | **Repara** BOM e mojibake (mapa CP1252 explícito + verificação *round-trip*) e **converte UTF-16 → UTF-8**                                                                  |
-| `md-align-tables.php` | Alinha as tabelas markdown (largura de ecrã; emoji = 2 colunas; ignora *code fences*; aceita separadores com 1+ hífenes (GFM) e pipes escapados `\|`)                       |
-| `md-verify.php`       | Verifica encoding, code fences, referências `§NN` (com **resolução cruzada** entre documentos e allowlist `<!-- md-verify:allow-refs=… -->`), tabelas (pipes escapados não  |
-|                       | contam) e marcadores residuais                                                                                                                                              |
-| `file-edit.php`       | `show` / `write` / `replace` / `lines` / `grep` — leitura e escrita UTF-8 **segura**                                                                                        |
-| `ascii-align.php`     | Nivela **tabelas ASCII** desenhadas à mão dentro de *code fences*: boxes `+---+` e a coluna de referência `│` dos diagramas de fluxo (`--boxes-only` limita aos boxes)      |
-| `md-wrap-tables.php`  | **Quebra o texto das células** para que nenhuma linha de tabela markdown exceda `--max` colunas (200 por omissão; aceita o pragma `<!-- md-wrap-tables:max=N -->` do        |
-|                       | ficheiro).                                                                                                                                                                  |
-|                       | **Nunca parte palavras a meio**                                                                                                                                             |
-| `widthcheck.php`      | Verifica a **uniformidade** das tabelas: todas as linhas do mesmo bloco têm de ter a mesma **largura de ecrã**, caber no limite e o bloco tem de ter **divisor** (senão é   |
-|                       | tabela partida). Puro diagnóstico (só lê)                                                                                                                                   |
-| `md-join-tables.php`  | Junta blocos de tabela **partidos por uma linha em branco** (a linha vazia fecha o bloco, o seguinte fica sem divisor e passa a ser ignorado por todos os formatadores). Só |
-|                       | junta quando o bloco seguinte é **inválido** isolado                                                                                                                        |
-| `health-check.php`    | Corre as **6** verificações de uma vez (encoding · `md-verify` · `md-align-tables` · `ascii-align` · `md-wrap-tables` · `md-widths`, as quatro últimas em *dry-run* por     |
-|                       | ficheiro) e dá um resumo                                                                                                                                                    |
-|                       | com `[OK]`/`[!!]`                                                                                                                                                           |
+| Ficheiro                | Para que serve                                                                                                                                                             |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `agent-files.php`       | Mantém os ficheiros do agente no disco **noutras branches**: `status` / `install` / `exclude` / `restore`. Ver §2.1                                                        |
+| `referer.php`           | Abre uma **referência** (`§18.2`, `D-12`, `RF-75`) no editor, no **ficheiro e linha exatos**, e volta atrás em pilha (`back` / `forward`). Ver §2.2                        |
+| `_common.php`           | Módulo comum: I/O UTF-8 seguro, CLI, largura de texto/emoji, deteção de encoding. **Não executar directamente**                                                            |
+| `encoding-check.php`    | Deteta BOM, mojibake, UTF-8 inválido, **UTF-16** e fins de linha mistos. Aceita `--ignore=` (exceções conhecidas)                                                          |
+| `encoding-fix.php`      | **Repara** BOM e mojibake (mapa CP1252 explícito + verificação *round-trip*) e **converte UTF-16 → UTF-8**                                                                 |
+| `md-align-tables.php`   | Alinha as tabelas markdown (largura de ecrã; emoji = 2 colunas; ignora *code fences*; aceita separadores com 1+ hífenes (GFM) e pipes escapados `\|`)                      |
+| `md-verify.php`         | Verifica encoding, code fences, referências `§NN` (com **resolução cruzada** entre documentos e allowlist `<!-- md-verify:allow-refs=… -->`), tabelas (pipes escapados não |
+|                         | contam) e marcadores residuais                                                                                                                                             |
+| `file-edit.php`         | `show` / `write` / `replace` / `lines` / `grep` — leitura e escrita UTF-8 **segura**                                                                                       |
+| `ascii-align.php`       | Nivela **tabelas ASCII** desenhadas à mão dentro de *code fences*: boxes `+---+` e a coluna de referência `│` dos diagramas de fluxo (`--boxes-only` limita aos boxes)     |
+| `md-wrap-tables.php`    | **Quebra o texto das células** para que nenhuma linha de tabela markdown exceda `--max` colunas (200 por omissão; aceita o pragma `<!-- md-wrap-tables:max=N -->` do       |
+|                         | ficheiro).                                                                                                                                                                 |
+|                         | **Nunca parte palavras a meio**                                                                                                                                            |
+| `widthcheck.php`        | Verifica a **uniformidade** das tabelas: todas as linhas do mesmo bloco têm de ter a mesma **largura de ecrã**, caber no limite e o bloco tem de ter **divisor** (senão é  |
+|                         | tabela partida). Puro diagnóstico (só lê)                                                                                                                                  |
+| `md-join-tables.php`    | Junta blocos de tabela **partidos por uma linha em branco** (a linha vazia fecha o bloco, o seguinte fica sem divisor e passa a ser ignorado por todos os formatadores).   |
+|                         | Só                                                                                                                                                                         |
+|                         | junta quando o bloco seguinte é **inválido** isolado                                                                                                                       |
+| `health-check.php`      | Corre as **6** verificações de uma vez (encoding · `md-verify` · `md-align-tables` · `ascii-align` · `md-wrap-tables` · `md-widths`, as quatro últimas em *dry-run* por    |
+|                         | ficheiro) e dá um resumo                                                                                                                                                   |
+|                         | com `[OK]`/`[!!]`                                                                                                                                                          |
+| `refresh-dump-data.php` | Regenera as secções de **dados** de `DataBase.sql` e `DataBase_clean.sql` a partir da BD viva, preservando os `CREATE TABLE` (F11). Evita reexportar tudo à mão            |
+| `seed-fase7.sql`        | **Dados de demonstração** (F11): limpa os dados operacionais e semeia cenários realistas (comissões, rotas, avisos, fiscal). `mysql -u root secade_beauty < …`             |
 
 ### 2.1 `agent-files.php` — os ficheiros do agente fora do `agent-workspace`
 

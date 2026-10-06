@@ -27,7 +27,7 @@
 | `categoria_servico` | 3 linhas (Cabeleireiro, Barbearia, Estética)                                             |
 | `servico`           | 35 linhas. `preco_base`, `duracao_estimada_minutos`, `requer_espaco_fisico`, **`ativo`** |
 | `servico_local`     | Disponibilidade por canal (`loja_fisica` / `carrinha_ambulante`)                         |
-| `servico_foto`      | Galeria de imagens (a alimentar — D-06)                                                  |
+| `servico_foto`      | Galeria de imagens; `destaque` = a foto do card. Gerida em `/gestao/catalogo` (F3.1)     |
 
 ### 17.3 Geografia e logística
 | Tabela              | Notas                                                                                                           |
@@ -57,6 +57,7 @@
 | `rota_ambulante`       | `estado_rota` ∈ {planeada, aprovada, recusada, em_execucao, concluida}; custos, lucros, e dados de auditoria (`decidido_por`, `decidido_em`, `observacoes_decisao`) |
 | `rota_funcionario`     | Alocação de funcionários à rota                                                                                                                                     |
 | `notificacao`          | Avisos/lembretes por utilizador (`tipo`, `mensagem`, `lida`, `criado_em`) — C-07/C-14                                                                               |
+| `manutencao_execucao`  | Guard de tempo do serviço de manutenção (`chave`, `executado_em`) — F6 · §9.3                                                                                       |
 
 > ⚠️ **Não existe coluna `decisao`** em `rota_ambulante` — a decisão é gravada em `estado_rota`
 > como `aprovada`/`recusada`.
@@ -72,17 +73,18 @@
 | `gorjeta`                   | Registos de gorjeta — **sem UI no MVP**                                                       |
 
 ### 17.7 Ficheiro SQL (dump único)
-| Ficheiro                              | Função                                                                                                                                                                      |
-| :------------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`DataBase.sql`**                    | **Único** dump do estado atual: cria a BD, as **26 tabelas** e **todos os dados** (catálogo, geografia, utilizadores de demonstração, 43 fornecedores e os clientes reais). |
-|                                       | Importar **uma só vez** — cria/recria a base do zero.                                                                                                                       |
-| `DataBase_clean.sql`                  | **Versão simplificada de leitura** do mesmo dump (sem comentários de ferramenta, sem `AUTO_INCREMENT` nem charset por coluna). Conteúdo fiel (`CHECKSUM` igual); **não** é  |
-|                                       | preciso para instalar.                                                                                                                                                      |
-| ~~`DataBase_v2/v3.sql`~~              | ❌ **consolidados** no `DataBase.sql` — o histórico fica no Git (`git log --diff-filter=D -- "*.sql"`).                                                                     |
-| ~~`database_seed.sql`~~               | ❌ **consolidado**: os utilizadores de teste + morada já entram pelo `DataBase.sql`.                                                                                        |
-| ~~`database_migration_v2/v3/v4.sql`~~ | ❌ **consolidadas** (o estado final é o do `DataBase.sql`): `servico.ativo`, `cliente.morada` anulável, **drop de `funcionario_categoria`**, durações do catálogo, tabela   |
-|                                       | **`fornecedor`** (43) e os **65 clientes** — §24.11.                                                                                                                        |
-| ~~`DataBase_backup_pre_v2.sql`~~      | ❌ arquivo histórico (dump do HeidiSQL em **UTF-16 LE**) — o histórico fica no Git.                                                                                         |
+| Ficheiro                              | Função                                                                                                                                                                     |
+| :------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`DataBase.sql`**                    | **Único** dump do estado atual: cria a BD, as **27 tabelas** e **todos os dados** (catálogo, geografia, utilizadores de demonstração, 43 fornecedores, os clientes reais e |
+|                                       | os cenários operacionais da F11: agendamentos em todos os estados, rota aprovada, obrigações fiscais e avisos).                                                            |
+|                                       | Importar **uma só vez** — cria/recria a base do zero.                                                                                                                      |
+| `DataBase_clean.sql`                  | **Versão simplificada de leitura** do mesmo dump (sem comentários de ferramenta, sem `AUTO_INCREMENT` nem charset por coluna). Conteúdo fiel (`CHECKSUM` igual); **não** é |
+|                                       | preciso para instalar.                                                                                                                                                     |
+| ~~`DataBase_v2/v3.sql`~~              | ❌ **consolidados** no `DataBase.sql` — o histórico fica no Git (`git log --diff-filter=D -- "*.sql"`).                                                                    |
+| ~~`database_seed.sql`~~               | ❌ **consolidado**: os utilizadores de teste + morada já entram pelo `DataBase.sql`.                                                                                       |
+| ~~`database_migration_v2/v3/v4.sql`~~ | ❌ **consolidadas** (o estado final é o do `DataBase.sql`): `servico.ativo`, `cliente.morada` anulável, **drop de `funcionario_categoria`**, durações do catálogo, tabela  |
+|                                       | **`fornecedor`** (43) e os **65 clientes** — §24.11.                                                                                                                       |
+| ~~`DataBase_backup_pre_v2.sql`~~      | ❌ arquivo histórico (dump do HeidiSQL em **UTF-16 LE**) — o histórico fica no Git.                                                                                        |
 
 Detalhe operacional de importação em **§27**.
 
