@@ -263,30 +263,6 @@ $bookingUserName = Session::user()["name"] ?? "";
                                     </div>
                                 </div>
 
-                                <!-- ============ PASSO (LOJA): PROFISSIONAL ============ -->
-                                <div class="form-step" data-step="professional">
-                                    <h4 class="section-title">
-                                        <i class="bi bi-person-badge text-gold me-2"></i><span class="step-number"></span>Preferência de Profissional
-                                    </h4>
-
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" type="radio" name="professional" id="professionalAny" value="" checked>
-                                        <label class="form-check-label" for="professionalAny">Sem preferência</label>
-                                    </div>
-                                    <p class="text-muted small mb-4">
-                                        A equipa é atribuída automaticamente de acordo com as categorias dos serviços selecionados.
-                                    </p>
-
-                                    <div class="d-flex justify-content-between">
-                                        <button type="button" class="btn btn-primary extended-border px-4" data-step-prev>
-                                            <i class="bi bi-arrow-left me-1"></i> Voltar
-                                        </button>
-                                        <button type="button" class="btn btn-primary extended-border px-4" data-step-next>
-                                            Continuar <i class="bi bi-arrow-right ms-1"></i>
-                                        </button>
-                                    </div>
-                                </div>
-
                                 <!-- ============ PASSO (AMB): POLÍTICA DE SINAL ============ -->
                                 <div class="form-step" data-step="policy">
                                     <h4 class="section-title">

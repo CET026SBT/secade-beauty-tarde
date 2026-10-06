@@ -45,7 +45,7 @@ echo "\n=== Assets estáticos (devem ser 200 e servir JS/CSS real) ===\n";
 $assets = [
     "modules/main/js/components/services.js",
     "modules/main/js/components/bookingWizard.js",
-    "modules/main/js/components/profile.js",
+    "modules/main/js/components/customerArea.js",
     "modules/main/js/components/appointments.js",
     "modules/main/js/components/testimonial.js",
     "modules/main/js/components/customerRegister.js",
