@@ -614,13 +614,24 @@ Session::createLoginSession(["id" => 2, "name" => "Funcionario Teste", "email" =
 $employeeAlerts = (new AlertService())->list();
 $employeeAlertKeys = array_column($employeeAlerts["groups"] ?? [], "key");
 check("avisos do funcionario nao incluem a origem fiscal", !in_array("fiscal", $employeeAlertKeys, true), json_encode($employeeAlertKeys));
-check("avisos do funcionario identificam o perfil", ($employeeAlerts["profile"] ?? "") === "funcionario", json_encode($employeeAlerts["profile"] ?? null));
+// F5/§3.7: o perfil do funcionário passa a distinguir RV de efetivo (G-03) e o
+// grupo «Rotas por decidir» deixa de aparecer a quem não é gestor.
+check("avisos do funcionario identificam o contrato (F5)", in_array(($employeeAlerts["profile"] ?? ""), ["recibo_verde", "efetivo"], true), json_encode($employeeAlerts["profile"] ?? null));
+check("avisos do funcionario nao incluem rotas", !in_array("rotas", $employeeAlertKeys, true), json_encode($employeeAlertKeys));
+check("avisos do funcionario incluem as suas alocacoes", in_array("alocacoes", $employeeAlertKeys, true), json_encode($employeeAlertKeys));
 
 Session::createLoginSession(["id" => 1, "name" => "Gestor Teste", "email" => "gestor@secade.pt", "profileType" => "gestor"]);
 $managerAlerts = (new AlertService())->list();
 $managerAlertKeys = array_column($managerAlerts["groups"] ?? [], "key");
 check("avisos do gestor incluem a origem fiscal", in_array("fiscal", $managerAlertKeys, true), json_encode($managerAlertKeys));
 check("avisos do gestor identificam o perfil", ($managerAlerts["profile"] ?? "") === "gestor", json_encode($managerAlerts["profile"] ?? null));
+
+// Q-15/§3.7: cada grupo limita a apresentacao a 10 itens e sinaliza se ha mais.
+$managerFiscalGroup = null;
+foreach ($managerAlerts["groups"] ?? [] as $alertGroup) {
+    if (($alertGroup["key"] ?? "") === "fiscal_atraso") { $managerFiscalGroup = $alertGroup; }
+}
+check("grupo de avisos expoe 'hasMore' (limite de 10)", is_array($managerFiscalGroup) && array_key_exists("hasMore", $managerFiscalGroup), json_encode($managerFiscalGroup));
 
 // ---------------------------------------------------------------------------
 section("14. Fase 6.1 - Fornecedores (RF-85)");

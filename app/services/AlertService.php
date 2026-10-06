@@ -46,9 +46,15 @@ class AlertService extends BaseService {
     public function list(): array {
         $summary = $this->buildGroups();
 
+        // §3.7/F5: o perfil passa a distinguir RV de efetivo (G-03).
+        $profile = "gestor";
+        if (Session::isEmployee()) {
+            $profile = Session::employeeContractType() === "efetivo_contratado" ? "efetivo" : "recibo_verde";
+        }
+
         return [
             "count"     => $summary["count"],
-            "profile"   => Session::isEmployee() ? "funcionario" : "gestor",
+            "profile"   => $profile,
             "groups"    => $summary["groups"],
             "readScope" => "global"
         ];
@@ -68,16 +74,27 @@ class AlertService extends BaseService {
         ];
     }
 
+    private const MAX_ITEMS = 10;
+
+    /**
+     * Grupos de avisos, por perfil.
+     *
+     * §3.7 (F5):
+     *   - o grupo «Rotas por decidir» é **só do gestor** (ao RV não aparece);
+     *   - o **efetivo** vê «Alocações planeadas» (o resultado da F4);
+     *   - cada grupo é limitado a `MAX_ITEMS` (`#limiteCards`) com `hasMore`.
+     */
     private function buildGroups(): array {
         $groups = [];
 
         if (Session::isManager()) {
             $groups[] = $this->fiscalGroup();
             $groups[] = $this->overdueGroup();
+            $groups[] = $this->pendingServicesGroup();
+            $groups[] = $this->routesGroup();
+        } else {
+            $groups[] = $this->myAllocationsGroup();
         }
-
-        $groups[] = $this->pendingServicesGroup();
-        $groups[] = $this->routesGroup();
 
         $count = 0;
         foreach ($groups as $group) {
@@ -85,6 +102,44 @@ class AlertService extends BaseService {
         }
 
         return ["count" => $count, "groups" => $groups];
+    }
+
+    /**
+     * Limita a lista mostrada e diz se há mais (§3.7 · Q-15). A contagem do grupo
+     * mantém-se **total** — o limite é só de apresentação.
+     */
+    private function limitedGroup(string $key, string $label, array $items): array {
+        $visible = array_slice($items, 0, self::MAX_ITEMS);
+
+        return [
+            "key"      => $key,
+            "label"    => $label,
+            "count"    => count($items),
+            "items"    => $visible,
+            "hasMore"  => count($items) > self::MAX_ITEMS,
+            "hidden"   => max(0, count($items) - self::MAX_ITEMS),
+            "showMoreUrl" => $items[0]["pageUrl"] ?? null
+        ];
+    }
+
+    /** Alocações planeadas do funcionário (F4/F5) — o que lhe foi atribuído. */
+    private function myAllocationsGroup(): array {
+        $employeeId = Session::userId();
+        $items = [];
+
+        if ($employeeId !== null) {
+            foreach ($this->bookingServiceRepository->findAcceptedByEmployee($employeeId, []) as $service) {
+                $items[] = [
+                    "title"   => (string)($service["serviceName"] ?? ""),
+                    "detail"  => "Agendamento #" . (int)($service["bookingId"] ?? 0) . " · " . (string)($service["dateTime"] ?? ""),
+                    "type"    => "alocacao",
+                    "page"    => "services",
+                    "pageUrl" => "/gestao/servicos"
+                ];
+            }
+        }
+
+        return $this->limitedGroup("alocacoes", "Alocações planeadas", $items);
     }
 
     private function fiscalGroup(): array {
@@ -101,12 +156,7 @@ class AlertService extends BaseService {
             ];
         }
 
-        return [
-            "key"   => "fiscal",
-            "label" => "Alertas fiscais por ler",
-            "count" => count($items),
-            "items" => $items
-        ];
+        return $this->limitedGroup("fiscal", "Alertas fiscais por ler", $items);
     }
 
     private function overdueGroup(): array {
@@ -123,12 +173,7 @@ class AlertService extends BaseService {
             ];
         }
 
-        return [
-            "key"   => "fiscal_atraso",
-            "label" => "Obrigações fiscais em atraso",
-            "count" => count($items),
-            "items" => $items
-        ];
+        return $this->limitedGroup("fiscal_atraso", "Obrigações fiscais em atraso", $items);
     }
 
     private function pendingServicesGroup(): array {
@@ -146,24 +191,10 @@ class AlertService extends BaseService {
             ];
         }
 
-        return [
-            "key"   => "servicos_pendentes",
-            "label" => "Serviços por aceitar",
-            "count" => count($items),
-            "items" => $items
-        ];
+        return $this->limitedGroup("servicos_pendentes", "Serviços por alocar", $items);
     }
 
     private function routesGroup(): array {
-        if (!Session::isManager()) {
-            return [
-                "key"   => "rotas",
-                "label" => "Rotas por decidir",
-                "count" => 0,
-                "items" => []
-            ];
-        }
-
         $groups = $this->bookingRepository->findAmbulatoryGroups(null, null, ["totalmente_alocado"]);
         $items  = [];
 
@@ -177,11 +208,6 @@ class AlertService extends BaseService {
             ];
         }
 
-        return [
-            "key"   => "rotas",
-            "label" => "Rotas por decidir",
-            "count" => count($items),
-            "items" => $items
-        ];
+        return $this->limitedGroup("rotas", "Rotas por decidir", $items);
     }
 }
