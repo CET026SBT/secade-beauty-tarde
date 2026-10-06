@@ -203,7 +203,7 @@ const boServices = (() => {
     }
 
     async function unacceptService(bookingServiceId, bookingId) {
-        if (!confirm("Desfazer a aceitação deste serviço?")) return;
+        if (!await generalUtils.confirmDialog({ text: "Desfazer a aceitação deste serviço?" })) return;
 
         $("#servicesError, #servicesSuccess").addClass("d-none");
 

@@ -150,7 +150,7 @@ const boAppointments = (() => {
     }
 
     async function executeAppointment(bookingId) {
-        if (!confirm("Registar a execução deste agendamento? O cliente poderá depois avaliar o serviço.")) return;
+        if (!await generalUtils.confirmDialog({ text: "Registar a execução deste agendamento? O cliente poderá depois avaliar o serviço." })) return;
 
         const promise = API.admin.executeAppointment(Number(bookingId));
         const preloader = $("#appointmentDetailsBody").preloader(".jq-overlay-process", promise);
@@ -161,7 +161,7 @@ const boAppointments = (() => {
             bootstrap.Modal.getInstance($("#appointmentDetailsModal")[0])?.hide();
             await load();
         } catch (error) {
-            alert(error?.responseJSON?.message || "Não foi possível registar a execução.");
+            generalUtils.alertDialog({ icon: "error", text: error?.responseJSON?.message || "Não foi possível registar a execução." });
         } finally {
             await preloader;
         }
@@ -245,7 +245,7 @@ const boAppointments = (() => {
         const booking = bookingById(id);
         if (!booking) return;
 
-        if (!confirm(`Cancelar o agendamento #${booking.id} de ${booking.customerName}?`)) return;
+        if (!await generalUtils.confirmDialog({ icon: "warning", text: `Cancelar o agendamento #${booking.id} de ${booking.customerName}?` })) return;
 
         const promise = API.admin.cancelAppointment(Number(id));
         const preloader = $("#appointmentsTableContainer").preloader(".jq-overlay-process", promise);
@@ -255,7 +255,7 @@ const boAppointments = (() => {
             bootstrap.Modal.getInstance($("#appointmentDetailsModal")[0])?.hide();
             await load();
         } catch (error) {
-            alert(error?.responseJSON?.message || "Não foi possível cancelar o agendamento.");
+            generalUtils.alertDialog({ icon: "error", text: error?.responseJSON?.message || "Não foi possível cancelar o agendamento." });
         } finally {
             await preloader;
         }

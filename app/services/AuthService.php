@@ -2,12 +2,14 @@
 
 require_once __DIR__ . "/BaseService.php";
 require_once APP_PATH . "/repositories/UserRepository.php";
+require_once APP_PATH . "/repositories/EmployeeRepository.php";
 require_once APP_PATH . "/services/CustomerService.php";
 require_once APP_PATH . "/services/EmployeeService.php";
 require_once APP_PATH . "/services/ManagerService.php";
 
 class AuthService extends BaseService {
     private UserRepository $userRepository;
+    private EmployeeRepository $employeeRepository;
     private CustomerService $customerService;
     private EmployeeService $employeeService;
     private ManagerService $managerService;
@@ -15,6 +17,7 @@ class AuthService extends BaseService {
     public function __construct() {
         parent::__construct();
         $this->userRepository = new UserRepository();
+        $this->employeeRepository = new EmployeeRepository();
         $this->customerService = new CustomerService();
         $this->employeeService = new EmployeeService();
         $this->managerService = new ManagerService();
@@ -51,6 +54,13 @@ class AuthService extends BaseService {
         $user = $this->userRepository->find(null, $data["email"]);
 
         $this->validateLoginInput($data, $user);
+
+        // G-02: o funcionário leva o tipo de contrato para a sessão (os métodos do
+        // Session passam a poder distingui-lo — RV vs efetivo).
+        if (($user["profileType"] ?? null) === "funcionario") {
+            $employee = $this->employeeRepository->find((int)$user["id"]);
+            $user["contractType"] = is_array($employee) ? ($employee["contractType"] ?? null) : null;
+        }
 
         Session::createLoginSession($user);
 

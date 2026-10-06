@@ -68,7 +68,7 @@ const appointments = (() => {
      * Cancelamento pelo cliente (RF-12).
      */
     async function cancelBooking(bookingId) {
-        if (!confirm("Cancelar este agendamento? Não há qualquer penalização.")) return;
+        if (!await generalUtils.confirmDialog({ icon: "warning", text: "Cancelar este agendamento? Não há qualquer penalização." })) return;
 
         const promise = API.booking.cancelBooking(Number(bookingId));
         const preloader = $("main").preloader(".jq-overlay-process", promise);

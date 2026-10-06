@@ -133,7 +133,7 @@ const services = (() => {
 
     async function loadData() {
         const promise = Promise.all([API.categories.getAll(), API.booking.services()]);
-        const preloader = cardsUI.$container.preloader('.jq-skeleton-service-category-card', promise);
+        const preloader = cardsUI.$container.preloader('.jq-skeleton-service-card', promise);
 
         const [categoriesResponse, servicesResponse] = await promise;
 
