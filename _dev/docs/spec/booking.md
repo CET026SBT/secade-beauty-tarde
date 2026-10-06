@@ -25,7 +25,7 @@
   visível no backoffice do gestor, que pode cancelar).
 - **Sem** bloqueio por "totalmente aceite por funcionários" (não se aplica à loja).
 - **Validação de conflito:** `countByDateWindow(..., 'loja_fisica')` considera a **duração total**
-  e conta os estados `pendente_validacao_logistica_loja`, `totalmente_aceite_funcionarios` e
+  e conta os estados `pendente_validacao_logistica_loja`, `totalmente_alocado` e
   `confirmado` → **409** se houver sobreposição.
 - **Sinal:** `valor_sinal = valor_total × 10 %` (simulado; `sinal_pago` permanece `0`).
 - **Campos gravados:** `local_prestacao='loja_fisica'`, `cliente_morada_id = NULL`,
@@ -51,7 +51,7 @@ Barba (4,07 € · 20 min) + Design de Sobrancelha (8,13 € · 30 min)
 5. **3 — Data e hora** do slot (por **lista de horas disponíveis**, ver D-07).
 6. **4 — Política de sinal:** informado que a 1.ª marcação é **dispensada**; aceitação de termos.
 7. **5 — Estrutura por pessoa + Resumo:** Pessoa 1..N, cada uma com os seus serviços.
-   → agendamento criado em **`pendente_aceitacao_funcionarios`**.
+   → agendamento criado em **`pendente_alocacao`**.
 
 ### 9.2 Estrutura por pessoa (regra central)
 - Os serviços são agrupados **obrigatoriamente por pessoa** (Pessoa 1, Pessoa 2, …) — funciona como
@@ -155,9 +155,9 @@ fiscal, serviços):
 
 ### 20.1 `agendamento.estado_reserva` — enum com 8 valores
 ```
-'pendente_aceitacao_funcionarios'    ← criado (carrinha)
+'pendente_alocacao'    ← criado (carrinha)
 'pendente_validacao_logistica_loja'  ← criado (loja)
-'totalmente_aceite_funcionarios'     ← consolidado (carrinha)
+'totalmente_alocado'     ← consolidado (carrinha)
 'confirmado'                         ← rota aprovada pelo gestor
 'recusado'                           ← existe no enum, NÃO usado pelo fluxo atual ⚠️
 'cancelado'                          ← rota recusada OU cancelamento (gestor/cliente/24h)
@@ -172,10 +172,10 @@ fiscal, serviços):
 [cliente confirma + OTP válido]
         │
         ▼
-(( pendente_aceitacao_funcionarios ))   ── todos os agendamento_servico = 'pendente'
+(( pendente_alocacao ))   ── todos os agendamento_servico = 'pendente'
         │   [funcionários aceitam individualmente]
         ▼  (último serviço aceite)
-(( totalmente_aceite_funcionarios ))    ── janela BLOQUEADA · desfazer BLOQUEADO (409)
+(( totalmente_alocado ))    ── janela BLOQUEADA · desfazer BLOQUEADO (409)
         │   [gestor decide a rota — MANUAL]
         ├──[APROVAR]──▶ (( confirmado )) ──[registar execução]──▶ (( executado )) ──▶ feedback
         └──[RECUSAR]──▶ (( cancelado ))  ✗ não executável
@@ -196,10 +196,10 @@ fiscal, serviços):
 | :---------------------------------- | :------------------------------- | :---------------------------------- | :---------- | :----------------------------------------------------------- |
 | —                                   | criar (loja)                     | `pendente_validacao_logistica_loja` | cliente     | `validateBookingDate` + `validateStoreOpeningHours` +        |
 |                                     |                                  |                                     |             | `countByDateWindow`                                          |
-| —                                   | criar (carrinha)                 | `pendente_aceitacao_funcionarios`   | cliente     | + `OTPService::verify` + morada + pessoas                    |
-| `pendente_aceitacao_funcionarios`   | aceitar todos                    | `totalmente_aceite_funcionarios`    | funcionário | `consolidateIfComplete` + `assertNoWindowConflict`           |
-| `totalmente_aceite_funcionarios`    | aprovar rota                     | `confirmado`                        | **gestor**  | `decideRoute` — **manual**                                   |
-| `totalmente_aceite_funcionarios`    | recusar rota                     | **`cancelado`**                     | **gestor**  | `decideRoute` — **manual**                                   |
+| —                                   | criar (carrinha)                 | `pendente_alocacao`                 | cliente     | + `OTPService::verify` + morada + pessoas                    |
+| `pendente_alocacao`                 | aceitar todos                    | `totalmente_alocado`                | funcionário | `consolidateIfComplete` + `assertNoWindowConflict`           |
+| `totalmente_alocado`                | aprovar rota                     | `confirmado`                        | **gestor**  | `decideRoute` — **manual**                                   |
+| `totalmente_alocado`                | recusar rota                     | **`cancelado`**                     | **gestor**  | `decideRoute` — **manual**                                   |
 | ≠ {cancelado, executado, concluido} | cancelar                         | `cancelado`                         | gestor      | `cancelBooking` — erro 409 se já estiver num estado terminal |
 | —                                   | **cancelar**                     | `cancelado`                         | **cliente** | **⬜ a implementar** (§24.6)                                 |
 | —                                   | **auto-cancelar (24h sem rota)** | `cancelado`                         | sistema     | **⬜ a implementar** (§24.6)                                 |
@@ -211,7 +211,7 @@ fiscal, serviços):
 (( pendente )) ──[funcionário aceita]──▶ (( aceite ))
       ▲                                      │
       └────────[desfazer]────────────────────┘
-               ✗ 409 se o AGENDAMENTO estiver 'totalmente_aceite_funcionarios'
+               ✗ 409 se o AGENDAMENTO estiver 'totalmente_alocado'
 
 TROCA: aceitar um serviço já 'aceite' por OUTRO funcionário → transfere (isSwap)
 LOJA:  criado diretamente como (( aceite )) — aceitação automática

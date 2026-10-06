@@ -107,7 +107,7 @@ pagamento simulados (Dinheiro/Multibanco/MB Way); falha de internet → numerár
   **generalizada** para alojar também a configuração do sinal (recomendação dos esclarecimentos de retificações).
 
 **Trabalho a fazer:**
-1. Tabela de configuração (ou generalização de `config_recibo_verde`) para o **% do sinal** e
+1. Tabela de configuração (ou generalização de `config_percentagem_padrao`) para o **% do sinal** e
    eventual **tolerância horária**; `BookingService` passa a ler a configuração em vigor.
 2. **Registo dos 90 %** no término do serviço (aproveitar `transacao_financeira` + UI no detalhe do
    agendamento, junto ao **registo de execução** que já existe).
@@ -164,7 +164,7 @@ com **todos** os serviços aceites.
 - ❌ **Sem biblioteca de gráficos:** `boFooter.php` L10-15 carrega só jQuery, Bootstrap e jq-preloader;
   nenhuma página de gestão serve Chart.js.
 - ❌ **Regra das rotas não é imposta:** `BookingRepository::findAmbulatoryGroups` (L194-196) e
-  `findDecidableByCityAndDate` (L266) incluem `pendente_aceitacao_funcionarios`, e `RotaService` L177
+  `findDecidableByCityAndDate` (L266) incluem `pendente_alocacao`, e `RotaService` L177
   expõe `awaitingAcceptance` → **é possível aprovar rota com serviços por aceitar** (RN-31).
 - ❌ **Lista "Por aceitar" não separa rotas confirmadas:** `BookingServiceRepository::findPending`
   (L134-141) inclui pendentes de agendamentos em qualquer estado não terminal — **incluindo `confirmado`**
@@ -206,7 +206,7 @@ com **todos** os serviços aceites.
 3. **Agenda do funcionário** (`/gestao/agenda`, perfil `funcionario`): calendário + `admin-employee-agenda-list`
    (intervalo de datas) — reutiliza os dados existentes.
 4. **RN-31 — rotas:** `findAmbulatoryGroups`/`findDecidableByCityAndDate` passam a considerar **apenas**
-   `totalmente_aceite_funcionarios`; decidir com pendentes → **409**; a listagem de rotas pode **mostrar**
+   `totalmente_alocado`; decidir com pendentes → **409**; a listagem de rotas pode **mostrar**
    os que aguardam aceitação, mas **não os agrega**.
 5. **RN-32 — lista "Por aceitar":** `findPending` exclui os agendamentos **já em rota confirmada**
    (`estado_reserva = 'confirmado'`); o acompanhamento desses passa a ser a agenda (RN-33).
@@ -225,7 +225,7 @@ com **todos** os serviços aceites.
    expõe apenas `create` (L77) e `updateDecision` (L104), `BookingRepository::updateEstadoMany` (L235)
    grava o estado em bloco e a recusa aplica `cancelado` a **todos** (RN-18); a procura por
    `excluir`/`reverter` em `app/` e `modules/` não devolve resultados. O gestor tem de poder **retirar**
-   um agendamento da rota **antes da decisão** → volta a `totalmente_aceite_funcionarios`; a decisão passa
+   um agendamento da rota **antes da decisão** → volta a `totalmente_alocado`; a decisão passa
    a aplicar-se ao **conjunto** incluído. **Ponto em aberto:** excluir depois de a rota estar `aprovada`
    (exige desfazer a decisão ou criar rota complementar — decidir na implementação, sem partir a RN-19).
 10. **Página centralizada de avisos (RF-81 · D-15):** `/gestao/avisos`, alcançável no **menu do
@@ -233,7 +233,7 @@ com **todos** os serviços aceites.
     existirem lembretes não fiscais, ➕ `notificacao` com leitura **por utilizador**.
 11. **Comissões do funcionário (RF-84):** página própria `/gestao/comissoes`, acessível pelo **menu do
     utilizador** e pela **sidebar**; os dados já existem
-    (`agendamento_servico.valor_recibo_verde_funcionario`, snapshot por aceitação — §11).
+    (`agendamento_servico.percentagem_funcionario_aplicada`, snapshot por aceitação — §11).
 
 > **Fases (28/09/2026):** os módulos do backoffice ficam **alinhados na Fase 6** (pedido do gestor, pelo
 > prazo), **incluindo a sidebar e a página das comissões** (28/09/2026: **descem da então Fase 7**, que

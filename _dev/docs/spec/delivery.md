@@ -170,7 +170,7 @@ SELECT
    WHERE table_schema = 'secade_beauty')        AS tabelas,        -- esperado: 25
  (SELECT COUNT(*) FROM servico)                 AS servicos,       -- esperado: 35
  (SELECT COUNT(*) FROM servico WHERE ativo = 1) AS servicos_ativos,-- esperado: 35
- (SELECT COUNT(*) FROM categoria_profissional)  AS categorias,     -- esperado: 3
+ (SELECT COUNT(*) FROM categoria_servico)  AS categorias,     -- esperado: 3
  (SELECT COUNT(*) FROM cidade)                  AS cidades,        -- esperado: 10
  (SELECT COUNT(*) FROM matriz_deslocacao)       AS deslocacoes,    -- esperado: 9
  (SELECT COUNT(*) FROM utilizador)              AS utilizadores,   -- esperado: 69 (3 demo + 65 reais + 1)
@@ -209,7 +209,7 @@ DELETE FROM rota_ambulante;
 DELETE FROM alerta_fiscal;
 DELETE FROM obrigacao_fiscal;
 DELETE FROM cliente_morada WHERE cliente_id = 3 AND id <> 1;
-DELETE FROM config_recibo_verde WHERE id > 1;
+DELETE FROM config_percentagem_padrao WHERE id > 2;
 SET FOREIGN_KEY_CHECKS = 1;
 -- esperado: agendamentos=0, rotas=0, obrigacoes=0, feedbacks=0, moradas=1
 ```

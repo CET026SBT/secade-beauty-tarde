@@ -10,24 +10,24 @@
 **Total: 25 tabelas** na base `secade_beauty` (`DataBase.sql` — dump único, schema + dados).
 
 ### 17.1 Núcleo — utilizadores e perfis
-| Tabela                      | Notas                                                                |
-| :-------------------------- | :------------------------------------------------------------------- |
-| `utilizador`                | Tabela mãe. `tipo_perfil` ∈ {cliente, funcionario, gestor}           |
-| `cliente`                   | 1:1 com `utilizador`; `telemovel_validado_otp`                       |
-| `funcionario`               | 1:1 com `utilizador`; `tipo_contrato`, `salario_base`, `cc`, `ativo` |
-| `cliente_morada`            | N por cliente; `principal` (1 = principal)                           |
-| ~~`funcionario_categoria`~~ | ⚠️ **REMOVIDA** (v3.0) — ver §3.2                                    |
+| Tabela                      | Notas                                                                                        |
+| :-------------------------- | :------------------------------------------------------------------------------------------- |
+| `utilizador`                | Tabela mãe. `tipo_perfil` ∈ {cliente, funcionario, gestor}; `foto` (avatar)                  |
+| `cliente`                   | 1:1 com `utilizador`; `telemovel_validado_otp`                                               |
+| `funcionario`               | 1:1 com `utilizador`; `tipo_contrato`, `percentagem_comissao`, `salario_base`, `cc`, `ativo` |
+| `cliente_morada`            | N por cliente; `principal` (1 = principal)                                                   |
+| ~~`funcionario_categoria`~~ | ⚠️ **REMOVIDA** (v3.0) — ver §3.2                                                            |
 
 > ⚠️ **Não existe tabela `gestor`** — o gestor vive em `utilizador` com `tipo_perfil='gestor'`
 > (`ManagerRepository` consulta `utilizador`).
 
 ### 17.2 Catálogo
-| Tabela                   | Notas                                                                                    |
-| :----------------------- | :--------------------------------------------------------------------------------------- |
-| `categoria_profissional` | 3 linhas (Cabeleireiro, Barbearia, Estética)                                             |
-| `servico`                | 35 linhas. `preco_base`, `duracao_estimada_minutos`, `requer_espaco_fisico`, **`ativo`** |
-| `servico_local`          | Disponibilidade por canal (`loja_fisica` / `carrinha_ambulante`)                         |
-| `servico_foto`           | Galeria de imagens (a alimentar — D-06)                                                  |
+| Tabela              | Notas                                                                                    |
+| :------------------ | :--------------------------------------------------------------------------------------- |
+| `categoria_servico` | 3 linhas (Cabeleireiro, Barbearia, Estética)                                             |
+| `servico`           | 35 linhas. `preco_base`, `duracao_estimada_minutos`, `requer_espaco_fisico`, **`ativo`** |
+| `servico_local`     | Disponibilidade por canal (`loja_fisica` / `carrinha_ambulante`)                         |
+| `servico_foto`      | Galeria de imagens (a alimentar — D-06)                                                  |
 
 ### 17.3 Geografia e logística
 | Tabela              | Notas                                                                                                           |
@@ -56,24 +56,25 @@
 | `feedback_cliente`     | Avaliação (1 por execução/agendamento)                                                                                                                              |
 | `rota_ambulante`       | `estado_rota` ∈ {planeada, aprovada, recusada, em_execucao, concluida}; custos, lucros, e dados de auditoria (`decidido_por`, `decidido_em`, `observacoes_decisao`) |
 | `rota_funcionario`     | Alocação de funcionários à rota                                                                                                                                     |
+| `notificacao`          | Avisos/lembretes por utilizador (`tipo`, `mensagem`, `lida`, `criado_em`) — C-07/C-14                                                                               |
 
 > ⚠️ **Não existe coluna `decisao`** em `rota_ambulante` — a decisão é gravada em `estado_rota`
 > como `aprovada`/`recusada`.
 
 ### 17.6 Financeiro e fiscal
-| Tabela                 | Notas                                                                                         |
-| :--------------------- | :-------------------------------------------------------------------------------------------- |
-| `config_recibo_verde`  | Percentagens + vigência por data                                                              |
-| `obrigacao_fiscal`     | IVA, IRC, SS, Seguros; `periodicidade`, `prazo`, `valor_estimado`, `estado`, `data_pagamento` |
-| `alerta_fiscal`        | `tipo_alerta` ∈ {30_dias, 15_dias, 7_dias, 3_dias, 1_dia, em_atraso}; `mensagem`, `lido`      |
-| `transacao_financeira` | Movimentos (incl. tipo `quota_parte_deslocacao`) — **sem UI no MVP**                          |
-| `fecho_caixa_diario`   | Auditoria de caixa — **sem UI no MVP**                                                        |
-| `gorjeta`              | Registos de gorjeta — **sem UI no MVP**                                                       |
+| Tabela                      | Notas                                                                                         |
+| :-------------------------- | :-------------------------------------------------------------------------------------------- |
+| `config_percentagem_padrao` | % padrão por tipo de contrato + vigência por data (ex-`config_recibo_verde`)                  |
+| `obrigacao_fiscal`          | IVA, IRC, SS, Seguros; `periodicidade`, `prazo`, `valor_estimado`, `estado`, `data_pagamento` |
+| `alerta_fiscal`             | `tipo_alerta` ∈ {30_dias, 15_dias, 7_dias, 3_dias, 1_dia, em_atraso}; `mensagem`, `lido`      |
+| `transacao_financeira`      | Movimentos (incl. tipo `quota_parte_deslocacao`) — **sem UI no MVP**                          |
+| `fecho_caixa_diario`        | Auditoria de caixa — **sem UI no MVP**                                                        |
+| `gorjeta`                   | Registos de gorjeta — **sem UI no MVP**                                                       |
 
 ### 17.7 Ficheiro SQL (dump único)
 | Ficheiro                              | Função                                                                                                                                                                      |
 | :------------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`DataBase.sql`**                    | **Único** dump do estado atual: cria a BD, as **25 tabelas** e **todos os dados** (catálogo, geografia, utilizadores de demonstração, 43 fornecedores e os clientes reais). |
+| **`DataBase.sql`**                    | **Único** dump do estado atual: cria a BD, as **26 tabelas** e **todos os dados** (catálogo, geografia, utilizadores de demonstração, 43 fornecedores e os clientes reais). |
 |                                       | Importar **uma só vez** — cria/recria a base do zero.                                                                                                                       |
 | `DataBase_clean.sql`                  | **Versão simplificada de leitura** do mesmo dump (sem comentários de ferramenta, sem `AUTO_INCREMENT` nem charset por coluna). Conteúdo fiel (`CHECKSUM` igual); **não** é  |
 |                                       | preciso para instalar.                                                                                                                                                      |
@@ -101,13 +102,14 @@ erDiagram
     %% ── Utilizadores, perfis e moradas ──
     utilizador ||--o| cliente             : "1:1"
     utilizador ||--o| funcionario         : "1:1"
-    utilizador ||--o{ config_recibo_verde : "configurado_por"
+    utilizador ||--o{ config_percentagem_padrao : "configurado_por"
+    utilizador ||--o{ notificacao         : "destinatario"
     utilizador ||--o{ rota_ambulante      : "decidido_por (auditoria)"
     cliente    ||--o{ cliente_morada      : "N moradas"
     cidade     ||--o{ cliente_morada      : "cidade_id"
 
     %% ── Catálogo ──
-    categoria_profissional ||--o{ servico       : "categoria_id"
+    categoria_servico ||--o{ servico       : "categoria_id"
     servico                ||--o{ servico_local : "disponibilidade por canal"
     servico                ||--o{ servico_foto  : "galeria"
 
@@ -143,14 +145,14 @@ erDiagram
 ```
 
 **Tabelas sem relação (ou relação parcial) — atenção:**
-| Tabela                                                                                          | Observação                                                                                     |
-| ----------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| `execucao_servico`                                                                              | **Sem FK alguma** (tabela de detalhe por serviço, ainda sem consumidor)                        |
-| `cidade`, `base_partida`, `categoria_profissional`, `servico`, `utilizador`, `obrigacao_fiscal` | São **referenciadas** mas não referenciam ninguém (tabelas "pai")                              |
-| `agendamento`                                                                                   | ⚠️ **não** tem FK para `cidade` nem para `rota_ambulante` — a cidade é derivada via            |
-|                                                                                                 | `cliente_morada` e a ligação à rota é por **(data, cidade)**                                   |
-| `rota_ambulante`                                                                                | A cidade do grupo entra por `cidade_id`, mas os agendamentos que constituem a rota **não** são |
-|                                                                                                 | gravados como filhos (a rota é um agregado calculado)                                          |
+| Tabela                                                                                     | Observação                                                                                     |
+| ------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
+| `execucao_servico`                                                                         | **Sem FK alguma** (tabela de detalhe por serviço, ainda sem consumidor)                        |
+| `cidade`, `base_partida`, `categoria_servico`, `servico`, `utilizador`, `obrigacao_fiscal` | São **referenciadas** mas não referenciam ninguém (tabelas "pai")                              |
+| `agendamento`                                                                              | ⚠️ **não** tem FK para `cidade` nem para `rota_ambulante` — a cidade é derivada via            |
+|                                                                                            | `cliente_morada` e a ligação à rota é por **(data, cidade)**                                   |
+| `rota_ambulante`                                                                           | A cidade do grupo entra por `cidade_id`, mas os agendamentos que constituem a rota **não** são |
+|                                                                                            | gravados como filhos (a rota é um agregado calculado)                                          |
 
 ### 17.9 Tabelas de importação de ficheiros (novas — D-12)
 
@@ -207,7 +209,7 @@ View (PHP) → JS componente → api.js → api.php (routing) → Controller →
   `lastInsertId` — **todos com prepared statements**.
 - Aplica **automaticamente o Mapper** associado (`protected ?string $mapper = XMapper::class;`).
 - **JOINs permitidos em SELECT** quando servem para **enriquecer** a linha da tabela principal com
-  dados de lookup (**N:1**): ex. `servico LEFT JOIN categoria_profissional`, `cliente_morada LEFT JOIN cidade`.
+  dados de lookup (**N:1**): ex. `servico LEFT JOIN categoria_servico`, `cliente_morada LEFT JOIN cidade`.
   - **Não** usar JOINs para **composição de coleções filhas (1:N)** — isso é feito no Service.
 - **Escrita (INSERT/UPDATE/DELETE) estritamente na própria tabela.**
 - Filtros dinâmicos: `WHERE 1=1` + concatenação condicional de `:params` nomeados.

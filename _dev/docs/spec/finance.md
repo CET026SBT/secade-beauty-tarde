@@ -9,24 +9,28 @@
 
 - **Gatilho:** apresentado **no momento da aceitação** de cada serviço de **ambulatório**
   (na loja não há aceitação por funcionários).
-- **Percentagens configuráveis pelo gestor** (por omissão: **70 % funcionário / 30 % plataforma**),
-  com **vigência por data** (`config_recibo_verde`).
+- **Percentagem por funcionário:** cada funcionário tem a sua percentagem
+  (`funcionario.percentagem_comissao`, **NOT NULL**), que nasce com o **padrão do tipo de contrato** e é
+  editável no RH. **Não existe valor «global»** nem cadeia de fallback (D-21).
+- **Padrões por tipo de contrato** (`config_percentagem_padrao`, ex-`config_recibo_verde`): configuráveis pelo
+  gestor no backoffice, com **vigência por data** — RV **70 %** · efetivo **0 %** por omissão (NF-01).
 - **Base de cálculo:** `preco_praticado` do **serviço individual**, no momento da aceitação.
-- **Fórmulas:**
+- **Valores (calculados na leitura — C-03/D-10):**
   ```
-  valor_recibo_verde_funcionario = preco_praticado × (pct_funcionario / 100)
-  valor_recibo_verde_plataforma  = preco_praticado × (pct_plataforma  / 100)
+  valor_funcionario = ROUND(preco_praticado × percentagem_funcionario_aplicada / 100, 2)
+  valor_empresa     = preco_praticado − valor_funcionario
   ```
-  Exemplo: Barba 4,07 € a 70/30 → funcionário **2,85 €** · plataforma **1,22 €**.
-- **Persistência:** os valores ficam gravados no próprio **`agendamento_servico`**
-  (`percentagem_funcionario_aplicada`, `valor_recibo_verde_funcionario`,
-  `valor_recibo_verde_plataforma`); as percentagens vivem em `config_recibo_verde`.
-- **Recálculo:** alterar a percentagem afeta **apenas aceitações futuras**; as já registadas mantêm
-  os valores gravados.
-- **Validação:** a soma das percentagens tem de ser **100** → **422** caso contrário.
+  Exemplo: Barba 4,07 € a 70 % → funcionário **2,85 €** · empresa **1,22 €**.
+- **Persistência:** grava-se só o *snapshot* da percentagem
+  (`agendamento_servico.percentagem_funcionario_aplicada`); os **valores são derivados** — as colunas
+  `valor_recibo_verde_funcionario` / `..._plataforma` foram **removidas**. Os padrões vivem em
+  `config_percentagem_padrao`.
+- **Recálculo:** alterar a percentagem afeta **apenas aceitações futuras**; as já registadas mantêm o
+  *snapshot*.
+- **Validação:** a percentagem tem de estar entre **0 e 100** → **422** caso contrário.
 - **Âmbito académico:** é um **simulador** — **não há emissão real** na Segurança Social.
 - **Configuração no backoffice:** endpoint `admin-green-receipt-config` e página
-  `/gestao/recibos-verdes` (histórico de configurações + simulador de valores).
+  `/gestao/recibos-verdes` («Configurações de Percentagens»: padrões em vigor + histórico).
 - **Nuance D-03 (§3.3):** a regra "recibo verde → ambulatório / contrato fixo → loja" **ainda não é
   aplicada** pelo sistema; hoje qualquer funcionário pode aceitar ambulatório.
 

@@ -7,14 +7,14 @@
 
 ## 6. DOMÍNIO: UTILIZADORES E PERFIS
 
-| Entidade             | Descrição                                                                       | Campos-chave                                                                           |
-| :------------------- | :------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------- |
-| **`utilizador`**     | Conta base dos 3 perfis                                                         | `nome`, `email`, `password_hash` (**bcrypt**), `telemovel`, `nif`, `tipo_perfil`       |
-| **`cliente`**        | Herança de `utilizador` (1:1)                                                   | `telemovel_validado_otp`                                                               |
-| **`funcionario`**    | Herança de `utilizador` (1:1)                                                   | `tipo_contrato` (`efetivo_contratado` / `recibo_verde`), `salario_base`, `cc`, `ativo` |
-| **`gestor`**         | ⚠️ **Não tem tabela própria** — vive em `utilizador` com `tipo_perfil='gestor'` | —                                                                                      |
-| **`cliente_morada`** | N moradas por cliente                                                           | `designacao`, `rua`, `numero_porta`, `andar_bloco`, `codigo_postal`, `principal`,      |
-|                      |                                                                                 | `cidade_id`                                                                            |
+| Entidade             | Descrição                                                                       | Campos-chave                                                                                                   |
+| :------------------- | :------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------- |
+| **`utilizador`**     | Conta base dos 3 perfis                                                         | `nome`, `email`, `password_hash` (**bcrypt**), `telemovel`, `nif`, `tipo_perfil`                               |
+| **`cliente`**        | Herança de `utilizador` (1:1)                                                   | `telemovel_validado_otp`                                                                                       |
+| **`funcionario`**    | Herança de `utilizador` (1:1)                                                   | `tipo_contrato` (`efetivo_contratado` / `recibo_verde`), `percentagem_comissao`, `salario_base`, `cc`, `ativo` |
+| **`gestor`**         | ⚠️ **Não tem tabela própria** — vive em `utilizador` com `tipo_perfil='gestor'` | —                                                                                                              |
+| **`cliente_morada`** | N moradas por cliente                                                           | `designacao`, `rua`, `numero_porta`, `andar_bloco`, `codigo_postal`, `principal`,                              |
+|                      |                                                                                 | `cidade_id`                                                                                                    |
 
 **Perfis em uso:** `cliente`, `funcionario`, `gestor` (enum em `utilizador.tipo_perfil`).
 
@@ -58,17 +58,18 @@ a recibo verde, na vertente **ambulante**. Esta correspondência **ainda não é
 - A aceitação é **por serviço individual** (não por agendamento nem por pessoa).
 - No momento da aceitação é apresentado o **Simulador de Recibos Verdes** (§11).
 - Grava em `agendamento_servico`: `funcionario_id`, `estado_aceitacao='aceite'`, `aceito_em`,
-  `percentagem_funcionario_aplicada`, `valor_recibo_verde_funcionario`, `valor_recibo_verde_plataforma`.
+  `percentagem_funcionario_aplicada` (o *snapshot* da percentagem do funcionário). Os **valores** por
+  funcionário/empresa são **calculados na leitura** (§11 · C-03/D-10).
 - **Troca:** aceitar um serviço já aceite por **outro** funcionário **transfere-o** (`isSwap`).
 
 ### 10.3 Desfazer / trocar
-- Permitido **enquanto** o agendamento não estiver **`totalmente_aceite_funcionarios`**.
+- Permitido **enquanto** o agendamento não estiver **`totalmente_alocado`**.
 - Só o funcionário que aceitou pode desfazer (**403** se não for ele).
 - Se o agendamento já estiver consolidado → **409** ("não permite desfazer nem trocar").
 
 ### 10.4 Consolidação
 - Assim que o **último serviço** é aceite, o agendamento transita para
-  **`totalmente_aceite_funcionarios`** (transacional).
+  **`totalmente_alocado`** (transacional).
 - Nesse momento: **(a)** bloqueia trocas/desistências e **(b)** bloqueia **agendamentos
   concorrentes na mesma janela temporal**.
 
@@ -76,7 +77,7 @@ a recibo verde, na vertente **ambulante**. Esta correspondência **ainda não é
 - Ao consolidar, o sistema reserva o slot (data/hora + duração total) e recusa agendamentos novos
   ou aceitações que colidam com essa janela (`assertNoWindowConflict` → **409**).
 - Estados considerados como "ocupantes": `pendente_validacao_logistica_loja`,
-  `totalmente_aceite_funcionarios`, `confirmado`.
+  `totalmente_alocado`, `confirmado`.
 
 ### 10.6 Capacidade de funcionários por slot
 - A disponibilidade baseia-se na **ausência de conflito de janela**, e **não** no número de

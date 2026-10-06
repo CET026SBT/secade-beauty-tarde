@@ -46,7 +46,7 @@ Legenda de estado: ✅ implementado · 🟡 parcial · ⬜ por implementar
 | RF-30 | Wizard com **morada** (10 cidades) + **OTP** + **estrutura por pessoa** | ✅                     |
 | RF-31 | OTP simulado: 6 dígitos, visível no ecrã, expira em 10 min, uso único   | ✅                     |
 | RF-32 | Duração e valor **por pessoa** (serviços partilhados contam por pessoa) | ✅                     |
-| RF-33 | Estado inicial `pendente_aceitacao_funcionarios`                        | ✅                     |
+| RF-33 | Estado inicial `pendente_alocacao`                                      | ✅                     |
 | RF-34 | Sinal **dispensado** (1.ª marcação)                                     | 🟡 (dispensado sempre) |
 | RF-35 | **Re-avaliar a disponibilidade ao alterar serviços** após escolher data | 🟡 (§3.7)              |
 | RF-36 | **Flexibilidade horária como exceção** (fim > 19:00 permitido)          | ⬜ (§3.9)              |
@@ -107,7 +107,7 @@ Legenda de estado: ✅ implementado · 🟡 parcial · ⬜ por implementar
 |       | **líquido a pagar** por trabalhador e por mês                                                                                                                                               |                    |
 | RF-83 | **Calendário fiscal com as 8 famílias** de obrigações do calendário oficial (SAF-T, DMR, retenções na fonte, Segurança Social, IVA-declaração e IVA-pagamento, IRC, IES/DA), **importável** | ⬜ (§13 · §24.10)  |
 |       | do ficheiro                                                                                                                                                                                 |                    |
-| RF-84 | **Página das comissões** por funcionário, com os valores **já gravados na aceitação** (`valor_recibo_verde_funcionario`), alcançável pelo menu do utilizador e pela **sidebar**             | ✅ (§11 · §24.7)   |
+| RF-84 | **Página das comissões** por funcionário, com os valores derivados do *snapshot* da aceitação (`percentagem_funcionario_aplicada`), alcançável pelo menu do utilizador e pela **sidebar**   | ✅ (§11 · §24.7)   |
 | RF-85 | **Gestão de fornecedores** em `/gestao/fornecedores` (listagem, pesquisa, criar/editar, ativar/desativar) sobre a tabela `fornecedor` **já carregada** com os 43 fornecedores reais         | ✅ (§25.1 · §17.9) |
 | RF-86 | **Carga dos ficheiros entregues pelo cliente** (durações dos serviços, fornecedores e clientes) por **migração idempotente gerada a partir do ficheiro** — nunca por transcrição manual     | ✅ (§24.11)        |
 | RF-87 | **Apresentação dos valores ao cliente com IVA**: catálogo, modal de detalhes, resumo do wizard (loja e carrinha) e "Meus Agendamentos" convertem o preço **net** gravado na BD              | ✅ (§3.16)         |
@@ -150,12 +150,12 @@ Legenda de estado: ✅ implementado · 🟡 parcial · ⬜ por implementar
 | RN-29 | Em pagamento com **falha de internet**, apenas **numerário** (a implementar)                                                                        | §24.5                                                      |
 | RN-30 | **Importar substitui o importado**: uma nova importação apaga os dados importados antes de gravar os novos, **numa transação**; nunca soma nem      | `ImportService` (a criar · §3.12)                          |
 |       | acumula                                                                                                                                             |                                                            |
-| RN-31 | **Rota só agrega agendamentos com todos os serviços aceites** (`totalmente_aceite_funcionarios`); a decisão do gestor **recusa (409)** grupos com   | ✅ `RotaService::decideRoute` · §24.7                      |
+| RN-31 | **Rota só agrega agendamentos com todos os serviços aceites** (`totalmente_alocado`); a decisão do gestor **recusa (409)** grupos com               | ✅ `RotaService::decideRoute` · §24.7                      |
 |       | serviços pendentes                                                                                                                                  |                                                            |
 | RN-32 | A lista **"Por aceitar"** mostra apenas serviços pendentes de agendamentos **fora de rota confirmada** — a partir do momento em que o agendamento   | ✅ `BookingServiceRepository::findPending` · §24.7         |
 |       | entra numa rota confirmada **deixa de aparecer**                                                                                                    |                                                            |
 | RN-33 | A **agenda** do funcionário mostra **apenas** agendamentos de **rotas confirmadas** (`confirmado`); o que ainda se aceita/desfaz fica na listagem   | ✅ §10.1 · §24.7                                           |
-| RN-34 | **Reverter/excluir** um agendamento só é possível **antes** de a rota ser confirmada: volta a `totalmente_aceite_funcionarios`                      | ✅ `RotaService::decideRoute` · §24.7                      |
+| RN-34 | **Reverter/excluir** um agendamento só é possível **antes** de a rota ser confirmada: volta a `totalmente_alocado`                                  | ✅ `RotaService::decideRoute` · §24.7                      |
 |       | (**qualificado**), **nunca** a `cancelado`; em **rota confirmada** o agendamento **não se altera**                                                  |                                                            |
 | RN-35 | **Subsídio de alimentação = dias úteis × 6,15 €** (dias úteis seg–sex; 21/20/22 no 1.º trimestre de 2026); a **SS patronal (23,75 %)** incide sobre | `PayrollService` (a criar · §24.9)                         |
 |       | o **saldo de remunerações** (19 880,77) e **não** sobre o bruto — a base da SS do trabalhador é a remuneração do período                            |                                                            |
