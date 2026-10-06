@@ -12,6 +12,7 @@ $routes = [
         "site-stats"     => ["controller" => "StatsController", "method" => "summary", "http" => "GET"],
 
         "booking-services"       => ["controller" => "BookingController", "method" => "serviceList", "http" => "GET"],
+        "service-photos"         => ["controller" => "ServicePhotoController", "method" => "publicList", "http" => "GET"],
         "booking-availability"   => ["controller" => "BookingController", "method" => "availability", "http" => "GET"],
         "booking-otp-request"    => ["controller" => "BookingController", "method" => "otpRequest", "http" => "POST"],
         "booking-create-store"   => ["controller" => "BookingController", "method" => "createStoreBooking", "http" => "POST"],
@@ -53,6 +54,12 @@ $routes = [
         "admin-service-accepted-list"=> ["controller" => "ServiceController", "method" => "acceptedList", "http" => "GET"],
         "admin-service-accept"       => ["controller" => "ServiceController", "method" => "accept", "http" => "POST"],
         "admin-service-unaccept"     => ["controller" => "ServiceController", "method" => "unaccept", "http" => "POST"],
+
+        // Fase 7 (F3.1) — fotos do catálogo (só o gestor)
+        "admin-service-photo-list"     => ["controller" => "ServicePhotoController", "method" => "list", "http" => "GET"],
+        "admin-service-photo-upload"   => ["controller" => "ServicePhotoController", "method" => "upload", "http" => "POST"],
+        "admin-service-photo-featured" => ["controller" => "ServicePhotoController", "method" => "setFeatured", "http" => "POST"],
+        "admin-service-photo-remove"   => ["controller" => "ServicePhotoController", "method" => "remove", "http" => "POST"],
 
         "admin-fiscal-calendar-list" => ["controller" => "FiscalController", "method" => "calendar", "http" => "GET"],
         "admin-fiscal-alert-list"    => ["controller" => "FiscalController", "method" => "alerts", "http" => "GET"],

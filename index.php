@@ -41,7 +41,8 @@ $routes = [
     "gestao/avisos"         => ROOT_PATH . "/modules/backoffice/avisos.php",
     "gestao/agenda"         => ROOT_PATH . "/modules/backoffice/agenda.php",
     "gestao/fornecedores"   => ROOT_PATH . "/modules/backoffice/suppliers.php",
-    "gestao/comissoes"      => ROOT_PATH . "/modules/backoffice/commissions.php"
+    "gestao/comissoes"      => ROOT_PATH . "/modules/backoffice/commissions.php",
+    "gestao/catalogo"       => ROOT_PATH . "/modules/backoffice/catalog.php"
 ];
 
 $matchedFile = match_route_and_extract_params($path, $routes);

@@ -734,8 +734,32 @@ CREATE TABLE IF NOT EXISTS `servico_foto` (
   CONSTRAINT `fk_servico_foto_servico` FOREIGN KEY (`servico_id`) REFERENCES `servico` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table secade_beauty.servico_foto: ~0 rows (approximately)
+-- Dumping data for table secade_beauty.servico_foto: ~23 rows (approximately)
 DELETE FROM `servico_foto`;
+INSERT INTO `servico_foto` (`id`, `servico_id`, `url_foto`, `destaque`, `ordem_exibicao`) VALUES
+	(1, 1, 'uploads/services/service-1.jpg', 1, 0),
+	(2, 2, 'uploads/services/service-2.jpg', 1, 0),
+	(3, 3, 'uploads/services/service-3.jpg', 1, 0),
+	(4, 4, 'uploads/services/service-4.jpg', 1, 0),
+	(5, 5, 'uploads/services/service-5.jpg', 1, 0),
+	(6, 6, 'uploads/services/service-6.jpg', 1, 0),
+	(7, 7, 'uploads/services/service-7.jpg', 1, 0),
+	(8, 8, 'uploads/services/service-8.png', 1, 0),
+	(9, 9, 'uploads/services/service-9.jpg', 1, 0),
+	(10, 10, 'uploads/services/service-10.jpg', 1, 0),
+	(11, 11, 'uploads/services/service-11.jpg', 1, 0),
+	(12, 12, 'uploads/services/service-12.jpg', 1, 0),
+	(13, 13, 'uploads/services/service-13.jpg', 1, 0),
+	(14, 14, 'uploads/services/service-14.jpg', 1, 0),
+	(15, 15, 'uploads/services/service-15.jpg', 1, 0),
+	(16, 16, 'uploads/services/service-16.jpg', 1, 0),
+	(17, 17, 'uploads/services/service-17.jpg', 1, 0),
+	(18, 18, 'uploads/services/service-18.jpg', 1, 0),
+	(19, 19, 'uploads/services/service-19.jpg', 1, 0),
+	(20, 20, 'uploads/services/service-20.jpg', 1, 0),
+	(21, 21, 'uploads/services/service-21.jpg', 1, 0),
+	(22, 22, 'uploads/services/service-22.jpg', 1, 0),
+	(23, 23, 'uploads/services/service-23.jpg', 1, 0);
 
 -- Dumping structure for table secade_beauty.servico_local
 DROP TABLE IF EXISTS `servico_local`;
