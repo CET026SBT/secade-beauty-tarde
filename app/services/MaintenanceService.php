@@ -23,6 +23,9 @@ class MaintenanceService extends BaseService {
     private const MIN_INTERVAL_MINUTES = 5;
     private const KEY = "manutencao";
 
+    /** R1a (RF-58/RN-24): a auto-recusa acontece 24 h antes da execução. */
+    private const CUTOFF_HOURS = 24;
+
     private MaintenanceRepository $maintenanceRepository;
     private BookingRepository $bookingRepository;
     private RotaRepository $rotaRepository;
@@ -85,17 +88,80 @@ class MaintenanceService extends BaseService {
     public function reconcileStates(): array {
         $now = date("Y-m-d H:i:s");
 
-        $refusedAsNoRoute = $this->bookingRepository->refuseOverdueWithoutRoute($now);
+        // R1a (RF-59/RN-25): 24 h antes da execução, sem rota confirmada, o
+        // agendamento é auto-recusado — e o cliente é avisado (C-14).
+        $refusedRows = $this->bookingRepository->refuseWithoutRouteAtCutoff($now, self::CUTOFF_HOURS);
+        $refusedNotices = $this->notifyCustomers($refusedRows, "agendamento_recusado", function() {
+            return "A sua marcação não conseguiu ser incluída numa rota a tempo. Nenhum valor lhe será cobrado.";
+        });
+
+        // RF-13: lembrete 24 h com alternativas, para marcações confirmadas.
+        $reminders = $this->remindConfirmedWithin24Hours($now);
+
         $notifiedConfirmed = $this->notifyConfirmedStarted();
         $completed = $this->bookingRepository->completeExecutedAfterWindow($now, 4);
         $routesClosed = $this->closeRoutesByChildren();
 
         return [
-            "refusedWithoutRoute"     => $refusedAsNoRoute,
-            "confirmedAlertsCreated"  => $notifiedConfirmed,
-            "completedAfterWindow"    => $completed,
-            "routesClosed"            => $routesClosed
+            "refusedWithoutRoute"    => count($refusedRows),
+            "refusedNotices"         => $refusedNotices,
+            "reminders24h"           => $reminders,
+            "confirmedAlertsCreated" => $notifiedConfirmed,
+            "completedAfterWindow"   => $completed,
+            "routesClosed"           => $routesClosed
         ];
+    }
+
+    /**
+     * RF-13: lembrete 24 h para marcações confirmadas, com **alternativas** de data
+     * (o compromisso de `aboutCommitment.php`). Não se repete: a ausência de aviso
+     * anterior é o critério.
+     */
+    private function remindConfirmedWithin24Hours(string $now): int {
+        $created = 0;
+
+        foreach ($this->bookingRepository->findConfirmedWithin24Hours($now) as $booking) {
+            $alternatives = $this->bookingRepository->findAlternativeSlots($booking);
+
+            $dates = array_map(
+                fn($row) => date("d/m/Y", strtotime((string)$row["data_alt"])),
+                $alternatives
+            );
+
+            $message = "Agendamento #" . (int)$booking["id"] . " é a "
+                . date("d/m/Y H:i", strtotime((string)$booking["data_hora_pretendida"])) . ".";
+
+            if (!empty($dates)) {
+                $message .= " Se precisar de alterar, temos disponibilidade em: " . implode(", ", $dates) . ".";
+            } else {
+                $message .= " Se precisar de alterar, contacte-nos.";
+            }
+
+            $created += $this->notificationRepository->create(
+                (int)$booking["cliente_id"],
+                "lembrete_24h",
+                $message
+            );
+        }
+
+        return $created;
+    }
+
+    /** Avisa os clientes das linhas afetadas por uma decisão automática (C-14). */
+    private function notifyCustomers(array $rows, string $type, callable $messageFor): int {
+        $created = 0;
+
+        foreach ($rows as $row) {
+            if (empty($row["cliente_id"])) continue;
+
+            $created += $this->notificationRepository->create(
+                (int)$row["cliente_id"],
+                $type,
+                "Agendamento #" . (int)$row["id"] . " " . $messageFor($row)
+            );
+        }
+
+        return $created;
     }
 
     /** R1b: avisa o(s) funcionário(s) de serviços já começados que continuam abertos. */

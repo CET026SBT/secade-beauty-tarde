@@ -253,26 +253,98 @@ class BookingRepository extends BaseRepository {
     }
 
     /**
-     * R1a (§8.2): agendamentos já começados, sem rota (não `confirmado`) e não
-     * terminais → passam a `recusado` (motivo: sem rota). Devolve quantos mudaram.
+     * R1a (§8.2 · RF-59/RN-25): a **24 h** da execução, sem rota confirmada, o
+     * agendamento é auto-recusado (o cliente é avisado por `notificacao`).
+     *
+     * Devolve as linhas afetadas para que o serviço de manutenção possa avisar os
+     * clientes — a reconciliação não escreve avisos sem saber a quem.
      */
-    public function refuseOverdueWithoutRoute(string $now): int {
-        $sql = "UPDATE agendamento
-                SET estado_reserva = 'recusado'
-                WHERE data_hora_pretendida < :agora
-                  AND estado_reserva IN ('pendente_alocacao', 'pendente_validacao_logistica_loja', 'totalmente_alocado')";
+    public function refuseWithoutRouteAtCutoff(string $now, int $hoursBefore): array {
+        $rows = $this->fetchAllRaw(
+            "SELECT id, cliente_id
+             FROM agendamento
+             WHERE estado_reserva IN ('pendente_alocacao', 'pendente_validacao_logistica_loja', 'totalmente_alocado')
+               AND data_hora_pretendida <= DATE_ADD(:agora, INTERVAL :horas HOUR)",
+            ["agora" => $now, "horas" => $hoursBefore]
+        );
 
-        return $this->execute($sql, ["agora" => $now]);
+        if (empty($rows)) {
+            return [];
+        }
+
+        $ids = array_map(fn($row) => (int)$row["id"], $rows);
+
+        $this->execute(
+            "UPDATE agendamento SET estado_reserva = 'recusado'
+             WHERE id IN (" . implode(",", array_map("intval", $ids)) . ")"
+        );
+
+        return $rows;
     }
 
     /** R1b (§8.2): agendamentos `confirmado` cuja execução já começou. */
     public function findConfirmedStarted(string $now): array {
-        $sql = "SELECT id, data_hora_pretendida
+        $sql = "SELECT id, data_hora_pretendida, cliente_id
                 FROM agendamento
                 WHERE estado_reserva = 'confirmado'
                   AND data_hora_pretendida < :agora";
 
         return $this->fetchAllRaw($sql, ["agora" => $now]);
+    }
+
+    /**
+     * Marcações **confirmadas** que entram nas próximas 24 h e ainda não têm
+     * lembrete (RF-13). A ausência de aviso evita repetir todos os dias.
+     */
+    public function findConfirmedWithin24Hours(string $now): array {
+        $sql = "SELECT a.id, a.cliente_id, a.data_hora_pretendida, a.local_prestacao,
+                       cm.cidade_id, c.nome AS cidade_nome
+                FROM agendamento a
+                LEFT JOIN cliente_morada cm ON a.cliente_morada_id = cm.id
+                LEFT JOIN cidade c ON cm.cidade_id = c.id
+                WHERE a.estado_reserva = 'confirmado'
+                  AND a.data_hora_pretendida BETWEEN :agora AND DATE_ADD(:agora, INTERVAL 24 HOUR)
+                  AND NOT EXISTS (
+                      SELECT 1 FROM notificacao n
+                      WHERE n.utilizador_id = a.cliente_id
+                        AND n.tipo = 'lembrete_24h'
+                        AND n.mensagem LIKE CONCAT('Agendamento #', a.id, ' %')
+                  )";
+
+        return $this->fetchAllRaw($sql, ["agora" => $now]);
+    }
+
+    /**
+     * Alternativas para o lembrete (RF-13): os **próximos horários livres** da mesma
+     * cidade/canal, para o cliente poder reagendar em vez de perder a marcação.
+     */
+    public function findAlternativeSlots(array $booking, int $limit = 3): array {
+        $cityId = $booking["cidade_id"] ?? null;
+        $local  = (string)($booking["local_prestacao"] ?? "loja_fisica");
+        $params = [
+            "data" => substr((string)$booking["data_hora_pretendida"], 0, 10),
+            "local" => $local
+        ];
+
+        $cityFilter = "";
+
+        if ($cityId !== null && (int)$cityId > 0) {
+            $cityFilter = " AND cm.cidade_id = :cidade_id";
+            $params["cidade_id"] = (int)$cityId;
+        }
+
+        $sql = "SELECT DATE(a.data_hora_pretendida) AS data_alt, COUNT(*) AS total
+                FROM agendamento a
+                LEFT JOIN cliente_morada cm ON a.cliente_morada_id = cm.id
+                WHERE a.local_prestacao = :local
+                  AND DATE(a.data_hora_pretendida) > :data
+                  AND a.estado_reserva NOT IN ('cancelado', 'recusado')
+                  {$cityFilter}
+                GROUP BY DATE(a.data_hora_pretendida)
+                ORDER BY data_alt ASC
+                LIMIT " . (int)$limit;
+
+        return $this->fetchAllRaw($sql, $params);
     }
 
     /** Funcionários com serviços aceites num agendamento (para o aviso R1b). */
@@ -305,6 +377,19 @@ class BookingRepository extends BaseRepository {
                   AND DATE_ADD(a.data_hora_pretendida, INTERVAL (GREATEST(d.dur, 1) + :horas * 60) MINUTE) < :agora";
 
         return $this->execute($sql, ["horas" => $hoursAfterEnd, "agora" => $now]);
+    }
+
+    /** Clientes + ids de uma lista de agendamentos (para os avisos de rota — F10). */
+    public function findCustomersOfBookings(array $bookingIds): array {
+        if (empty($bookingIds)) {
+            return [];
+        }
+
+        $ids = implode(",", array_map("intval", $bookingIds));
+
+        return $this->fetchAllRaw(
+            "SELECT id, cliente_id FROM agendamento WHERE id IN ({$ids}) AND cliente_id IS NOT NULL"
+        );
     }
 
     /** Estados dos agendamentos filhos de uma rota (para R3/R4 — cascata). */

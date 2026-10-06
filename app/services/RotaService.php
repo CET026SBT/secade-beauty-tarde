@@ -4,6 +4,7 @@ require_once __DIR__ . "/BaseService.php";
 require_once APP_PATH . "/repositories/RotaRepository.php";
 require_once APP_PATH . "/repositories/BookingRepository.php";
 require_once APP_PATH . "/repositories/BookingServiceRepository.php";
+require_once APP_PATH . "/repositories/NotificationRepository.php";
 require_once APP_PATH . "/utils/Session.php";
 
 /**
@@ -14,8 +15,8 @@ require_once APP_PATH . "/utils/Session.php";
  * (nunca aprova nem recusa automaticamente).
  *
  * Ao decidir:
- *   aprovada -> rota 'aprovada' + agendamentos 'confirmado'
- *   recusada -> rota 'recusada' + agendamentos 'cancelado'
+ *   aprovada -> rota 'aprovada' + agendamentos 'confirmado' + aviso ao cliente
+ *   recusada -> rota 'recusada' + agendamentos 'recusado' + aviso ao cliente
  */
 class RotaService extends BaseService {
 
@@ -25,12 +26,14 @@ class RotaService extends BaseService {
     private RotaRepository $rotaRepository;
     private BookingRepository $bookingRepository;
     private BookingServiceRepository $bookingServiceRepository;
+    private NotificationRepository $notificationRepository;
 
     public function __construct() {
         parent::__construct();
         $this->rotaRepository = new RotaRepository();
         $this->bookingRepository = new BookingRepository();
         $this->bookingServiceRepository = new BookingServiceRepository();
+        $this->notificationRepository = new NotificationRepository();
     }
 
     /**
@@ -163,6 +166,10 @@ class RotaService extends BaseService {
             $bookingState = $approved ? "confirmado" : "recusado";
             $this->bookingRepository->updateEstadoMany($bookingIds, $bookingState);
 
+            // C-11/C-14/D-07.6: o cliente é avisado ao ser **confirmada** a rota
+            // (não quando o último serviço é alocado) e também quando é recusada.
+            $notified = $this->notifyRouteOutcome($bookingIds, $approved, $date);
+
             $decisionNotes = $notes !== null && $notes !== ""
                 ? $notes
                 : ($approved
@@ -207,14 +214,40 @@ class RotaService extends BaseService {
                 "profitability" => $profitability,
                 "meetsReference"=> $reference,
                 "bookingStatus" => $bookingState,
+                "notified"      => $notified,
                 "message"       => ($approved
-                    ? "Rota aprovada. " . count($bookingIds) . " agendamento(s) confirmado(s); clientes notificados (simulado)."
-                    : "Rota recusada. " . count($bookingIds) . " agendamento(s) cancelado(s); clientes notificados com alternativas (simulado).")
+                    ? "Rota aprovada. " . count($bookingIds) . " agendamento(s) confirmado(s); " . $notified . " cliente(s) avisado(s)."
+                    : "Rota recusada. " . count($bookingIds) . " agendamento(s) recusado(s); " . $notified . " cliente(s) avisado(s) com alternativas.")
                     . (count($excludedIds) > 0
                         ? " " . count($excludedIds) . " agendamento(s) ficaram fora da rota e continuam qualificados."
                         : "")
             ];
         });
+    }
+
+    /**
+     * Avisa os clientes do desfecho da rota (C-11 · C-14 · D-07.6).
+     *
+     * Na confirmação: «a sua marcação foi confirmada». Na recusa: «não foi possível
+     * realizar — veja as alternativas». Os avisos vivem em `notificacao` e são
+     * idempotentes por dia.
+     */
+    private function notifyRouteOutcome(array $bookingIds, bool $approved, string $date): int {
+        $created = 0;
+
+        foreach ($this->bookingRepository->findCustomersOfBookings($bookingIds) as $row) {
+            $message = $approved
+                ? "Agendamento #" . (int)$row["id"] . " confirmado para " . date("d/m/Y", strtotime($date)) . "."
+                : "Agendamento #" . (int)$row["id"] . " não foi possível realizar nesta data. Nenhum valor lhe será cobrado.";
+
+            $created += $this->notificationRepository->create(
+                (int)$row["cliente_id"],
+                $approved ? "agendamento_confirmado" : "agendamento_recusado",
+                $message
+            );
+        }
+
+        return $created;
     }
 
     /**

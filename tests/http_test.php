@@ -57,9 +57,18 @@ function request(string $url, string $method = "GET", $body = null, ?string $jar
     ];
 }
 
+/**
+ * Primeira data útil (Ter–Sáb) a respeitar a regra das 24 h (RF-58/RN-24).
+ */
 function nextWorkingDate(int $offsetDays = 1): string {
     $ts = strtotime("+{$offsetDays} day");
     while ((int)date("N", $ts) < 2 || (int)date("N", $ts) > 6) { $ts = strtotime("+1 day", $ts); }
+
+    while (strtotime(date("Y-m-d", $ts) . " 10:00") < strtotime("+24 hours")) {
+        $ts = strtotime("+1 day", $ts);
+        while ((int)date("N", $ts) < 2 || (int)date("N", $ts) > 6) { $ts = strtotime("+1 day", $ts); }
+    }
+
     return date("Y-m-d", $ts);
 }
 

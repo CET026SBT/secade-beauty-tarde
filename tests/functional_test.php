@@ -46,9 +46,20 @@ function check(string $label, bool $ok, $extra = "") {
 }
 function section(string $title) { echo "\n=== {$title} ===\n"; }
 
+/**
+ * Primeira data útil (Ter–Sáb) a respeitar a regra das 24 h (RF-58/RN-24):
+ * as marcações de teste têm de estar a pelo menos 24 h de distância.
+ */
 function nextWorkingDate(int $offsetDays = 1): string {
     $ts = strtotime("+{$offsetDays} day");
     while ((int)date("N", $ts) < 2 || (int)date("N", $ts) > 6) { $ts = strtotime("+1 day", $ts); }
+
+    // A hora usada nos testes é 10:00 — avança até essa hora já estar a >24 h.
+    while (strtotime(date("Y-m-d", $ts) . " 10:00") < strtotime("+24 hours")) {
+        $ts = strtotime("+1 day", $ts);
+        while ((int)date("N", $ts) < 2 || (int)date("N", $ts) > 6) { $ts = strtotime("+1 day", $ts); }
+    }
+
     return date("Y-m-d", $ts);
 }
 
@@ -265,7 +276,7 @@ check("filtro por estado (recusado)", $statusFiltered["total"] >= 1, (string)$st
 
 $toCancel = $bookingService->createStoreBooking($customerId, ["serviceIds" => [33], "date" => $date, "time" => "16:00"]);
 $cancelResult = $bookingService->cancelBooking((int)$toCancel["bookingId"]);
-check("admin-appointment-cancel funciona", ($bookingRepository->find((int)$toCancel["bookingId"])["status"] ?? "") === "cancelado", json_encode($cancelResult));
+check("admin-appointment-cancel recusa (staff recusa, não cancela — D-07.4)", ($bookingRepository->find((int)$toCancel["bookingId"])["status"] ?? "") === "recusado", json_encode($cancelResult));
 
 $alreadyCancelled = null;
 try { $bookingService->cancelBooking((int)$toCancel["bookingId"]); } catch (Exception $e) { $alreadyCancelled = $e->getMessage(); }
@@ -863,6 +874,57 @@ $photoService = new UserPhotoService();
 $badPhoto = null;
 try { $photoService->upload($rhId, ["error" => UPLOAD_ERR_NO_FILE, "tmp_name" => "", "size" => 0]); } catch (Exception $e) { $badPhoto = $e->getMessage(); }
 check("UserPhotoService rejeita pedido sem ficheiro (422)", $badPhoto !== null, "sem erro");
+
+// ---------------------------------------------------------------------------
+section("19. Fase 7 (F10) - Regra das 24 h, auto-recusa e lembrete com alternativas");
+
+// RF-58/RN-24: uma marcação a menos de 24 h é rejeitada na criação.
+$tooSoonError = null;
+try {
+    $bookingService->createStoreBooking($customerId, ["serviceIds" => [29], "date" => date("Y-m-d", strtotime("+1 day")), "time" => "10:00"]);
+} catch (Exception $e) { $tooSoonError = $e->getMessage(); }
+check("marcação a menos de 24 h é rejeitada (RF-58/RN-24)", $tooSoonError !== null, "sem erro");
+
+// RF-59/RN-25: 24 h antes da execução, sem rota, o agendamento é auto-recusado + aviso.
+$conn->exec("INSERT INTO agendamento (cliente_id, local_prestacao, data_hora_pretendida, estado_reserva, valor_total, sinal_pago, valor_sinal)
+             VALUES ({$customerId}, 'loja_fisica', DATE_ADD(NOW(), INTERVAL 20 HOUR), 'pendente_alocacao', 15.00, 0, 0.00)");
+$cutoffBookingId = (int)$conn->lastInsertId();
+$conn->exec("INSERT INTO agendamento_servico (agendamento_id, servico_id, preco_praticado, duracao_minutos, estado_aceitacao)
+             VALUES ({$cutoffBookingId}, 29, 15.00, 30, 'pendente')");
+
+$maintenanceRepo->markRun("manutencao", date("Y-m-d H:i:s", time() - 3600));
+$cutoffRun = $maintenanceService->run();
+
+check("auto-recusa às 24 h devolve o número de recusas", isset($cutoffRun["reconciliation"]["refusedWithoutRoute"]), json_encode($cutoffRun["reconciliation"] ?? null));
+check("agendamento a 20 h sem rota passa a recusado", ($bookingRepository->find($cutoffBookingId)["status"] ?? "") === "recusado");
+check("cliente é avisado da recusa (C-14)", (int)$conn->query(
+    "SELECT COUNT(*) FROM notificacao WHERE utilizador_id = {$customerId} AND tipo = 'agendamento_recusado'
+     AND mensagem LIKE 'Agendamento #{$cutoffBookingId} %'"
+)->fetchColumn() === 1, "sem notificação");
+
+// RF-13: lembrete 24 h com alternativas para uma marcação confirmada.
+$conn->exec("INSERT INTO agendamento (cliente_id, local_prestacao, data_hora_pretendida, estado_reserva, valor_total, sinal_pago, valor_sinal)
+             VALUES ({$customerId}, 'loja_fisica', DATE_ADD(NOW(), INTERVAL 12 HOUR), 'confirmado', 20.00, 0, 0.00)");
+$reminderBookingId = (int)$conn->lastInsertId();
+
+$maintenanceRepo->markRun("manutencao", date("Y-m-d H:i:s", time() - 3600));
+$reminderRun = $maintenanceService->run();
+check("lembrete 24 h é criado (RF-13)", (int)($reminderRun["reconciliation"]["reminders24h"] ?? 0) >= 1, json_encode($reminderRun["reconciliation"] ?? null));
+
+$reminderMessage = (string)$conn->query(
+    "SELECT mensagem FROM notificacao WHERE utilizador_id = {$customerId} AND tipo = 'lembrete_24h'
+     AND mensagem LIKE 'Agendamento #{$reminderBookingId} %' LIMIT 1"
+)->fetchColumn();
+check("lembrete refere a marcação", str_contains($reminderMessage, "#{$reminderBookingId}"), $reminderMessage);
+check("lembrete sugere alternativas (RF-13)", str_contains($reminderMessage, "disponibilidade") || str_contains($reminderMessage, "contacte-nos"), $reminderMessage);
+
+// O lembrete não se repete na passagem seguinte.
+$maintenanceRepo->markRun("manutencao", date("Y-m-d H:i:s", time() - 3600));
+$secondRun = $maintenanceService->run();
+check("lembrete 24 h não se repete", (int)($secondRun["reconciliation"]["reminders24h"] ?? -1) === 0, json_encode($secondRun["reconciliation"] ?? null));
+
+// Notificações de teste (não poluir a Área Cliente do cliente de demonstração).
+$conn->exec("DELETE FROM notificacao WHERE utilizador_id = {$customerId}");
 
 // ---------------------------------------------------------------------------
 section("RESULTADO FINAL");

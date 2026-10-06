@@ -48,6 +48,16 @@ class BookingService extends BaseService {
             throw new Exception("Apenas é possível agendar de Terça a Sábado.", 422);
         }
 
+        // RF-58/RN-24: a marcação tem de ser feita com **pelo menos 24 h** de
+        // antecedência — a operação planeia rotas, não improvisa o dia de hoje.
+        if (strtotime($dateTime) < strtotime("+24 hours")) {
+            throw new Exception(
+                "As marcações têm de ser feitas com pelo menos 24 horas de antecedência. Escolha uma data a partir de "
+                . date("d/m/Y", strtotime("+1 day")) . ".",
+                422
+            );
+        }
+
         return $dateTime;
     }
 
@@ -349,15 +359,16 @@ class BookingService extends BaseService {
             throw new Exception("Agendamento não encontrado.", 404);
         }
 
-        if (in_array($booking["status"], ["cancelado", "executado", "concluido"], true)) {
-            throw new Exception("Este agendamento não pode ser cancelado (estado atual: {$booking['status']}).", 409);
+        if (in_array($booking["status"], ["recusado", "cancelado", "executado", "concluido"], true)) {
+            throw new Exception("Este agendamento não pode ser recusado (estado atual: {$booking['status']}).", 409);
         }
 
-        $this->bookingRepository->updateEstado($bookingId, "cancelado");
+        // D-07.4 / 6.1: a staff **recusa** — `cancelado` continua reservado ao cliente.
+        $this->bookingRepository->updateEstado($bookingId, "recusado");
 
         return [
             "bookingId" => $bookingId,
-            "message"   => "Agendamento cancelado com sucesso. O cliente será notificado (simulado)."
+            "message"   => "Agendamento recusado. O cliente será avisado."
         ];
     }
 
