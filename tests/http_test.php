@@ -325,8 +325,10 @@ check("pendentes devolvem categorias e config", isset($pending["json"]["categori
 $accepted = request("{$base}/api?action=admin-service-accepted-list", "GET", null, $employeeJar);
 check("admin-service-accepted-list 200", $accepted["status"] === 200, (string)$accepted["status"]);
 
+// F4/C-08: o gestor passou a ALOCAR — a lista de alocação é dele (200).
 $managerPending = request("{$base}/api?action=admin-service-pending-list", "GET", null, $managerJar);
-check("gestor NAO acede a lista de aceitacao (403)", $managerPending["status"] === 403, (string)$managerPending["status"]);
+check("gestor acede a lista de alocacao (200)", $managerPending["status"] === 200, (string)$managerPending["status"]);
+check("lista de alocacao traz funcionarios (seletor)", !empty($managerPending["json"]["employees"]), json_encode($managerPending["json"]["employees"] ?? null));
 
 $clientAccept = request("{$base}/api?action=admin-service-accept", "POST", ["bookingServiceId" => 1], $clientJar);
 check("cliente NAO pode aceitar servicos (403)", $clientAccept["status"] === 403, (string)$clientAccept["status"]);

@@ -30,6 +30,21 @@ class EmployeeRepository extends BaseRepository {
         return (int)$this->fetchRaw("SELECT COUNT(*) AS total FROM funcionario WHERE ativo = 1")["total"];
     }
 
+    /**
+     * Funcionários **ativos** para o seletor de alocação (F4). O gestor aloca a
+     * qualquer funcionário ativo; o funcionário aloca a si próprio.
+     */
+    public function listActive(): array {
+        $sql = "SELECT f.id, f.tipo_contrato, f.percentagem_comissao, f.salario_base, u.nome
+                FROM funcionario f
+                INNER JOIN utilizador u ON f.id = u.id
+                WHERE f.ativo = 1
+                ORDER BY u.nome ASC";
+
+        $rows = $this->fetchAll($sql);
+        return is_array($rows) ? $rows : [];
+    }
+
     public function create(array $data): int {
         $sql = "INSERT INTO funcionario (id, tipo_contrato, percentagem_comissao, salario_base, cc, ativo)
                 VALUES (:id, :tipo_contrato, :percentagem_comissao, :salario_base, :cc, 1)";

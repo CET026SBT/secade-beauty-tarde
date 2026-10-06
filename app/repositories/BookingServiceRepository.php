@@ -171,9 +171,10 @@ class BookingServiceRepository extends BaseRepository {
     // ------------------------------------------------------------------
 
     /**
-     * Serviços aceites pelo funcionário (opção "Totalmente Aceite" no backoffice).
+     * Serviços alocados/aceites (opção "Totalmente Alocado" no backoffice).
+     * `$employeeId = null` devolve as alocações de **todos** (visão do gestor).
      */
-    public function findAcceptedByEmployee(int $employeeId, array $filters = []): array {
+    public function findAcceptedByEmployee(?int $employeeId, array $filters = []): array {
         $sql = "SELECT s.id, s.agendamento_id, s.agendamento_pessoa_id, s.servico_id,
                        s.funcionario_id, s.preco_praticado, s.duracao_minutos, s.estado_aceitacao,
                        s.aceito_em, s.percentagem_funcionario_aplicada,
@@ -181,6 +182,7 @@ class BookingServiceRepository extends BaseRepository {
                        ROUND(s.preco_praticado - ROUND(s.preco_praticado * s.percentagem_funcionario_aplicada / 100, 2), 2) AS valor_recibo_verde_plataforma,
                        sv.nome AS servico_nome, sv.categoria_id, cat.nome AS categoria_nome,
                        p.nome_pessoa,
+                       fu.nome AS funcionario_nome,
                        a.data_hora_pretendida, a.local_prestacao, a.estado_reserva,
                        a.cliente_id, u.nome AS cliente_nome
                 FROM agendamento_servico s
@@ -189,9 +191,16 @@ class BookingServiceRepository extends BaseRepository {
                 INNER JOIN agendamento a ON s.agendamento_id = a.id
                 INNER JOIN cliente c ON a.cliente_id = c.id
                 INNER JOIN utilizador u ON c.id = u.id
+                LEFT JOIN utilizador fu ON s.funcionario_id = fu.id
                 LEFT JOIN agendamento_pessoa p ON s.agendamento_pessoa_id = p.id
-                WHERE s.funcionario_id = :funcionario_id";
-        $params = ["funcionario_id" => $employeeId];
+                WHERE s.funcionario_id IS NOT NULL";
+        $params = [];
+
+        // O gestor vê todas as alocações; o funcionário só as suas.
+        if ($employeeId !== null && $employeeId > 0) {
+            $sql .= " AND s.funcionario_id = :funcionario_id";
+            $params["funcionario_id"] = $employeeId;
+        }
 
         if (!empty($filters["data"])) {
             $sql .= " AND DATE(a.data_hora_pretendida) = :data";
