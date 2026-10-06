@@ -238,6 +238,21 @@ class BookingRepository extends BaseRepository {
     }
 
     /**
+     * Próximas marcações do cliente (não terminais e ainda no futuro) — F9 · §3.5.
+     */
+    public function findUpcomingByCustomer(int $customerId): array {
+        $sql = "SELECT id, data_hora_pretendida AS dateTime, estado_reserva AS status, local_prestacao AS local, valor_total AS totalAmount
+                FROM agendamento
+                WHERE cliente_id = :cliente_id
+                  AND data_hora_pretendida >= NOW()
+                  AND estado_reserva NOT IN ('cancelado', 'recusado', 'concluido')
+                ORDER BY data_hora_pretendida ASC
+                LIMIT 10";
+
+        return $this->fetchAllRaw($sql, ["cliente_id" => $customerId]);
+    }
+
+    /**
      * R1a (§8.2): agendamentos já começados, sem rota (não `confirmado`) e não
      * terminais → passam a `recusado` (motivo: sem rota). Devolve quantos mudaram.
      */

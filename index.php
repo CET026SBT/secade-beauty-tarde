@@ -24,8 +24,11 @@ $routes = [
     "registo"               => ROOT_PATH . "/modules/main/customerRegister.php",
     "recuperar-passe"       => ROOT_PATH . "/modules/main/recoverPassword.php",
 
-    "perfil"                => ROOT_PATH . "/modules/main/profile.php",
-    "agendamentos"          => ROOT_PATH . "/modules/main/appointments.php",
+    // F9 (§3.5/C-05): a Área Cliente substitui as antigas páginas «Perfil» e
+    // «Histórico». As rotas antigas ficam como atalhos para não quebrar links.
+    "area-cliente"          => ROOT_PATH . "/modules/main/customerArea.php",
+    "perfil"                => ROOT_PATH . "/modules/main/customerArea.php",
+    "agendamentos"          => ROOT_PATH . "/modules/main/customerArea.php",
     "agendar"               => ROOT_PATH . "/modules/main/booking.php",
     "agendamento-sucesso"   => ROOT_PATH . "/modules/main/bookingSuccess.php",
 

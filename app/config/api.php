@@ -21,6 +21,9 @@ $routes = [
         "customer-booking-cancel" => ["controller" => "BookingController", "method" => "cancelBooking", "http" => "POST"],
 
         "customer-profile"            => ["controller" => "CustomerController", "method" => "profile", "http" => "GET"],
+        "customer-profile-update"     => ["controller" => "CustomerController", "method" => "update", "http" => "POST"],
+        "user-photo-upload"           => ["controller" => "UserPhotoController", "method" => "upload", "http" => "POST"],
+        "user-photo-remove"           => ["controller" => "UserPhotoController", "method" => "remove", "http" => "POST"],
         "customer-address-list"       => ["controller" => "CustomerAddressController", "method" => "index", "http" => "GET"],
         "customer-address-store"      => ["controller" => "CustomerAddressController", "method" => "store", "http" => "POST"],
         "customer-address-set-principal" => ["controller" => "CustomerAddressController", "method" => "setPrincipal", "http" => "POST"],
@@ -39,6 +42,11 @@ $routes = [
         "admin-alert-summary"        => ["controller" => "AlertController", "method" => "summary", "http" => "GET"],
         "admin-alert-list"           => ["controller" => "AlertController", "method" => "list", "http" => "GET"],
         "admin-alert-read"           => ["controller" => "AlertController", "method" => "markRead", "http" => "POST"],
+
+    // Fase 7 (F9) — Área Cliente (avisos com o âmbito do cliente)
+        "customer-alerts-summary"    => ["controller" => "AlertController", "method" => "customerSummary", "http" => "GET"],
+        "customer-alerts-list"       => ["controller" => "AlertController", "method" => "customerList", "http" => "GET"],
+        "customer-alerts-read"       => ["controller" => "AlertController", "method" => "customerMarkRead", "http" => "POST"],
         "admin-employee-agenda-list" => ["controller" => "AgendaController", "method" => "month", "http" => "GET"],
 
         // Fase 6.1 — fornecedores (RF-85 · §25.1)

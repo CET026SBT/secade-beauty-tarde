@@ -58,13 +58,35 @@ class AlertService extends BaseService {
         $profile = "gestor";
         if (Session::isEmployee()) {
             $profile = Session::employeeContractType() === "efetivo_contratado" ? "efetivo" : "recibo_verde";
+        } elseif (Session::isCustomer()) {
+            $profile = "cliente";
         }
 
         return [
             "count"     => $summary["count"],
             "profile"   => $profile,
             "groups"    => $summary["groups"],
-            "readScope" => "global"
+            "readScope" => $profile === "cliente" ? "proprio" : "global"
+        ];
+    }
+
+    /**
+     * O cliente marca como lidos **os seus** avisos (`notificacao`).
+     */
+    public function markMyNotificationsAsRead(): array {
+        $userId = Session::userId();
+
+        if ($userId === null) {
+            throw new Exception("Sessão inválida.", 401);
+        }
+
+        $updated = $this->notificationRepository->markAllRead($userId);
+
+        return [
+            "updated" => $updated,
+            "message" => $updated > 0
+                ? "Avisos marcados como lidos."
+                : "Não existiam avisos por ler."
         ];
     }
 
@@ -95,7 +117,12 @@ class AlertService extends BaseService {
     private function buildGroups(): array {
         $groups = [];
 
-        if (Session::isManager()) {
+        if (Session::isCustomer()) {
+            // §3.5/C-07 (F9): o cliente passa a ter avisos próprios — os lembretes
+            // que lhe dizem respeito e as suas próximas marcações.
+            $groups[] = $this->myNotificationsGroup();
+            $groups[] = $this->myUpcomingBookingsGroup();
+        } elseif (Session::isManager()) {
             $groups[] = $this->fiscalGroup();
             $groups[] = $this->overdueGroup();
             $groups[] = $this->pendingServicesGroup();
@@ -149,6 +176,43 @@ class AlertService extends BaseService {
         }
 
         return $this->limitedGroup("notificacoes", "Os meus avisos", $items);
+    }
+
+    /** §3.5/C-07 (F9): as próximas marcações do cliente, como lembrete. */
+    private function myUpcomingBookingsGroup(): array {
+        $customerId = Session::userId();
+        $items = [];
+
+        if ($customerId !== null) {
+            foreach ($this->bookingRepository->findUpcomingByCustomer($customerId) as $booking) {
+                $state = $this->bookingStateLabel((string)$booking["status"]);
+
+                $items[] = [
+                    "title"   => "Agendamento #" . (int)$booking["id"],
+                    "detail"  => date("d/m/Y H:i", strtotime((string)$booking["dateTime"])) . " · " . $state,
+                    "type"    => "agendamento",
+                    "page"    => "agendamentos",
+                    "pageUrl" => "/area-cliente#agendamentos"
+                ];
+            }
+        }
+
+        return $this->limitedGroup("proximas_marcacoes", "As minhas próximas marcações", $items);
+    }
+
+    private function bookingStateLabel(string $state): string {
+        $labels = [
+            "pendente_alocacao" => "Pendente de alocação",
+            "pendente_validacao_logistica_loja" => "Pendente de validação",
+            "totalmente_alocado" => "Totalmente alocado",
+            "confirmado" => "Confirmado",
+            "executado" => "Executado",
+            "concluido" => "Concluído",
+            "recusado" => "Recusado",
+            "cancelado" => "Cancelado"
+        ];
+
+        return $labels[$state] ?? $state;
     }
 
     /** Alocações planeadas do funcionário (F4/F5) — o que lhe foi atribuído. */

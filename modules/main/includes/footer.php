@@ -61,6 +61,15 @@
     <!-- Main Javascript -->
     <script type="text/javascript" src="<?= BASE_URL ?>/modules/main/js/main.js"></script>
 
+    <!-- Bibliotecas pedidas pela própria página (opcional) -->
+    <?php
+    if (!empty($pageLibraryScripts)) {
+        foreach ($pageLibraryScripts as $libraryScript) {
+            echo '<script type="text/javascript" src="' . BASE_URL . '/modules/common/lib/' . $libraryScript . '"></script>' . PHP_EOL;
+        }
+    }
+    ?>
+
     <!-- Page & Components Javascript -->
     <?php
     global $requiredScripts;

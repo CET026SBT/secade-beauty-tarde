@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . "/BaseRepository.php";
+require_once APP_PATH . "/utils/Session.php";
 require_once APP_PATH . "/mappers/UserMapper.php";
 
 class UserRepository extends BaseRepository {
@@ -53,5 +54,21 @@ class UserRepository extends BaseRepository {
             "UPDATE utilizador SET foto = :foto WHERE id = :id",
             ["foto" => $photo, "id" => $userId]
         ) >= 0;
+    }
+
+    /** Dados de contacto do próprio utilizador (Área Cliente · F9). */
+    public function updateContact(int $userId, string $name, string $phone, ?string $nif): bool {
+        return $this->execute(
+            "UPDATE utilizador SET nome = :nome, telemovel = :telemovel, nif = :nif WHERE id = :id",
+            ["nome" => $name, "telemovel" => $phone, "nif" => $nif, "id" => $userId]
+        ) >= 0;
+    }
+
+    /** Atualiza os dados de sessão depois de uma edição (evita valores obsoletos no menu). */
+    public function refreshSessionName(int $userId): void {
+        $user = $this->find($userId);
+        if ($user) {
+            Session::createLoginSession($user);
+        }
     }
 }

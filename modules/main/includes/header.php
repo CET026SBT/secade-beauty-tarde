@@ -35,6 +35,15 @@ $pageTitle = isset($pageTitle) ? $pageTitle . " - " . SITE_NAME : SITE_NAME . " 
     <!-- Common Stylesheet -->
     <link href="<?= BASE_URL ?>/modules/common/css/style.css" rel="stylesheet">
 
+    <!-- Bibliotecas pedidas pela própria página (opcional) -->
+    <?php
+    if (!empty($pageLibraryStyles)) {
+        foreach ($pageLibraryStyles as $libraryStyle) {
+            echo '<link href="' . BASE_URL . '/modules/common/lib/' . $libraryStyle . '" rel="stylesheet">' . PHP_EOL;
+        }
+    }
+    ?>
+
     <script>
         window.BASE_URL = <?= json_encode(BASE_URL) ?>;
         window.APP_PARAMS = <?= json_encode($_GET, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE) ?>;

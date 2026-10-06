@@ -120,13 +120,27 @@ foreach (["services", "address", "otp", "datetime", "policy", "summary"] as $ste
     check("wizard tem passo '{$step}'", str_contains($wizard["body"], 'data-step="' . $step . '"'), "");
 }
 
-$profilePage = request("{$base}/perfil", "GET", null, $clientJar);
-check("/perfil responde 200", $profilePage["status"] === 200, (string)$profilePage["status"]);
-check("/perfil carrega componente JS", str_contains($profilePage["body"], "components/profile.js"));
+// F9 (§3.5/C-05): `/perfil` passa a servir a Área Cliente (a página antiga foi substituída).
+    $profilePage = request("{$base}/area-cliente", "GET", null, $clientJar);
+    check("/area-cliente responde 200", $profilePage["status"] === 200, (string)$profilePage["status"]);
+    check("/area-cliente carrega componente JS", str_contains($profilePage["body"], "components/customerArea.js"));
 
-$appointmentsPage = request("{$base}/agendamentos", "GET", null, $clientJar);
-check("/agendamentos responde 200", $appointmentsPage["status"] === 200, (string)$appointmentsPage["status"]);
-check("/agendamentos carrega componente JS", str_contains($appointmentsPage["body"], "components/appointments.js"));
+    $legacyProfilePage = request("{$base}/perfil", "GET", null, $clientJar);
+    check("/perfil (rota antiga) continua a responder 200", $legacyProfilePage["status"] === 200, (string)$legacyProfilePage["status"]);
+    check("/perfil entrega a Área Cliente", str_contains($legacyProfilePage["body"], "components/customerArea.js"));
+
+    $appointmentsPage = request("{$base}/agendamentos", "GET", null, $clientJar);
+    check("/agendamentos responde 200", $appointmentsPage["status"] === 200, (string)$appointmentsPage["status"]);
+    check("/agendamentos carrega componente JS", str_contains($appointmentsPage["body"], "components/appointments.js"));
+
+    // Área Cliente (F9): as três secções existem na mesma página.
+    foreach (["sectionPerfil", "sectionAgendamentos", "sectionLembretes"] as $section) {
+        check("/area-cliente tem a secção '{$section}'", str_contains($profilePage["body"], $section), "");
+    }
+
+    $customerAlerts = request("{$base}/api?action=customer-alerts-list", "GET", null, $clientJar);
+    check("customer-alerts-list responde ao cliente", $customerAlerts["status"] === 200, (string)$customerAlerts["status"]);
+    check("customer-alerts-list devolve os grupos do cliente", is_array($customerAlerts["json"]["groups"] ?? null), json_encode($customerAlerts["json"]));
 
 // ---------------------------------------------------------------------------
 section("3. APIs públicas/autenticadas (HTTP)");
