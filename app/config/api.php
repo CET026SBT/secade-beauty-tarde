@@ -47,6 +47,16 @@ $routes = [
         "admin-supplier-update"      => ["controller" => "SupplierController", "method" => "update", "http" => "POST"],
         "admin-supplier-set-active"  => ["controller" => "SupplierController", "method" => "setActive", "http" => "POST"],
 
+        // Fase 7 (F7) — Recursos Humanos (só o gestor)
+        "admin-employee-list"        => ["controller" => "EmployeeController", "method" => "list", "http" => "GET"],
+        "admin-employee-create"      => ["controller" => "EmployeeController", "method" => "create", "http" => "POST"],
+        "admin-employee-update"      => ["controller" => "EmployeeController", "method" => "update", "http" => "POST"],
+        "admin-employee-impact"      => ["controller" => "EmployeeController", "method" => "impact", "http" => "GET"],
+        "admin-employee-deactivate"  => ["controller" => "EmployeeController", "method" => "deactivate", "http" => "POST"],
+        "admin-employee-activate"    => ["controller" => "EmployeeController", "method" => "activate", "http" => "POST"],
+        "admin-employee-photo-upload"=> ["controller" => "EmployeeController", "method" => "uploadPhoto", "http" => "POST"],
+        "admin-employee-photo-remove"=> ["controller" => "EmployeeController", "method" => "removePhoto", "http" => "POST"],
+
         // Fase 6.4 — comissões (RF-84 · §25.5)
         "admin-commission-list"      => ["controller" => "CommissionController", "method" => "list", "http" => "GET"],
 

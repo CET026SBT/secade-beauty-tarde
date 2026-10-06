@@ -52,6 +52,16 @@ const API = ((baseApi) => ({
             update: (data) => baseApi.post('?action=admin-supplier-update', data),
             setActive: (supplierId, active) => baseApi.post('?action=admin-supplier-set-active', { supplierId, active })
         },
+        employees: {
+            list: () => baseApi.get('?action=admin-employee-list', 0),
+            create: (data) => baseApi.post('?action=admin-employee-create', data),
+            update: (data) => baseApi.post('?action=admin-employee-update', data),
+            impact: (employeeId) => baseApi.get(`?action=admin-employee-impact&employeeId=${employeeId}`, 0),
+            deactivate: (employeeId) => baseApi.post('?action=admin-employee-deactivate', { employeeId }),
+            activate: (employeeId) => baseApi.post('?action=admin-employee-activate', { employeeId }),
+            uploadPhoto: (formData) => baseApi.post('?action=admin-employee-photo-upload', formData),
+            removePhoto: (employeeId) => baseApi.post('?action=admin-employee-photo-remove', { employeeId })
+        },
         commissions: {
             list: (month) => baseApi.get(`?action=admin-commission-list&month=${month}`, 0)
         },

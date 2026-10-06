@@ -23,6 +23,9 @@ require_once APP_PATH . "/services/EmployeeService.php";
 require_once APP_PATH . "/repositories/CityRepository.php";
 require_once APP_PATH . "/repositories/BookingServiceRepository.php";
 require_once APP_PATH . "/repositories/EmployeeRepository.php";
+require_once APP_PATH . "/repositories/MaintenanceRepository.php";
+require_once APP_PATH . "/services/MaintenanceService.php";
+require_once APP_PATH . "/services/UserPhotoService.php";
 
 // Bootstrap de sessão (o harness CLI simula uma sessão autenticada antes de qualquer output)
 ob_start();
@@ -65,6 +68,8 @@ $conn->exec("DELETE FROM rota_ambulante");
 $conn->exec("DELETE FROM alerta_fiscal");
 $conn->exec("DELETE FROM obrigacao_fiscal");
 $conn->exec("DELETE FROM config_percentagem_padrao WHERE id > 2");
+$conn->exec("DELETE FROM funcionario WHERE id IN (SELECT id FROM utilizador WHERE email = 'rh.teste@secade.local')");
+$conn->exec("DELETE FROM utilizador WHERE email = 'rh.teste@secade.local'");
 
 // F4 (R-ALOC): o mesmo funcionário não pode ficar em duas cidades no mesmo dia.
 // O harness cria um 2.º funcionário (a folha real tem 6) para cobrir as 2 cidades.
@@ -783,6 +788,54 @@ check("R1a: agendamento no passado sem rota passa a recusado", ($bookingReposito
 // Idempotencia: repetir nao altera mais nada.
 $again = $maintenanceService->run();
 check("manutencao e idempotente (2.ª passagem sem recusas)", (int)($again["reconciliation"]["refusedWithoutRoute"] ?? -1) === 0, json_encode($again["reconciliation"] ?? null));
+
+// ---------------------------------------------------------------------------
+section("18. Fase 7 (F7) - Recursos Humanos (soft delete com impacto)");
+
+$rhService = new EmployeeService();
+
+$rhContext = $rhService->formContext();
+check("RH devolve a lista de funcionarios", isset($rhContext["employees"]) && count($rhContext["employees"]) >= 1, json_encode(array_keys($rhContext)));
+check("RH traz as percentagens por omissao do tipo de contrato", isset($rhContext["defaults"]["recibo_verde"], $rhContext["defaults"]["efetivo_contratado"]), json_encode($rhContext["defaults"] ?? null));
+check("RH expoe indicadores sem inventar (custo fixo e contagens)", isset($rhContext["totals"]["fixedCost"], $rhContext["totals"]["reciboVerde"]), json_encode($rhContext["totals"] ?? null));
+
+// A percentagem por omissao vem da config (RV 70 · efetivo 0).
+check("percentagem por omissao RV = 70", (float)$rhService->defaultPercentageFor("recibo_verde") === 70.0, (string)$rhService->defaultPercentageFor("recibo_verde"));
+check("percentagem por omissao efetivo = 0", (float)$rhService->defaultPercentageFor("efetivo_contratado") === 0.0, (string)$rhService->defaultPercentageFor("efetivo_contratado"));
+
+// Ciclo de vida completo num funcionario de teste (o harness limpa no fim).
+$rhNew = $rhService->createEmployee([
+    "name" => "Funcionario RH Teste", "email" => "rh.teste@secade.local", "phone" => "+351911000111",
+    "password" => "Teste!12345", "nif" => "299999990", "cc" => "999999991Z2X",
+    "contractType" => "recibo_verde", "salary" => 500
+]);
+$rhId = (int)$rhNew["id"];
+check("RH cria funcionario", $rhId > 0, json_encode($rhNew));
+check("RV nasce sem salario base (C-10)", (float)($rhService->findEmployee($rhId)["salary"] ?? -1) === 0.0);
+check("RV nasce com a percentagem do tipo de contrato (C-09)", (float)($rhService->findEmployee($rhId)["commissionPercentage"] ?? -1) === 70.0);
+
+$rhUpdated = $rhService->updateEmployee($rhId, [
+    "name" => "Funcionario RH Teste", "email" => "rh.teste@secade.local", "phone" => "+351911000111",
+    "nif" => "299999990", "cc" => "999999991Z2X",
+    "contractType" => "efetivo_contratado", "salary" => 1200, "commissionPercentage" => 5
+]);
+check("RH edita funcionario", ($rhService->findEmployee($rhId)["contractType"] ?? "") === "efetivo_contratado", json_encode($rhUpdated));
+
+$rhImpact = $rhService->deactivationImpact($rhId);
+check("RH calcula o impacto da desativacao", array_key_exists("affectedServices", $rhImpact) && array_key_exists("hasImpact", $rhImpact), json_encode($rhImpact));
+
+$rhDeactivated = $rhService->deactivateEmployee($rhId);
+check("RH desativa (soft delete)", ($rhService->findEmployee($rhId)["isActive"] ?? true) === false, json_encode($rhDeactivated));
+check("RH nao apaga a linha (preserva historico)", !empty($rhService->findEmployee($rhId)), "linha apagada");
+
+$rhService->activateEmployee($rhId);
+check("RH reativa", ($rhService->findEmployee($rhId)["isActive"] ?? false) === true);
+
+// §4.6: a foto do utilizador tem de existir como uploads/users/<id> (validacao de formato).
+$photoService = new UserPhotoService();
+$badPhoto = null;
+try { $photoService->upload($rhId, ["error" => UPLOAD_ERR_NO_FILE, "tmp_name" => "", "size" => 0]); } catch (Exception $e) { $badPhoto = $e->getMessage(); }
+check("UserPhotoService rejeita pedido sem ficheiro (422)", $badPhoto !== null, "sem erro");
 
 // ---------------------------------------------------------------------------
 section("RESULTADO FINAL");

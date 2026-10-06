@@ -38,7 +38,8 @@ $boSidebarGroups = Session::isEmployee()
             ["page" => "commissions",  "url" => "/gestao/comissoes",      "icon" => "bi-cash-stack",     "label" => "Comissões"]
         ]],
         ["label" => "Gestão", "links" => [
-            ["page" => "suppliers",    "url" => "/gestao/fornecedores",   "icon" => "bi-truck",          "label" => "Fornecedores"]
+            ["page" => "suppliers",    "url" => "/gestao/fornecedores",   "icon" => "bi-truck",          "label" => "Fornecedores"],
+            ["page" => "employees",    "url" => "/gestao/rh",             "icon" => "bi-people",         "label" => "Recursos Humanos"]
         ]]
       ];
 ?>

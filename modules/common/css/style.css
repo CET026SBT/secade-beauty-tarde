@@ -882,6 +882,20 @@ form .row > *:has([aria-invalid="true"])*/ {
     border-color: var(--bs-primary);
 }
 
+/* RH (F7) — avatar do funcionário */
+.bo-employee-photo {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border: 2px solid var(--bs-primary-light, #dbc17b);
+}
+
+.bo-employee-thumb {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+}
+
 /* ------------------------------------------------------------------
    Backoffice (gestão)
 ------------------------------------------------------------------ */

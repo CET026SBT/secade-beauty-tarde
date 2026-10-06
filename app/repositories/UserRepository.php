@@ -46,4 +46,12 @@ class UserRepository extends BaseRepository {
 
         return (int)$this->lastInsertId();
     }
+
+    /** Guarda a foto de perfil (caminho relativo, ou nulo para a remover). */
+    public function updatePhoto(int $userId, ?string $photo): bool {
+        return $this->execute(
+            "UPDATE utilizador SET foto = :foto WHERE id = :id",
+            ["foto" => $photo, "id" => $userId]
+        ) >= 0;
+    }
 }
