@@ -47,8 +47,8 @@ const appointments = (() => {
                         ${isAmbulatory ? "Carrinha" : "Loja"}
                     </span>
                 </div>
-                <span class="fw-bold">${generalUtils.formatCurrencyWithVat(booking.totalAmount)}</span>
-                    <span class="small text-muted ms-1">(IVA incl.)</span>
+                <span class="fw-bold ms-auto">${generalUtils.formatCurrencyWithVat(booking.totalAmount)}</span>
+                <span class="small text-muted ms-1">(IVA incl.)</span>
             </div>
             <p class="text-muted small mb-2">
                 <i class="bi bi-calendar-event me-1"></i>${generalUtils.formatDateTime(booking.dateTime)}

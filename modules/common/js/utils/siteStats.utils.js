@@ -7,8 +7,6 @@
  * directamente para este efeito.
  */
 const siteStats = (() => {
-    const DEFAULT_FALLBACK = { services: 35, categories: 3, cities: 10, team: 6, customers: 0, reviews: 0, minPrice: 5.01 };
-
     /**
      * Chaves cujo valor é **dinheiro**: guardam-se em bruto (sem IVA) ou já com IVA, mas mostram-se
      * sempre formatadas (`generalUtils.formatCurrency`).
@@ -27,7 +25,7 @@ const siteStats = (() => {
     let pending = null;
 
     function fallback() {
-        return { ...DEFAULT_FALLBACK, ...(window.SITE_CONFIG?.statsFallback || {}) };
+        return { ...(window.SITE_CONFIG?.statsFallback || {}) };
     }
 
     /** Chaves em que a contagem da BD ainda não é completa (config do servidor). */
