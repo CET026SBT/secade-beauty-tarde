@@ -128,6 +128,25 @@ class RotaRepository extends BaseRepository {
     /**
      * Custo de combustível (matriz de deslocação) entre a base e a cidade.
      */
+    /**
+     * Rotas "abertas" (ainda não fechadas nem recusadas) — base da cascata R3/R4.
+     */
+    public function listOpen(): array {
+        $sql = "SELECT id, data_rota, cidade_id, estado_rota
+                FROM rota_ambulante
+                WHERE estado_rota IN ('planeada', 'aprovada', 'em_execucao')";
+
+        return $this->fetchAllRaw($sql);
+    }
+
+    /** Muda só o estado da rota (cascata automática — F6 · R3/R4). */
+    public function updateEstado(int $id, string $estado): bool {
+        return $this->execute(
+            "UPDATE rota_ambulante SET estado_rota = :estado WHERE id = :id",
+            ["estado" => $estado, "id" => $id]
+        ) >= 0;
+    }
+
     public function getFuelCost(int $cityId, int $baseId = 1): float {
         $sql = "SELECT custo_estimado_combustivel
                 FROM matriz_deslocacao

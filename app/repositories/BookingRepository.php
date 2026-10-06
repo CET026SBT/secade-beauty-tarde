@@ -237,6 +237,98 @@ class BookingRepository extends BaseRepository {
         return array_values(array_map(fn($row) => (int)$row["id"], $rows));
     }
 
+    /**
+     * R1a (§8.2): agendamentos já começados, sem rota (não `confirmado`) e não
+     * terminais → passam a `recusado` (motivo: sem rota). Devolve quantos mudaram.
+     */
+    public function refuseOverdueWithoutRoute(string $now): int {
+        $sql = "UPDATE agendamento
+                SET estado_reserva = 'recusado'
+                WHERE data_hora_pretendida < :agora
+                  AND estado_reserva IN ('pendente_alocacao', 'pendente_validacao_logistica_loja', 'totalmente_alocado')";
+
+        return $this->execute($sql, ["agora" => $now]);
+    }
+
+    /** R1b (§8.2): agendamentos `confirmado` cuja execução já começou. */
+    public function findConfirmedStarted(string $now): array {
+        $sql = "SELECT id, data_hora_pretendida
+                FROM agendamento
+                WHERE estado_reserva = 'confirmado'
+                  AND data_hora_pretendida < :agora";
+
+        return $this->fetchAllRaw($sql, ["agora" => $now]);
+    }
+
+    /** Funcionários com serviços aceites num agendamento (para o aviso R1b). */
+    public function findAmbulatoryBookingEmployees(int $bookingId): array {
+        $rows = $this->fetchAllRaw(
+            "SELECT DISTINCT funcionario_id
+             FROM agendamento_servico
+             WHERE agendamento_id = :agendamento_id
+               AND funcionario_id IS NOT NULL
+               AND estado_aceitacao = 'aceite'",
+            ["agendamento_id" => $bookingId]
+        );
+
+        return array_values(array_map(fn($row) => (int)$row["funcionario_id"], $rows));
+    }
+
+    /**
+     * R2 (§8.2): agendamentos `executado` cuja janela terminou há mais de N horas
+     * → passam a `concluido`.
+     */
+    public function completeExecutedAfterWindow(string $now, int $hoursAfterEnd): int {
+        $sql = "UPDATE agendamento a
+                INNER JOIN (
+                    SELECT agendamento_id, COALESCE(SUM(duracao_minutos), 0) AS dur
+                    FROM agendamento_servico
+                    GROUP BY agendamento_id
+                ) d ON d.agendamento_id = a.id
+                SET a.estado_reserva = 'concluido'
+                WHERE a.estado_reserva = 'executado'
+                  AND DATE_ADD(a.data_hora_pretendida, INTERVAL (GREATEST(d.dur, 1) + :horas * 60) MINUTE) < :agora";
+
+        return $this->execute($sql, ["horas" => $hoursAfterEnd, "agora" => $now]);
+    }
+
+    /** Estados dos agendamentos filhos de uma rota (para R3/R4 — cascata). */
+    public function childStatesOfRoute(int $routeId): array {
+        $rows = $this->fetchAllRaw(
+            "SELECT a.estado_reserva
+             FROM execucao_agendamento e
+             INNER JOIN agendamento a ON e.agendamento_id = a.id
+             WHERE e.rota_id = :rota_id",
+            ["rota_id" => $routeId]
+        );
+
+        if (empty($rows)) {
+            // Sem execuções registadas: os filhos são os agendamentos da cidade+data.
+            $route = $this->fetchRaw(
+                "SELECT data_rota, cidade_id FROM rota_ambulante WHERE id = :id",
+                ["id" => $routeId]
+            );
+
+            if ($route) {
+                $children = $this->fetchAllRaw(
+                    "SELECT a.estado_reserva
+                     FROM agendamento a
+                     INNER JOIN cliente_morada cm ON a.cliente_morada_id = cm.id
+                     WHERE a.local_prestacao = 'carrinha_ambulante'
+                       AND cm.cidade_id = :cidade_id
+                       AND DATE(a.data_hora_pretendida) = :data_rota",
+                    ["cidade_id" => (int)$route["cidade_id"], "data_rota" => (string)$route["data_rota"]]
+                );
+
+                return array_values(array_map(fn($row) => (string)$row["estado_reserva"], $children));
+            }
+
+            return [];
+        }
+
+        return array_values(array_map(fn($row) => (string)$row["estado_reserva"], $rows));
+    }
+
     // ------------------------------------------------------------------
     // Backoffice (admin)
     // ------------------------------------------------------------------

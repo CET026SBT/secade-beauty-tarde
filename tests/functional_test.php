@@ -750,6 +750,41 @@ try { $bookingService->cancelCustomerBooking($customerId, 999999); } catch (Exce
 check("cancelar agendamento inexistente devolve 404", $cancelMissing !== null, "sem erro");
 
 // ---------------------------------------------------------------------------
+section("17. Fase 7 (F6) - Servico de manutencao (reconciliacao + alertas fiscais)");
+
+$maintenanceService = new MaintenanceService();
+$maintenanceRepo = new MaintenanceRepository();
+
+// Guard de tempo: a 2.ª chamada seguida dentro do intervalo nao volta a correr.
+$maintenanceRepo->markRun("manutencao", date("Y-m-d H:i:s"));
+$guarded = $maintenanceService->runIfDue();
+check("manutencao respeita o guard de tempo", ($guarded["ran"] ?? true) === false, json_encode($guarded));
+
+// Forcar execucao: reconcilia e gera alertas fiscais.
+$maintenanceRepo->markRun("manutencao", date("Y-m-d H:i:s", time() - 3600));
+$ran = $maintenanceService->run();
+check("manutencao corre e reconcilia", ($ran["ran"] ?? false) === true, json_encode($ran));
+check("manutencao devolve o resultado da reconciliacao", isset($ran["reconciliation"]["refusedWithoutRoute"]), json_encode($ran["reconciliation"] ?? null));
+
+// R1a: um agendamento no passado, sem rota, passa a recusado (fixture própria).
+$conn->exec("INSERT INTO agendamento (cliente_id, local_prestacao, data_hora_pretendida, estado_reserva, valor_total, sinal_pago, valor_sinal)
+             VALUES ({$customerId}, 'loja_fisica', DATE_SUB(NOW(), INTERVAL 3 DAY), 'pendente_alocacao', 10.00, 0, 0.00)");
+$pastBookingId = (int)$conn->lastInsertId();
+$conn->exec("INSERT INTO agendamento_servico (agendamento_id, servico_id, preco_praticado, duracao_minutos, estado_aceitacao)
+             VALUES ({$pastBookingId}, 29, 10.00, 20, 'pendente')");
+
+check("R1a: fixture criada no passado sem rota", ($bookingRepository->find($pastBookingId)["status"] ?? "") === "pendente_alocacao");
+
+$maintenanceRepo->markRun("manutencao", date("Y-m-d H:i:s", time() - 3600));
+$ranR1a = $maintenanceService->run();
+check("R1a: manutencao recusou o agendamento sem rota", (int)($ranR1a["reconciliation"]["refusedWithoutRoute"] ?? 0) >= 1, json_encode($ranR1a["reconciliation"] ?? null));
+check("R1a: agendamento no passado sem rota passa a recusado", ($bookingRepository->find($pastBookingId)["status"] ?? "") === "recusado");
+
+// Idempotencia: repetir nao altera mais nada.
+$again = $maintenanceService->run();
+check("manutencao e idempotente (2.ª passagem sem recusas)", (int)($again["reconciliation"]["refusedWithoutRoute"] ?? -1) === 0, json_encode($again["reconciliation"] ?? null));
+
+// ---------------------------------------------------------------------------
 section("RESULTADO FINAL");
 echo ($failed === 0 ? "TODOS OS TESTES PASSARAM" : "EXISTEM FALHAS") . " => {$passed} pass, {$failed} fail\n";
 exit($failed === 0 ? 0 : 1);
