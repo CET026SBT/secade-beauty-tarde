@@ -151,7 +151,6 @@ const boDashboard = (() => {
             state.data = response;
             render(response);
         } catch (error) {
-            debugger;
             $("#dashboardError").removeClass("d-none")
                 .text(error?.responseJSON?.message || "Não foi possível carregar o painel.");
         } finally {

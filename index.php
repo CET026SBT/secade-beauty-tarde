@@ -15,7 +15,9 @@ $routes = [
     "home"                  => ROOT_PATH . "/modules/main/home.php",
     "sobre"                 => ROOT_PATH . "/modules/main/about.php",
     "contacto"              => ROOT_PATH . "/modules/main/contact.php",
-    "servicos"              => ROOT_PATH . "/modules/main/serviceCategories.php",
+    // §3.4.1: `/servicos` serve o CATÁLOGO (com filtro de categoria opcional);
+    // a grelha de categorias (`serviceCategories`) vive só na Home.
+    "servicos"              => ROOT_PATH . "/modules/main/services.php",
     "servicos/:category"    => ROOT_PATH . "/modules/main/services.php",
 
     "login"                 => ROOT_PATH . "/modules/main/login.php",

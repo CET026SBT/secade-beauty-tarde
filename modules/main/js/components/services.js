@@ -12,6 +12,22 @@ const services = (() => {
         get $container() { return $('.services-container'); },
         get $empty() { return $('#servicesEmpty'); },
 
+        /**
+         * Imagem do card (§3.4.4): usa a foto real (`service.photoUrl`, F3.1) quando
+         * existe; senão o placeholder SVG da categoria e, em último caso, o genérico.
+         * Nunca devolve um `src` vazio.
+         */
+        imageFor(service) {
+            if (service.photoUrl) {
+                return `${BASE_URL ?? ''}/${String(service.photoUrl).replace(/^\//, '')}`;
+            }
+
+            const slug = generalUtils.slugify(service.categoryName || '').toLowerCase();
+            const known = ['cabeleireiro', 'barbearia', 'estetica'];
+            const file = known.includes(slug) ? `servico-${slug}.svg` : 'servico-generico.svg';
+            return `${BASE_URL ?? ''}/modules/common/img/service-images/skeletons/${file}`;
+        },
+
         render(list) {
             this.$container.empty();
 
@@ -82,6 +98,9 @@ const services = (() => {
 
         return $(`<div class="col-md-6 col-lg-4">
             <div class="card h-100 border-0 shadow-sm service-card">
+                <img class="card-img-top object-fit-cover service-card-img"
+                     src="${cardsUI.imageFor(service)}"
+                     alt="${generalUtils.escapeHtml(service.name)}" loading="lazy">
                 <div class="card-body d-flex flex-column">
                     <div class="d-flex justify-content-between align-items-start mb-3">
                         <span class="badge bg-primary">${generalUtils.escapeHtml(service.categoryName || '')}</span>
@@ -94,7 +113,7 @@ const services = (() => {
                         <li><i class="bi bi-tag me-1"></i>${generalUtils.formatCurrencyWithVat(service.basePrice)} <small>(IVA incl.)</small></li>
                     </ul>
                     <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-sm btn-outline-primary flex-fill" data-details="${service.id}">Detalhes</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary extended-border flex-fill" data-details="${service.id}">Detalhes</button>
                         <a class="btn btn-sm btn-primary extended-border flex-fill" href="${BASE_URL ?? ''}/agendar?services=${service.id}">Agendar</a>
                     </div>
                 </div>

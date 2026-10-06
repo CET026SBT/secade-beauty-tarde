@@ -130,6 +130,10 @@ const bookingWizard = (() => {
 
         $("#peopleBlock").toggleClass("d-none", !isAmb);
         $("#bookingServicePicker").toggleClass("d-none", isAmb);
+
+        // O horário Terça–Sábado é o da LOJA: no ambulatório a nota do passo
+        // data/hora não se aplica (o passo é partilhado).
+        $("#channelScheduleNote").toggleClass("d-none", isAmb);
         $("#servicesHint").text(isAmb
             ? "Indique cada pessoa e os serviços que vai receber. A duração e o valor são calculados por pessoa."
             : "Escolha um ou mais serviços. O total e a duração são calculados automaticamente.");
@@ -411,7 +415,7 @@ const bookingWizard = (() => {
             return `<button type="button" class="btn btn-sm btn-outline-primary slot-btn" data-time="${slot.time}" ${disabled}${title}>${slot.time}</button>`;
         });
 
-        $container.html(`<div class="d-flex flex-wrap gap-2">${buttons.join("")}</div>`);
+        $container.html(buttons.join(""));
         highlightSelectedSlot();
     }
 
