@@ -17,6 +17,7 @@ if (Session::isEmployee()) {
 }
 
 register_script("components/customerArea", "main");
+register_script("components/bookingEditor", "main");
 register_script("components/appointments", "main");
 
 // Cropper (local, §4.6): o recorte quadrado do avatar faz-se no browser e a
@@ -307,6 +308,61 @@ include_once ROOT_PATH . "/modules/main/includes/navbar.php";
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
                 <button type="button" class="btn btn-primary" id="customerCropSaveBtn">
                     <i class="bi bi-check2 me-1"></i>Guardar fotografia
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: alterar agendamento (F9b · C-06 · §4.5) -->
+<div class="modal fade" id="bookingEditModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Alterar agendamento <span id="bookingEditRef"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger d-none" id="bookingEditError" role="alert"></div>
+
+                <p class="small text-muted" id="bookingEditChannel"></p>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-5">
+                        <label class="form-label small text-muted mb-1" for="bookingEditDate">Data</label>
+                        <input type="date" id="bookingEditDate" class="form-control form-control-sm">
+                    </div>
+                    <div class="col-md-7">
+                        <label class="form-label small text-muted mb-1">Horário</label>
+                        <div id="bookingEditSlots" class="d-flex flex-wrap gap-2"></div>
+                        <input type="hidden" id="bookingEditTime">
+                    </div>
+                </div>
+
+                <div id="bookingEditAddressBlock" class="mb-3 d-none">
+                    <label class="form-label small text-muted mb-1" for="bookingEditAddress">Morada da prestação</label>
+                    <select id="bookingEditAddress" class="form-select form-select-sm"></select>
+                </div>
+
+                <div id="bookingEditStoreServices" class="mb-3 d-none">
+                    <label class="form-label small text-muted mb-1">Serviços</label>
+                    <div id="bookingEditStoreServicesList" class="row g-2"></div>
+                </div>
+
+                <div id="bookingEditPeopleBlock" class="mb-3 d-none">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <label class="form-label small text-muted mb-0">Pessoas e serviços</label>
+                        <button type="button" class="btn btn-sm btn-outline-primary" id="bookingEditAddPerson">
+                            <i class="bi bi-person-plus me-1"></i>Adicionar pessoa
+                        </button>
+                    </div>
+                    <div id="bookingEditPeople"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="bookingEditSaveBtn">
+                    <i class="bi bi-check2 me-1"></i>Guardar alterações
                 </button>
             </div>
         </div>

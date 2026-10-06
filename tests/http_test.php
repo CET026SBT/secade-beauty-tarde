@@ -724,9 +724,38 @@ $anonymousCancel = request("{$base}/api?action=customer-booking-cancel", "POST",
     "bookingId" => $clientCancellableId
 ], $anonJar);
 check("cancelamento sem sessao devolve 401", $anonymousCancel["status"] === 401, (string)$anonymousCancel["status"]);
+// ---------------------------------------------------------------------------
+section("11.5 Fase 7 (F9b): editor de agendamento do cliente (HTTP)");
+
+$clientEditable = request("{$base}/api?action=booking-create-store", "POST", [
+    "serviceIds" => [30], "date" => $bookingDate, "time" => "17:30"
+], $clientJar);
+$clientEditableId = (int)($clientEditable["json"]["bookingId"] ?? 0);
+check("cliente cria agendamento para editar", $clientEditableId > 0, json_encode($clientEditable["json"] ?? []));
+
+$editResponse = request("{$base}/api?action=customer-booking-update", "POST", [
+    "bookingId"  => $clientEditableId,
+    "date"       => $bookingDate,
+    "time"       => "18:00",
+    "serviceIds" => [31]
+], $clientJar);
+check("cliente altera o proprio agendamento (200)", $editResponse["status"] === 200, json_encode($editResponse["json"] ?? []));
+check("alteracao devolve o novo estado pendente", ($editResponse["json"]["status"] ?? "") === "pendente_validacao_logistica_loja", json_encode($editResponse["json"] ?? []));
+
+$managerEdit = request("{$base}/api?action=customer-booking-update", "POST", [
+    "bookingId" => $clientEditableId, "date" => $bookingDate, "time" => "18:30", "serviceIds" => [31]
+], $e2eManagerJar);
+check("gestor nao usa o editor do cliente (403)", $managerEdit["status"] === 403, (string)$managerEdit["status"]);
+
+$anonymousEdit = request("{$base}/api?action=customer-booking-update", "POST", [
+    "bookingId" => $clientEditableId, "date" => $bookingDate, "time" => "18:30", "serviceIds" => [31]
+], $anonJar);
+check("editor sem sessao devolve 401", $anonymousEdit["status"] === 401, (string)$anonymousEdit["status"]);
 
 $appointmentsPageClient = request("{$base}/agendamentos", "GET", null, $clientJar);
 check("pagina de agendamentos tem o botao de cancelamento", $appointmentsPageClient["status"] === 200 && str_contains($appointmentsPageClient["body"], "appointmentsSuccess"), (string)$appointmentsPageClient["status"]);
+check("Area Cliente carrega o editor de agendamento (F9b)", str_contains($appointmentsPageClient["body"], "components/bookingEditor.js"), (string)$appointmentsPageClient["status"]);
+check("Area Cliente tem o modal de alteracao", str_contains($appointmentsPageClient["body"], "bookingEditModal"), (string)$appointmentsPageClient["status"]);
 
 // ---------------------------------------------------------------------------
 section("12. Limpeza dos dados E2E");

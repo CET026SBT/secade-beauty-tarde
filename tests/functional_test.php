@@ -925,6 +925,74 @@ check("lembrete 24 h não se repete", (int)($secondRun["reconciliation"]["remind
 
 // Notificações de teste (não poluir a Área Cliente do cliente de demonstração).
 $conn->exec("DELETE FROM notificacao WHERE utilizador_id = {$customerId}");
+// ---------------------------------------------------------------------------
+section("20. Fase 7 (F9b) - Editor de agendamento do cliente (C-06 · §4.5)");
+
+// Criação de um agendamento em loja para editar.
+$editDate = nextWorkingDate(3);
+$editBooking = $bookingService->createStoreBooking($customerId, ["serviceIds" => [29], "date" => $editDate, "time" => "10:00"]);
+$editId = (int)($editBooking["bookingId"] ?? 0);
+check("editor: agendamento de teste criado", $editId > 0, json_encode($editBooking));
+
+// Altera serviços + data/hora (loja). A composição volta a pendente de validação logística.
+$editDate2 = nextWorkingDate(4);
+$updated = $bookingService->updateCustomerBooking($customerId, [
+    "bookingId"  => $editId,
+    "date"       => $editDate2,
+    "time"       => "11:00",
+    "serviceIds" => [28, 33]
+]);
+check("editor: alteração devolve o novo estado", ($updated["status"] ?? "") === "pendente_validacao_logistica_loja", json_encode($updated));
+
+$editedBooking = $bookingRepository->find($editId);
+check("editor: data/hora gravadas", str_starts_with((string)($editedBooking["dateTime"] ?? ""), $editDate2 . " 11:00"), (string)($editedBooking["dateTime"] ?? ""));
+check("editor: valor recalculado (12,20 + 12,20)", abs((float)($editedBooking["totalAmount"] ?? 0) - 24.40) < 0.01, (string)($editedBooking["totalAmount"] ?? ""));
+
+$editedServices = $bookingServiceRepo->findByBooking($editId);
+check("editor: serviços substituídos (2 serviços)", count($editedServices) === 2, json_encode(array_map(fn($s) => $s["serviceId"], $editedServices)));
+check("editor: serviços voltam a 'aceite' na loja", count(array_filter($editedServices, fn($s) => $s["acceptanceStatus"] === "aceite")) === 2);
+
+// O canal é imutável: continua loja_fisica.
+check("editor: canal permanece loja_fisica", ($editedBooking["local"] ?? "") === "loja_fisica", (string)($editedBooking["local"] ?? ""));
+
+// C-07: alterar gera um aviso para o cliente.
+check("editor: aviso gerado ao cliente", (int)$conn->query(
+    "SELECT COUNT(*) FROM notificacao WHERE utilizador_id = {$customerId}
+     AND mensagem LIKE 'Agendamento #{$editId} foi alterado%'"
+)->fetchColumn() >= 1, "sem notificação");
+
+// Posse: outro cliente não pode alterar.
+$foreignEdit = null;
+try {
+    $bookingService->updateCustomerBooking($customerId + 1, [
+        "bookingId" => $editId, "date" => nextWorkingDate(5), "time" => "10:00", "serviceIds" => [29]
+    ]);
+} catch (Exception $e) { $foreignEdit = $e->getMessage(); }
+check("editor: agendamento de outro cliente devolve 403", $foreignEdit !== null, "sem erro");
+
+// Estado terminal: recusar e tentar alterar.
+$bookingService->cancelBooking($editId);
+$terminalEdit = null;
+try {
+    $bookingService->updateCustomerBooking($customerId, [
+        "bookingId" => $editId, "date" => nextWorkingDate(5), "time" => "10:00", "serviceIds" => [29]
+    ]);
+} catch (Exception $e) { $terminalEdit = $e->getMessage(); }
+check("editor: estado terminal devolve 409", $terminalEdit !== null, "sem erro");
+
+// RF-58/RN-24 continua a valer no editor.
+$tooSoonEdit = null;
+try {
+    $soon = $bookingService->createStoreBooking($customerId, ["serviceIds" => [29], "date" => nextWorkingDate(6), "time" => "10:00"]);
+    $bookingService->updateCustomerBooking($customerId, [
+        "bookingId" => (int)$soon["bookingId"], "date" => date("Y-m-d"), "time" => "10:00", "serviceIds" => [29]
+    ]);
+} catch (Exception $e) { $tooSoonEdit = $e->getMessage(); }
+check("editor: data a menos de 24 h é rejeitada (RF-58)", $tooSoonEdit !== null, "sem erro");
+
+$conn->exec("DELETE FROM notificacao WHERE utilizador_id = {$customerId}");
+
+// ---------------------------------------------------------------------------
 
 // ---------------------------------------------------------------------------
 section("RESULTADO FINAL");

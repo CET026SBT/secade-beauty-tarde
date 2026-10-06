@@ -157,6 +157,12 @@ class BookingServiceRepository extends BaseRepository {
         return is_array($rows) ? $rows : [];
     }
 
+    /** Remove todos os serviços de um agendamento (edição — F9b · C-06). */
+    public function deleteByBooking(int $bookingId): int {
+        return $this->execute("DELETE FROM agendamento_servico WHERE agendamento_id = :id", ["id" => $bookingId]);
+    }
+
+    /** Duração total já gravada num agendamento (sem depender de JOIN). */
     public function totalDurationByBooking(int $bookingId): int {
         $sql = "SELECT COALESCE(SUM(duracao_minutos), 0) FROM agendamento_servico
                 WHERE agendamento_id = :agendamento_id";

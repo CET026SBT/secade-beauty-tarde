@@ -35,6 +35,11 @@ class BookingPersonRepository extends BaseRepository {
      * Mantém-se por ser o único ponto de leitura por (id, agendamento) da tabela;
      * se continuar sem uso na próxima iteração, deve ser removido.
      */
+    /** Remove os acompanhantes de um agendamento (edição — F9b). */
+    public function deleteByBooking(int $bookingId): int {
+        return $this->execute("DELETE FROM agendamento_pessoa WHERE agendamento_id = :id", ["id" => $bookingId]);
+    }
+
     public function findByIdAndBooking(int $id, int $bookingId): ?array {
         $sql = "SELECT id, agendamento_id, nome_pessoa FROM agendamento_pessoa
                 WHERE id = :id AND agendamento_id = :agendamento_id LIMIT 1";

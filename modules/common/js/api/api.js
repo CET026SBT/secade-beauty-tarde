@@ -21,7 +21,8 @@ const API = ((baseApi) => ({
         createStore: (data) => baseApi.post('?action=booking-create-store', data),
         createAmbulatory: (data) => baseApi.post('?action=booking-create-amb', data),
         myBookings: () => baseApi.get('?action=booking-my', 0),
-        cancelBooking: (bookingId) => baseApi.post('?action=customer-booking-cancel', { bookingId })
+        cancelBooking: (bookingId) => baseApi.post('?action=customer-booking-cancel', { bookingId }),
+        updateBooking: (data) => baseApi.post('?action=customer-booking-update', data)
     },
     customer: {
         profile: () => baseApi.get('?action=customer-profile', 0),

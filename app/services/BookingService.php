@@ -5,7 +5,9 @@ require_once APP_PATH . "/repositories/BookingRepository.php";
 require_once APP_PATH . "/repositories/BookingServiceRepository.php";
 require_once APP_PATH . "/repositories/BookingPersonRepository.php";
 require_once APP_PATH . "/repositories/ServiceRepository.php";
+require_once APP_PATH . "/repositories/NotificationRepository.php";
 require_once __DIR__ . "/OTPService.php";
+require_once __DIR__ . "/CustomerAddressService.php";
 
 class BookingService extends BaseService {
     private const STORE_OPEN_HOUR  = 9;   // 09:00
@@ -18,6 +20,8 @@ class BookingService extends BaseService {
     private BookingPersonRepository $bookingPersonRepository;
     private ServiceRepository $serviceRepository;
     private OTPService $otpService;
+    private NotificationRepository $notificationRepository;
+    private CustomerAddressService $customerAddressService;
 
     public function __construct() {
         parent::__construct();
@@ -26,6 +30,8 @@ class BookingService extends BaseService {
         $this->bookingPersonRepository = new BookingPersonRepository();
         $this->serviceRepository = new ServiceRepository();
         $this->otpService = new OTPService();
+        $this->notificationRepository = new NotificationRepository();
+        $this->customerAddressService = new CustomerAddressService();
     }
 
     // ------------------------------------------------------------------
@@ -265,6 +271,132 @@ class BookingService extends BaseService {
                 "bookingId" => $bookingId,
                 "message"   => "Agendamento de ambulatório criado! Aguarda aceitação dos funcionários.",
                 "totalAmount" => $totalAmount
+            ];
+        });
+    }
+
+    /**
+     * Editor de agendamento do cliente (F9b · C-06 · §4.5).
+     *
+     * O que **se pode** mudar: serviços + pessoas, morada (carrinha) e data/hora —
+     * com re-avaliação dos slots. O que **não se muda**: o **canal** (`local_prestacao`
+     * é imutável) e o OTP (D-04/D-07.7 — deixou de existir no fluxo de agendamento).
+     *
+     * Regras aplicadas: posse do agendamento, estado não terminal, RF-58/RN-24
+     * (≥ 24 h), horário da loja e conflito de janela (ignorando o próprio).
+     */
+    public function updateCustomerBooking(int $customerId, array $data): array {
+        return $this->executeTransactional(function() use ($customerId, $data) {
+            $bookingId = (int)($data["bookingId"] ?? 0);
+
+            if ($bookingId <= 0) {
+                throw new Exception("Identificador de agendamento inválido.", 422);
+            }
+
+            $booking = $this->bookingRepository->find($bookingId);
+
+            if (!$booking) {
+                throw new Exception("Agendamento não encontrado.", 404);
+            }
+
+            if ((int)($booking["customerId"] ?? 0) !== $customerId) {
+                throw new Exception("Este agendamento não lhe pertence.", 403);
+            }
+
+            if (in_array($booking["status"], ["recusado", "cancelado", "executado", "concluido"], true)) {
+                throw new Exception(
+                    "Este agendamento já não pode ser alterado (estado atual: {$booking['status']}).",
+                    409
+                );
+            }
+
+            $this->validate($data, function($v) {
+                $v  ->required("date", "A data é obrigatória.")
+                    ->required("time", "A hora é obrigatória.");
+            });
+
+            $dateTime = $this->validateBookingDate($data["date"], $data["time"]);
+            $local    = (string)$booking["local"];
+
+            // O canal é imutável (§4.5): a estrutura dos serviços segue o canal existente.
+            $people     = $data["people"] ?? null;
+            $addressId  = (int)($data["addressId"] ?? 0);
+
+            if ($local === "carrinha_ambulante") {
+                if (!is_array($people) || empty($people)) {
+                    throw new Exception("Indique pelo menos uma pessoa com serviços.", 422);
+                }
+
+                if ($addressId <= 0) {
+                    throw new Exception("Indique a morada da prestação.", 422);
+                }
+
+                $this->customerAddressService->assertIsCustomerAddress($customerId, $addressId);
+
+                [$services, $totalAmount, $totalDuration] = $this->resolveServicesForPeople($people);
+                $estado = "pendente_alocacao";
+            } else {
+                $addressId = null;
+
+                [$services, $totalAmount, $totalDuration] = $this->resolveServices($data["serviceIds"] ?? []);
+                $estado = "pendente_validacao_logistica_loja";
+            }
+
+            $this->validateStoreOpeningHours($data["date"], $data["time"], $totalDuration);
+
+            // O conflito de janela ignora o próprio agendamento — senão bloqueava-se a si mesmo.
+            if ($this->bookingRepository->countByDateWindow($dateTime, $totalDuration, $local, [$bookingId]) > 0) {
+                throw new Exception("Já existe um agendamento nesta janela horária. Escolha outro slot.", 409);
+            }
+
+            // Recomeça-se a folha de serviços: as percentagens aplicadas na aceitação
+            // referiam-se a outra composição — não se arrastam (D-21).
+            $this->bookingServiceRepository->deleteByBooking($bookingId);
+            $this->bookingPersonRepository->deleteByBooking($bookingId);
+
+            if ($local === "carrinha_ambulante") {
+                foreach ($people as $person) {
+                    $personId = $this->bookingPersonRepository->create(
+                        $bookingId,
+                        $person["name"] ?? "Pessoa",
+                        $person["notes"] ?? null
+                    );
+
+                    foreach (array_unique(array_map("intval", $person["serviceIds"] ?? [])) as $serviceId) {
+                        $service = $this->serviceRepository->find($serviceId);
+                        $this->bookingServiceRepository->create(
+                            $bookingId, $personId, $serviceId,
+                            $service["basePrice"], $service["estimatedDurationMinutes"],
+                            "pendente"
+                        );
+                    }
+                }
+            } else {
+                foreach ($services as $service) {
+                    $this->bookingServiceRepository->create(
+                        $bookingId, null, $service["id"],
+                        $service["basePrice"], $service["estimatedDurationMinutes"],
+                        "aceite"
+                    );
+                }
+            }
+
+            $this->bookingRepository->updateSchedule($bookingId, $dateTime, $totalAmount, $addressId, $estado);
+
+            // C-07/D-07.6: alterar a marcação gera um lembrete novo.
+            $this->notificationRepository->create(
+                $customerId,
+                "agendamento_confirmado",
+                "Agendamento #" . $bookingId . " foi alterado para "
+                    . date("d/m/Y H:i", strtotime($dateTime)) . "."
+            );
+
+            return [
+                "bookingId"   => $bookingId,
+                "dateTime"    => $dateTime,
+                "status"      => $estado,
+                "totalAmount" => $totalAmount,
+                "message"     => "Agendamento alterado. Os serviços voltam a ser tratados pela equipa."
             ];
         });
     }
