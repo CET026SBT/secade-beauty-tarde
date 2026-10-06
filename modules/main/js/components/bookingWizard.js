@@ -20,7 +20,7 @@ const bookingWizard = (() => {
     // O canal é escolhido PRIMEIRO: é ele que decide a forma de escolher os serviços
     // (lista simples na loja / por pessoa na carrinha) e que passos se seguem.
     const FLOWS = {
-        loja_fisica: ["channel", "services", "datetime", "professional", "summary"],
+        loja_fisica: ["channel", "services", "datetime", "summary"],
         carrinha_ambulante: ["channel", "services", "address", "otp", "datetime", "policy", "summary"]
     };
 
@@ -30,7 +30,6 @@ const bookingWizard = (() => {
         address: "Morada",
         otp: "OTP",
         datetime: "Data/Hora",
-        professional: "Profissional",
         policy: "Sinal",
         summary: "Resumo"
     };

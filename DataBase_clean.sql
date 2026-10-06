@@ -38,16 +38,17 @@ CREATE TABLE `agendamento` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `agendamento` (`id`, `cliente_id`, `cliente_morada_id`, `local_prestacao`, `data_hora_pretendida`, `estado_reserva`, `modo_urgencia`, `valor_total`, `sinal_pago`, `valor_sinal`, `validado_logistica_loja`, `criado_em`) VALUES
-  (190, 53, 75, 'carrinha_ambulante', '2026-09-24 09:00:00', 'totalmente_alocado', 0, 32.52, 0, 0.00, 0, '2026-09-22 13:37:26'),
-  (191, 53, NULL, 'loja_fisica', '2026-09-23 09:00:00', 'pendente_validacao_logistica_loja', 0, 28.46, 0, 2.85, 0, '2026-09-22 13:40:10'),
-  (210, 3, NULL, 'loja_fisica', '2026-09-23 10:00:00', 'pendente_validacao_logistica_loja', 0, 16.27, 0, 1.63, 0, '2026-09-22 14:33:27'),
-  (211, 3, 1, 'carrinha_ambulante', '2026-09-23 09:00:00', 'pendente_alocacao', 0, 16.27, 0, 0.00, 0, '2026-09-22 14:33:27'),
-  (212, 3, NULL, 'carrinha_ambulante', '2026-09-29 10:00:00', 'confirmado', 0, 4.07, 0, 0.00, 0, '2026-09-22 14:33:27'),
-  (213, 3, 98, 'carrinha_ambulante', '2026-09-29 09:00:00', 'cancelado', 0, 199.20, 0, 0.00, 0, '2026-09-22 14:33:27'),
-  (214, 3, NULL, 'loja_fisica', '2026-09-23 16:00:00', 'cancelado', 0, 12.20, 0, 1.22, 0, '2026-09-22 14:33:27'),
-  (215, 3, 99, 'carrinha_ambulante', '2026-10-01 09:00:00', 'executado', 0, 12.20, 0, 0.00, 0, '2026-09-22 14:33:27'),
-  (216, 3, NULL, 'loja_fisica', '2026-09-23 17:00:00', 'pendente_validacao_logistica_loja', 0, 40.65, 0, 4.07, 0, '2026-09-22 14:33:27'),
-  (217, 3, 99, 'carrinha_ambulante', '2026-10-06 10:00:00', 'pendente_alocacao', 0, 12.20, 0, 0.00, 0, '2026-09-22 14:33:27');
+  (1001, 100, 200, 'loja_fisica', '2026-09-15 10:00:00', 'concluido', 0, 24.40, 1, 2.44, 1, '2026-10-06 14:49:34'),
+  (1002, 101, 201, 'loja_fisica', '2026-09-22 15:00:00', 'concluido', 0, 28.46, 1, 2.85, 1, '2026-10-06 14:49:34'),
+  (1003, 102, 202, 'carrinha_ambulante', '2026-09-29 09:30:00', 'concluido', 0, 40.65, 1, 4.07, 0, '2026-10-06 14:49:34'),
+  (1004, 103, 203, 'loja_fisica', '2026-10-03 11:00:00', 'executado', 0, 13.82, 1, 1.38, 1, '2026-10-06 14:49:34'),
+  (1005, 104, 300, 'carrinha_ambulante', '2026-10-14 09:30:00', 'confirmado', 0, 28.46, 1, 2.85, 0, '2026-10-06 14:49:34'),
+  (1006, 105, 301, 'carrinha_ambulante', '2026-10-14 11:00:00', 'confirmado', 0, 24.39, 1, 2.44, 0, '2026-10-06 14:49:34'),
+  (1007, 106, 302, 'carrinha_ambulante', '2026-10-21 10:00:00', 'totalmente_alocado', 0, 20.33, 1, 2.03, 0, '2026-10-06 14:49:34'),
+  (1008, 107, 303, 'carrinha_ambulante', '2026-10-21 14:00:00', 'pendente_alocacao', 0, 16.26, 1, 1.63, 0, '2026-10-06 14:49:34'),
+  (1009, 108, 208, 'loja_fisica', '2026-10-16 16:00:00', 'cancelado', 0, 16.26, 0, 0.00, 1, '2026-10-06 14:49:34'),
+  (1010, 109, 209, 'loja_fisica', '2026-10-17 11:00:00', 'recusado', 0, 12.20, 0, 0.00, 1, '2026-10-06 14:49:34'),
+  (1011, 110, 210, 'loja_fisica', '2026-10-20 10:30:00', 'confirmado', 0, 40.65, 1, 4.07, 1, '2026-10-06 14:49:34');
 
 -- ------------------------------------------------------------
 -- Tabela: agendamento_pessoa
@@ -62,15 +63,6 @@ CREATE TABLE `agendamento_pessoa` (
   CONSTRAINT `fk_agend_pessoa_agendamento` FOREIGN KEY (`agendamento_id`) REFERENCES `agendamento` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `agendamento_pessoa` (`id`, `agendamento_id`, `nome_pessoa`, `observacoes`) VALUES
-  (148, 190, 'Daniel Branco', NULL),
-  (164, 211, 'João Cliente', NULL),
-  (165, 211, 'Maria Familiar', NULL),
-  (166, 212, 'João Cliente', NULL),
-  (167, 213, 'João Cliente', NULL),
-  (168, 215, 'João Cliente', NULL),
-  (169, 215, 'Maria Familiar', NULL),
-  (170, 217, 'João Cliente', NULL);
 
 -- ------------------------------------------------------------
 -- Tabela: agendamento_servico
@@ -95,26 +87,18 @@ CREATE TABLE `agendamento_servico` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `agendamento_servico` (`id`, `agendamento_id`, `agendamento_pessoa_id`, `servico_id`, `funcionario_id`, `preco_praticado`, `duracao_minutos`, `estado_aceitacao`, `aceito_em`, `percentagem_funcionario_aplicada`) VALUES
-  (394, 190, 148, 1, 2, 32.52, 240, 'aceite', '2026-09-22 15:06:33', 70.00),
-  (395, 191, NULL, 4, NULL, 28.46, 150, 'aceite', NULL, NULL),
-  (435, 210, NULL, 28, NULL, 12.20, 30, 'aceite', NULL, NULL),
-  (436, 210, NULL, 29, NULL, 4.07, 20, 'aceite', NULL, NULL),
-  (437, 211, 164, 29, NULL, 4.07, 20, 'pendente', NULL, NULL),
-  (438, 211, 165, 29, NULL, 4.07, 20, 'pendente', NULL, NULL),
-  (439, 211, 165, 35, NULL, 8.13, 30, 'pendente', NULL, NULL),
-  (440, 212, 166, 29, NULL, 4.07, 20, 'pendente', NULL, NULL),
-  (441, 213, 167, 20, NULL, 36.59, 60, 'pendente', NULL, NULL),
-  (442, 213, 167, 18, NULL, 24.39, 60, 'pendente', NULL, NULL),
-  (443, 213, 167, 23, NULL, 28.46, 60, 'pendente', NULL, NULL),
-  (444, 213, 167, 21, NULL, 16.26, 60, 'pendente', NULL, NULL),
-  (445, 213, 167, 9, NULL, 24.39, 60, 'pendente', NULL, NULL),
-  (446, 213, 167, 2, NULL, 48.78, 180, 'pendente', NULL, NULL),
-  (447, 213, 167, 27, NULL, 20.33, 60, 'pendente', NULL, NULL),
-  (448, 214, NULL, 33, NULL, 12.20, 45, 'aceite', NULL, NULL),
-  (449, 215, 168, 29, 2, 4.07, 20, 'aceite', '2026-09-22 15:33:27', 70.00),
-  (450, 215, 169, 35, 2, 8.13, 30, 'aceite', '2026-09-22 15:33:27', 70.00),
-  (451, 216, NULL, 30, NULL, 40.65, 120, 'aceite', NULL, NULL),
-  (452, 217, 170, 33, NULL, 12.20, 45, 'pendente', NULL, NULL);
+  (1066, 1001, NULL, 28, 2, 12.20, 30, 'aceite', '2026-09-15 09:10:00', 70.00),
+  (1067, 1001, NULL, 33, 2, 12.20, 45, 'aceite', '2026-09-15 09:10:00', 70.00),
+  (1068, 1002, NULL, 31, 2, 28.46, 60, 'aceite', '2026-09-22 14:05:00', 70.00),
+  (1069, 1003, NULL, 7, 2, 40.65, 120, 'aceite', '2026-09-29 08:40:00', 70.00),
+  (1070, 1004, NULL, 19, 2, 13.82, 30, 'aceite', '2026-10-03 10:20:00', 70.00),
+  (1071, 1005, NULL, 4, 2, 28.46, 120, 'aceite', '2026-10-12 09:00:00', 70.00),
+  (1072, 1006, NULL, 9, 2, 24.39, 60, 'aceite', '2026-10-12 09:05:00', 70.00),
+  (1073, 1007, NULL, 17, 2, 20.33, 45, 'aceite', '2026-10-19 10:00:00', 70.00),
+  (1074, 1008, NULL, 24, NULL, 16.26, 45, 'pendente', NULL, NULL),
+  (1075, 1009, NULL, 21, NULL, 16.26, 45, 'pendente', NULL, NULL),
+  (1076, 1010, NULL, 28, NULL, 12.20, 30, 'pendente', NULL, NULL),
+  (1077, 1011, NULL, 8, 2, 40.65, 120, 'aceite', '2026-10-18 15:00:00', 70.00);
 
 -- ------------------------------------------------------------
 -- Tabela: alerta_fiscal
@@ -131,10 +115,6 @@ CREATE TABLE `alerta_fiscal` (
   CONSTRAINT `fk_alerta_obrigacao` FOREIGN KEY (`obrigacao_fiscal_id`) REFERENCES `obrigacao_fiscal` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `alerta_fiscal` (`id`, `obrigacao_fiscal_id`, `tipo_alerta`, `data_alerta`, `visualizado`) VALUES
-  (420, 84, '7_dias', '2026-09-22', 1),
-  (421, 85, 'em_atraso', '2026-09-22', 1),
-  (425, 86, '30_dias', '2026-09-22', 1);
 
 -- ------------------------------------------------------------
 -- Tabela: base_partida
@@ -148,7 +128,7 @@ CREATE TABLE `base_partida` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `base_partida` (`id`, `nome`, `morada`) VALUES
-  (1, 'Évora', 'Rua do Centro de Formação');
+  (1, 'Évora', 'Espaço comercial, Praça Joaquim António de Aguiar, 12 a 19, U-5-ag, Évora');
 
 -- ------------------------------------------------------------
 -- Tabela: categoria_servico
@@ -163,7 +143,7 @@ CREATE TABLE `categoria_servico` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `categoria_servico` (`id`, `nome`, `descricao`) VALUES
-  (1, 'Cabelereiro', 'Tranças e Penteados'),
+  (1, 'Cabeleireiro', 'Tranças e Penteados'),
   (2, 'Barbearia', 'Cortes'),
   (3, 'Estética', 'Maquiagem, Manicure e limpeza facial');
 
@@ -291,10 +271,8 @@ CREATE TABLE `cliente_morada` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `cliente_morada` (`id`, `cliente_id`, `cidade_id`, `designacao`, `rua`, `numero_porta`, `andar_bloco`, `codigo_postal`, `principal`) VALUES
-  (1, 3, 10, 'Casa', 'Rua de Aviz', '10', '1º Esq', '7000-123', 1),
+  (1, 3, 10, 'Casa', 'Rua de Aviz', '10', '1º Esq', '7000-123', 0),
   (75, 53, 10, 'Casa', 'Rua Frei Carlos, 7000-737, Évora', '4', '2Esq', '7000-737', 1),
-  (98, 3, 7, 'Casa', 'Rua Teste Rica', '2', NULL, '7000-200', 1),
-  (99, 3, 10, 'Casa', 'Rua Aceitacao', '5', NULL, '7000-300', 0),
   (200, 100, 10, 'Casa', '', NULL, NULL, NULL, 1),
   (201, 101, 10, 'Casa', '', NULL, NULL, NULL, 1),
   (202, 102, 10, 'Casa', '', NULL, NULL, NULL, 1),
@@ -359,7 +337,11 @@ INSERT INTO `cliente_morada` (`id`, `cliente_id`, `cidade_id`, `designacao`, `ru
   (261, 161, 8, 'Casa', '', NULL, NULL, NULL, 1),
   (262, 162, 3, 'Casa', '', NULL, NULL, NULL, 1),
   (263, 163, 4, 'Casa', '', NULL, NULL, NULL, 1),
-  (264, 164, 1, 'Casa', '', NULL, NULL, NULL, 1);
+  (264, 164, 1, 'Casa', '', NULL, NULL, NULL, 1),
+  (300, 104, 2, 'Casa', 'Rua dos Lagares', '12', NULL, '7050-101', 0),
+  (301, 105, 2, 'Casa', 'Praça da República', '4', NULL, '7050-120', 0),
+  (302, 106, 5, 'Casa', 'Rua Nova', '27', NULL, '7170-055', 0),
+  (303, 107, 5, 'Casa', 'Travessa do Outeiro', '8', NULL, '7170-070', 0);
 
 -- ------------------------------------------------------------
 -- Tabela: config_percentagem_padrao
@@ -399,7 +381,12 @@ CREATE TABLE `execucao_agendamento` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `execucao_agendamento` (`id`, `agendamento_id`, `rota_id`, `data_hora_inicio_real`, `data_hora_fim_real`, `estado_execucao`, `observacoes_tecnico`) VALUES
-  (21, 215, NULL, '2026-09-22 15:33:27', '2026-09-22 15:33:27', 'concluido', NULL);
+  (1, 1001, NULL, '2026-09-15 10:00:00', '2026-09-15 11:15:00', 'concluido', 'Serviço concluído sem observações.'),
+  (2, 1002, NULL, '2026-09-22 15:00:00', '2026-09-22 16:00:00', 'concluido', 'Cliente pediu ajuste de tom.'),
+  (3, 1003, NULL, '2026-09-29 09:35:00', '2026-09-29 11:35:00', 'concluido', 'Rota cumprida à hora prevista.'),
+  (4, 1004, NULL, '2026-10-03 11:00:00', '2026-10-03 11:30:00', 'concluido', NULL),
+  (5, 1005, 502, NULL, NULL, 'em_curso', NULL),
+  (6, 1006, 502, NULL, NULL, 'em_curso', NULL);
 
 -- ------------------------------------------------------------
 -- Tabela: fecho_caixa_diario
@@ -434,7 +421,8 @@ CREATE TABLE `feedback_cliente` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `feedback_cliente` (`id`, `execucao_agendamento_id`, `classificacao_estrelas`, `comentario`, `data_feedback`) VALUES
-  (21, 21, 5, 'Serviço excelente (teste).', '2026-09-22 14:33:27');
+  (49, 1, 5, 'Excelente atendimento, muito profissional.', '2026-10-06 14:49:34'),
+  (50, 2, 4, 'Gostei muito do resultado.', '2026-10-06 14:49:34');
 
 -- ------------------------------------------------------------
 -- Tabela: fornecedor
@@ -454,49 +442,49 @@ CREATE TABLE `fornecedor` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `fornecedor` (`id`, `nome`, `nif`, `email`, `telemovel`, `ativo`, `observacoes`, `criado_em`) VALUES
-  (1, 'Stand Virtual', '508069491', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (2, 'Worten', '503630330', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (3, 'Leroy-Merlin', '506848558', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (4, 'AOSOM', '980683386', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (5, 'Staples', '503789372', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (6, 'Beleza 37', '514749636', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (7, 'Extintores online', '518352080', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (8, 'Continente', '502011475', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (9, 'Logo seguros', '508278600', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (10, 'Generali', '500940231', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (11, 'OK! Seguros', '504011944', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (12, 'Fidelidade', '500918880', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (13, 'Liberty', '500068658', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (14, 'SK pro Med Beauty Solutions', '508161320', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (15, 'Primor', '980663695', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (16, 'Pluri cosmética', '503890278', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (17, 'AfroQueen', '516416081', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (18, 'Temu', NULL, NULL, NULL, 1, 'NP (não possui) NIF', '2026-10-03 21:41:30'),
-  (19, 'IKEA', '505416654', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (20, 'Lusini', '517386402', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (21, 'DRUNI', '518530752', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (22, 'Wells', '508037514', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (23, 'Baber tools profissional', '589053345', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (24, 'Ideal Cosméticos', '514239085', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (25, 'Barberalia', '516206370', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (26, 'Bandido Portugal.pt', NULL, NULL, NULL, 1, 'NIF indisponível nas plataformas digitais', '2026-10-03 21:41:30'),
-  (27, 'ViceDeal.com', NULL, NULL, NULL, 1, 'NP (não possui) NIF', '2026-10-03 21:41:30'),
-  (28, 'Casa do Barbeiro', '501766448', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (29, 'Espaço barbeiro', '510427103', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (30, 'Aliexpress', NULL, NULL, NULL, 1, 'NP (não possui) NIF', '2026-10-03 21:41:30'),
-  (31, 'Município de Évora', '504828576', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (32, 'Endesa', '508855950', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (33, 'MEO', '504615947', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (34, 'Galp', '505060515', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (35, 'Repsol', '500246963', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (36, 'Manuel jacinto (renda)', '320491366', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (37, 'Banco CTT', '513412417', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (38, 'Consumíveis', NULL, NULL, NULL, 1, 'NP (não possui) NIF', '2026-10-03 21:41:30'),
-  (39, 'Norauto', '503629995', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (40, 'Gestévora', '500785708', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (41, 'Manuel jacinto (renda)', '285284240', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (42, 'Stela Cristina', '200846922', NULL, NULL, 1, NULL, '2026-10-03 21:41:30'),
-  (43, 'Moloni', '513321527', NULL, NULL, 1, NULL, '2026-10-03 21:41:30');
+  (1, 'Stand Virtual', '508069491', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (2, 'Worten', '503630330', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (3, 'Leroy-Merlin', '506848558', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (4, 'AOSOM', '980683386', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (5, 'Staples', '503789372', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (6, 'Beleza 37', '514749636', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (7, 'Extintores online', '518352080', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (8, 'Continente', '502011475', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (9, 'Logo seguros', '508278600', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (10, 'Generali', '500940231', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (11, 'OK! Seguros', '504011944', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (12, 'Fidelidade', '500918880', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (13, 'Liberty', '500068658', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (14, 'SK pro Med Beauty Solutions', '508161320', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (15, 'Primor', '980663695', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (16, 'Pluri cosmética', '503890278', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (17, 'AfroQueen', '516416081', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (18, 'Temu', NULL, NULL, NULL, 1, 'NP (não possui) NIF', '2026-10-03 22:41:30'),
+  (19, 'IKEA', '505416654', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (20, 'Lusini', '517386402', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (21, 'DRUNI', '518530752', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (22, 'Wells', '508037514', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (23, 'Baber tools profissional', '589053345', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (24, 'Ideal Cosméticos', '514239085', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (25, 'Barberalia', '516206370', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (26, 'Bandido Portugal.pt', NULL, NULL, NULL, 1, 'NIF indisponível nas plataformas digitais', '2026-10-03 22:41:30'),
+  (27, 'ViceDeal.com', NULL, NULL, NULL, 1, 'NP (não possui) NIF', '2026-10-03 22:41:30'),
+  (28, 'Casa do Barbeiro', '501766448', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (29, 'Espaço barbeiro', '510427103', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (30, 'Aliexpress', NULL, NULL, NULL, 1, 'NP (não possui) NIF', '2026-10-03 22:41:30'),
+  (31, 'Município de Évora', '504828576', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (32, 'Endesa', '508855950', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (33, 'MEO', '504615947', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (34, 'Galp', '505060515', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (35, 'Repsol', '500246963', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (36, 'Manuel jacinto (renda)', '320491366', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (37, 'Banco CTT', '513412417', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (38, 'Consumíveis', NULL, NULL, NULL, 1, 'NP (não possui) NIF', '2026-10-03 22:41:30'),
+  (39, 'Norauto', '503629995', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (40, 'Gestévora', '500785708', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (41, 'Manuel jacinto (renda)', '285284240', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (42, 'Stela Cristina', '200846922', NULL, NULL, 1, NULL, '2026-10-03 22:41:30'),
+  (43, 'Moloni', '513321527', NULL, NULL, 1, NULL, '2026-10-03 22:41:30');
 
 -- ------------------------------------------------------------
 -- Tabela: funcionario
@@ -566,7 +554,8 @@ INSERT INTO `matriz_deslocacao` (`id`, `base_partida_id`, `cidade_id`, `distanci
   (6, 1, 6, 110.00, 80, 16.42),
   (7, 1, 7, 95.00, 70, 14.23),
   (8, 1, 8, 115.00, 85, 17.24),
-  (9, 1, 9, 110.00, 90, 16.42);
+  (9, 1, 9, 110.00, 90, 16.42),
+  (10, 1, 10, 5.00, 5, 0.75);
 
 -- ------------------------------------------------------------
 -- Tabela: notificacao
@@ -582,6 +571,11 @@ CREATE TABLE `notificacao` (
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_notificacao_utilizador` FOREIGN KEY (`utilizador_id`) REFERENCES `utilizador` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `notificacao` (`id`, `utilizador_id`, `tipo`, `mensagem`, `lida`, `criado_em`) VALUES
+  (14, 104, 'agendamento_confirmado', 'Agendamento #1005 confirmado para 14/10/2026.', 0, '2026-10-06 14:49:34'),
+  (15, 104, 'lembrete_24h', 'Agendamento #1005 é a 14/10/2026 09:30. Se precisar de alterar, temos disponibilidade em: 21/10/2026, 28/10/2026.', 0, '2026-10-06 14:49:34'),
+  (16, 108, 'agendamento_cancelado', 'Agendamento #1009 cancelado. O horário voltou a ficar disponível.', 0, '2026-10-06 14:49:34');
 
 -- ------------------------------------------------------------
 -- Tabela: obrigacao_fiscal
@@ -604,9 +598,11 @@ CREATE TABLE `obrigacao_fiscal` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `obrigacao_fiscal` (`id`, `tipo`, `designacao`, `periodicidade`, `valor_estimado`, `data_prazo`, `estado`, `data_pagamento`, `observacoes`, `criado_em`) VALUES
-  (84, 'iva', 'IVA Trimestral (teste)', 'trimestral', 1234.56, '2026-09-29', 'pago', '2026-09-22', NULL, '2026-09-22 14:33:27'),
-  (85, 'seguranca_social', 'SS em atraso (teste)', 'mensal', 350.00, '2026-09-17', 'pendente', NULL, NULL, '2026-09-22 14:33:27'),
-  (86, 'irc', 'IRC 30 dias (teste)', 'anual', 5000.00, '2026-10-22', 'pendente', NULL, NULL, '2026-09-22 14:33:27');
+  (181, 'iva', 'IVA HTTP (teste)', 'trimestral', 500.00, '2026-10-09', 'pago', '2026-10-06', NULL, '2026-10-06 14:42:44'),
+  (182, 'iva', 'IVA do 3.º trimestre', 'trimestral', 1840.00, '2026-11-20', 'pendente', NULL, 'Declaração periódica trimestral.', '2026-10-06 14:49:35'),
+  (183, 'irc', 'IRC — pagamento por conta', 'trimestral', 610.00, '2026-12-15', 'pendente', NULL, '3.º pagamento por conta.', '2026-10-06 14:49:35'),
+  (184, 'seguranca_social', 'Segurança Social — novembro', 'mensal', 520.00, '2026-11-20', 'pendente', NULL, 'Contribuições da equipa.', '2026-10-06 14:49:35'),
+  (185, 'seguros', 'Seguro de responsabilidade civil', 'anual', 395.00, '2026-12-31', 'pendente', NULL, 'Apólice anual do espaço e da carrinha.', '2026-10-06 14:49:35');
 
 -- ------------------------------------------------------------
 -- Tabela: rota_ambulante
@@ -632,8 +628,8 @@ CREATE TABLE `rota_ambulante` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `rota_ambulante` (`id`, `data_rota`, `base_partida_id`, `cidade_id`, `estado_rota`, `custo_estimado_combustivel`, `quota_parte_cliente`, `lucro_servicos`, `lucro_total`, `decidido_por`, `decidido_em`, `observacoes_decisao`) VALUES
-  (63, '2026-09-29', 1, 1, 'aprovada', 6.75, 0.00, 4.07, -52.68, 3, '2026-09-22 15:33:27', 'Decisão manual de teste: aprovada apesar da referência.'),
-  (64, '2026-09-29', 1, 7, 'recusada', 14.23, 0.00, 199.20, 134.97, 3, '2026-09-22 15:33:27', 'Decisão manual: rota recusada (rentabilidade 134.97 EUR).');
+  (501, '2026-09-29', 1, 10, 'concluida', 12.50, 0.00, 40.65, 28.15, 1, '2026-09-27 18:20:00', 'Rota aprovada e cumprida.'),
+  (502, '2026-10-14', 1, 2, 'aprovada', 14.20, 52.85, 0.00, 38.65, 1, '2026-10-12 19:30:00', 'Dia com procura suficiente; aprovada.');
 
 -- ------------------------------------------------------------
 -- Tabela: rota_funcionario
@@ -646,6 +642,9 @@ CREATE TABLE `rota_funcionario` (
   CONSTRAINT `fk_rota_func_funcionario` FOREIGN KEY (`funcionario_id`) REFERENCES `funcionario` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_rota_func_rota` FOREIGN KEY (`rota_id`) REFERENCES `rota_ambulante` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `rota_funcionario` (`rota_id`, `funcionario_id`) VALUES
+  (502, 2);
 
 -- ------------------------------------------------------------
 -- Tabela: servico
@@ -792,75 +791,75 @@ CREATE TABLE `utilizador` (
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `utilizador` (`id`, `nome`, `email`, `password_hash`, `telemovel`, `nif`, `tipo_perfil`, `criado_em`) VALUES
-  (1, 'Gestor Secade', 'gestor@secade.pt', '$2y$10$DX3o9mDbE2M00tUg21KO1OOtvl7SGpPvhNZ4SFnYBXHNetwcdt0F6', '+351911111111', '123456789', 'gestor', '2026-09-21 21:27:40'),
-  (2, 'Ana Técnica', 'funcionario@secade.pt', '$2y$10$D22wXVD90rZoILW3X3QalOTr1mb3dSz8IxR5eIbulvc0jN0Eitvta', '+351922222222', '298765438', 'funcionario', '2026-09-21 21:27:40'),
-  (3, 'João Cliente', 'cliente@teste.pt', '$2y$10$NRQDxzU490d8RvpmHVmLb.6AnC74Pds1ozKySPI85.1801rGGDWSS', '+351933333333', '345678915', 'cliente', '2026-09-21 21:27:40'),
-  (53, 'Daniel Branco', 'hb.daniel@gmail.com', '$2y$10$g95ZP3MI6AsHPIoPuvddk.VEoEKqUONmvT/XVLkPTQoIs8raP4YVu', '923456789', NULL, 'cliente', '2026-09-22 11:59:11'),
-  (100, 'Leonor Santos', 'leonor.santos.251989518@cliente.secade.local', '*', '', '251989518', 'cliente', '2026-10-03 21:41:30'),
-  (101, 'Catarina Pixoto', 'catarina.pixoto.298784076@cliente.secade.local', '*', '', '298784076', 'cliente', '2026-10-03 21:41:30'),
-  (102, 'Elvisson Daniel', 'elvisson.daniel.278561519@cliente.secade.local', '*', '', '278561519', 'cliente', '2026-10-03 21:41:30'),
-  (103, 'Leandro Silva', 'leandro.silva.214056686@cliente.secade.local', '*', '', '214056686', 'cliente', '2026-10-03 21:41:30'),
-  (104, 'Tomásia Contreiras', 'tom.asia.contreiras.227748204@cliente.secade.local', '*', '', '227748204', 'cliente', '2026-10-03 21:41:30'),
-  (105, 'Joaquina Matos', 'joaquina.matos.235820776@cliente.secade.local', '*', '', '235820776', 'cliente', '2026-10-03 21:41:30'),
-  (106, 'Lídia Correia', 'l.idia.correia.201303140@cliente.secade.local', '*', '', '201303140', 'cliente', '2026-10-03 21:41:30'),
-  (107, 'Emanuela Vigílio', 'emanuela.vig.ilio.213916819@cliente.secade.local', '*', '', '213916819', 'cliente', '2026-10-03 21:41:30'),
-  (108, 'Augusta Contente', 'augusta.contente.240660501@cliente.secade.local', '*', '', '240660501', 'cliente', '2026-10-03 21:41:30'),
-  (109, 'Laura Vanuza', 'laura.vanuza.235159026@cliente.secade.local', '*', '', '235159026', 'cliente', '2026-10-03 21:41:30'),
-  (110, 'Florentino Rosa', 'florentino.rosa.278084737@cliente.secade.local', '*', '', '278084737', 'cliente', '2026-10-03 21:41:30'),
-  (111, 'Beatriz Baessa', 'beatriz.baessa.232443777@cliente.secade.local', '*', '', '232443777', 'cliente', '2026-10-03 21:41:30'),
-  (112, 'Tiago Fortunato', 'tiago.fortunato.214803155@cliente.secade.local', '*', '', '214803155', 'cliente', '2026-10-03 21:41:30'),
-  (113, 'Elias Patente', 'elias.patente.243363010@cliente.secade.local', '*', '', '243363010', 'cliente', '2026-10-03 21:41:30'),
-  (114, 'Partrícia Gomes', 'partr.icia.gomes.274907810@cliente.secade.local', '*', '', '274907810', 'cliente', '2026-10-03 21:41:30'),
-  (115, 'Alexanda Pinto', 'alexanda.pinto.261788396@cliente.secade.local', '*', '', '261788396', 'cliente', '2026-10-03 21:41:30'),
-  (116, 'Maria Luana', 'maria.luana.270325492@cliente.secade.local', '*', '', '270325492', 'cliente', '2026-10-03 21:41:30'),
-  (117, 'Rena Nunes', 'rena.nunes.259969931@cliente.secade.local', '*', '', '259969931', 'cliente', '2026-10-03 21:41:30'),
-  (118, 'Vanessa Cardoso', 'vanessa.cardoso.204914663@cliente.secade.local', '*', '', '204914663', 'cliente', '2026-10-03 21:41:30'),
-  (119, 'Tiago Alves', 'tiago.alves.272698679@cliente.secade.local', '*', '', '272698679', 'cliente', '2026-10-03 21:41:30'),
-  (120, 'Maria Pedro', 'maria.pedro.229658660@cliente.secade.local', '*', '', '229658660', 'cliente', '2026-10-03 21:41:30'),
-  (121, 'Luísa Evidência', 'lu.isa.evid.encia.289524121@cliente.secade.local', '*', '', '289524121', 'cliente', '2026-10-03 21:41:30'),
-  (122, 'Bianca Brico', 'bianca.brico.273711148@cliente.secade.local', '*', '', '273711148', 'cliente', '2026-10-03 21:41:30'),
-  (123, 'Amanda Alves', 'amanda.alves.265052955@cliente.secade.local', '*', '', '265052955', 'cliente', '2026-10-03 21:41:30'),
-  (124, 'Patrícia Freitas', 'patr.icia.freitas.279336055@cliente.secade.local', '*', '', '279336055', 'cliente', '2026-10-03 21:41:30'),
-  (125, 'Beatriz Oliveira', 'beatriz.oliveira.207109176@cliente.secade.local', '*', '', '207109176', 'cliente', '2026-10-03 21:41:30'),
-  (126, 'Lúcia Camarada', 'l.ucia.camarada.299502309@cliente.secade.local', '*', '', '299502309', 'cliente', '2026-10-03 21:41:30'),
-  (127, 'Vivalda Libolo', 'vivalda.libolo.254824498@cliente.secade.local', '*', '', '254824498', 'cliente', '2026-10-03 21:41:30'),
-  (128, 'Ricardo Sebastião', 'ricardo.sebasti.ao.217579906@cliente.secade.local', '*', '', '217579906', 'cliente', '2026-10-03 21:41:30'),
-  (129, 'Beatriz Gonçalves', 'beatriz.goncalves.219082081@cliente.secade.local', '*', '', '219082081', 'cliente', '2026-10-03 21:41:30'),
-  (130, 'Sónia Silva', 's.onia.silva.299763374@cliente.secade.local', '*', '', '299763374', 'cliente', '2026-10-03 21:41:30'),
-  (131, 'Marta Gonçalves', 'marta.goncalves.250174332@cliente.secade.local', '*', '', '250174332', 'cliente', '2026-10-03 21:41:30'),
-  (132, 'Joana Silva', 'joana.silva.248171240@cliente.secade.local', '*', '', '248171240', 'cliente', '2026-10-03 21:41:30'),
-  (133, 'Sílvia Almeida', 's.ilvia.almeida.295931540@cliente.secade.local', '*', '', '295931540', 'cliente', '2026-10-03 21:41:30'),
-  (134, 'Rita Costa', 'rita.costa.252554620@cliente.secade.local', '*', '', '252554620', 'cliente', '2026-10-03 21:41:30'),
-  (135, 'Teresa Correia', 'teresa.correia.275536394@cliente.secade.local', '*', '', '275536394', 'cliente', '2026-10-03 21:41:30'),
-  (136, 'Teresa Cardoso', 'teresa.cardoso.231413882@cliente.secade.local', '*', '', '231413882', 'cliente', '2026-10-03 21:41:30'),
-  (137, 'Claúdia Marques', 'cla.udia.marques.275469727@cliente.secade.local', '*', '', '275469727', 'cliente', '2026-10-03 21:41:30'),
-  (138, 'Sílvia Gonçalves', 's.ilvia.goncalves.228145651@cliente.secade.local', '*', '', '228145651', 'cliente', '2026-10-03 21:41:30'),
-  (139, 'Carla Morauto', 'carla.morauto.261207890@cliente.secade.local', '*', '', '261207890', 'cliente', '2026-10-03 21:41:30'),
-  (140, 'Patrícia Costa', 'patr.icia.costa.287024350@cliente.secade.local', '*', '', '287024350', 'cliente', '2026-10-03 21:41:30'),
-  (141, 'Joana Pereira', 'joana.pereira.258735082@cliente.secade.local', '*', '', '258735082', 'cliente', '2026-10-03 21:41:30'),
-  (142, 'Filipa Costa', 'filipa.costa.244808929@cliente.secade.local', '*', '', '244808929', 'cliente', '2026-10-03 21:41:30'),
-  (143, 'Joana Pinto', 'joana.pinto.264883268@cliente.secade.local', '*', '', '264883268', 'cliente', '2026-10-03 21:41:30'),
-  (144, 'Daniela Cardoso', 'daniela.cardoso.254736130@cliente.secade.local', '*', '', '254736130', 'cliente', '2026-10-03 21:41:30'),
-  (145, 'Catarina Correia', 'catarina.correia.277691400@cliente.secade.local', '*', '', '277691400', 'cliente', '2026-10-03 21:41:30'),
-  (146, 'Catarina Lopes', 'catarina.lopes.234560657@cliente.secade.local', '*', '', '234560657', 'cliente', '2026-10-03 21:41:30'),
-  (147, 'Sónia Fenandes', 's.onia.fenandes.269836870@cliente.secade.local', '*', '', '269836870', 'cliente', '2026-10-03 21:41:30'),
-  (148, 'Margarida Santos', 'margarida.santos.232060649@cliente.secade.local', '*', '', '232060649', 'cliente', '2026-10-03 21:41:30'),
-  (149, 'Rita Pereira', 'rita.pereira.243526512@cliente.secade.local', '*', '', '243526512', 'cliente', '2026-10-03 21:41:30'),
-  (150, 'Inês Mendes', 'in.es.mendes.203624513@cliente.secade.local', '*', '', '203624513', 'cliente', '2026-10-03 21:41:30'),
-  (151, 'Vera Costa', 'vera.costa.245056220@cliente.secade.local', '*', '', '245056220', 'cliente', '2026-10-03 21:41:30'),
-  (152, 'Filipa Santos', 'filipa.santos.281021970@cliente.secade.local', '*', '', '281021970', 'cliente', '2026-10-03 21:41:30'),
-  (153, 'Marta Rodrigues', 'marta.rodrigues.248193848@cliente.secade.local', '*', '', '248193848', 'cliente', '2026-10-03 21:41:30'),
-  (154, 'Marta Almeida', 'marta.almeida.241834961@cliente.secade.local', '*', '', '241834961', 'cliente', '2026-10-03 21:41:30'),
-  (155, 'Sílvia Ferreira', 's.ilvia.ferreira.299343049@cliente.secade.local', '*', '', '299343049', 'cliente', '2026-10-03 21:41:30'),
-  (156, 'Rita Jesus', 'rita.jesus.291337392@cliente.secade.local', '*', '', '291337392', 'cliente', '2026-10-03 21:41:30'),
-  (157, 'Maria Ferreira', 'maria.ferreira.250412365@cliente.secade.local', '*', '', '250412365', 'cliente', '2026-10-03 21:41:30'),
-  (158, 'Margarida Gonçalves', 'margarida.goncalves.211275859@cliente.secade.local', '*', '', '211275859', 'cliente', '2026-10-03 21:41:30'),
-  (159, 'Daniela Ribeiro', 'daniela.ribeiro.221393366@cliente.secade.local', '*', '', '221393366', 'cliente', '2026-10-03 21:41:30'),
-  (160, 'Daniela Oliveira', 'daniela.oliveira.266255264@cliente.secade.local', '*', '', '266255264', 'cliente', '2026-10-03 21:41:30'),
-  (161, 'Ana Lopes', 'ana.lopes.255884117@cliente.secade.local', '*', '', '255884117', 'cliente', '2026-10-03 21:41:30'),
-  (162, 'Teresa Lopes', 'teresa.lopes.259591696@cliente.secade.local', '*', '', '259591696', 'cliente', '2026-10-03 21:41:30'),
-  (163, 'Inês Lopes', 'in.es.lopes.261930966@cliente.secade.local', '*', '', '261930966', 'cliente', '2026-10-03 21:41:30'),
-  (164, 'Daniela Jesus', 'daniela.jesus.273038273@cliente.secade.local', '*', '', '273038273', 'cliente', '2026-10-03 21:41:30');
+INSERT INTO `utilizador` (`id`, `nome`, `email`, `password_hash`, `telemovel`, `nif`, `tipo_perfil`, `foto`, `criado_em`) VALUES
+  (1, 'Gestor Secade', 'gestor@secade.pt', '$2y$10$DX3o9mDbE2M00tUg21KO1OOtvl7SGpPvhNZ4SFnYBXHNetwcdt0F6', '+351911111111', '123456789', 'gestor', NULL, '2026-09-21 22:27:40'),
+  (2, 'Ana Técnica', 'funcionario@secade.pt', '$2y$10$D22wXVD90rZoILW3X3QalOTr1mb3dSz8IxR5eIbulvc0jN0Eitvta', '+351922222222', '298765438', 'funcionario', NULL, '2026-09-21 22:27:40'),
+  (3, 'João Cliente', 'cliente@teste.pt', '$2y$10$NRQDxzU490d8RvpmHVmLb.6AnC74Pds1ozKySPI85.1801rGGDWSS', '+351933333333', '345678915', 'cliente', NULL, '2026-09-21 22:27:40'),
+  (53, 'Daniel Branco', 'hb.daniel@gmail.com', '$2y$10$g95ZP3MI6AsHPIoPuvddk.VEoEKqUONmvT/XVLkPTQoIs8raP4YVu', '923456789', NULL, 'cliente', NULL, '2026-09-22 12:59:11'),
+  (100, 'Leonor Santos', 'leonor.santos.251989518@cliente.secade.local', '*', '', '251989518', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (101, 'Catarina Pixoto', 'catarina.pixoto.298784076@cliente.secade.local', '*', '', '298784076', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (102, 'Elvisson Daniel', 'elvisson.daniel.278561519@cliente.secade.local', '*', '', '278561519', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (103, 'Leandro Silva', 'leandro.silva.214056686@cliente.secade.local', '*', '', '214056686', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (104, 'Tomásia Contreiras', 'tom.asia.contreiras.227748204@cliente.secade.local', '*', '', '227748204', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (105, 'Joaquina Matos', 'joaquina.matos.235820776@cliente.secade.local', '*', '', '235820776', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (106, 'Lídia Correia', 'l.idia.correia.201303140@cliente.secade.local', '*', '', '201303140', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (107, 'Emanuela Vigílio', 'emanuela.vig.ilio.213916819@cliente.secade.local', '*', '', '213916819', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (108, 'Augusta Contente', 'augusta.contente.240660501@cliente.secade.local', '*', '', '240660501', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (109, 'Laura Vanuza', 'laura.vanuza.235159026@cliente.secade.local', '*', '', '235159026', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (110, 'Florentino Rosa', 'florentino.rosa.278084737@cliente.secade.local', '*', '', '278084737', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (111, 'Beatriz Baessa', 'beatriz.baessa.232443777@cliente.secade.local', '*', '', '232443777', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (112, 'Tiago Fortunato', 'tiago.fortunato.214803155@cliente.secade.local', '*', '', '214803155', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (113, 'Elias Patente', 'elias.patente.243363010@cliente.secade.local', '*', '', '243363010', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (114, 'Partrícia Gomes', 'partr.icia.gomes.274907810@cliente.secade.local', '*', '', '274907810', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (115, 'Alexanda Pinto', 'alexanda.pinto.261788396@cliente.secade.local', '*', '', '261788396', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (116, 'Maria Luana', 'maria.luana.270325492@cliente.secade.local', '*', '', '270325492', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (117, 'Rena Nunes', 'rena.nunes.259969931@cliente.secade.local', '*', '', '259969931', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (118, 'Vanessa Cardoso', 'vanessa.cardoso.204914663@cliente.secade.local', '*', '', '204914663', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (119, 'Tiago Alves', 'tiago.alves.272698679@cliente.secade.local', '*', '', '272698679', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (120, 'Maria Pedro', 'maria.pedro.229658660@cliente.secade.local', '*', '', '229658660', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (121, 'Luísa Evidência', 'lu.isa.evid.encia.289524121@cliente.secade.local', '*', '', '289524121', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (122, 'Bianca Brico', 'bianca.brico.273711148@cliente.secade.local', '*', '', '273711148', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (123, 'Amanda Alves', 'amanda.alves.265052955@cliente.secade.local', '*', '', '265052955', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (124, 'Patrícia Freitas', 'patr.icia.freitas.279336055@cliente.secade.local', '*', '', '279336055', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (125, 'Beatriz Oliveira', 'beatriz.oliveira.207109176@cliente.secade.local', '*', '', '207109176', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (126, 'Lúcia Camarada', 'l.ucia.camarada.299502309@cliente.secade.local', '*', '', '299502309', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (127, 'Vivalda Libolo', 'vivalda.libolo.254824498@cliente.secade.local', '*', '', '254824498', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (128, 'Ricardo Sebastião', 'ricardo.sebasti.ao.217579906@cliente.secade.local', '*', '', '217579906', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (129, 'Beatriz Gonçalves', 'beatriz.goncalves.219082081@cliente.secade.local', '*', '', '219082081', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (130, 'Sónia Silva', 's.onia.silva.299763374@cliente.secade.local', '*', '', '299763374', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (131, 'Marta Gonçalves', 'marta.goncalves.250174332@cliente.secade.local', '*', '', '250174332', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (132, 'Joana Silva', 'joana.silva.248171240@cliente.secade.local', '*', '', '248171240', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (133, 'Sílvia Almeida', 's.ilvia.almeida.295931540@cliente.secade.local', '*', '', '295931540', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (134, 'Rita Costa', 'rita.costa.252554620@cliente.secade.local', '*', '', '252554620', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (135, 'Teresa Correia', 'teresa.correia.275536394@cliente.secade.local', '*', '', '275536394', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (136, 'Teresa Cardoso', 'teresa.cardoso.231413882@cliente.secade.local', '*', '', '231413882', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (137, 'Claúdia Marques', 'cla.udia.marques.275469727@cliente.secade.local', '*', '', '275469727', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (138, 'Sílvia Gonçalves', 's.ilvia.goncalves.228145651@cliente.secade.local', '*', '', '228145651', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (139, 'Carla Morauto', 'carla.morauto.261207890@cliente.secade.local', '*', '', '261207890', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (140, 'Patrícia Costa', 'patr.icia.costa.287024350@cliente.secade.local', '*', '', '287024350', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (141, 'Joana Pereira', 'joana.pereira.258735082@cliente.secade.local', '*', '', '258735082', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (142, 'Filipa Costa', 'filipa.costa.244808929@cliente.secade.local', '*', '', '244808929', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (143, 'Joana Pinto', 'joana.pinto.264883268@cliente.secade.local', '*', '', '264883268', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (144, 'Daniela Cardoso', 'daniela.cardoso.254736130@cliente.secade.local', '*', '', '254736130', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (145, 'Catarina Correia', 'catarina.correia.277691400@cliente.secade.local', '*', '', '277691400', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (146, 'Catarina Lopes', 'catarina.lopes.234560657@cliente.secade.local', '*', '', '234560657', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (147, 'Sónia Fenandes', 's.onia.fenandes.269836870@cliente.secade.local', '*', '', '269836870', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (148, 'Margarida Santos', 'margarida.santos.232060649@cliente.secade.local', '*', '', '232060649', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (149, 'Rita Pereira', 'rita.pereira.243526512@cliente.secade.local', '*', '', '243526512', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (150, 'Inês Mendes', 'in.es.mendes.203624513@cliente.secade.local', '*', '', '203624513', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (151, 'Vera Costa', 'vera.costa.245056220@cliente.secade.local', '*', '', '245056220', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (152, 'Filipa Santos', 'filipa.santos.281021970@cliente.secade.local', '*', '', '281021970', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (153, 'Marta Rodrigues', 'marta.rodrigues.248193848@cliente.secade.local', '*', '', '248193848', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (154, 'Marta Almeida', 'marta.almeida.241834961@cliente.secade.local', '*', '', '241834961', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (155, 'Sílvia Ferreira', 's.ilvia.ferreira.299343049@cliente.secade.local', '*', '', '299343049', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (156, 'Rita Jesus', 'rita.jesus.291337392@cliente.secade.local', '*', '', '291337392', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (157, 'Maria Ferreira', 'maria.ferreira.250412365@cliente.secade.local', '*', '', '250412365', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (158, 'Margarida Gonçalves', 'margarida.goncalves.211275859@cliente.secade.local', '*', '', '211275859', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (159, 'Daniela Ribeiro', 'daniela.ribeiro.221393366@cliente.secade.local', '*', '', '221393366', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (160, 'Daniela Oliveira', 'daniela.oliveira.266255264@cliente.secade.local', '*', '', '266255264', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (161, 'Ana Lopes', 'ana.lopes.255884117@cliente.secade.local', '*', '', '255884117', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (162, 'Teresa Lopes', 'teresa.lopes.259591696@cliente.secade.local', '*', '', '259591696', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (163, 'Inês Lopes', 'in.es.lopes.261930966@cliente.secade.local', '*', '', '261930966', 'cliente', NULL, '2026-10-03 22:41:30'),
+  (164, 'Daniela Jesus', 'daniela.jesus.273038273@cliente.secade.local', '*', '', '273038273', 'cliente', NULL, '2026-10-03 22:41:30');
 
 SET FOREIGN_KEY_CHECKS = 1;
