@@ -532,6 +532,15 @@ CREATE TABLE `gorjeta` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ------------------------------------------------------------
+-- ------------------------------------------------------------
+-- Tabela: manutencao_execucao
+-- ------------------------------------------------------------
+DROP TABLE IF EXISTS `manutencao_execucao`;
+CREATE TABLE `manutencao_execucao` (
+  `chave` varchar(50) NOT NULL,
+  `executado_em` datetime NOT NULL,
+  PRIMARY KEY (`chave`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 -- Tabela: matriz_deslocacao
 -- ------------------------------------------------------------
 DROP TABLE IF EXISTS `matriz_deslocacao`;

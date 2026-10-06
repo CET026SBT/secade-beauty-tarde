@@ -6,6 +6,7 @@ require_once APP_PATH . "/repositories/EmployeeRepository.php";
 require_once APP_PATH . "/services/CustomerService.php";
 require_once APP_PATH . "/services/EmployeeService.php";
 require_once APP_PATH . "/services/ManagerService.php";
+require_once __DIR__ . "/MaintenanceService.php";
 
 class AuthService extends BaseService {
     private UserRepository $userRepository;
@@ -63,6 +64,10 @@ class AuthService extends BaseService {
         }
 
         Session::createLoginSession($user);
+
+        // F6 (§9.3): ponto único e previsível — garante que o sistema se atualiza
+        // pelo menos uma vez por sessão (o guard de tempo evita repetições).
+        (new MaintenanceService())->runIfDue();
 
         return [
             "message" => "Login efetuado com sucesso!",

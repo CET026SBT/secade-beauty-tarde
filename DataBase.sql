@@ -552,6 +552,16 @@ CREATE TABLE IF NOT EXISTS `gorjeta` (
 -- Dumping data for table secade_beauty.gorjeta: ~0 rows (approximately)
 DELETE FROM `gorjeta`;
 
+-- Dumping structure for table secade_beauty.manutencao_execucao
+DROP TABLE IF EXISTS `manutencao_execucao`;
+CREATE TABLE IF NOT EXISTS `manutencao_execucao` (
+  `chave` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `executado_em` datetime NOT NULL,
+  PRIMARY KEY (`chave`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Dumping data for table secade_beauty.manutencao_execucao: ~0 rows (approximately)
+DELETE FROM `manutencao_execucao`;
 -- Dumping structure for table secade_beauty.matriz_deslocacao
 DROP TABLE IF EXISTS `matriz_deslocacao`;
 CREATE TABLE IF NOT EXISTS `matriz_deslocacao` (

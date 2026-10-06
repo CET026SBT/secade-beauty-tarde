@@ -5,6 +5,8 @@ require_once APP_PATH . "/repositories/FiscalAlertRepository.php";
 require_once APP_PATH . "/repositories/FiscalObligationRepository.php";
 require_once APP_PATH . "/repositories/BookingServiceRepository.php";
 require_once APP_PATH . "/repositories/BookingRepository.php";
+require_once APP_PATH . "/repositories/NotificationRepository.php";
+require_once __DIR__ . "/MaintenanceService.php";
 
 /**
  * Avisos por perfil — Fase 6.0 (RF-81 · D-15 · §24.7).
@@ -23,6 +25,7 @@ class AlertService extends BaseService {
     private FiscalObligationRepository $fiscalObligationRepository;
     private BookingServiceRepository $bookingServiceRepository;
     private BookingRepository $bookingRepository;
+    private NotificationRepository $notificationRepository;
 
     public function __construct() {
         parent::__construct();
@@ -30,6 +33,7 @@ class AlertService extends BaseService {
         $this->fiscalObligationRepository = new FiscalObligationRepository();
         $this->bookingServiceRepository = new BookingServiceRepository();
         $this->bookingRepository = new BookingRepository();
+        $this->notificationRepository = new NotificationRepository();
     }
 
     /**
@@ -44,6 +48,10 @@ class AlertService extends BaseService {
      * Avisos do utilizador autenticado, agrupados por origem.
      */
     public function list(): array {
+        // F6 (§9.3): a leitura dos avisos é um momento relevante — aproveita-se para
+        // correr o serviço de manutenção (reconciliação + alertas fiscais).
+        (new MaintenanceService())->runIfDue();
+
         $summary = $this->buildGroups();
 
         // §3.7/F5: o perfil passa a distinguir RV de efetivo (G-03).
@@ -93,6 +101,7 @@ class AlertService extends BaseService {
             $groups[] = $this->pendingServicesGroup();
             $groups[] = $this->routesGroup();
         } else {
+            $groups[] = $this->myNotificationsGroup();
             $groups[] = $this->myAllocationsGroup();
         }
 
@@ -120,6 +129,26 @@ class AlertService extends BaseService {
             "hidden"   => max(0, count($items) - self::MAX_ITEMS),
             "showMoreUrl" => $items[0]["pageUrl"] ?? null
         ];
+    }
+
+    /** Avisos/lembretes do próprio utilizador (`notificacao` — C-07/C-14 · F6). */
+    private function myNotificationsGroup(): array {
+        $userId = Session::userId();
+        $items = [];
+
+        if ($userId !== null) {
+            foreach ($this->notificationRepository->findUnread($userId) as $notification) {
+                $items[] = [
+                    "title"   => ucfirst(str_replace("_", " ", (string)$notification["tipo"])),
+                    "detail"  => (string)$notification["mensagem"],
+                    "type"    => "notificacao",
+                    "page"    => "alerts",
+                    "pageUrl" => "/gestao/avisos"
+                ];
+            }
+        }
+
+        return $this->limitedGroup("notificacoes", "Os meus avisos", $items);
     }
 
     /** Alocações planeadas do funcionário (F4/F5) — o que lhe foi atribuído. */
