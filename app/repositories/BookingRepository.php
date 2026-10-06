@@ -61,30 +61,10 @@ class BookingRepository extends BaseRepository {
         return $this->execute($sql, ["estado" => $estado, "id" => $id]) >= 0;
     }
 
-    /** Reprograma o agendamento (data/hora, morada e valor) — edição F9b. */
-    public function updateSchedule(int $id, string $dateTime, float $totalAmount, ?int $addressId, string $estado): bool {
-        return $this->execute(
-            "UPDATE agendamento
-             SET data_hora_pretendida = :data_hora,
-                 valor_total = :valor_total,
-                 cliente_morada_id = :morada_id,
-                 estado_reserva = :estado
-             WHERE id = :id",
-            [
-                "data_hora"   => $dateTime,
-                "valor_total" => $totalAmount,
-                "morada_id"   => $addressId,
-                "estado"      => $estado,
-                "id"          => $id
-            ]
-        ) >= 0;
-    }
-
-    /** Contagem de conflitos na janela, ignorando o próprio agendamento. */
     public function countByDateWindow(string $dateTimeStart, int $durationMinutes, string $local, array $excludeIds = []): int {
         $sql = "SELECT COUNT(*) FROM agendamento
                 WHERE local_prestacao = :local
-                  AND estado_reserva IN ('pendente_validacao_logistica_loja','totalmente_alocado','confirmado')
+                  AND estado_reserva IN ('pendente_validacao_logistica_loja','totalmente_aceite_funcionarios','confirmado')
                   AND data_hora_pretendida < :fim
                   AND DATE_ADD(data_hora_pretendida, INTERVAL :duracao MINUTE) > :inicio";
         $params = [
@@ -106,347 +86,6 @@ class BookingRepository extends BaseRepository {
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
         return (int)$stmt->fetchColumn();
-    }
-
-    // ------------------------------------------------------------------
-    // Fase 7 (F4) — regras de alocação e confirmação (§4.4)
-    // ------------------------------------------------------------------
-
-    /** Cidade da morada de um agendamento (nulo quando não tem morada). */
-    public function findCityId(int $bookingId): ?int {
-        $row = $this->fetchRaw(
-            "SELECT cm.cidade_id
-             FROM agendamento a
-             LEFT JOIN cliente_morada cm ON a.cliente_morada_id = cm.id
-             WHERE a.id = :id LIMIT 1",
-            ["id" => $bookingId]
-        );
-
-        return isset($row["cidade_id"]) ? (int)$row["cidade_id"] : null;
-    }
-
-    /**
-     * R-ALOC (§4.4): quantos serviços **aceites** este funcionário já tem, no mesmo
-     * dia, em **agendamentos de outra cidade**. Se > 0, não pode ser alocado aqui
-     * (não pode estar em duas cidades no mesmo dia).
-     */
-    public function countEmployeeInOtherCitySameDay(int $employeeId, int $bookingId): int {
-        $sql = "SELECT COUNT(*)
-                FROM agendamento_servico s
-                INNER JOIN agendamento a ON s.agendamento_id = a.id
-                LEFT JOIN cliente_morada cm ON a.cliente_morada_id = cm.id
-                WHERE s.funcionario_id = :funcionario_id
-                  AND s.estado_aceitacao = 'aceite'
-                  AND s.agendamento_id <> :agendamento_id
-                  AND a.estado_reserva NOT IN ('cancelado', 'recusado', 'executado', 'concluido')
-                  AND DATE(a.data_hora_pretendida) = (
-                        SELECT DATE(a2.data_hora_pretendida) FROM agendamento a2 WHERE a2.id = :agendamento_id
-                  )
-                  AND cm.cidade_id IS NOT NULL AND cm.cidade_id <> (
-                        SELECT cm2.cidade_id
-                        FROM agendamento a3
-                        LEFT JOIN cliente_morada cm2 ON a3.cliente_morada_id = cm2.id
-                        WHERE a3.id = :agendamento_id
-                  )";
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(["funcionario_id" => $employeeId, "agendamento_id" => $bookingId]);
-
-        return (int)$stmt->fetchColumn();
-    }
-
-    /**
-     * R-CONF (§4.4): **quantos** agendamentos já confirmados na mesma cidade e data
-     * têm janela temporal sobreposta à dos agendamentos a confirmar. > 0 bloqueia a
-     * confirmação da rota (a carrinha não está em dois sítios à mesma hora).
-     */
-    public function findCityWindowConflicts(int $cityId, string $date, array $bookingIds): int {
-        if (empty($bookingIds)) {
-            return 0;
-        }
-
-        $placeholders = [];
-        $params = ["cidade_id" => $cityId, "data_rota" => $date];
-
-        foreach (array_values($bookingIds) as $i => $id) {
-            $placeholders[] = ":inc{$i}";
-            $params["inc{$i}"] = (int)$id;
-        }
-
-        $inList = implode(",", $placeholders);
-
-        // A duração de cada agendamento é a soma das durações dos seus serviços.
-        $durationJoin = "INNER JOIN (
-                            SELECT agendamento_id, COALESCE(SUM(duracao_minutos), 0) AS dur
-                            FROM agendamento_servico
-                            GROUP BY agendamento_id
-                        ) %s ON %s.agendamento_id = %s.id";
-
-        $sql = "SELECT COUNT(*)
-                FROM agendamento a
-                INNER JOIN cliente_morada cm ON a.cliente_morada_id = cm.id
-                " . sprintf($durationJoin, "d", "d", "a") . "
-                WHERE a.local_prestacao = 'carrinha_ambulante'
-                  AND cm.cidade_id = :cidade_id
-                  AND DATE(a.data_hora_pretendida) = :data_rota
-                  AND a.estado_reserva = 'confirmado'
-                  AND EXISTS (
-                        SELECT 1
-                        FROM agendamento inc
-                        " . sprintf($durationJoin, "di", "di", "inc") . "
-                        WHERE inc.id IN ({$inList})
-                          AND inc.data_hora_pretendida < DATE_ADD(a.data_hora_pretendida, INTERVAL GREATEST(d.dur, 1) MINUTE)
-                          AND DATE_ADD(inc.data_hora_pretendida, INTERVAL GREATEST(di.dur, 1) MINUTE) > a.data_hora_pretendida
-                  )";
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute($params);
-
-        return (int)$stmt->fetchColumn();
-    }
-
-    /**
-     * R-ALOC (§4.4) — lista: funcionários **ocupados noutra cidade** no dia deste
-     * agendamento. O front-end usa-a para desativar as opções do seletor.
-     */
-    public function findEmployeesBusyElsewhereOnDate(int $bookingId): array {
-        $sql = "SELECT DISTINCT s.funcionario_id
-                FROM agendamento_servico s
-                INNER JOIN agendamento a ON s.agendamento_id = a.id
-                LEFT JOIN cliente_morada cm ON a.cliente_morada_id = cm.id
-                WHERE s.funcionario_id IS NOT NULL
-                  AND s.estado_aceitacao = 'aceite'
-                  AND s.agendamento_id <> :agendamento_id
-                  AND a.estado_reserva NOT IN ('cancelado', 'recusado', 'executado', 'concluido')
-                  AND DATE(a.data_hora_pretendida) = (
-                        SELECT DATE(a2.data_hora_pretendida) FROM agendamento a2 WHERE a2.id = :agendamento_id
-                  )
-                  AND cm.cidade_id IS NOT NULL AND cm.cidade_id <> (
-                        SELECT cm2.cidade_id
-                        FROM agendamento a3
-                        LEFT JOIN cliente_morada cm2 ON a3.cliente_morada_id = cm2.id
-                        WHERE a3.id = :agendamento_id
-                  )";
-
-        $rows = $this->fetchAllRaw($sql, ["agendamento_id" => $bookingId]);
-
-        return array_values(array_map(fn($row) => (int)$row["funcionario_id"], $rows));
-    }
-
-    /** Ids (dentre os indicados) cuja execução é a **menos de 24 h** — R-24H (§4.4). */
-    public function findIdsWithin24Hours(array $bookingIds): array {
-        if (empty($bookingIds)) {
-            return [];
-        }
-
-        $placeholders = [];
-        $params = [];
-
-        foreach (array_values($bookingIds) as $i => $id) {
-            $placeholders[] = ":b{$i}";
-            $params["b{$i}"] = (int)$id;
-        }
-
-        $sql = "SELECT a.id
-                FROM agendamento a
-                WHERE a.id IN (" . implode(",", $placeholders) . ")
-                  AND a.data_hora_pretendida < DATE_ADD(NOW(), INTERVAL 24 HOUR)";
-
-        $rows = $this->fetchAllRaw($sql, $params);
-
-        return array_values(array_map(fn($row) => (int)$row["id"], $rows));
-    }
-
-    /**
-     * Próximas marcações do cliente (não terminais e ainda no futuro) — F9 · §3.5.
-     */
-    public function findUpcomingByCustomer(int $customerId): array {
-        $sql = "SELECT id, data_hora_pretendida AS dateTime, estado_reserva AS status, local_prestacao AS local, valor_total AS totalAmount
-                FROM agendamento
-                WHERE cliente_id = :cliente_id
-                  AND data_hora_pretendida >= NOW()
-                  AND estado_reserva NOT IN ('cancelado', 'recusado', 'concluido')
-                ORDER BY data_hora_pretendida ASC
-                LIMIT 10";
-
-        return $this->fetchAllRaw($sql, ["cliente_id" => $customerId]);
-    }
-
-    /**
-     * R1a (§8.2 · RF-59/RN-25): a **24 h** da execução, sem rota confirmada, o
-     * agendamento é auto-recusado (o cliente é avisado por `notificacao`).
-     *
-     * Devolve as linhas afetadas para que o serviço de manutenção possa avisar os
-     * clientes — a reconciliação não escreve avisos sem saber a quem.
-     */
-    public function refuseWithoutRouteAtCutoff(string $now, int $hoursBefore): array {
-        $rows = $this->fetchAllRaw(
-            "SELECT id, cliente_id
-             FROM agendamento
-             WHERE estado_reserva IN ('pendente_alocacao', 'pendente_validacao_logistica_loja', 'totalmente_alocado')
-               AND data_hora_pretendida <= DATE_ADD(:agora, INTERVAL :horas HOUR)",
-            ["agora" => $now, "horas" => $hoursBefore]
-        );
-
-        if (empty($rows)) {
-            return [];
-        }
-
-        $ids = array_map(fn($row) => (int)$row["id"], $rows);
-
-        $this->execute(
-            "UPDATE agendamento SET estado_reserva = 'recusado'
-             WHERE id IN (" . implode(",", array_map("intval", $ids)) . ")"
-        );
-
-        return $rows;
-    }
-
-    /** R1b (§8.2): agendamentos `confirmado` cuja execução já começou. */
-    public function findConfirmedStarted(string $now): array {
-        $sql = "SELECT id, data_hora_pretendida, cliente_id
-                FROM agendamento
-                WHERE estado_reserva = 'confirmado'
-                  AND data_hora_pretendida < :agora";
-
-        return $this->fetchAllRaw($sql, ["agora" => $now]);
-    }
-
-    /**
-     * Marcações **confirmadas** que entram nas próximas 24 h e ainda não têm
-     * lembrete (RF-13). A ausência de aviso evita repetir todos os dias.
-     */
-    public function findConfirmedWithin24Hours(string $now): array {
-        $sql = "SELECT a.id, a.cliente_id, a.data_hora_pretendida, a.local_prestacao,
-                       cm.cidade_id, c.nome AS cidade_nome
-                FROM agendamento a
-                LEFT JOIN cliente_morada cm ON a.cliente_morada_id = cm.id
-                LEFT JOIN cidade c ON cm.cidade_id = c.id
-                WHERE a.estado_reserva = 'confirmado'
-                  AND a.data_hora_pretendida BETWEEN :agora AND DATE_ADD(:agora, INTERVAL 24 HOUR)
-                  AND NOT EXISTS (
-                      SELECT 1 FROM notificacao n
-                      WHERE n.utilizador_id = a.cliente_id
-                        AND n.tipo = 'lembrete_24h'
-                        AND n.mensagem LIKE CONCAT('Agendamento #', a.id, ' %')
-                  )";
-
-        return $this->fetchAllRaw($sql, ["agora" => $now]);
-    }
-
-    /**
-     * Alternativas para o lembrete (RF-13): os **próximos horários livres** da mesma
-     * cidade/canal, para o cliente poder reagendar em vez de perder a marcação.
-     */
-    public function findAlternativeSlots(array $booking, int $limit = 3): array {
-        $cityId = $booking["cidade_id"] ?? null;
-        $local  = (string)($booking["local_prestacao"] ?? "loja_fisica");
-        $params = [
-            "data" => substr((string)$booking["data_hora_pretendida"], 0, 10),
-            "local" => $local
-        ];
-
-        $cityFilter = "";
-
-        if ($cityId !== null && (int)$cityId > 0) {
-            $cityFilter = " AND cm.cidade_id = :cidade_id";
-            $params["cidade_id"] = (int)$cityId;
-        }
-
-        $sql = "SELECT DATE(a.data_hora_pretendida) AS data_alt, COUNT(*) AS total
-                FROM agendamento a
-                LEFT JOIN cliente_morada cm ON a.cliente_morada_id = cm.id
-                WHERE a.local_prestacao = :local
-                  AND DATE(a.data_hora_pretendida) > :data
-                  AND a.estado_reserva NOT IN ('cancelado', 'recusado')
-                  {$cityFilter}
-                GROUP BY DATE(a.data_hora_pretendida)
-                ORDER BY data_alt ASC
-                LIMIT " . (int)$limit;
-
-        return $this->fetchAllRaw($sql, $params);
-    }
-
-    /** Funcionários com serviços aceites num agendamento (para o aviso R1b). */
-    public function findAmbulatoryBookingEmployees(int $bookingId): array {
-        $rows = $this->fetchAllRaw(
-            "SELECT DISTINCT funcionario_id
-             FROM agendamento_servico
-             WHERE agendamento_id = :agendamento_id
-               AND funcionario_id IS NOT NULL
-               AND estado_aceitacao = 'aceite'",
-            ["agendamento_id" => $bookingId]
-        );
-
-        return array_values(array_map(fn($row) => (int)$row["funcionario_id"], $rows));
-    }
-
-    /**
-     * R2 (§8.2): agendamentos `executado` cuja janela terminou há mais de N horas
-     * → passam a `concluido`.
-     */
-    public function completeExecutedAfterWindow(string $now, int $hoursAfterEnd): int {
-        $sql = "UPDATE agendamento a
-                INNER JOIN (
-                    SELECT agendamento_id, COALESCE(SUM(duracao_minutos), 0) AS dur
-                    FROM agendamento_servico
-                    GROUP BY agendamento_id
-                ) d ON d.agendamento_id = a.id
-                SET a.estado_reserva = 'concluido'
-                WHERE a.estado_reserva = 'executado'
-                  AND DATE_ADD(a.data_hora_pretendida, INTERVAL (GREATEST(d.dur, 1) + :horas * 60) MINUTE) < :agora";
-
-        return $this->execute($sql, ["horas" => $hoursAfterEnd, "agora" => $now]);
-    }
-
-    /** Clientes + ids de uma lista de agendamentos (para os avisos de rota — F10). */
-    public function findCustomersOfBookings(array $bookingIds): array {
-        if (empty($bookingIds)) {
-            return [];
-        }
-
-        $ids = implode(",", array_map("intval", $bookingIds));
-
-        return $this->fetchAllRaw(
-            "SELECT id, cliente_id FROM agendamento WHERE id IN ({$ids}) AND cliente_id IS NOT NULL"
-        );
-    }
-
-    /** Estados dos agendamentos filhos de uma rota (para R3/R4 — cascata). */
-    public function childStatesOfRoute(int $routeId): array {
-        $rows = $this->fetchAllRaw(
-            "SELECT a.estado_reserva
-             FROM execucao_agendamento e
-             INNER JOIN agendamento a ON e.agendamento_id = a.id
-             WHERE e.rota_id = :rota_id",
-            ["rota_id" => $routeId]
-        );
-
-        if (empty($rows)) {
-            // Sem execuções registadas: os filhos são os agendamentos da cidade+data.
-            $route = $this->fetchRaw(
-                "SELECT data_rota, cidade_id FROM rota_ambulante WHERE id = :id",
-                ["id" => $routeId]
-            );
-
-            if ($route) {
-                $children = $this->fetchAllRaw(
-                    "SELECT a.estado_reserva
-                     FROM agendamento a
-                     INNER JOIN cliente_morada cm ON a.cliente_morada_id = cm.id
-                     WHERE a.local_prestacao = 'carrinha_ambulante'
-                       AND cm.cidade_id = :cidade_id
-                       AND DATE(a.data_hora_pretendida) = :data_rota",
-                    ["cidade_id" => (int)$route["cidade_id"], "data_rota" => (string)$route["data_rota"]]
-                );
-
-                return array_values(array_map(fn($row) => (string)$row["estado_reserva"], $children));
-            }
-
-            return [];
-        }
-
-        return array_values(array_map(fn($row) => (string)$row["estado_reserva"], $rows));
     }
 
     // ------------------------------------------------------------------
@@ -550,13 +189,13 @@ class BookingRepository extends BaseRepository {
      * Agrupa os agendamentos de ambulatório por data + cidade.
      *
      * RN-31 (§24.7): a rota só agrega agendamentos com **todos** os serviços aceites
-     * (`totalmente_alocado`). Os que aguardam aceitação **não** entram na
+     * (`totalmente_aceite_funcionarios`). Os que aguardam aceitação **não** entram na
      * agregação — aparecem apenas como aviso na listagem (não se agrega o que não
      * está qualificado).
      */
     public function findAmbulatoryGroups(?string $date = null, ?int $cityId = null, array $states = []): array {
         if (empty($states)) {
-            $states = ["totalmente_alocado"];
+            $states = ["totalmente_aceite_funcionarios"];
         }
 
         $placeholders = [];
@@ -572,7 +211,7 @@ class BookingRepository extends BaseRepository {
                        cid.distrito,
                        SUM(a.valor_total) AS receita_prevista,
                        COUNT(a.id) AS total_agendamentos,
-                       SUM(a.estado_reserva = 'totalmente_alocado') AS total_consolidados,
+                       SUM(a.estado_reserva = 'totalmente_aceite_funcionarios') AS total_consolidados,
                        GROUP_CONCAT(a.id) AS agendamentos_ids
                 FROM agendamento a
                 INNER JOIN cliente_morada cm ON a.cliente_morada_id = cm.id
@@ -619,7 +258,7 @@ class BookingRepository extends BaseRepository {
      * Agendamentos de ambulatório de uma cidade+data em condições de receber a
      * decisão MANUAL do gestor (Fase 4 — sem limiar automático).
      *
-     * RN-31 (§24.7): só os **qualificados** (`totalmente_alocado`), ou
+     * RN-31 (§24.7): só os **qualificados** (`totalmente_aceite_funcionarios`), ou
      * seja com todos os serviços aceites. Um grupo com serviços pendentes é
      * recusado com 409 por `RotaService::decideRoute` (ver `countPendingByCityAndDate`).
      */
@@ -630,7 +269,7 @@ class BookingRepository extends BaseRepository {
                 WHERE a.local_prestacao = 'carrinha_ambulante'
                   AND cm.cidade_id = :cidade_id
                   AND DATE(a.data_hora_pretendida) = :data_rota
-                  AND a.estado_reserva = 'totalmente_alocado'
+                  AND a.estado_reserva = 'totalmente_aceite_funcionarios'
                 ORDER BY a.id ASC";
 
         return $this->fetchAllRaw($sql, ["cidade_id" => $cityId, "data_rota" => $date]);
@@ -647,7 +286,7 @@ class BookingRepository extends BaseRepository {
                 WHERE a.local_prestacao = 'carrinha_ambulante'
                   AND cm.cidade_id = :cidade_id
                   AND DATE(a.data_hora_pretendida) = :data_rota
-                  AND a.estado_reserva = 'pendente_alocacao'";
+                  AND a.estado_reserva = 'pendente_aceitacao_funcionarios'";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute(["cidade_id" => $cityId, "data_rota" => $date]);
@@ -663,7 +302,7 @@ class BookingRepository extends BaseRepository {
      */
     public function findAmbulatoryBookingsByCityAndDate(string $date, int $cityId, array $states = []): array {
         if (empty($states)) {
-            $states = ["totalmente_alocado"];
+            $states = ["totalmente_aceite_funcionarios"];
         }
 
         $placeholders = [];

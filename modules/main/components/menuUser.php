@@ -32,36 +32,23 @@ if ($isLoggedIn && $user):
         $managementLinks[] = ["url" => "/gestao/fiscal", "icon" => "bi-receipt-cutoff", "label" => "Calendário Fiscal"];
         $managementLinks[] = ["url" => "/gestao/recibos-verdes", "icon" => "bi-cash-stack", "label" => "Recibos Verdes"];
     }
-// C-05: o avatar mostra a fotografia real quando existe; senão o placeholder.
-    $avatarSrc = !empty($user['photo'])
-        ? BASE_URL . "/" . ltrim($user['photo'], "/")
-        : BASE_URL . "/modules/common/img/testimonial-1.jpg";
 ?>
 <div class="menuUser dropdown ms-auto order-xl-last">
     <button class="btn btn-link dropdown-toggle d-flex align-items-center text-decoration-none p-0" 
             type="button" data-bs-toggle="dropdown" aria-expanded="false">
         <span class="text-white me-2 d-none d-md-inline"><?= htmlspecialchars($userName) ?></span>
-        <img src="<?= htmlspecialchars($avatarSrc) ?>"
+        <img src="<?= BASE_URL ?>/modules/common/img/testimonial-1.jpg"
             alt="<?= htmlspecialchars($userName) ?>"
             class="wh-40 rounded-circle object-fit-cover border border-2 border-primary">
     </button>
     <ul class="dropdown-menu dropdown-menu-end">
+        <!--
         <li>
-            <a class="dropdown-item" href="<?= BASE_URL ?>/area-cliente">
-                <i class="bi bi-person-badge me-2"></i>Área Cliente
+            <a class="dropdown-item" href="<?= BASE_URL ?>/perfil">
+                <i class="bi bi-person-circle me-2"></i>Perfil
             </a>
         </li>
-        <li>
-            <a class="dropdown-item" href="<?= BASE_URL ?>/area-cliente?seccao=agendamentos">
-                <i class="bi bi-calendar-check me-2"></i>As minhas marcações
-            </a>
-        </li>
-        <li>
-            <a class="dropdown-item" href="<?= BASE_URL ?>/area-cliente?seccao=lembretes">
-                <i class="bi bi-bell me-2"></i>Lembretes
-                <span class="badge bg-danger ms-1 d-none" id="menuUserAlertsBadge">0</span>
-            </a>
-        </li>
+        -->
 
         <?php if ($isStaff): ?>
             <li><hr class="dropdown-divider"></li>
@@ -74,6 +61,12 @@ if ($isLoggedIn && $user):
                     </a>
                 </li>
             <?php endforeach; ?>
+        <?php else: ?>
+            <li>
+                <a class="dropdown-item" href="<?= BASE_URL ?>/agendamentos">
+                    <i class="bi bi-calendar-check me-2"></i>Agendamentos
+                </a>
+            </li>
         <?php endif; ?>
 
         <li><hr class="dropdown-divider"></li>

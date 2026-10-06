@@ -33,24 +33,4 @@ class AlertController extends BaseController {
         Session::requireProfileApi(["gestor"]);
         return $this->alertService->markAllAsRead();
     }
-
-    // ------------------------------------------------------------------
-    // Área Cliente (F9 · §3.5) — os mesmos avisos, com o âmbito do cliente.
-    // ------------------------------------------------------------------
-
-    public function customerSummary(): array {
-        Session::requireProfileApi(["cliente"]);
-        return ["count" => $this->alertService->count()];
-    }
-
-    public function customerList(): array {
-        Session::requireProfileApi(["cliente"]);
-        return $this->alertService->list();
-    }
-
-    /** O cliente marca como lidos **os seus** avisos (tabela `notificacao`). */
-    public function customerMarkRead(): array {
-        Session::requireProfileApi(["cliente"]);
-        return $this->alertService->markMyNotificationsAsRead();
-    }
 }

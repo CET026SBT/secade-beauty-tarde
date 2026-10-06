@@ -9,7 +9,7 @@ class CategoryRepository extends BaseRepository {
 
     public function find(?int $id=null): mixed {
         $sql = "SELECT cp.id, cp.nome, cp.descricao
-                FROM categoria_servico cp
+                FROM categoria_profissional cp
                 WHERE 1=1";
         $params = [];
 
@@ -24,6 +24,6 @@ class CategoryRepository extends BaseRepository {
     }
 
     public function countAll(): int {
-        return (int)$this->fetchRaw("SELECT COUNT(*) AS total FROM categoria_servico")["total"];
+        return (int)$this->fetchRaw("SELECT COUNT(*) AS total FROM categoria_profissional")["total"];
     }
 }

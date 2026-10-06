@@ -17,11 +17,10 @@ include_once ROOT_PATH . "/modules/backoffice/includes/boNavbar.php";
 <main class="p-4">
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
         <div>
-            <h2 class="mb-1"><i class="bi bi-cash-stack text-primary me-2"></i><?= Session::isEmployee() ? "As minhas comissões" : "Comissões" ?></h2>
+            <h2 class="mb-1"><i class="bi bi-cash-stack text-primary me-2"></i>Comissões</h2>
             <p class="text-muted small mb-0">
-                Folha de <strong>serviços prestados</strong> — o que conta é o serviço ter sido executado,
-                não apenas alocado. Os valores são o <strong>snapshot da aceitação</strong>: a percentagem
-                pode mudar, o histórico não.
+                Valores <strong>gravados no momento da aceitação</strong> (simulação de recibos verdes).
+                Nada é recalculado depois: a percentagem em vigor pode mudar, o histórico não.
             </p>
         </div>
         <div class="d-flex gap-2 align-items-end">
@@ -39,20 +38,6 @@ include_once ROOT_PATH . "/modules/backoffice/includes/boNavbar.php";
 
     <div class="row g-3 mb-4" id="commissionKpis" preloader-defer></div>
 
-    <!-- D-07.1/D-07.2: o fixo (salário base) nunca se mistura com o variável (comissões). -->
-    <div class="card border-0 shadow-sm mb-4 d-none" id="commissionSalaryCard">
-        <div class="card-body d-flex flex-wrap justify-content-between align-items-center gap-3">
-            <div>
-                <span class="d-block text-muted small">Salário base (fixo)</span>
-                <span class="fs-4 fw-bold" id="commissionSalaryValue">—</span>
-            </div>
-            <p class="small text-muted mb-0 flex-grow-1">
-                Valor fixo do contrato, apresentado separado: <strong>não</strong> é comissão e
-                <strong>não</strong> entra no total variável.
-            </p>
-        </div>
-    </div>
-
     <div class="card border-0 shadow-sm mb-4 d-none" id="commissionEmployeesCard">
         <div class="card-header bg-white fw-bold">Totais por funcionário</div>
         <div class="card-body p-0">
@@ -61,11 +46,11 @@ include_once ROOT_PATH . "/modules/backoffice/includes/boNavbar.php";
                     <thead>
                         <tr>
                             <th>Funcionário</th>
-                            <th class="text-center">Serviços prestados</th>
+                            <th class="text-center">Serviços</th>
                             <th class="text-end">Valor dos serviços</th>
                             <th class="text-center">% média</th>
                             <th class="text-end">Comissão (funcionário)</th>
-                            <th class="text-end">Parte da Empresa</th>
+                            <th class="text-end">Parte da plataforma</th>
                         </tr>
                     </thead>
                     <tbody id="commissionEmployeesBody"></tbody>
@@ -76,7 +61,7 @@ include_once ROOT_PATH . "/modules/backoffice/includes/boNavbar.php";
 
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center gap-2">
-            <span class="fw-bold">Serviços prestados no mês</span>
+            <span class="fw-bold">Serviços aceites no mês</span>
             <span class="text-muted small" id="commissionsCount">A carregar...</span>
         </div>
         <div class="card-body p-0" id="commissionsTableContainer" preloader-defer>
@@ -87,7 +72,7 @@ include_once ROOT_PATH . "/modules/backoffice/includes/boNavbar.php";
                             <th>Agendamento</th>
                             <th>Serviço</th>
                             <th>Funcionário</th>
-                            <th>Data</th>
+                            <th>Aceite em</th>
                             <th class="text-end">Valor do serviço</th>
                             <th class="text-center">%</th>
                             <th class="text-end">Comissão</th>

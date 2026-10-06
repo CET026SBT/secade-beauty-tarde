@@ -78,7 +78,7 @@ const testimonial = (() => {
     async function load() {
         const $container = $("#testimonialCarousel");
         const promise = API.feedback.list(6);
-        const preloader = $container.preloader(".jq-skeleton-testimonial", promise, { rows: 3 });
+        const preloader = $container.preloader(".jq-skeleton-service-category-card", promise, { rows: 3 });
 
         try {
             const response = await promise;

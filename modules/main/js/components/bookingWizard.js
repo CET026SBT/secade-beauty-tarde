@@ -20,7 +20,7 @@ const bookingWizard = (() => {
     // O canal é escolhido PRIMEIRO: é ele que decide a forma de escolher os serviços
     // (lista simples na loja / por pessoa na carrinha) e que passos se seguem.
     const FLOWS = {
-        loja_fisica: ["channel", "services", "datetime", "summary"],
+        loja_fisica: ["channel", "services", "datetime", "professional", "summary"],
         carrinha_ambulante: ["channel", "services", "address", "otp", "datetime", "policy", "summary"]
     };
 
@@ -30,6 +30,7 @@ const bookingWizard = (() => {
         address: "Morada",
         otp: "OTP",
         datetime: "Data/Hora",
+        professional: "Profissional",
         policy: "Sinal",
         summary: "Resumo"
     };
@@ -129,10 +130,6 @@ const bookingWizard = (() => {
 
         $("#peopleBlock").toggleClass("d-none", !isAmb);
         $("#bookingServicePicker").toggleClass("d-none", isAmb);
-
-        // O horário Terça–Sábado é o da LOJA: no ambulatório a nota do passo
-        // data/hora não se aplica (o passo é partilhado).
-        $("#channelScheduleNote").toggleClass("d-none", isAmb);
         $("#servicesHint").text(isAmb
             ? "Indique cada pessoa e os serviços que vai receber. A duração e o valor são calculados por pessoa."
             : "Escolha um ou mais serviços. O total e a duração são calculados automaticamente.");
@@ -414,7 +411,7 @@ const bookingWizard = (() => {
             return `<button type="button" class="btn btn-sm btn-outline-primary slot-btn" data-time="${slot.time}" ${disabled}${title}>${slot.time}</button>`;
         });
 
-        $container.html(buttons.join(""));
+        $container.html(`<div class="d-flex flex-wrap gap-2">${buttons.join("")}</div>`);
         highlightSelectedSlot();
     }
 

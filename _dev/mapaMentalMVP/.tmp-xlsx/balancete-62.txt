@@ -1,0 +1,38 @@
+﻿--- linhas 1148..1162 (conta 62) ---
+Acumulado
+Débito
+Período
+Crédito
+Fornecimentos e serviços externos
+6.527,30
+6.527,30
+62
+6.527,30
+Serviços especializados
+930,58
+930,58
+622
+930,58
+Serviços especializados-Trabalhos especializados
+--- linhas 1480..1500 (conta 626) ---
+62481113
+295,00
+Serviços diversos
+2.320,87
+2.320,87
+626
+2.320,87
+Serviços diversos-Rendas e alugueres
+1.600,00
+1.600,00
+6261
+1.600,00
+6.527,30
+Total a transportar
+6.527,30
+6.527,30
+7
+9
+Página
+Emitido por Ensino (Powered by - TOConline - https://www.toconline.pt)
+/

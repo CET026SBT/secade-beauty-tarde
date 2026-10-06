@@ -1,0 +1,26 @@
+﻿| RF-50 | Lista de agendamentos com filtros (data, local, estado, cidade) + paginação | ✅                     |
+| RF-51 | Detalhe por **serviço/funcionário** + progresso de aceitação + execução     | ✅                     |
+| RF-52 | Cancelamento de agendamento                                                 | ✅                     |
+| RF-53 | Registo de **execução** do serviço (idempotente)                            | ✅                     |
+| RF-54 | Rotas por **dia+cidade** com custos/lucros e **indicador 50 €** (visual)    | ✅                     |
+| RF-55 | **Decisão manual** de rota (aprovar/recusar) com auditoria                  | ✅                     |
+| RF-56 | **Rotas multicidades** (ordenação cronológica + validação de espaçamento)   | ⬜ (§3.9)              |
+| RF-57 | **Alerta padronizado de custos/viabilidade** nas listagens                  | ⬜ (§3.9)              |
+| RF-58 | **Regra das 24 h** na criação de rotas                                      | ⬜ (§3.11)             |
+| RF-59 | **Auto-cancelamento** de agendamentos a 24 h sem rota (retidos na BD)       | ⬜ (§3.11)             |
+| RF-60 | Calendário Fiscal (IVA, IRC, SS, Seguros) + alertas 30/15/7/3/1/atraso      | ✅                     |
+| RF-61 | Configuração do Simulador de Recibos Verdes (percentagens + vigência)       | ✅                     |
+| RF-62 | **Configuração do sinal** cobrado aos clientes                              | ⬜ (§3.10 · D-10)      |
+| RF-63 | **Dashboard/resumo** e estrutura de menus convencionada por módulo          | 🟡 → **RF-77** (§24.7) |
+
+### 4.6 Pagamentos (simulados)
+
+| ID    | Requisito                                                         | Estado     |
+| :---- | :---------------------------------------------------------------- | :--------: |
+| RF-70 | Sinal 10 % simulado na criação                                    | ✅         |
+| RF-71 | **Cobrança dos 90 %** no término do serviço                       | ⬜ (§3.10) |
+| RF-72 | **Escolha simulada do método** (Dinheiro / Multibanco / MB Way)   | ⬜ (§3.10) |
+| RF-73 | Cenário de **falha de internet** → pagamento restrito a numerário | ⬜ (§3.10) |
+| RF-74 | Recibo manual — avaliar se existe; caso não, **trabalho futuro**  | ⬜ (§25)   |
+
+### 4.7 Backoffice — Importação de ficheiros e contabilidade

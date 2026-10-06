@@ -1,0 +1,71 @@
+﻿--- _dev/docs/spec/delivery.md  (total 243 linhas | mostrar 13..45) ---
+| Fase                                | ├émbito                                                                                                                                                  | Estado                 |
+| :---------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------ | :--------------------- |
+| **1 ΓÇö Cat├ílogo e base**             | Cat├ílogo de servi├ºos (filtros, modal), categorias, autentica├º├úo, registo, perfil/moradas, preloader, validators                                         | Γ£à CONCLU├ìDA           |
+| **2 ΓÇö Agendamentos**                | Wizard **Loja** (5 passos) + Wizard **Carrinha** (7 passos + OTP), disponibilidade, conflitos, p├ígina de sucesso                                        | Γ£à CONCLU├ìDA           |
+| **3 ΓÇö Backoffice do Funcion├írio**   | Aceita├º├úo individual, desfazer/trocar, consolida├º├úo, bloqueio de janela, **Simulador de Recibos Verdes**                                                | Γ£à CONCLU├ìDA           |
+| **4 ΓÇö Backoffice do Gestor**        | Agendamentos (filtros, detalhe por servi├ºo/funcion├írio, execu├º├úo, cancelamento), **Rotas com decis├úo manual** (+50 Γé¼ visual),                           | Γ£à CONCLU├ìDA           |
+|                                     | **Calend├írio Fiscal** + alertas, config. de recibos verdes                                                                                              |                        |
+| **5 ΓÇö Integra├º├úo e testes**         | Fluxos end-to-end (cliente ΓåÆ funcion├írio ΓåÆ gestor), responsividade, notifica├º├╡es simuladas, **293 verifica├º├╡es**                                        | Γ£à CONCLU├ìDA           |
+| **6 ΓÇö Requisitos adicionais (┬º24)** | P├ígina de detalhes + carousel; re-avalia├º├úo din├ómica de slots; 24 h + lembrete + cancelamento pelo cliente; multicidades + alerta de custos; config. do | Γ¼£ **A INICIAR** (┬º24) |
+|                                     | sinal; 10/90 + m├⌐todos de pagamento                                                                                                                     |                        |
+|                                     | **+ m├│dulos do backoffice**: dashboard/gr├íficos, agenda do funcion├írio, contabilidade, RH, fornecedores, comiss├╡es, sininho e p├ígina de avisos;         |                        |
+|                                     | **+ sidebar** do backoffice (┬º25.5) ΓÇö **promo├º├╡es adiadas** (Fase 7 ┬╖ ┬º24.7)                                                                            |                        |
+| **7 ΓÇö Promo├º├╡es**                   | M├│dulo de **promo├º├╡es e campanhas** ΓÇö adiado; avaliar antes o risco de **retro-atualiza├º├úo** de hist├│rico e agendamentos passados (┬º24.7)               | Γ¼£ adiada              |
+
+> **Chart.js (E-3):** entra na **Fase 6**, junto com os gr├íficos do dashboard ΓÇö **n├úo** fica para depois.
+> A biblioteca continua **local** em `modules/common/lib/chartjs/` (nunca por CDN) e **s├│** carregada no
+> backoffice. A **sidebar** do backoffice e a p├ígina das **comiss├╡es** entram **tamb├⌐m na Fase 6** (┬º25.5);
+> `/gestao/agendamentos` **mant├⌐m o nome** ΓÇö a renomea├º├úo de rotas **n├úo** faz parte desta fase.
+
+### 21.1 Entreg├íveis
+
+1. **C├│digo-fonte completo** (`app/`, `modules/`, `index.php`, assets)
+2. **Base de dados**: `DataBase_v2.sql` + `database_seed.sql` (+ migra├º├╡es `v2`/`v3`) ΓÇö ordem em ┬º27
+3. **Documenta├º├úo**: `especificacao_mvp.md` (mestre) + `_dev/docs/spec/` (por dom├¡nio) + `README.md`
+   + `_dev/docs/` (regras e moldes on-demand)
+4. **Diagrama de BD**: ┬º17.8 (rela├º├╡es + consulta SQL para regenerar)
+5. **Testes automatizados** em `_dev/tests/` ΓÇö 293 verifica├º├╡es (┬º26)
+
+## 22. SIMPLIFICA├ç├òES ACAD├ëMICAS E LIMITA├ç├òES
+
+### 22.1 Simplifica├º├╡es aceites (├ómbito do MVP)
+| ├ürea                          | Simplifica├º├úo do MVP                                                                      |
+| :---------------------------- | :---------------------------------------------------------------------------------------- |
+===== backlog 205-222 =====
+--- _dev/docs/spec/backlog.md  (total 341 linhas | mostrar 205..222) ---
+    utilizador** e pelo **clique no sino**; contador de n├úo lidos por `alerta_fiscal` (global) e, quando
+    existirem lembretes n├úo fiscais, Γ₧ò `notificacao` com leitura **por utilizador**.
+11. **Comiss├╡es do funcion├írio (RF-84):** p├ígina pr├│pria `/gestao/comissoes`, acess├¡vel pelo **menu do
+    utilizador** e pela **sidebar**; os dados j├í existem
+    (`agendamento_servico.valor_recibo_verde_funcionario`, snapshot por aceita├º├úo ΓÇö ┬º11).
+
+> **Fases (28/09/2026):** os m├│dulos do backoffice ficam **alinhados na Fase 6** (pedido do gestor, pelo
+> prazo), **incluindo a sidebar e a p├ígina das comiss├╡es** (28/09/2026: **descem da ent├úo Fase 7**, que
+> deixa de existir); `/gestao/agendamentos` **n├úo** ├⌐ renomeado. O Chart.js ├⌐ copiado para
+> `modules/common/lib/chartjs/` na **mesma fase** em que os gr├íficos forem implementados.
+> **Ordem interna (de ┬º1.9, sem conflito bloqueante):** 6.0 painel + autoriza├º├úo por perfil ΓåÆ 6.1
+> fornecedores ΓåÆ 6.2 contabilidade ΓåÆ 6.3 RH ΓåÆ 6.4 **sidebar + comiss├╡es** ΓåÆ 6.5 ├írea do funcion├írio
+> (**promo├º├╡es saem da Fase 6** ΓÇö passam a **Fase 7**, com o risco de **retro-atualiza├º├úo de hist├│rico e
+> agendamentos passados** a avaliar antes de implementar). **Depend├¬ncias assinaladas:** o card
+> *D├¡vidas a Fornecedores* do dashboard s├│ existe depois de 6.1 (C-11 ΓÇö at├⌐ l├í, estado vazio explicativo).
+
+### 24.8 ΓÇö Defeito: dropdown do autocomplete vis├¡vel no canto superior esquerdo (`/registo`)
+**Sintoma:** ao carregar `/registo`, o *dropdown* do autocomplete aparece **vazio no canto superior esquerdo**.
+===== criteria 235-242 =====
+--- _dev/docs/spec/delivery.md  (total 243 linhas | mostrar 233..242) ---
+19. Γ¼£ A **agenda** do funcion├írio mostra **s├│** agendamentos de **rotas confirmadas**, em calend├írio.
+20. Γ¼£ Uma rota **n├úo** ├⌐ confirmada com servi├ºos por aceitar (**409**), a lista **"Por aceitar"** deixa de mostrar servi├ºos assim que o agendamento entra em rota confirmada, e a rota exp├╡e o **detalhe dos agendamentos qualificados**.
+21. Γ¼£ O *dropdown* do autocomplete **n├úo** aparece no carregamento de `/registo` (┬º24.8).
+22. Γ¼£ O gestor **reverte/exclui** um agendamento **antes** de a rota ser confirmada e ele volta a **qualificado** (nunca `cancelado`); em rota confirmada **n├úo se altera**.
+23. Γ¼£ Existe uma p├ígina de **avisos** por perfil, com **contador de n├úo lidos** no sino e liga├º├úo no menu do utilizador.
+24. Γ¼£ Existe p├ígina das **comiss├╡es** por funcion├írio, com os valores **j├í gravados na aceita├º├úo**.
+25. Γ¼£ O backoffice tem **sidebar** (a navbar atual est├í no limite) e as p├íginas `/gestao/*` mant├¬m a autoriza├º├úo por perfil.
+
+### 28.3 Crit├⌐rios transversais (sempre)
+Γ£à C├│digo organizado e leg├¡vel ┬╖ Γ£à interface responsiva ┬╖ Γ£à valida├º├╡es client+server ┬╖
+===== RF-84 =====
+--- _dev/docs/spec/requirements.md  (total 157 linhas | mostrar 108..110) ---
+| RF-83 | **Calend├írio fiscal com as 8 fam├¡lias** de obriga├º├╡es do calend├írio oficial (SAF-T, DMR, reten├º├╡es na fonte, Seguran├ºa Social, IVA-declara├º├úo e IVA-pagamento, IRC, IES/DA), **import├ível** | Γ¼£ (┬º13 ┬╖ ┬º24.10)  |
+| RF-84 | **P├ígina das comiss├╡es** por funcion├írio, com os valores **j├í gravados na aceita├º├úo** (`valor_recibo_verde_funcionario`), alcan├º├ível pelo menu do utilizador e pela **sidebar**             | Γ¼£ (┬º11 ┬╖ ┬º24.7)   |
+|       | do ficheiro                                                                                                                                                                                 |                    |

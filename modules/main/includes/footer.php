@@ -41,9 +41,6 @@
     <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/lib/counterup/counterup.min.js"></script>
     <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/lib/owlcarousel/owl.carousel.min.js"></script>
 
-    <!-- Sweetalert2 local (Q-05): diálogos de confirmação/alerta da aplicação -->
-    <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/lib/sweetalert/sweetalert.js"></script>
-
     <!-- Our Libraries Javascript -->
     <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/lib-our/jq-preloader/jq-preloader.js"></script>
 
@@ -60,15 +57,6 @@
 
     <!-- Main Javascript -->
     <script type="text/javascript" src="<?= BASE_URL ?>/modules/main/js/main.js"></script>
-
-    <!-- Bibliotecas pedidas pela própria página (opcional) -->
-    <?php
-    if (!empty($pageLibraryScripts)) {
-        foreach ($pageLibraryScripts as $libraryScript) {
-            echo '<script type="text/javascript" src="' . BASE_URL . '/modules/common/lib/' . $libraryScript . '"></script>' . PHP_EOL;
-        }
-    }
-    ?>
 
     <!-- Page & Components Javascript -->
     <?php

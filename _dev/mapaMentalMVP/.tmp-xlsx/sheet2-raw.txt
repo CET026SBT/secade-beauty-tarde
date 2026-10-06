@@ -1,0 +1,22 @@
+﻿PARTE: sheet2.xml  bytes=3128
+ROW r=2 cells=6
+   <row r="2" spans="2:7" x14ac:dyDescent="0.3"><c r="B2" s="10"/><c r="C2" s="10"/><c r="D2" s="10"/><c r="E2" s="11" t="s"><v>20</v></c><c r="F2" s="11"/><c r="G2" s="11"/></row>
+ROW r=3 cells=6
+   <row r="3" spans="2:7" x14ac:dyDescent="0.3"><c r="B3" s="10" t="s"><v>22</v></c><c r="C3" s="10" t="s"><v>12</v></c><c r="D3" s="10" t="s"><v>15</v></c><c r="E3" s="10" t="s"><v>13</v></c><c r="F3" s="10" t="s"><v>14</v></c><c r="G3" s="10" t="s"><v>16</v></c></row>
+ROW r=4 cells=6
+   <row r="4" spans="2:7" x14ac:dyDescent="0.3"><c r="B4" s="10"><v>1200</v></c><c r="C4" s="10"/><c r="D4" s="12"><v>6.15</v></c><c r="E4" s="13"><v>0.08</v></c><c r="F4" s="14"><v>0.11</v></c><c r="G4" s="15"><v>0.23749999999999999</v></c></row>
+ROW r=5 cells=6
+   <row r="5" spans="2:7" x14ac:dyDescent="0.3"><c r="B5" s="10"><v>1200</v></c><c r="C5" s="10"/><c r="D5" s="10"/><c r="E5" s="13"><v>0.08</v></c><c r="F5" s="10"/><c r="G5" s="10"/></row>
+ROW r=6 cells=6
+   <row r="6" spans="2:7" x14ac:dyDescent="0.3"><c r="B6" s="10"><v>1000</v></c><c r="C6" s="10"/><c r="D6" s="10"/><c r="E6" s="16" t="s"><v>17</v></c><c r="F6" s="10"/><c r="G6" s="10"/></row>
+ROW r=7 cells=6
+   <row r="7" spans="2:7" x14ac:dyDescent="0.3"><c r="B7" s="10"><v>1000</v></c><c r="C7" s="10"/><c r="D7" s="10"/><c r="E7" s="16" t="s"><v>17</v></c><c r="F7" s="10"/><c r="G7" s="10"/></row>
+ROW r=8 cells=6
+   <row r="8" spans="2:7" x14ac:dyDescent="0.3"><c r="B8" s="10"><v>1000</v></c><c r="C8" s="10"/><c r="D8" s="10"/><c r="E8" s="16" t="s"><v>17</v></c><c r="F8" s="10"/><c r="G8" s="10"/></row>
+ROW r=9 cells=6
+   <row r="9" spans="2:7" x14ac:dyDescent="0.3"><c r="B9" s="10"><v>1250</v></c><c r="C9" s="10"/><c r="D9" s="10"/><c r="E9" s="16" t="s"><v>18</v></c><c r="F9" s="10"/><c r="G9" s="10"/></row>
+ROW r=14 cells=1
+   <row r="14" spans="2:7" x14ac:dyDescent="0.3"><c r="B14" t="s"><v>19</v></c></row>
+ROW r=17 cells=1
+   <row r="17" spans="2:2" x14ac:dyDescent="0.3"><c r="B17" t="s"><v>21</v></c></row>
+TOTAL ROWS = 10

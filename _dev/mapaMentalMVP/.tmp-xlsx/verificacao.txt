@@ -1,0 +1,68 @@
+﻿===== 1. RAI ΓÇö reconciliacao da divergencia =====
+oficial            = -12 945,58
++ delta FSE        = 8 750,40
++ delta juros      = 9,68
+  soma             = -21 705,66   [xlsx=-21 705,66]  OK 
+
+===== 2. Folha de salarios (imagem 1) vs Balancete =====
+  Cassiana Tavares    bruto= 3 600,00 IRS=  288,00  SS11=  396,00  SS23,75=  855,00  PAGAR= 3 303,45
+  Delfina Benjamim    bruto= 3 600,00 IRS=  288,00  SS11=  396,00  SS23,75=  855,00  PAGAR= 3 303,45
+  Iracelma Joaquim    bruto= 3 000,00 IRS=  108,00  SS11=  330,00  SS23,75=  712,50  PAGAR= 2 949,45
+  Luis Chivela        bruto= 3 000,00 IRS=  108,00  SS11=  330,00  SS23,75=  712,50  PAGAR= 2 949,45
+  Teresa Elisabeth    bruto= 3 000,00 IRS=  108,00  SS11=  330,00  SS23,75=  712,50  PAGAR= 2 949,45
+  Sebenildes Cabamba  bruto= 3 750,00 IRS=  321,00  SS11=  412,50  SS23,75=  890,63  PAGAR= 3 391,65
+  Remuneracao (D)        19 950,00  (imagem  19 950,00)  OK 
+  Subsidio (SA)           2 312,40  (imagem   2 312,40)  OK 
+  Remun + SA (E)         22 262,40  (imagem  22 262,40)  OK 
+  IRS (F)                 1 221,00  (imagem   1 221,00)  OK 
+  SS 11 (G)               2 194,50  (imagem   2 194,50)  OK 
+  SS 23,75 (H)            4 738,13  (imagem   4 721,68)  ERRO
+  SS total                6 932,63  (imagem   6 916,18)  ERRO
+  PAGAR AO PESSOAL (I)   18 846,90  (imagem  18 846,90)  OK 
+
+  Cruzamento com o Balancete oficial:
+  6321 vencimentos mensais (debito)    Balancete  19 950,00  calculado  19 950,00  OK 
+  6324 subsidio de alimentacao         Balancete   2 312,40  calculado   2 312,40  OK 
+  632 pessoal (debito)                 Balancete  22 262,40  calculado  22 262,40  OK 
+  635 encargos sobre remuneracoes      Balancete   4 721,70  calculado   4 738,13  ERRO
+
+  Conta 63 ΓÇö composicao (saldo): 632 (22 262,40-69,23) + 635 + 636 + 638
+  calculado 27 234,13   [Balancete/DR = 27 234,13]  OK 
+
+===== 3. Dias uteis e subsidio/dia =====
+  SA/dia 6,15 -> 387,45/6,15 = 63 dias ; 375,15/6,15 = 61 dias
+  por mes (analise): 129,15/6,15=21  123/6,15=20  135,30/6,15=22 -> soma 63
+  Sebenildes: 61 dias = 63 - 2  (diferenca de 2 dias)
+
+===== 4. Depreciacoes e inventario =====
+  Carrinha 44 715,45 / 4 anos / 4 trim = 2 794,72  [6424 = 2 794,71]  OK 
+  Portatil    913,99 / 3 anos / 4 trim = 76,17  [6425 =    76,17]  OK 
+  Total trimestre = 2 870,88  [64 = 2 870,88]  OK 
+  Valor contabilistico = 42 758,56  [Balanco ANC marco = 42 758,56]  OK 
+
+===== 5. Racios (Menu Racios) vs Balanco de marco =====
+  Liquidez Geral            0,593596  [Menu Racios     0,593596]  OK 
+  Fundo de Maneio         -34 463,82  [Menu Racios   -34 463,82]  OK 
+  Autonomia Financeira      0,089098  [Menu Racios     0,089098]  OK 
+  Endividamento             0,910902  [Menu Racios     0,910902]  OK 
+  Solvabilidade             0,097813  [Menu Racios     0,097813]  OK 
+  Ativo total = 93 096,65   [Balanco: 0 + 93 096,65]  OK 
+
+===== 6. Capital em divida: real vs plano =====
+  real (conta 25111): 50 000,00 - 645,34 = 49 354,66
+  plano do cliente:   50 000,00 - 25 983,20 = 24 016,80
+
+===== 7. Dias da semana (prazo em dia util?) =====
+  2026-01-09  sexta   
+  2026-05-20  quarta  
+  2026-05-25  segunda 
+  2026-07-25  sabado    <-- FIM DE SEMANA
+  2026-08-31  segunda 
+  2026-09-20  domingo   <-- FIM DE SEMANA
+  2026-09-21  segunda 
+  2026-09-25  sexta   
+  2026-11-20  sexta   
+  2026-11-25  quarta  
+  2027-02-20  sabado    <-- FIM DE SEMANA
+  2027-06-30  quarta  
+  2027-07-15  quinta  

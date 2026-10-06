@@ -1,0 +1,65 @@
+﻿--- _dev/docs/spec/core.md  (total 270 linhas | mostrar 196..213) ---
+  196 | 
+  197 | | #   | O que os documentos provam                                                                               | Consequ├¬ncia no que se implementa                                                                   |
+  198 | | :-- | :------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------- |
+  199 | | 1   | A **Demonstra├º├úo de resultados ├⌐ acumulada** desde janeiro (fevereiro inclui janeiro)                    | O valor **mensal** ├⌐ a **diferen├ºa** para o m├¬s anterior ΓÇö nunca o valor publicado                  |
+  200 | | 2   | As **vendas s├úo tributadas a 23 %**, confirmado fatura a fatura no mapa de confer├¬ncia                   | Taxa **uniforme na venda**; nas **compras** h├í 6 % e 23 % e existe IVA **n├úo dedut├¡vel**            |
+  201 | | 3   | O **IVA dedut├¡vel** est├í no **Ativo**; do lado do **Passivo** s├│ h├í **Seguran├ºa Social + IRS retido**    | S├úo naturezas diferentes e **n├úo se somam** num cart├úo de "d├¡vidas a pagar"                         |
+  202 | | 4   | O **capital em d├¡vida** ├⌐ o saldo da conta de **empr├⌐stimos banc├írios**                                  | O cart├úo l├¬ o **saldo da conta**; o plano de amortiza├º├úo **n├úo** ├⌐ valor contabil├¡stico             |
+  203 | | 5   | A coluna de **2025 est├í vazia** em todos os mapas                                                        | **N├úo h├í per├¡odo hom├│logo**: a varia├º├úo s├│ se calcula **m├¬s a m├¬s dentro de 2026**                  |
+  204 | | 6   | **Clientes = 0** no balan├ºo                                                                              | Confirma o recebimento imediato (┬º14.1) e serve de **caso de teste**                                |
+  205 | | 7   | Pelo menos **um valor do resumo entregue** (`.xlsx`) **n├úo coincide** com o documento oficial            | ΓÜá∩╕Å **Diverg├¬ncia a perguntar** ao grupo de contabilidade: prevalece o **documento oficial**         |
+  206 | | 8   | A **folha de sal├írios atualizada** **fecha com o Balancete**: 6321 = 19 950,00 ┬╖ 6324 = 2 312,40 ┬╖ 632 = | O custo de pessoal e o **l├¡quido a pagar** s├úo **calculados** na plataforma (RF-82), nunca lidos de |
+  207 | |     | 22 262,40 ┬╖ IRS retido 1 221,00 ┬╖ SS do trabalhador 2 194,50 ┬╖ conta **63 = 27 234,13**                  | c├⌐lula                                                                                              |
+  208 | | 9   | O **subs├¡dio de alimenta├º├úo = dias ├║teis ├ù 6,15 Γé¼**; em 2026: janeiro 21 ┬╖ fevereiro 20 ┬╖ mar├ºo 22 =     | Base **vari├ível por m├¬s** (RN-35); o crit├⌐rio de feriados fica **a confirmar** (perguntas 33 e 34)  |
+  209 | |     | **63 dias** = 387,45 (em fevereiro **n├úo** se desconta o Carnaval)                                       |                                                                                                     |
+  210 | | 10  | A base da **SS patronal (23,75 %)** ├⌐ o **saldo de remunera├º├╡es** (19 880,77) e n├úo o bruto (19 950,00): | O encargo patronal usa a **base corrigida**; **2 c├¬ntimos** de arredondamento a documentar          |
+  211 | |     | 23,75 % ├ù 19 880,77 = 4 721,68 [Balancete 635 = 4 721,70]                                                |                                                                                                     |
+  212 | | 11  | As **deprecia├º├╡es conferem**: 44 715,45/4 anos = 2 794,71 ┬╖ 913,99/3 anos = 76,17 ┬╖ **2 870,88** = conta | Tabela de ativos e cart├úo de deprecia├º├╡es ficam com **prova num├⌐rica** (┬º26.3)                      |
+  213 | |     | 64; 45 629,44 ΓêÆ 2 870,88 = **42 758,56** = Ativo n├úo corrente de mar├ºo                                   |                                                                                                     |
+===== requirements RF-82/83 =====
+--- _dev/docs/spec/requirements.md  (total 156 linhas | mostrar 108..115) ---
+  108 | | RF-83 | **Calend├írio fiscal com as 8 fam├¡lias** de obriga├º├╡es do calend├írio oficial (SAF-T, DMR, reten├º├╡es na fonte, Seguran├ºa Social, IVA-declara├º├úo e IVA-pagamento, IRC, IES/DA), **import├ível** | Γ¼£ (┬º13 ┬╖ ┬º24.10)  |
+  109 | |       | do ficheiro                                                                                                                                                                                 |                    |
+  110 | 
+  111 | ## 5. REGRAS DE NEG├ôCIO (RN)
+  112 | 
+  113 | ### 5.1 Regras
+  114 | 
+  115 | | ID    | Regra                                                                                                                                               | Onde ├⌐ aplicada                                            |
+===== requirements RN-35 =====
+--- _dev/docs/spec/requirements.md  (total 156 linhas | mostrar 150..156) ---
+  150 | | RN-32 | A lista **"Por aceitar"** mostra apenas servi├ºos pendentes de agendamentos **fora de rota confirmada** ΓÇö a partir do momento em que o agendamento   | `BookingServiceRepository::findPending` ┬╖ ┬º24.7            |
+  151 | |       | entra numa rota confirmada **deixa de aparecer** (a implementar)                                                                                    |                                                            |
+  152 | | RN-33 | A **agenda** do funcion├írio mostra **apenas** agendamentos de **rotas confirmadas** (`confirmado`); o que ainda se aceita/desfaz fica na listagem   | ┬º10.1 ┬╖ ┬º24.7                                              |
+  153 | | RN-34 | **Reverter/excluir** um agendamento s├│ ├⌐ poss├¡vel **antes** de a rota ser confirmada: volta a `totalmente_aceite_funcionarios`                      | `RotaService::decideRoute` ┬╖ ┬º24.7                         |
+  154 | |       | (**qualificado**), **nunca** a `cancelado`; em **rota confirmada** o agendamento **n├úo se altera** (a implementar)                                  |                                                            |
+  155 | | RN-35 | **Subs├¡dio de alimenta├º├úo = dias ├║teis ├ù 6,15 Γé¼** (dias ├║teis segΓÇôsex; 21/20/22 no 1.┬║ trimestre de 2026); a **SS patronal (23,75 %)** incide sobre | `PayrollService` (a criar ┬╖ ┬º24.9)                         |
+  156 | |       | o **saldo de remunera├º├╡es** (19 880,77) e **n├úo** sobre o bruto ΓÇö a base da SS do trabalhador ├⌐ a remunera├º├úo do per├¡odo                            |                                                            |
+===== delivery 26-34 =====
+--- _dev/docs/spec/delivery.md  (total 240 linhas | mostrar 26..34) ---
+   26 | | **8 ΓÇö Promo├º├╡es**                   | M├│dulo de **promo├º├╡es e campanhas** ΓÇö adiado; avaliar antes o risco de **retro-atualiza├º├úo** de hist├│rico e agendamentos passados (┬º24.7)        | Γ¼£ adiada              |
+   27 | 
+   28 | > **Chart.js (E-3):** entra na **Fase 6**, junto com os gr├íficos do dashboard ΓÇö **n├úo** fica para a Fase 7,
+   29 | > que passa a ser **s├│** a **sidebar** do backoffice e o acesso ├á p├ígina das **comiss├╡es**. A biblioteca
+   30 | > continua **local** em `modules/common/lib/chartjs/` (nunca por CDN) e **s├│** carregada no backoffice.
+   31 | ### 21.1 Entreg├íveis
+   32 | 
+   33 | 1. **C├│digo-fonte completo** (`app/`, `modules/`, `index.php`, assets)
+   34 | 2. **Base de dados**: `DataBase_v2.sql` + `database_seed.sql` (+ migra├º├╡es `v2`/`v3`) ΓÇö ordem em ┬º27
+===== backlog 24.0 =====
+--- _dev/docs/spec/backlog.md  (total 340 linhas | mostrar 14..27) ---
+   14 | 
+   15 | | #         | Tema                                                                     | Estado     | Impacto Principal                 |
+   16 | | :-------- | :----------------------------------------------------------------------- | :--------- | :-------------------------------- |
+   17 | | **24.1**  | Re-avalia├º├úo din├ómica dos slots                                          | ≡ƒƒí parcial | UX ΓÇö preven├º├úo de slots obsoletos |
+   18 | | **24.2**  | P├ígina de detalhes de servi├ºo + carousel                                 | Γ¼£ ausente | Enriquecimento do Cat├ílogo        |
+   19 | | **24.3**  | Encaminhamento por tipo de contrato                                      | Γ¼£ ausente | Regra de neg├│cio operacional      |
+   20 | | **24.4**  | Multicidades + flexibilidade hor├íria + alertas                           | Γ¼£ ausente | Gest├úo de Opera├º├úo e Log├¡stica    |
+   21 | | **24.5**  | Sinal configur├ível + 10/90 + m├⌐todos de pagamento                        | ≡ƒƒí parcial | Componente Financeiro             |
+   22 | | **24.6**  | Regra das 24h + lembrete + cancelamento pelo cliente                     | Γ¼£ ausente | **Cr├¡tico / Operacional**         |
+   23 | | **24.7**  | Backoffice: dashboard, gr├íficos, agenda do funcion├írio e regra das rotas | Γ¼£ ausente | Entrada do backoffice e opera├º├úo  |
+   24 | | **24.8**  | Defeito: dropdown do autocomplete vis├¡vel no canto (`/registo`)          | Γ¼£ defeito | UI do registo                     |
+   25 | | **24.9**  | RH: folha de sal├írios e l├¡quido a pagar **calculados**                   | Γ¼£ ausente | Custo de pessoal e RH             |
+   26 | | **24.10** | Calend├írio fiscal: 8 fam├¡lias de obriga├º├╡es e calend├írio de 2026         | ≡ƒƒí parcial | M├│dulo do Calend├írio Fiscal       |
+   27 | 

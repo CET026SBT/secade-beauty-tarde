@@ -13,7 +13,7 @@ require_once APP_PATH . "/repositories/RotaRepository.php";
  */
 class ExecutionService extends BaseService {
 
-    private const EXECUTABLE_STATES = ["totalmente_alocado", "confirmado", "pendente_validacao_logistica_loja"];
+    private const EXECUTABLE_STATES = ["totalmente_aceite_funcionarios", "confirmado", "pendente_validacao_logistica_loja"];
 
     private ExecutionRepository $executionRepository;
     private BookingRepository $bookingRepository;
@@ -103,7 +103,7 @@ class ExecutionService extends BaseService {
                 "total"    => array_sum($stateCounts),
                 "pending"  => $stateCounts["pendente"] ?? 0,
                 "accepted" => $stateCounts["aceite"] ?? 0,
-                "isConsolidated" => $booking["status"] === "totalmente_alocado"
+                "isConsolidated" => $booking["status"] === "totalmente_aceite_funcionarios"
             ]
         ];
     }

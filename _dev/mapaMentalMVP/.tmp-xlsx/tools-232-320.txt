@@ -1,0 +1,90 @@
+﻿## 3. USO RÁPIDO
+
+```bash
+# Saude geral do projeto (encoding + .md + alinhamento)
+php _dev/tools/health-check.php
+
+# Detetar problemas de encoding (aceita exceções conhecidas)
+php _dev/tools/encoding-check.php
+php _dev/tools/encoding-check.php especificacao_mvp.md
+php _dev/tools/encoding-check.php --ext=php,sql
+php _dev/tools/encoding-check.php --ignore=ficheiro_legado.sql
+
+# Reparar BOM / mojibake  +  converter UTF-16 -> UTF-8 (dry-run -> gravar)
+php _dev/tools/encoding-fix.php especificacao_mvp.md
+php _dev/tools/encoding-fix.php especificacao_mvp.md --write
+php _dev/tools/encoding-fix.php . --write
+php _dev/tools/encoding-fix.php dump_legado.sql        # deteta UTF-16 e propõe conversão
+
+# --- PIPELINE .md: quebrar linhas longas -> nivelar tabelas -> nivelar ASCII ---
+# (por esta ordem: o wrap pode voltar a desalinhar, e o align fecha a formatação)
+php _dev/tools/md-wrap-tables.php especificacao_mvp.md            # dry-run (diz quantas tabelas excedem 200 colunas)
+php _dev/tools/md-wrap-tables.php especificacao_mvp.md --write
+php _dev/tools/md-wrap-tables.php relatorio.md --write --max=160 --min=10 --verbose
+
+# Alinhar tabelas markdown de um .md
+php _dev/tools/md-align-tables.php especificacao_mvp.md
+php _dev/tools/md-align-tables.php especificacao_mvp.md --write
+
+# Verificar a uniformidade das tabelas (todas as linhas do bloco com a mesma largura)
+php _dev/tools/widthcheck.php especificacao_mvp.md
+php _dev/tools/widthcheck.php relatorio.md 260      # limite explicito (ignora o pragma do ficheiro)
+
+# Juntar tabelas partidas por uma linha em branco (dry-run -> gravar)
+php _dev/tools/md-join-tables.php doc.md
+php _dev/tools/md-join-tables.php doc.md --write
+
+# Nivelar tabelas ASCII / diagramas dentro de code fences
+php _dev/tools/ascii-align.php _dev/docs/spec/booking.md
+php _dev/tools/ascii-align.php _dev/docs/spec/booking.md --write
+php _dev/tools/ascii-align.php diagrama.md --write --boxes-only    # só boxes '+---+'
+php _dev/tools/ascii-align.php diagrama.md --verbose               # diagnostico por linha
+
+# Verificar estrutura dos .md
+php _dev/tools/md-verify.php
+php _dev/tools/md-verify.php especificacao_mvp.md
+
+# Ler / escrever com seguranca
+php _dev/tools/file-edit.php show especificacao_mvp.md 1105 40
+php _dev/tools/file-edit.php grep "funcionario_categoria"
+php _dev/tools/file-edit.php grep "admin-service-" --ext=php --ignore-case
+php _dev/tools/file-edit.php replace doc.md spec.json --write
+php _dev/tools/file-edit.php lines doc.md 12 18 novo.txt --write
+
+# --- REFERÊNCIAS: abrir no ponto exato e voltar atrás (instalar uma vez) ---
+php _dev/tools/referer.php install          # .git/ + exclusões locais + alias git
+php _dev/tools/referer.php index --write    # constrói o índice a partir da documentação
+php _dev/tools/referer.php status           # índice, histórico, editor e exclusões
+php _dev/tools/referer.php list D-          # lista as referências (filtro: D-)
+php _dev/tools/referer.php open §18.2       # abre no ficheiro:linha, reaproveitando a janela
+php _dev/tools/referer.php open D-12 --dry-run   # só calcula a posição
+git ref-open RF-75 ; git ref-back ; git ref-forward
+```
+
+### Formato do `spec.json` (para `file-edit.php replace`)
+
+```json
+{
+  "comment": "metadados opcionais (o ficheiro pode ser directamente o array abaixo)",
+  "jobs": [
+    { "search": "texto antigo", "replace": "texto novo" },
+    { "search": "so na 1a ocorrencia", "replace": "novo", "count": 1 },
+    { "search": "§(\\d+)", "replace": "§$1", "regex": true }
+  ]
+}
+```
+- `search` — texto literal (ou expressão regular, se `regex: true`).
+- `count` — `0`/ausente = todas as ocorrências; `1`+ = limita.
+- ⚠️ **`regex` corre com `/u` mas *sem* `m`:** um `^`/`$` ancora ao **início/fim do ficheiro**, não a cada
+  linha — para ancorar a linhas, pôr `(?m)` no início do padrão (`"(?m)^\\|\\s+(C-\\d{2})"`). Medido: sem
+  isso, um padrão `^\| C-\d{2} \|` devolveu **0 substituições** mesmo com 30 linhas correspondentes.
+- Aceita tanto `[{...}, {...}]` como `{"comment":"...", "jobs":[...]}`.
+- Se um `search` não for encontrado, o utilitário **informa-o** (não falha em silêncio).
+- Este formato evita o *escaping* problemático do PowerShell.
+
+---
+
+### 3.1 Garantias de segurança do pipeline `.md`
+
+Os três formatadores partilham a mesma promessa: **nunca alteram texto** — só mexem em *espaços*,
+no comprimento dos separadores (`-`, `+`, `│`), nos *pipes* e nas *quebras de linha*.

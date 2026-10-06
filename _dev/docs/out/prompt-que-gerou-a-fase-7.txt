@@ -1,0 +1,454 @@
+Secade Beauty - Bugs/Improvements
+
+Base de Dados
+- agendamento
+	- estado_reserva		   (deverás ajustar os valores do enum de acordo com a nova realidade. (ex: talvez trocar aceitacao/aceite, por alocacao/alocado) Ver #servCarrinha)
+- agendamento_servico (#percentageFields)
+        - percentagem_funcionario_aplicada (FONTE DE VERDADE, os valores podem ser calculados não?)
+	- valor_recibo_verde_funcionario   (NÃO É REDUNDANTE?)
+	- valor_recibo_verde_plataforma	   (NÃO É REDUNDANTE?)
+- categoria_profissional (RENOMEAR PARA categoria_servico, ver dependencias)
+
+App (server side)
+	- Config.php
+		- Existe um comentario a dizer que o numero fallback de elementos da "team" (em SITE_STATS_FALLBACK)
+		  não está a ser substituido por uma leitura/levantamento do numero de elementos 
+		  (provavelmente funcionários e gestores) a partir da BD.
+
+Site Principal (modules/main)
+- Includes/Componentes 
+	- Navbar/FooterNavbar
+		- Ao navegar para /agendar, o link "Agendar" não fica selecionado na 
+          	  navbar nem na footerNavbar, deveria ficar.
+		- Ao abrir o menu hamburguer do user e clicar em Agendamentos, navega-se 
+          	  para o histórico dos Agendamentos e o link "Agendar" fica selecionado na 
+          	  navbar e na footerNavbar, não deveria de ficar selecionado.
+	- Testemunhos
+		- Está a ser usado um skeleton indevido no preloader ao carregar os feebacks
+          	  (este skeleton é só relacionado com as categorias de serviço). Verifica em que outros locais 
+                  este skeleton está a ser usado, e cria se precisares skeletons, (no jq-preloader/templates.php), 
+                  que se assemelhem em aspeto aos elementos que visam mascarar/substituir enquanto não estão prontos).
+
+- Login:
+	- Faz sentido fazer submit ao apertar Enter (usar evento de jquery no login.js).
+
+- Agendar (cliente)
+	- Passo 5: Não faz sentido mostrar a mensagem das horas e dias da semana de atendimento quando o local/tipo do agendamento é carrinha, só faz sentido quando é loja.
+	           As caixas dos slots de horas não estão devidamente alinhadas quando fazem wrap, devem ter todas a mesma largura. 
+                   Caso o layout fique muito desequilibrado, estudar uma forma melhor de apresentar a informação deste passo.
+	- Passo 6: 
+
+- Área Cliente (cliente) (NOVA página/secção)
+	- Esta nova pagina visa substituir o Perfil e o Historico de Agendamentos (ver no código o que mais substitui de acordo com a funcionalidade requerida/incluida na descrição)
+	- A estrutura desta secção deverá conter:
+		- Secção "O meu perfil" (col-12), com informações tais como os dados pessoais, e a possibilidade de associar uma foto, por arrasto ou clicando, com sistema de crop 
+                  quadrado pelo rosto (sugerir lib que já faça isso, pedes para que eu adicione e depois continuas e implementas usando a lib).
+                  Deve ter no topo direito da secção, um botão para editar o perfil, e em baixo á direita um para alterar o email, e outro para alterar a palavra-passe, 
+                  seguindo convenções já existentes na plataforma (ver #editoresDialog).
+		- Secção com "Os meus agendamentos" (col-12), com listagem dos agendamentos desse cliente, e possibilidade de alterar um agendamento, ver #editoresDialog, 
+                  desde que ainda não esteja presente numa rota confirmada (deve estar ainda pendente ou em planeamento). 
+                  O editor não deve permitir alterar o local_prestacao do agendamento, verificar se faz sentido ter dois editores diferentes.
+                  Ao alterar os serviços, deverão ser gerados novos alertas/lembretes aos gestores e funcionarios (recibos verdes), 
+                  somente para os novos serviços, pois os restantes ou foram removidos ou não sofreram alterações. Ver #servCarrinha.
+		- Secção com "Alertas/Lembretes" (col-12), semelhante á pagina de Alertas/Lembretes do backoffice, mas para o cliente, simplificada pois penso não existirem diferentes 
+                  contextos/tipos de alertas/lembretes.
+		- #editoresDialog: Estes editores deverão abrir uma bootstrap modal, apresentando os formulários para edição dos mesmos.
+		- Os links de navegação para o Perfil e Agendamentos do menu hamburguer como cliente, deverão agora navegar para este Área Cliente, e fazer scroll para a sua respetiva secção.
+
+Site Backoffice (modules/backoffice)
+- Alocação de funcionários a Serviços de Ambulatório (#servCarrinha):
+	- Trata-se da página de Serviços de Ambulatório (/gestao/servicos), só que reformulada, (com alterações). Poderá ser acedida e gerenciada tanto por
+          funcionários (recibos verdes), como por gestores, para os gestores em vez de mostrar um botão para aceitar o serviço (como deve funcionar para funcionario (recibos verdes)), 
+          mostrava-se uma dropdown para escolher o funcionário (efetivo) que o deve executar.
+	- Talvez faça sentido haver mais filtros, por Agendamento, Funcionário, além dos filtros já existentes: (Data e Categoria).
+          Ordem dos filtros:
+		- Em serviços por alocar/aceitar: Data, Cidade, Categoria, Agendamento.
+		- Em serviços alocados/aceites: Data, Cidade, Funcionário, Agendamento.
+	  Poderia haver um botão com icon, com atributo title (tooltip) de "Mais Filtros" no lado direito dos filtros, onde mostrariamos todos os filtros de 
+          uma forma conveniente (dependendo do layout), talvez sobrepondo a listagem, verifica qual seria a melhor forma de o apresentar.
+          Na secção normal dos filtros, mostrariamos os dois filtros mais relevantes, Data e Cidade (mostrariamos todos os filtros em breakpoint xxl, sem botão de mais filtros).
+        - #1 Verifica se ao aceitar/alocar um serviço de um agendamento para um determinado dia/hora, numa determinada
+          cidade, bloqueia devidamente a aceitação de serviços de outro agendamento para o mesmo dia/hora e cidade. Uma vez
+          que aceitar os mesmos implicaria aceitar dois agendamentos para o mesmo dia/hora e cidade, gerando conflito.
+	- #2 Se um funcionario estiver alocado a/aceite um serviço num agendamento para uma determinada cidade, num determinado dia,
+          não deverá ser possivel aloca-lo a/aceitar serviços em agendamentos para outra cidade nesse mesmo dia
+          (uma vez que implicaria ele estar simultaneamente presente em rotas diferentes).
+	- Para o ponto #1, o botão de aceitar (funcionario rv) / dropdown de alocar (gestor) poderia ficar disabled.
+	  Para o ponto #2, o botão de aceitar (funcionario rv) poderia ficar disabled, a dropdown de alocar (gestor) passaria a mostrar a option do funcionario disabled.
+	  (o toggle do disabled seria anulado quando a(s) condição(ões) se revertesse(m)).
+	- A mensagem que aparece no topo "Simulador de recibos verdes: xx% / yy%" não faz muito sentido, acho que de facto tanto o gestor,
+          como o funcionário (recibos verdes) deveriam de poder ver as percentagens de como está a ser dividido o lucro, mas não com um texto
+          especifico como "Simulador de recibos verdes", algo mais contextual (da-me sugestões).
+	- O bloqueio da janela temporal quando um serviço é aceite/alocado deve somente ser aplicado caso esse serviço especifico esteja presente em agendamentos, 
+          presentes em rotas confirmadas, e não quando um agendamento já tem todos os serviços aceites. Se o cliente tiver a ser #notificado quando o seu agendamento é 
+          totalmente aceite, passa somente a ser #notificado quando ele estiver associado a uma rota confirmada. Uma vez que a confirmação de rotas só poderá ser feita
+          até 24 horas antes (por favor confirma) da execução da mesma, o cliente terá sempre tempo de tomar conhecimento, e de saber exactamente os detalhes de como vai ser atendido.
+        - A própria mensagem por baixo do titulo da página "Aceitação individual por serviço...", assim como quaisquer notificações ou mensagens de erro internas,
+          ou tags "aceite" deverão ser ajustadas á nova realidade (ex: nas tags se for gestor "alocado", ou então procurar uma forma de generalizar/normalizar este estado dos serviços.
+          As proprias expressões "A receber" e "Plataforma (Empresa)" deverão ter outros nomes quando geridas da prespetiva do gestor, é mais importante para o gestor o lucro dos agendamentos 
+          filtrados (ver o que vai para a Empresa e o que vai para os Funcionários).
+	- Não faz sentido mostrar nestes cartões, o nome da pessoa que vai usufruir desse serviço, fará sim sentido talvez na agenda dos funcionários, ou mais tarde num ecrã responsável pela execução / operação da carrinha.
+        - Ajustes necessários na apresentação do layout:
+		- O cabeçalho e secção de filtros (fina) destas duas listagens poderia ser sticky ao topo do main.
+     		- A row que contem as listagens de cards, tanto de serviços por aceitar/alocar como de aceites/alocados
+                  deve ficar com as cols com as seguintes classes de break-points de resolução bootstrap: col-lg-12 col-xl-6.
+	- Só faz sentido mostrar este ecrã e rota/pagina a gestores e funcionários (recibos verdes).
+	
+- Avisos/Lembretes (ajustar o acesso/visualização/responsabilidade consoante do tipo de perfil do utilizador):
+	- gestor (só vê/tem acesso a)
+		- Alertas fiscais (mostrar todos os alertas fiscais aqui, incluindo os que estão em atraso, realçar os que estão em atraso)
+		- Serviços por alocar (NOVO, basear na secção de lembretes "Serviços por aceitar", dos funcionarios, acho que faz sentido re-aproveitar/modularizar de alguma forma esse layout, 
+                  a menos que fique realmente complexo ou tenha muitas diferenças. Ver também #limiteCards)
+		- Rotas por decidir (permanece como está, a menos que faça sentido ser alterado. Ver também #limiteCards)
+
+	- funcionario
+		- (recibos verdes)
+			- Serviços por aceitar (alterar/ajustar se necessário, Ver também #limiteCards)
+                        - Atualmente está a mostrar o Rotas por decidir, não deve...
+		- (efetivo)
+			- Alocações a serviços planeadas, feitas por gestores, com a informação devida do serviço, da pessoa e quanto ele lucrará a mais pelos s
+			- Atualmente está a mostrar o Rotas por decidir, não deve...
+
+	- #limiteCards:  A ideia era as secções de alertas/lembretes somente mostrarem até um máximo de 10 cards por cada secção.
+	- #rotaDinamica: A ideia era ao clicar numa seta para navegar para a pagina especifica onde esse alerta/lembrete se encontra, ajustar automaticamente o scroll
+	                 da pagina após o carregamento da listagem de serviços por alocar/aceitar e fazer highlight temporario (com fadeout do highlight) do card relacionado ao lembrete.
+			 Pensei que essa informação poderia ser enviada por uma variavel ou variaveis de url, mas se o fizermos, devemos verificar se já existe uma convenção para isso no projeto, 
+                         e se fizer sentido, criar um ficheiro com utilitarios para tratar disso e reduzir ao maximo o boilerplate nos componentes.
+
+- Comissões:
+	- Serviços realizados (em vez de Serviços aceites)
+	- Para que serve o cartão funcionários com aceitações, é para o gestor? 
+	  Ou seja tanto o gestor como o funcionario teem acesso a esta pagina?
+          Atualmente este cartão está a aparecer tanto para o funcionário 
+          como (suponho) para gestor... Não faças ainda nada nele, explica-me de uma forma bem detalhada, 
+          e para quem não percebe nada de contabilidade o que é que é este ecrã, 
+          qual o objetivo atual dele, qual deveria ser o objetivo dele no backoffice
+          caso deva existir, e quem é que deve aceder ao mesmo.
+          - #comissoes: Será que faz sentido ter os formularios e a parte de configurações de 
+          percentagens do lucro de funcionarios (rv) e lucro extra de funcionarios (efetivo) nesta página, em vez de ter uma pagina de Recibos Verdes?
+          estas percentagens seriam apenas padrão (valores default) a associar durante a criação de um novo funcionário na pagina de RH, mas tais valores 
+          devem ser editaveis no formulario, estes valores default seriam somente valores default/iniciais no form.
+          - Outra coisa, na pagina dos Recibos Verdes atualmente configuramos redundantemente a percentagem da Empresa e a do Funcionario, mas trata-se da mesma configuração,
+          é estupido ter que definir duas percentagens para somar 100%, quando poderiamos simplesmente definir um só valor, e o da empresa ser calculado... Ver #percentageFields acima
+
+- Componentes
+	- Sidebar:
+		- Link "Recibos Verdes" está sem icon, deve ter.
+
+Sites (Ambos)
+- Deverá ser adicionada uma lib em modules/common/lib, com o Swal dialog, e todos os alertas e prompts nativos
+  do js, implementados no projeto deverão passar a usar o Swal dialog. 
+  NOTA: Uma vez que não tens autorização para adicionar libs, pede-me para te fornecer o(s) 
+        ficheiro(s) da lib, na propria pasta modules/common/lib, depois implementas as alterações deste ponto.
+- Em todos os locais deste levantamento onde vires #notificado: Tratam-se de lembretes (sino userMenu/userMenuBo), 
+  (para o Cliente criar uma pagina/secção de lembretes/avisos á semelhança da pagina de lembretes/avisos do backoffice).
+  Potencialmente, em vez de ficar numa pagina a parte, poderá ficar na pagina "Área Cliente" (por implementar).
+- Substituir/normalizar os textos:
+	- "(visual)" deverá ser "" (vazio) (ex: "Categoria (visual)", deve ficar só "Categoria")
+	- "Plataforma" deverá ser "Empresa"
+        - Simulador de Recibos Verdes (não é um simulador, é uma configuração, tira este conceito de simulador da plataforma, é configuração)
+	- Retificar textos muito genericos/na terceira pessoa (ex: Agendamento em ambulatório, Passo 6, "(com aviso ao cliente)", já se trata do proprio cliente a visualizar)
+- Paginas desformatadas, sem o tamanho minimo da tab do browser
+	- login
+	- register
+	- servicos
+	- NOTA: Provavelmente há mais paginas sem o tamanho minimo da tab do browser (verifica tanto no site principal como no backoffice).
+
+Melhorias na Base de Dados e Dados em geral:
+- Apaga-me todos os agendamentos, e serviços associados, de todos os clientes, e gera-me agendamentos com serviços
+  mais realistas, consoante o género da pessoa (ex João Cliente não faz Manicure, geralmente clientes do sexo feminino e que fazem manicure),
+  em estados já aceites ou ainda por aceitar, já realizados, cancelados (diversifica para tornar o aspeto mais realista)
+
+- Só os funcionários efetivos recebem salário base (garante-me que não há funcionários a recibos verdes com salario_base (default deve ser 0.0). 
+  Todos os funcionários poderão receber uma percentagem extra por serviço prestado (percentagem do lucro do serviço), semelhante ao que está atualmente 
+  implementado nos recibos verdes (70% 30%). Esta percentagem será definida por funcionário e não de uma forma global e visa substituir o sistema de 
+  percentagens a recibos verdes, ela deverá ser especificada ao criar/editar um funcionario na(s) paginas(s) de Recursos Humanos. Acho que continua a fazer sentido poder definir a 
+  percentagem que o funcionario (recibos verdes) recebe na execução de um serviço de uma forma global (como está a ser feita atualmente na pagina de Recibos Verdes, ver #comissoes acima)
+  (Acerca da pagina de Recursos Humanos: somente acessivel por gestores, já existe planeamento, mas não está implementado, deve ser implementado, ver ponto 1 em IMPORTANTE, neste prompt). 
+  Cuidado que ao remover um funcionario, terá de ser com soft delete, para preservar o historico, e se ele estiver associado a serviços que vão ser executados
+  deveremos avisar o gestor de que ele será removido de todos serviços pendentes (em agendamentos não confirmados, recusados, cancelados, executados ou concluidos) 
+  a que se encontra associado. O estado_aceitacao desses serviços deverá ser atualizado de volta para pendente, e o estado_reserva desses agendamentos deverá ser ajustado de acordo.
+  
+
+IMPORTANTE:  
+- Procura toda a especificação que encontrares sobre o planeamento de Recursos Humanos, aproveita somente aquilo que achares que faz sentido aproveitar
+  e define-me um plano de implementação de gestão dos Recursos Humanos (funcionários e gestores) cruzando com o estado atual da plataforma e 
+  as especificações a serem pedidas neste prompt.
+
+- Todos os formulários novos que implementares, devem usar sempre que possivel o form.utils, e reutilizar validators já existentes de forma a evitar redundancias, 
+  somente criar novos validators quando necessario.
+
+- Todo o componente e código que ficar orfão/não for mostrado ou utilizado pela app de alguma forma, deverá ser removido (ex: Componentes que serão substituidos pelo Área Cliente, etc..)
+  O codigo deverá ficar o mais limpo e modular possivel, de forma a agilizar futuras manutenções.
+
+
+##########################################################################################################################################################
+
+Nova onda de bugs:
+
+Em (modules/common):
+	- (/img):
+		- Reparei que há imagens svg repetidas nesta pasta (ex: ver pasta /about-images/skeletons), verifica que outras imagens estão repetidas
+		  e elimina todas as que estiverem, no caso das svg do about, permanece com as que estão em /about-images/skeletons, e as que estiverem a ser
+                  referenciadas na página Acerca e que não estiverem lá, passa-as para lá.
+
+Site Principal (modules/main)
+
+- Catálogo de Serviços:
+	- Filtro de categoria é devidamente alimentado pelo "parametro de URL" /:categoria (identificado pelos regexes em index.php e extraido do proprio URL), 
+          e funciona bem para as categorias "barbearia" e "estetica", mas não parece funcionar para "cabeleireiro"
+
+- Componentes:
+	- serviceCategories.js:
+		- Em vez de botão "Agendar" e encaminhar para /agendar, mudar para botão "Ver Serviços" e encaminhar para /servicos/:categoria
+                - Normalizar o aspeto do botão "Detalhes" (no card do serviço), de forma a que tenha a extended-border (mesmas dimensões do agendar) 
+                  só que com fundo transparente (sem primary á partida...)
+
+Conflitos:
+- C-01:   
+	agendamento.estado_reserva: Refiro-me aos valores presentes no enum, existem:
+		pendente_aceitacao_funcionarios
+		totalmente_aceite_funcionarios
+	seria trocar por:
+		pendente_alocacao_funcionarios
+		totalmente_alocado_funcionarios
+	
+	Entendo que provavelmente estavas a pensar que só o gestor é que aloca, o funcionario (recibos verdes) aceita, mas na realidade, 
+        o dominante entre as duas versões é alocacao/alocado (independentemente se são funcionários efetivos ou a rv, eles ficam alocados aos serviços).
+
+	No final vê se os estados no enum fazem sentido de acordo com as novas regras de negócio.
+
+- C-02:
+	Não percebi, explica melhor.
+
+- C-03:
+	Acho que não precisamos de, nem de:
+		valor_recibo_verde_funcionario
+		valor_recibo_verde_plataforma
+	porque supostamente já temos o preco_praticado no proprio agendamento_servico, então nem o histórico seria um problema,
+	porque é que não podemos aplicar a percentagem_funcionario_aplicada a preco_praticado? preco_praticado não está a guardar o valor 
+        resultante do somatório de valor_recibo_verde_funcionario e valor_recibo_verde_plataforma?
+
+- C-04: 
+	categoria_profissional -> categoria_servico
+	
+	"rename da tabela + rename JOINs em 8 ficheiros"
+		- Isto faz de facto sentido aplicar e é exactamente aquilo que eu faria, 
+                  verifica-me se existem lacunas neste thought process, mas á partida seria isto.
+	"+ nomes de chaves no mapper/JS (categoryId, categoryName)": 
+		- Isto á partida não seria uma preocupação, já que a tabela continua a chamar-se "categoria_*", 
+                  e os campos nos mappers não mencionam "Professional" ou "Service", nem devem mencionar, eu mantinha-os na mesma.
+
+- C-05:
+	Tu disseste:
+		"Dizes que substitui «o Perfil e o Histórico de Agendamentos», mas também queres lá Alertas/Lembretes e
+		 edição de agendamentos. Ou seja: substitui 3 páginas e acrescenta funcionalidade que hoje não existe (editar)."
+			- 3 páginas?? Pensei que era só o Perfil e o Histórico de Agendamentos /agendamentos, sim deve incluir alteras e lembretes 
+                          (como mencionado na especificação desta fase e também a possibilidade de editar os agendamentos a partir de uma bootstrap modal
+			  como especifico nesta fase).
+
+		"Se o «Perfil» sai, os gestores/funcionários (que hoje usam profile.php para os atalhos de gestão) ficam sem página"
+			- De facto, ficam sem página de Perfil, mas honestamente, acho que não faz muito sentido gestores e funcionários 
+                          terem acesso a uma pagina de perfil, deverão exclusivamente ser gerenciados pela página de Recursos Humanos que será implementada
+                          nesta fase. Lembrei-me agora, que eles também vão precisar de foto, então o sistema de escolha e crop da foto poderia estar componetizado, 
+                          ou num utilitario em modules/common, de forma a que possa ser reutilizado no editor de perfil do cliente, e também nos formularios de 
+                          criação e edição de gestores/funcionarios (em Recursos Humanos). Para isto, faz sentido adicionar uma nova coluna á tabela utilizador
+                          de forma a armazenar o caminho da foto, já as fotos, faz sentido fazer upload delas para dentro do diretorio: /modules/common/img/users/<user-id>.{jpg/png/etc...}
+                          Por questões de segurança, não deves permitir upload de SVGs, pois podem conter tags de script que são injetaveis e executaveis no browser.
+			  Á partida a Q-08 fica também respondida com isto.
+
+- C-06:
+	Em vez de ser uma modal, de facto é muita informação para ser tratada, e deve ser toda tratada, defino em baixo como poderia funcionar o editor de agendamentos:
+		- Escolha de Local (loja ou carrinha): Não faz muito sentido poder alterar isto, então á partida, a sequencia de passos no editor excluiria este passo.
+		- (carrinha) Edição de pessoas a usufruir dos serviços: Deve continuar a ser possivel adicionar / remover / editar pessoas, deve ser possivel especificar o nome delas, e 
+                  deve ser possivel alterar os serviços que elas irão usufruir, exactamente como já está implementado na criação.
+ 		- (carrinha) Deve ser possivel alterar ou adicionar uma morada a associar ao agendamento, exactamente como já está implementado na criação.
+		- Validação OTP: Não deve ser possivel associar / alterar o telemovel associado á criação do agendamento. EXTRA: Esta validação deverá ser removida
+                  do processo de criação ou edição de agendamentos, uma vez que não existe implementação do processo de pagamento do sinal nos mesmos (confirma-me se estiver errado), e porque
+                  geralmente modulos ou bibliotecas de terceiros responsaveis por pagamentos, já fazem internamente a validação OTP.
+		- Na Área Cliente, acho que a validação OTP deveria ser feita ao: 
+			- Alterar o telemovel no editor de Perfil.
+			- Alterar o email (deverá também pedir a palavra-passe atual).
+			- Alterar a palavra-passe (deverá também pedir a palavra-passe atual).
+
+	Em termos de implementação, talvez faça mais sentido:
+		- Ou reaproveitar o wizard de criação de agendamentos (já existente), 
+                  modulariza-lo (fazer divisão por contexto, logica e de responsabilidades) em componentes mais pequenos,
+                  e aplicar a lógica de funcionamento do editar (especificada acima, neste mesmo ponto).
+		- Ou fazer um clone completo do wizard de criação de agendamentos (já existente)
+		  moldando-o de forma a que aplique a lógica de funcionamento do editar (especificada acima, neste mesmo ponto).
+		- NOTA: Seria preferivel implementar a primeira opção, a menos que de facto se mostre demasiado complexa para ser 
+                        interpretada por nós mais tarde em qualquer manutenção necessária. (ex: se na tentativa de generalizar, 
+                        a complexidade de compontentes ou funções ou qualquer estrutura dos wizards aumentar drasticamente a sua complexidade 
+                        em comparação ao que existe atualmente no wizard, durante a criação).
+
+- C-07:
+	Tem que se criar a tabela notificacoes para o utilizador, as notificações que dão para se marcar com lidas creio que atualmente são as fiscais, 
+        estas novas também teriam de ter o mesmo mecanismo de marcar como lidas, acho que faz sentido viverem em AlertService.php, mas a lógica, os métodos, 
+	os endpoints e os acessos teriam potencialmente de ser re-avaliados e fazer os ajustes necessarios.
+
+- C-08: 
+	O acesso deve ser garantido somente a funcionarios rv e gestores.
+	Os funcionarios rv aceitam ou descartam os seus serviços (semelhante ao que existe), os gestores alocam ou removem/trocam funcionarios efetivos de serviços.
+	Desta forma tanto funcionarios rv, como efetivos podem participar em serviços de ambulatório.
+
+- C-09:
+	O ecrã/pagina Recibos Verdes deixa de ser somente de Recibos Verdes, passa a ser de configurações de percentagens 
+        (pensar como arquiteto de sistema onde esta informação ficaria melhor, se nessa pagina isolada, ou se em algum outro local com mais sentido).
+	Eu também especifiquei qual ganha, a definida por funcionário ganha sempre á percentagem padrão dos efetivos e a dos recibos verdes, estas percentagens padrão 
+	servem somente para fornecer um valor default/inicial no formulario de criação de funcionarios.
+
+- C-10:
+	De facto, funcionarios rv não recebem salario base, ganham á base dos serviços prestados, então deverão ganhar uma percentagem substancial do lucro dos serviços
+	que prestam. Já o funcionario efetivo, ganha um salario base, por padrão tem o percentagem por serviço prestado a 0, e poderá ser configurado no ecrã a definir em C-09.
+
+- C-11: 
+	Não percebi este conflito, quando disse "terá sempre tempo" referia-me ao quê exactamente? (acho que era, o cliente terá sempre tempo de alterar/editar o agendamento se precisar,
+        uma vez que o mesmo só ficará bloqueado para edição a partir do momento em que se encontrar numa rota confirmada, só a partir desse momento, o cliente
+	deve receber o tal aviso/lembrete, avisando-o de que o seu agendamento foi confirmado e planeado para execução, com todos os dados relevantes.
+
+- C-12: 
+	A pagina de Comissões supostamente só faz sentido apresentar lucros e valores concretos e reais, não supostos de acontecer e planeados, um serviço alocado/aceite é só uma promessa,
+        um serviço realizado é uma verdade. Mas corrige-me se eu estiver equivocado sobre o proposito da página.
+
+- C-13:
+	Já sei, então em vez de recusar/cancelar serviços/agendamentos/rotas anteriores á execução, deverá recusar/cancelar anterior á confirmação
+        E a partir do momento em que está confirmado, se passar da data/hora de execução, deverá ser mostrado um alerta/lembrete ao funcionario para alterar o estado para
+        cancelado no terreno, concluido, recusado (qualquer estado que marque um desfecho do serviço/agendamento/rota, onde eu tiver dito que ia ser aplicado...
+
+- C-14:
+	Mas neste caso o utilizador deverá receber um alerta/lembrete novo e posterior, avisando que por motivos de logistica operacional, não poderam executar o agendamento ou rota
+        (Acho que já havia um aviso/lembrete deste género no planeamento)
+
+Gaps:
+- G-01:
+	Este Passo 6, na verdade não é Passo 6, mas sim o Passo 4 na criação de agendamentos em loja. Neste passo, pede a escolha do profissional, mas não faz
+	muito sentido, o profissional nunca é escolhido pelo cliente, mas sim alocado por um gestor / aceite por um funcionario rv, então este passo não faz sentido.
+
+- G-02:
+	rv e efetivo devem continuar a ser tipos de contrato como já são, mas deve ser adicionar uma forma de detetar / devolver o tipo de funcionario a partir do session.
+	de preferencia reaproveitando ou organizando os metodos de maneira a deixar tudo organizado e com convenções identicas.
+
+- G-03:
+	Sim os efetivos ficam de fora, são redirecionados para outra pagina do backoffice, talvez a agenda 
+        (essa sim deveria de ser a pagina principal dos funcionarios, tanto rv como efetivos).
+
+- G-04:
+	Não sei se já respondi ou esclareci isto nos pontos anteriores deste prompt, avisa-me se não tiver, se for o caso explica melhor a situação.
+
+- G-05:
+	Também creio já ter respondido a isto nos pontos anteriores deste prompt.
+
+- G-06:
+	Sim, quero implementar agora, e acho que já mencionei algo neste prompt acerca disso, da semelhança com a estabilização / atualização automatica dos estados. 
+        Mas posso estar equivocado sobre ter mencionado, avisa-me se estiver.
+
+- G-07:
+	Sim, cria-me skeletons customizados e com layout muitissimo semelhante ao conteudo que visam substituir / segurar.
+
+6.1
+Auto-cancelamento deveria ser auto-recusado, sempre que existir um estado relacionado a "recusado", uma vez que não foi o cliente a cancelar, mas sim o sistema/staff. 
+Da mesma forma, quando a staff recusa algo, não deve ficar cancelado, mas sim recusado. No entanto, atualmente não sei se a staff chega a cancelar alguma coisa a não ser rotas.
+
+Duvidas:
+- Q-01: 
+	Forneci o cropper.js v 1.6.3 nessa pasta modules/common/lib/cropper.
+
+- Q-02..Q-04 e Q-08:
+	Já respondido aqui neste prompt.
+
+- Q-05:
+	Ficheiro sweetalert.js fornecido em modules/common/lib/sweetalert.
+
+- Q-06: 
+	Não apagues os agendamentos dos 65 clientes reais, ou quaisquer clientes que estejam a mapear os 
+        graficos no painel de administração ou informações relacionadas a contabilidade, somente os que foram
+        gerados em testes.
+
+- Q-07, Q-09: 
+	Acho que já respondi a isto neste prompt.
+
+- Q-08:
+	Já existem atalhos para os ecrãs de gestão no menu hamburguer do utilizador certo?
+	
+- Q-10:
+	Confio na tua proposta, mas se quiseres explica melhor.
+
+- Q-11:
+	Ignora isso do passo 6, era o passo 4, mencionei ja coisas sobre isso neste prompt.
+
+- Q-12:
+	Também acho que já respondi a isto, mas confirma.
+
+- Q-13:
+	Sim.
+
+- Q-14:
+	Onde viste isto do seed com género, o que queres dizer com seed, explica isto melhor.
+
+- Q-15:
+	10 cards max, com botão para mostrar mais por baixo (navegando para a pagina especifica (fiscal, serviços, etc...))
+	mas se encontrares lacunas nisto avisa.
+
+
+Comissões:
+	- Estive a ler a explicação que me geraste no relatório e pelo que entendi, existe aqui algum atrito na disponibilização da informação 
+          na prespetiva do funcionário, o que eu acho que ele deveria de ver: 
+		- Card "Serviços prestados" com a quantidade de serviços prestados por ele nesse mês
+		- Card "Comissões do mês" com o valor que ele lucrou ao prestar serviços nesse mês (Devo/não devo incluir o salário base caso seja efetivo?)
+		- Card <titulo por definir> com o propósito de mostrar o valor total que ele gerou dos serviços que prestou (inclui o que ele lucrou + o que a empresa lucrou), fará sentido?
+		
+		- Tabela "Serviços prestados no mês", listar os serviços que esse funcionario prestou (como já existe? verificar se não mostrar os que ele aceitou/lhe foram alocados, mas sim os que ele executou/prestou)
+		
+	- NÃO VÊ:
+		- Card "Funcionários com prestações", seria redundante mostrar somente 1 funcionário neste cartão (ele próprio), faz mais sentido ao gestor.
+		- Tabela "Totais por funcionário", isto faz mais sentido ser mostrado ao gestor, já que o propósito de uma lista destas seria 
+                  listar as comissões de todos os funcionários.
+	
+	na prespetiva do gestor, o que ele devira de ver:
+		- Card "Serviços prestados" com a quantidade de serviços prestados por todos os funcionarios nesse mês
+		- Card "Comissões do mês" com o valor "a pagar" a todos os funcionários nesse mês (Devo/não devo incluir o salário base dos funcionários efetivos?)
+		- Card "Funcionários com prestações", mostrar o total de funcionarios que prestaram serviços.
+
+		- Tabela "Totais por funcionário", listar as comissões de todos os funcionários (como já existe).
+		- Tabela "Serviços prestados no mês", listar os serviços que os funcionarios prestaram (como já existe? verificar se não mostrar os que os funcionarios aceitaram/lhes foram alocados, mas sim os que eles executaram/prestaram)
+	
+8.2
+	De forma a simplificar, vamos ignorar os feriados e dias por trabalhador.
+	Passo 5: Tenta encontrar as identidades dos trabalhadores em ficheiros do mapaMentalMVP, se não encontrares, gera-me identidades á tua escolha, que façam sentido com os dados e tipos existentes.
+		
+9.
+	Mantém:
+		team.php
+		employee.validator.js (provavelmente vais usar)
+		greenReceipts.js (depende agora da resposta dada neste prompt acredito)
+	Re-atualiza esta lista de acordo com os esclarecimentos.
+
+Validações/Correções gerais:
+- Garante-me em todo o projeto que a apresentação de dados vindos do servidor, que possam adicionar um risco de injeções de javascript 
+  está devidamente protegida com o utilitário generalUtils.escapeHtml.
+
+IMPORTANTE:
+- Requisitos a incluir nesta fase:
+	- **Cancelamento do agendamento pelo cliente** + regra das **24 h** + lembrete com alternativas (ajustado á nova realidade/especificação)
+	- **Re-avaliação dinâmica dos slots** quando os serviços mudam no wizard
+	- CRON/agendador para geração automática de alertas fiscais (faria sentido isto usar uma arquitetura semelhante ao reconciliador de estados? 
+          Além disso, tinhamos planeado correr o reconciliador de estados ao ir buscar os dados de agendamentos ou serviços ou rotas..., tinha dito isto
+          de forma a tentar ser o mais económico possivel na utilização de recursos do servidor, e porque não tinha necessariamente uma ideia concreta de 
+          como preparar triggers automaticos por tempo com o php (creio que o servidor precisaria de estar a correr o tempo todo). Pensei na possibilidade 
+          de correr este processo ao fazer login (de forma assincrona caso seja muito demorado, i.e > 2 segundos, e de forma sincrona caso contrario, só precisaria de ser 
+          implementado de uma das formas (sincrona ou assincrona, dependendo do peso atual dos dados na BD, como se trata de um projeto em contexto académico, 
+          talvez não faça muito sentido complicar a implementação, a base de dados irá permanecer com poucos dados (os já existentes e poucos mais...))
+
+- Requisitos a ponderar incluir nesta fase:
+	- **Sinal configurável** no backoffice + cobrança dos 90 % + **métodos de pagamento** simulados: Explica-me detalhadamente 
+            como é que este requisito estava planeado ser implementado, de um ponto de vista de negócio, funcional, e grafico (layout). 
+            Parece-me estar muito relacionado com a fase de operação/execução das rotas e dos seus agendamentos, assim como a operação na loja.
+        - UI para `transacao_financeira`, `fecho_caixa_diario` e `gorjeta` (Como é que isto está relacionado com o ponto acima?)
+
+- Requisitos a revogar:
+	- Rotas Multicidades (descartar esta ideia)
+
+Por fim:
+- Atualiza-me o relatorio da fase com tudo o que foi explicado e resolvido com esta informação.
+- Se tiveres mais duvidas ou conflitos para eu resolver expõe no relatorio.

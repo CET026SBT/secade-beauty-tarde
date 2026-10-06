@@ -12,22 +12,6 @@ const services = (() => {
         get $container() { return $('.services-container'); },
         get $empty() { return $('#servicesEmpty'); },
 
-        /**
-         * Imagem do card (§3.4.4): usa a foto real (`service.photoUrl`, F3.1) quando
-         * existe; senão o placeholder SVG da categoria e, em último caso, o genérico.
-         * Nunca devolve um `src` vazio.
-         */
-        imageFor(service) {
-            if (service.photoUrl) {
-                return `${BASE_URL ?? ''}/${String(service.photoUrl).replace(/^\//, '')}`;
-            }
-
-            const slug = generalUtils.slugify(service.categoryName || '').toLowerCase();
-            const known = ['cabeleireiro', 'barbearia', 'estetica'];
-            const file = known.includes(slug) ? `servico-${slug}.svg` : 'servico-generico.svg';
-            return `${BASE_URL ?? ''}/modules/common/img/service-images/skeletons/${file}`;
-        },
-
         render(list) {
             this.$container.empty();
 
@@ -53,11 +37,6 @@ const services = (() => {
 
             $('#serviceModalTitle').text(service.name);
             $('#serviceModalBody').html(`
-                <div id="serviceGallery" class="mb-3">
-                    <img id="serviceGalleryMain" class="img-fluid rounded w-100 service-card-img"
-                         src="${cardsUI.imageFor(service)}" alt="${generalUtils.escapeHtml(service.name)}">
-                    <div id="serviceGalleryThumbs" class="d-flex gap-2 mt-2 flex-wrap"></div>
-                </div>
                 <p class="text-muted mb-3">${generalUtils.escapeHtml(service.description || '')}</p>
                 <ul class="list-unstyled mb-0">
                     <li class="mb-2"><i class="bi bi-tag me-2 text-primary"></i><strong>Preço:</strong> ${generalUtils.formatCurrencyWithVat(service.basePrice)} <small class="text-muted">(IVA incl.)</small></li>
@@ -69,8 +48,6 @@ const services = (() => {
             $('#serviceModalBook').attr('href', `${BASE_URL ?? ''}/agendar?services=${service.id}`);
 
             bootstrap.Modal.getOrCreateInstance($('#serviceDetailsModal')[0]).show();
-
-            loadGallery(service);
         }
     };
 
@@ -105,9 +82,6 @@ const services = (() => {
 
         return $(`<div class="col-md-6 col-lg-4">
             <div class="card h-100 border-0 shadow-sm service-card">
-                <img class="card-img-top object-fit-cover service-card-img"
-                     src="${cardsUI.imageFor(service)}"
-                     alt="${generalUtils.escapeHtml(service.name)}" loading="lazy">
                 <div class="card-body d-flex flex-column">
                     <div class="d-flex justify-content-between align-items-start mb-3">
                         <span class="badge bg-primary">${generalUtils.escapeHtml(service.categoryName || '')}</span>
@@ -120,41 +94,12 @@ const services = (() => {
                         <li><i class="bi bi-tag me-1"></i>${generalUtils.formatCurrencyWithVat(service.basePrice)} <small>(IVA incl.)</small></li>
                     </ul>
                     <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-sm btn-outline-primary extended-border flex-fill" data-details="${service.id}">Detalhes</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary flex-fill" data-details="${service.id}">Detalhes</button>
                         <a class="btn btn-sm btn-primary extended-border flex-fill" href="${BASE_URL ?? ''}/agendar?services=${service.id}">Agendar</a>
                     </div>
                 </div>
             </div>
         </div>`);
-    }
-
-    /**
-     * Preenche a galeria do modal com TODAS as fotos do serviço (F3.1). Se o serviço
-     * não tiver fotos, mantém-se o placeholder da categoria como imagem única.
-     */
-    async function loadGallery(service) {
-        let photos = [];
-
-        try {
-            const response = await API.booking.servicePhotos(service.id);
-            photos = response?.photos || [];
-        } catch (error) {
-            photos = [];
-        }
-
-        if (photos.length === 0) {
-            $('#serviceGalleryThumbs').empty();
-            return;
-        }
-
-        const url = (photo) => `${BASE_URL ?? ''}/${String(photo.url).replace(/^\//, '')}`;
-        const ordered = [...photos].sort((a, b) => Number(b.featured) - Number(a.featured));
-
-        $('#serviceGalleryMain').attr('src', url(ordered[0]));
-
-        $('#serviceGalleryThumbs').html(ordered.map((photo, index) => `
-            <img class="service-gallery-thumb ${index === 0 ? 'active' : ''}"
-                 src="${url(photo)}" alt="" data-gallery-src="${url(photo)}">`).join(''));
     }
 
     function filteredServices() {
@@ -188,7 +133,7 @@ const services = (() => {
 
     async function loadData() {
         const promise = Promise.all([API.categories.getAll(), API.booking.services()]);
-        const preloader = cardsUI.$container.preloader('.jq-skeleton-service-card', promise);
+        const preloader = cardsUI.$container.preloader('.jq-skeleton-service-category-card', promise);
 
         const [categoriesResponse, servicesResponse] = await promise;
 
@@ -213,16 +158,6 @@ const services = (() => {
 
         $(document).on('click', '[data-details]', function () {
             cardsUI.openDetails($(this).data('details'));
-        });
-
-        // Galeria do modal: clicar numa miniatura troca a imagem principal.
-        $(document).on('click', '.service-gallery-thumb', function () {
-            const src = $(this).data('gallery-src');
-            if (!src) return;
-
-            $('#serviceGalleryMain').attr('src', src);
-            $('.service-gallery-thumb').removeClass('active');
-            $(this).addClass('active');
         });
 
         $('#serviceSearch').on('input', function () {

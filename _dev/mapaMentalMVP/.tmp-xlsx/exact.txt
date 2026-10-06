@@ -1,0 +1,15 @@
+﻿--- _dev/docs/spec/delivery.md  (total 241 linhas | mostrar 236..238) ---
+22. Γ¼£ O gestor **reverte/exclui** um agendamento **antes** de a rota ser confirmada e ele volta a **qualificado** (nunca `cancelado`); em rota confirmada **n├úo se altera**.
+23. Γ¼£ Existe uma p├ígina de **avisos** por perfil, com **contador de n├úo lidos** no sino e liga├º├úo no menu do utilizador.
+
+===== req 106-108 =====
+--- _dev/docs/spec/requirements.md  (total 156 linhas | mostrar 106..108) ---
+| RF-82 | **Custos com pessoal calculados na plataforma**: remunera├º├úo ├ù meses + **subs├¡dio (dias ├║teis ├ù 6,15 Γé¼)** ΓêÆ IRS retido ΓêÆ SS do trabalhador (11 %), e SS patronal (23,75 %) ΓåÆ                | Γ¼£ (┬º3.12 ┬╖ ┬º24.9) |
+|       | **l├¡quido a pagar** por trabalhador e por m├¬s                                                                                                                                               |                    |
+| RF-83 | **Calend├írio fiscal com as 8 fam├¡lias** de obriga├º├╡es do calend├írio oficial (SAF-T, DMR, reten├º├╡es na fonte, Seguran├ºa Social, IVA-declara├º├úo e IVA-pagamento, IRC, IES/DA), **import├ível** | Γ¼£ (┬º13 ┬╖ ┬º24.10)  |
+===== out 35-38 =====
+--- _dev/docs/out/relatorio_decisoes-28-09-local.md  (total 82 linhas | mostrar 35..38) ---
+| Bot├╡es de a├º├úo        | ├ìcone + `title`, fundo transparente; dourado=detalhes ┬╖ azul=editar ┬╖ vermelho=remover; **retrofit** a todas as listagens          | ┬º24.7 (item 8)                          |
+| **Promo├º├╡es**         | **Fora da Fase 6** ΓåÆ **Fase 8**; risco de **retro-atualiza├º├úo** de hist├│rico a avaliar                                             | `delivery.md` ┬º21 ┬╖ C-33                |
+| Fases                 | Fase 6 = ┬º24 + m├│dulos do backoffice; **Fase 7** = sidebar (+ acesso ├ás comiss├╡es); **Fase 8** = promo├º├╡es                         | `delivery.md` ┬º21                       |
+## 3. O que falta decidir ΓÇö propostas (bloqueiam a Fase 6)

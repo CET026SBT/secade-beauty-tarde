@@ -1,0 +1,32 @@
+﻿FICHEIRO: Gastos e Rendimentos_Simulador processamento de sal├írios Secade.xlsx
+FOLHAS (2): Folha1 | Processamento de sal├írio
+
+====================================================================================================
+FOLHA: Folha1   (xl/worksheets/sheet1.xml)
+====================================================================================================
+1   : A=Gastos
+2   : A=Conta  |  B=Descri├º├úo  |  C=Valores
+3   : A=62  |  B=Fornecimentos e servi├ºos externos  |  C=15277,7
+4   : A=63  |  B=Gastos com o pessoal  |  C=27234,13
+5   : A=64  |  B=Gastos de deprecia├º├úo e amortiza├º├úo  |  C=2870,88
+6   : A=69  |  B=Gastos de financiamento  |  C=425
+7   : A=Total  |  C=45807,71
+8   : A=Rendimentos
+9   : A=72  |  B=Presta├º├╡es de servi├ºos  |  C=24102,05
+10  : A=Total  |  C=24102,05
+11  : A=Resultado Antes do Imposto  |  C=-21705,66
+
+====================================================================================================
+FOLHA: Processamento de sal├írio   (xl/worksheets/sheet2.xml)
+====================================================================================================
+2   : E=Taxas
+3   : B=Vencimento base  |  C=Dias de trabalho  |  D=Subs├¡dio de Alimenta├º├úo  |  E=IRS  |  F=SS  |  G=Encargos da Empresa
+4   : B=1200  |  D=6,15  |  E=0,08  |  F=0,11  |  G=0,2375
+5   : B=1200  |  E=0,08
+6   : B=1000  |  E=3, 6%
+7   : B=1000  |  E=3, 6%
+8   : B=1000  |  E=3, 6%
+9   : B=1250  |  E=8, 56%
+14  : B=Venci+dias de trab.*SA-IRS-SS
+17  : B=Encargos da Empresa*Vencimento base
+

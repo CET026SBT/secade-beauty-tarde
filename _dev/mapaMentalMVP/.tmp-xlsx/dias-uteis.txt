@@ -1,0 +1,26 @@
+﻿Mes 2026 | dias uteis (seg-sex) | feriados em dia util | liquido
+  01   |         22            |          1            |    21
+  02   |         20            |          1            |    19
+  03   |         22            |          0            |    22
+
+Janeiro   21 x 6,15 = 129,15   [129,15]
+Fevereiro 20 x 6,15 = 123,00   [123,00]
+Marco     22 x 6,15 = 135,30   [135,30]
+Trimestre 63 x 6,15 = 387,45   [387,45]
+
+Dias que o Balancete confirma: 6324 = 2 312,40 = 5 x 387,45 + 375,15
+375,15 / 6,15 = 61 dias (61) -> 2 dias de diferenca face a 63
+
+Outros meses de 2026 (para o RH):
+  01 January   dias uteis=22 feriados=1 -> 21 dias x 6,15 =   129,15
+  02 February  dias uteis=20 feriados=1 -> 19 dias x 6,15 =   116,85
+  03 March     dias uteis=22 feriados=0 -> 22 dias x 6,15 =   135,30
+  04 April     dias uteis=22 feriados=1 -> 21 dias x 6,15 =   129,15
+  05 May       dias uteis=21 feriados=1 -> 20 dias x 6,15 =   123,00
+  06 June      dias uteis=22 feriados=2 -> 20 dias x 6,15 =   123,00
+  07 July      dias uteis=23 feriados=0 -> 23 dias x 6,15 =   141,45
+  08 August    dias uteis=21 feriados=0 -> 21 dias x 6,15 =   129,15
+  09 September dias uteis=22 feriados=0 -> 22 dias x 6,15 =   135,30
+  10 October   dias uteis=22 feriados=1 -> 21 dias x 6,15 =   129,15
+  11 November  dias uteis=21 feriados=0 -> 21 dias x 6,15 =   129,15
+  12 December  dias uteis=23 feriados=3 -> 20 dias x 6,15 =   123,00

@@ -1,0 +1,73 @@
+﻿FICHEIRO: Servi├ºos, Clientes e Fornecedores.xlsx
+FOLHAS (1): Folha1
+
+====================================================================================================
+FOLHA: Folha1   (xl/worksheets/sheet1.xml)
+====================================================================================================
+1   : A=Servi├ºos  |  C=Pre├ºo ao cliente com IVA  |  D=Valor Base  |  E=Valor IVA  |  G=N├║mero  |  H=Lista de Fornecedores  |  I=Contribuinte  |  K=N├║mero  |  L=Lista de Clientes  |  M=Contribuinte  |  N=Localidade
+2   : A=Tran├ºas  |  B=Box braids  |  C=40  |  D=32,520325  |  E=7,479675  |  G=1  |  H=Stand Virtual  |  I=508069491  |  K=1  |  L=Leonor Santos  |  M=251989518  |  N=├ëvora
+3   : B=Cordolete  |  C=60  |  D=48,780488  |  E=11,219512  |  G=2  |  H=Worten  |  I=503630330  |  K=2  |  L=Catarina Pixoto  |  M=298784076  |  N=├ëvora
+4   : B=Dem├úo  |  C=45  |  D=36,585366  |  E=8,414634  |  G=3  |  H=Leroy-Merlin  |  I=506848558  |  K=3  |  L=Elvisson Daniel  |  M=278561519  |  N=├ëvora
+5   : B=Tran├ºas nag├┤  |  C=35  |  D=28,455285  |  E=6,544715  |  G=4  |  H=AOSOM  |  I=980683386  |  K=4  |  L=Leandro Silva  |  M=214056686  |  N=├ëvora  |  Q=9300
+6   : B=Retrobraids  |  C=60  |  D=48,780488  |  E=11,219512  |  G=5  |  H=Staples  |  I=503789372  |  K=5  |  L=Tom├ísia Contreiras  |  M=227748204  |  N=├ëvora
+7   : B=Dreads look  |  C=55  |  D=44,715447  |  E=10,284553  |  G=6  |  H=Beleza 37  |  I=514749636  |  K=6  |  L=Joaquina Matos  |  M=235820776  |  N=├ëvora
+8   : B=Tran├ºa twist  |  C=50  |  D=40,650407  |  E=9,349593  |  G=7  |  H=Extintores online  |  I=518352080  |  K=7  |  L=L├¡dia Correia  |  M=201303140  |  N=├ëvora
+9   : B=Box braid crochet hair  |  C=45  |  D=36,585366  |  E=8,414634  |  G=8  |  H=Continente  |  I=502011475  |  K=8  |  L=Emanuela Vig├¡lio  |  M=213916819  |  N=├ëvora
+10  : B=Tran├ºa boxeadora  |  C=30  |  D=24,390244  |  E=5,609756  |  G=9  |  H=Logo seguros  |  I=508278600  |  K=9  |  L=Augusta Contente  |  M=240660501  |  N=├ëvora
+11  : B=Tran├ºa butterfly  |  C=55,99  |  D=45,520325  |  E=10,469675  |  G=10  |  H=Generali  |  I=500940231  |  K=10  |  L=Laura Vanuza  |  M=235159026  |  N=├ëvora
+12  : B=Tran├ºa fulani  |  C=45  |  D=36,585366  |  E=8,414634  |  G=11  |  H=OK! Seguros  |  I=504011944  |  K=11  |  L=Florentino Rosa  |  M=278084737  |  N=├ëvora
+13  : B=French curl  |  C=60  |  D=48,780488  |  E=11,219512  |  G=12  |  H=Fidelidade  |  I=500918880  |  K=12  |  L=Beatriz Baessa  |  M=232443777  |  N=├ëvora
+14  : B=Faux locs  |  C=58  |  D=47,154472  |  E=10,845528  |  G=13  |  H=Liberty  |  I=500068658  |  K=13  |  L=Tiago Fortunato  |  M=214803155  |  N=├ëvora
+15  : B=Gypsy braids  |  C=60  |  D=48,780488  |  E=11,219512  |  G=14  |  H=SK pro Med Beauty Solutions  |  I=508161320  |  K=14  |  L=Elias Patente  |  M=243363010  |  N=├ëvora
+16  : B=Bohemian braids  |  C=56  |  D=45,528455  |  E=10,471545  |  G=15  |  H=Primor  |  I=980663695  |  K=15  |  L=Partr├¡cia Gomes  |  M=274907810  |  N=├ëvora
+17  : B=Tran├ºas pipocas  |  C=50  |  D=40,650407  |  E=9,349593  |  G=16  |  H=Pluri cosm├⌐tica  |  I=503890278  |  K=16  |  L=Alexanda Pinto  |  M=261788396  |  N=├ëvora
+18  : A=Penteados  |  B=Rabo de cavalo (Ponytail)  |  C=25  |  D=20,325203  |  E=4,674797  |  G=17  |  H=AfroQueen  |  I=516416081  |  K=17  |  L=Maria Luana  |  M=270325492  |  N=├ëvora
+19  : B=Coque (Bun)  |  C=30  |  D=24,390244  |  E=5,609756  |  G=18  |  H=Temu  |  I=0  |  K=18  |  L=Rena Nunes  |  M=259969931  |  N=├ëvora
+20  : B=Tran├ºa Francesa  |  C=17  |  D=13,821138  |  E=3,178862  |  G=19  |  H=IKEA  |  I=505416654  |  K=19  |  L=Vanessa Cardoso  |  M=204914663  |  N=├ëvora
+21  : B=Half bun (meio coque)  |  C=45  |  D=36,585366  |  E=8,414634  |  G=20  |  H=Lusini  |  I=517386402  |  K=20  |  L=Tiago Alves  |  M=272698679  |  N=├ëvora
+22  : B=Beach waves  |  C=20  |  D=16,260163  |  E=3,739837  |  G=21  |  H=DRUNI  |  I=518530752  |  K=21  |  L=Maria Pedro  |  M=229658660  |  N=├ëvora
+23  : B=Cabelo liso com franja  |  C=40  |  D=32,520325  |  E=7,479675  |  G=22  |  H=Wells  |  I=508037514  |  K=22  |  L=Lu├¡sa Evid├¬ncia  |  M=289524121  |  N=├ëvora
+24  : B=Coque Messy  |  C=35  |  D=28,455285  |  E=6,544715  |  G=23  |  H=Baber tools profissional  |  I=589053345  |  K=23  |  L=Bianca Brico  |  M=273711148  |  N=├ëvora
+25  : B=Tran├ºa espinha de peixe  |  C=20  |  D=16,260163  |  E=3,739837  |  G=24  |  H=Ideal Cosm├⌐ticos  |  I=514239085  |  K=24  |  L=Amanda Alves  |  M=265052955  |  N=├ëvora
+26  : B=Cabelo preso lateral  |  C=45  |  D=36,585366  |  E=8,414634  |  G=25  |  H=Barberalia  |  I=516206370  |  K=25  |  L=Patr├¡cia Freitas  |  M=279336055  |  N=├ëvora
+27  : B=Cabelo solto com ondas  |  C=50  |  D=40,650407  |  E=9,349593  |  G=26  |  H=Bandido Portugal.pt  |  I=NIF indispon├¡vel nas plataformas digitais  |  K=26  |  L=Beatriz Oliveira  |  M=207109176  |  N=├ëvora
+28  : B=Coque baixo elegante  |  C=25  |  D=20,325203  |  E=4,674797  |  G=27  |  H=ViceDeal.com  |  I=NP (n├úo possui) NIF  |  K=27  |  L=L├║cia Camarada  |  M=299502309  |  N=├ëvora
+29  : G=28  |  H=Casa do Barbeiro  |  I=501766448  |  K=28  |  L=Vivalda Libolo  |  M=254824498  |  N=├ëvora
+30  : A=Barbearia  |  B=Corte de cabelo  |  C=15  |  D=12,195122  |  E=2,804878  |  G=29  |  H=Espa├ºo barbeiro  |  I=510427103  |  K=29  |  L=Ricardo Sebasti├úo  |  M=217579906  |  N=├ëvora
+31  : B=Barba  |  C=5  |  D=4,065041  |  E=0,934959  |  G=30  |  H=Aliexpress  |  I=0  |  K=30  |  L=Beatriz Gon├ºalves  |  M=219082081  |  N=Arraiaolos
+32  : G=31  |  H=Munic├¡pio de ├ëvora  |  I=504828576  |  K=31  |  L=S├│nia Silva  |  M=299763374  |  N=Arraiaolos
+33  : A=Est├⌐tica  |  B=Maquilhagem para noivas  |  C=50  |  D=40,650407  |  E=9,349593  |  G=32  |  H=Endesa  |  I=508855950  |  K=32  |  L=Marta Gon├ºalves  |  M=250174332  |  N=Montemor-O-Novo
+34  : B=Maquilhagem para festa  |  C=35  |  D=28,455285  |  E=6,544715  |  G=33  |  H=MEO  |  I=504615947  |  K=33  |  L=Joana Silva  |  M=248171240  |  N=Montemor-O-Novo
+35  : B=Maquilhagem simples  |  C=20  |  D=16,260163  |  E=3,739837  |  G=34  |  H=Galp  |  I=505060515  |  K=34  |  L=S├¡lvia Almeida  |  M=295931540  |  N=Viana Do Alentejo
+36  : B=Manicure  |  C=15  |  D=12,195122  |  E=2,804878  |  G=35  |  H=Repsol  |  I=500246963  |  K=35  |  L=Rita Costa  |  M=252554620  |  N=Viana Do Alentejo
+37  : B=Limpeza facial  |  C=30  |  D=24,390244  |  E=5,609756  |  G=36  |  H=Manuel jacinto (renda)  |  I=320491366  |  K=36  |  L=Teresa Correia  |  M=275536394  |  N=Reguengos de Monsaraz
+38  : B=Design de sobrancelha com linha  |  C=10  |  D=8,130081  |  E=1,869919  |  G=37  |  H=Banco CTT  |  I=513412417  |  K=37  |  L=Teresa Cardoso  |  M=231413882  |  N=Reguengos de Monsaraz
+39  : G=38  |  H=Consum├¡veis  |  I=0  |  K=38  |  L=Cla├║dia Marques  |  M=275469727  |  N=Redondo
+40  : G=39  |  H=Norauto  |  I=503629995  |  K=39  |  L=S├¡lvia Gon├ºalves  |  M=228145651  |  N=Redondo
+41  : G=40  |  H=Gest├⌐vora  |  I=500785708  |  K=40  |  L=Carla Morauto  |  M=261207890  |  N=Vendas Novas
+42  : G=41  |  H=Manuel jacinto (renda)  |  I=285284240  |  K=41  |  L=Patr├¡cia Costa  |  M=287024350  |  N=Vendas Novas
+43  : G=42  |  H=Stela Cristina  |  I=200846922  |  K=42  |  L=Joana Pereira  |  M=258735082  |  N=Estremoz 
+44  : H=Moloni  |  I=513321527  |  K=43  |  L=Filipa Costa  |  M=244808929  |  N=Estremoz 
+45  : K=44  |  L=Joana Pinto  |  M=264883268  |  N=Vila Vi├ºosa
+46  : K=45  |  L=Daniela Cardoso  |  M=254736130  |  N=Vila Vi├ºosa
+47  : K=46  |  L=Catarina Correia  |  M=277691400  |  N=Vila Vi├ºosa
+48  : K=47  |  L=Catarina Lopes  |  M=234560657  |  N=Mour├úo
+49  : K=48  |  L=S├│nia Fenandes  |  M=269836870  |  N=Mour├úo
+50  : K=49  |  L=Margarida Santos  |  M=232060649  |  N=Mour├úo
+51  : K=50  |  L=Rita Pereira  |  M=243526512  |  N=Arraiaolos
+52  : K=51  |  L=In├¬s Mendes  |  M=203624513  |  N=Arraiaolos
+53  : K=52  |  L=Vera Costa  |  M=245056220  |  N=Montemor-O-Novo
+54  : K=53  |  L=Filipa Santos  |  M=281021970  |  N=Montemor-O-Novo
+55  : K=54  |  L=Marta Rodrigues  |  M=248193848  |  N=Viana Do Alentejo
+56  : K=55  |  L=Marta Almeida  |  M=241834961  |  N=Viana Do Alentejo
+57  : K=56  |  L=S├¡lvia Ferreira  |  M=299343049  |  N=Reguengos de Monsaraz
+58  : K=57  |  L=Rita Jesus  |  M=291337392  |  N=Redondo
+59  : K=58  |  L=Maria Ferreira  |  M=250412365  |  N=Redondo
+60  : K=59  |  L=Margarida Gon├ºalves  |  M=211275859  |  N=Vendas Novas
+61  : K=60  |  L=Daniela Ribeiro  |  M=221393366  |  N=Vila Vi├ºosa
+62  : K=61  |  L=Daniela Oliveira  |  M=266255264  |  N=Vila Vi├ºosa
+63  : K=62  |  L=Ana Lopes  |  M=255884117  |  N=Vila Vi├ºosa
+64  : K=63  |  L=Teresa Lopes  |  M=259591696  |  N=Viana Do Alentejo
+65  : K=64  |  L=In├¬s Lopes  |  M=261930966  |  N=Reguengos de Monsaraz
+66  : K=65  |  L=Daniela Jesus  |  M=273038273  |  N=Arraiaolos
+

@@ -1,0 +1,89 @@
+﻿--- _dev/docs/spec/delivery.md  (total 241 linhas | mostrar 13..32) ---
+   13 | | Fase                                | ├émbito                                                                                                                                           | Estado                 |
+   14 | | :---------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------- |
+   15 | | **1 ΓÇö Cat├ílogo e base**             | Cat├ílogo de servi├ºos (filtros, modal), categorias, autentica├º├úo, registo, perfil/moradas, preloader, validators                                  | Γ£à CONCLU├ìDA           |
+   16 | | **2 ΓÇö Agendamentos**                | Wizard **Loja** (5 passos) + Wizard **Carrinha** (7 passos + OTP), disponibilidade, conflitos, p├ígina de sucesso                                 | Γ£à CONCLU├ìDA           |
+   17 | | **3 ΓÇö Backoffice do Funcion├írio**   | Aceita├º├úo individual, desfazer/trocar, consolida├º├úo, bloqueio de janela, **Simulador de Recibos Verdes**                                         | Γ£à CONCLU├ìDA           |
+   18 | | **4 ΓÇö Backoffice do Gestor**        | Agendamentos (filtros, detalhe por servi├ºo/funcion├írio, execu├º├úo, cancelamento), **Rotas com decis├úo manual** (+50 Γé¼ visual),                    | Γ£à CONCLU├ìDA           |
+   19 | |                                     | **Calend├írio Fiscal** + alertas, config. de recibos verdes                                                                                       |                        |
+   20 | | **5 ΓÇö Integra├º├úo e testes**         | Fluxos end-to-end (cliente ΓåÆ funcion├írio ΓåÆ gestor), responsividade, notifica├º├╡es simuladas, **293 verifica├º├╡es**                                 | Γ£à CONCLU├ìDA           |
+   21 | | **6 ΓÇö Requisitos adicionais (┬º24)** | P├ígina de detalhes + carousel; re-avalia├º├úo din├ómica de slots; 24 h + lembrete + cancelamento pelo cliente; multicidades + alerta de             | Γ¼£ **A INICIAR** (┬º24) |
+   22 | |                                     | custos; config. do sinal; 10/90 + m├⌐todos de pagamento                                                                                           |                        |
+   23 | |                                     | **+ m├│dulos do backoffice**: dashboard/gr├íficos, agenda do funcion├írio, contabilidade, RH, fornecedores, sininho e p├ígina de avisos (**promo├º├╡es |                        |
+   24 | |                                     | adiadas** ΓÇö Fase 8 ┬╖ ┬º24.7)                                                                                                                      |                        |
+   25 | | **7 ΓÇö Sidebar do backoffice**       | **Sidebar** (a navbar atual est├í no limite), com a p├ígina das **comiss├╡es** acess├¡vel por l├í (┬º24.7 ┬╖ ┬º25.5)                                     | Γ¼£ planeada            |
+   26 | | **8 ΓÇö Promo├º├╡es**                   | M├│dulo de **promo├º├╡es e campanhas** ΓÇö adiado; avaliar antes o risco de **retro-atualiza├º├úo** de hist├│rico e agendamentos passados (┬º24.7)        | Γ¼£ adiada              |
+   27 | 
+   28 | > **Chart.js (E-3):** entra na **Fase 6**, junto com os gr├íficos do dashboard ΓÇö **n├úo** fica para a Fase 7,
+   29 | > que passa a ser **s├│** a **sidebar** do backoffice e o acesso ├á p├ígina das **comiss├╡es**. A biblioteca
+   30 | > continua **local** em `modules/common/lib/chartjs/` (nunca por CDN) e **s├│** carregada no backoffice.
+   31 | 
+   32 | ### 21.1 Entreg├íveis
+===== delivery 220-240 =====
+--- _dev/docs/spec/delivery.md  (total 241 linhas | mostrar 220..240) ---
+  220 | 8. Γ£à **Nenhum acesso do cliente ao backoffice**; perfis respeitados em todos os endpoints `admin-*`.
+  221 | 9. Γ£à **Feedback do cliente** ap├│s execu├º├úo, com reflexo p├║blico nos testemunhos.
+  222 | 10. Γ£à Valida├º├╡es em client e server; **testes automatizados a passar** (293).
+  223 | 
+  224 | ### 28.2 Crit├⌐rios da Fase 6 (a cumprir com a ┬º24)
+  225 | 11. Γ¼£ Cliente consegue **cancelar** o seu agendamento pela plataforma, **sem penaliza├º├úo**.
+  226 | 12. Γ¼£ Nenhuma rota ├⌐ criada com agendamentos a **menos de 24 h**; agendamentos sem rota ├ás 24 h s├úo **auto-cancelados** e **retidos** na BD.
+  227 | 13. Γ¼£ Cliente recebe **lembrete** com sugest├úo de loja f├¡sica ou reagendamento.
+  228 | 14. Γ¼£ Sinal **configur├ível** no backoffice; **90 %** cobrados no t├⌐rmino com **m├⌐todo simulado**.
+  229 | 15. Γ¼£ **P├ígina de detalhes** por servi├ºo com **carousel**.
+  230 | 16. Γ¼£ **Multicidades** validado com espa├ºamento temporal + **alerta de custos** padronizado.
+  231 | 17. Γ¼£ Lista de horas **revalidada** quando os servi├ºos mudam.
+  232 | 18. Γ¼£ `/gestao` ├⌐ o **dashboard do gestor** (KPIs + gr├íficos) e o funcion├írio ├⌐ encaminhado para a sua **agenda**.
+  233 | 19. Γ¼£ A **agenda** do funcion├írio mostra **s├│** agendamentos de **rotas confirmadas**, em calend├írio.
+  234 | 20. Γ¼£ Uma rota **n├úo** ├⌐ confirmada com servi├ºos por aceitar (**409**), a lista **"Por aceitar"** deixa de mostrar servi├ºos assim que o agendamento entra em rota confirmada, e a rota exp├╡e o **detalhe dos agendamentos qualificados**.
+  235 | 21. Γ¼£ O *dropdown* do autocomplete **n├úo** aparece no carregamento de `/registo` (┬º24.8).
+  236 | 22. Γ¼£ O gestor **reverte/exclui** um agendamento **antes** de a rota ser confirmada e ele volta a **qualificado** (nunca `cancelado`); em rota confirmada **n├úo se altera**.
+  237 | 23. Γ¼£ Existe uma p├ígina de **avisos** por perfil, com **contador de n├úo lidos** no sino e liga├º├úo no menu do utilizador.
+  238 | 
+  239 | ### 28.3 Crit├⌐rios transversais (sempre)
+  240 | Γ£à C├│digo organizado e leg├¡vel ┬╖ Γ£à interface responsiva ┬╖ Γ£à valida├º├╡es client+server ┬╖
+===== backlog 200-222 =====
+--- _dev/docs/spec/backlog.md  (total 340 linhas | mostrar 200..222) ---
+  200 |    `excluir`/`reverter` em `app/` e `modules/` n├úo devolve resultados. O gestor tem de poder **retirar**
+  201 |    um agendamento da rota **antes da decis├úo** ΓåÆ volta a `totalmente_aceite_funcionarios`; a decis├úo passa
+  202 |    a aplicar-se ao **conjunto** inclu├¡do. **Ponto em aberto:** excluir depois de a rota estar `aprovada`
+  203 |    (exige desfazer a decis├úo ou criar rota complementar ΓÇö decidir na implementa├º├úo, sem partir a RN-19).
+  204 | 10. **P├ígina centralizada de avisos (RF-81 ┬╖ D-15):** `/gestao/avisos`, alcan├º├ível no **menu do
+  205 |     utilizador** e pelo **clique no sino**; contador de n├úo lidos por `alerta_fiscal` (global) e, quando
+  206 |     existirem lembretes n├úo fiscais, Γ₧ò `notificacao` com leitura **por utilizador**.
+  207 | 11. **Comiss├╡es do funcion├írio:** p├ígina pr├│pria (proposta `/gestao/comissoes`), acess├¡vel pelo **menu do
+  208 |     utilizador** e, na Fase 7, pela **sidebar**; os dados j├í existem
+  209 |     (`agendamento_servico.valor_recibo_verde_funcionario`, snapshot por aceita├º├úo ΓÇö ┬º11).
+  210 | 
+  211 | > **Fases (28/09/2026):** os m├│dulos do backoffice ficam **alinhados na Fase 6** (pedido do gestor, pelo
+  212 | > prazo); a **Fase 7** reserva-se ├á **sidebar** do backoffice (a renomea├º├úo de `/gestao/agendamentos`
+  213 | > **n├úo** avan├ºa). O Chart.js ├⌐ copiado para `modules/common/lib/chartjs/` na **mesma fase** em que os
+  214 | > gr├íficos forem implementados. **Ordem interna (de ┬º1.9, sem conflito bloqueante):** 6.0 painel +
+  215 | > autoriza├º├úo por perfil ΓåÆ 6.1 fornecedores ΓåÆ 6.2 contabilidade ΓåÆ 6.3 RH ΓåÆ 6.5 ├írea do funcion├írio
+  216 | > (**promo├º├╡es saem da Fase 6** ΓÇö 28/09/2026: passam a **Fase 8**, com o risco de **retro-atualiza├º├úo de
+  217 | > hist├│rico e agendamentos passados** a avaliar antes de implementar). **Depend├¬ncias assinaladas:** o card
+  218 | > *D├¡vidas a Fornecedores* do dashboard s├│ existe depois de 6.1 (C-11 ΓÇö at├⌐ l├í, estado vazio explicativo) e
+  219 | > a **sidebar (Fase 7)** passa a ser a via de acesso ├á p├ígina das **comiss├╡es** (RF-81 n├úo a inclui).
+  220 | 
+  221 | ### 24.8 ΓÇö Defeito: dropdown do autocomplete vis├¡vel no canto superior esquerdo (`/registo`)
+  222 | **Sintoma:** ao carregar `/registo`, o *dropdown* do autocomplete aparece **vazio no canto superior esquerdo**.
+===== backlog 334-341 =====
+--- _dev/docs/spec/backlog.md  (total 340 linhas | mostrar 334..340) ---
+  334 | /gestao/fornecedores*  ΓåÆ gestor      (PRIORIDADE 1 do futuro)
+  335 | ```
+  336 | `*` = por implementar. **Toda a implementa├º├úo futura deve encaixar nesta estrutura** (n├úo criar
+  337 | menus paralelos).
+  338 | **Notas (28/09/2026):** a navbar do backoffice est├í no limite de lota├º├úo ΓÇö a migra├º├úo para **sidebar**
+  339 | (componente exclusivo do backoffice) fica para a **Fase 7**; a renomea├º├úo de `/gestao/agendamentos`
+  340 | **n├úo avan├ºa** (o nome fica) e a **renomea├º├úo** de outras rotas s├│ se fizer com a sidebar.
+===== annex 106-114 =====
+--- _dev/docs/spec/annex.md  (total 114 linhas | mostrar 106..114) ---
+  106 | | Porque o backoffice n├úo est├í em `admin/`?      | Instru├º├úo de n├úo tocar em `/admin` ΓÇö `.clinerules` ┬º1 ┬╖ ┬º25.3                        |
+  107 | | Posso commitar em `dev` ou `main`?             | **N├úo.** S├│ por merge da branch de contexto ΓÇö `.clinerules` ┬º4                       |
+  108 | | Como devem ser as mensagens de commit?         | Resumidas, tipografia simples, sem emoji/markdown, `-` para bullets ΓÇö ┬º4             |
+  109 | 
+  110 | ---
+  111 | 
+  112 | **Vers├úo:** 2.0 ┬╖ **Data:** 24/09/2026 ┬╖ **Estado:** Γ£à Fases 1-5 conclu├¡das e validadas (293 verifica├º├╡es) ┬╖
+  113 | Γ¼£ Fase 6 (requisitos adicionais ΓÇö ┬º24) em curso
+  114 | **Preval├¬ncia:** este documento ├⌐ a **├║nica** fonte de requisitos. As fontes anteriores est├úo revogadas ΓÇö arquivo no Git (┬º29.2)

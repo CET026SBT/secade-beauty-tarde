@@ -1,0 +1,5 @@
+## 19. API / ENDPOINTS
+
+> 🔗 **Fonte única: `_dev/docs/spec/data-api-endpoints.md`** — catálogo de endpoints por perfil, matriz de
+> códigos HTTP, a regra do número publicado em `site-stats` e a lista do que **falta** implementar
+> (§19.1–§19.5). **Não se repete aqui** (o ficheiro foi separado quando este chegou ao limite de 400 linhas).

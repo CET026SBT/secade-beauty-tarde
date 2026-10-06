@@ -150,7 +150,7 @@ const boAppointments = (() => {
     }
 
     async function executeAppointment(bookingId) {
-        if (!await generalUtils.confirmDialog({ text: "Registar a execução deste agendamento? O cliente poderá depois avaliar o serviço." })) return;
+        if (!confirm("Registar a execução deste agendamento? O cliente poderá depois avaliar o serviço.")) return;
 
         const promise = API.admin.executeAppointment(Number(bookingId));
         const preloader = $("#appointmentDetailsBody").preloader(".jq-overlay-process", promise);
@@ -161,7 +161,7 @@ const boAppointments = (() => {
             bootstrap.Modal.getInstance($("#appointmentDetailsModal")[0])?.hide();
             await load();
         } catch (error) {
-            generalUtils.alertDialog({ icon: "error", text: error?.responseJSON?.message || "Não foi possível registar a execução." });
+            alert(error?.responseJSON?.message || "Não foi possível registar a execução.");
         } finally {
             await preloader;
         }
@@ -198,7 +198,7 @@ const boAppointments = (() => {
                 <span class="d-block small text-muted">${generalUtils.formatDateTime(execution.startedAt)}</span>`)
             : "";
 
-        const canExecute = ["totalmente_alocado", "confirmado", "pendente_validacao_logistica_loja"].includes(booking.status) && !execution;
+        const canExecute = ["totalmente_aceite_funcionarios", "confirmado", "pendente_validacao_logistica_loja"].includes(booking.status) && !execution;
 
         return `
             <div class="row g-4">
@@ -245,7 +245,7 @@ const boAppointments = (() => {
         const booking = bookingById(id);
         if (!booking) return;
 
-        if (!await generalUtils.confirmDialog({ icon: "warning", text: `Cancelar o agendamento #${booking.id} de ${booking.customerName}?` })) return;
+        if (!confirm(`Cancelar o agendamento #${booking.id} de ${booking.customerName}?`)) return;
 
         const promise = API.admin.cancelAppointment(Number(id));
         const preloader = $("#appointmentsTableContainer").preloader(".jq-overlay-process", promise);
@@ -255,7 +255,7 @@ const boAppointments = (() => {
             bootstrap.Modal.getInstance($("#appointmentDetailsModal")[0])?.hide();
             await load();
         } catch (error) {
-            generalUtils.alertDialog({ icon: "error", text: error?.responseJSON?.message || "Não foi possível cancelar o agendamento." });
+            alert(error?.responseJSON?.message || "Não foi possível cancelar o agendamento.");
         } finally {
             await preloader;
         }

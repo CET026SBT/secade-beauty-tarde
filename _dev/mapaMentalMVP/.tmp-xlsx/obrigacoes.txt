@@ -1,0 +1,60 @@
+﻿FICHEIRO: Obriga├º├╡es Fiscais.xlsx
+FOLHAS (1): Obriga├º├╡es
+
+====================================================================================================
+FOLHA: Obriga├º├╡es   (xl/worksheets/sheet1.xml)
+====================================================================================================
+1   : I=Declara├º├úo IVA  |  J=Meses  |  K=Declara├º├úo Iva  |  L=Pagamento do IVA
+2   : B=M├¬s  |  C=Obriga├º├úo  |  D=Per├¡odo  |  E=Prazo em 2026  |  F=Estado  |  I=1┬║timestre  |  J=Jan/Fev/Mar  |  K=2026-05-20  |  L=2026-05-25
+3   : B=Janeiro  |  C=SAF-T (comunica├º├úo de faturas)  |  D=Dezembro_2025  |  E=2026-01-09  |  F=_  |  I=2┬║ trimestre  |  J=Abr/Mai/Jun  |  K=2026-09-20  |  L=2026-09-25
+4   : B=Fevereiro  |  C=SAF-T (comunica├º├úo de faturas)  |  D=Janeiro  |  E=2026-02-05  |  F=pendente  |  I=3┬║trimestre  |  J=Jul/Ago/Set  |  K=2026-11-20  |  L=2026-11-25
+5   : C=DRM  |  D=Janeiro  |  E=2026-02-10  |  F=Pendente  |  I=4┬║trimestre  |  J=Out/Nov/Dez  |  K=2027-02-20  |  L=2027-02-25
+6   : C=Reten├º├╡es na fonta IRS/IRC  |  D=Janeiro  |  E=2026-02-20  |  F=pendente
+7   : C=Seguran├ºa Social  |  D=Janeiro  |  E=2026-02-25  |  F=pendente  |  I=IRC
+8   : B=Mar├ºo  |  C=SAF-T (comunica├º├úo de faturas)  |  D=Fevereiro  |  E=2026-03-05  |  F=pendente  |  I=Obriga├º├úo  |  J=Per├¡odo  |  K=Data para a Secade
+9   : C=DMR  |  D=Fevereiro  |  E=2026-03-10  |  F=pendente  |  I=Modelo 22 - IRC  |  J=2026  |  K=2027-06-30
+10  : C=Reten├º├╡es na fonta IRS/IRC  |  D=Fevereiro  |  E=2026-03-20  |  F=pendente  |  I=Pagamento final de IRC  |  J=2026  |  K=2027-06-30
+11  : C=Seguran├ºa Social  |  D=Fevereiro  |  E=2026-03-25  |  F=pendente  |  I=Pagamento por conta de IRC  |  J=2026  |  K=2026-08-31  |  L=2026-09-30
+12  : B=Abril  |  C=SAF-T (comunica├º├úo de faturas)  |  D=Mar├ºo  |  E=2026-04-08  |  F=pendente  |  I=IES/DA  |  J=2026  |  K=2027-07-15  |  N=IES/DA  |  O=Informa├º├úo Empresarial Simplificada/Declara├º├úo Anual
+13  : C=DMR  |  D=Mar├ºo  |  E=2026-04-10  |  F=pendente
+14  : C=Reten├º├╡es na fonta IRS/IRC  |  D=Mar├ºo  |  E=2026-04-20  |  F=pendente
+15  : C=Seguran├ºa Social  |  D=Mar├ºo  |  E=2026-04-25  |  F=pendente
+16  : B=Maio  |  C=SAF-T (comunica├º├úo de faturas)  |  D=Abril  |  E=2026-05-08  |  F=pendente
+17  : C=DMR  |  D=Abril  |  E=2026-05-11  |  F=pendente
+18  : C=IVA-declara├º├úo per├¡odica  |  D=1┬║Trimestre  |  E=2026-05-20  |  F=pendente
+19  : C=IVA-Pagamento  |  D=1┬║Trimestre  |  E=2026-05-25  |  F=pendente
+20  : C=Reten├º├╡es na fonta IRS/IRC  |  D=Abril  |  E=2026-05-20  |  F=pendente
+21  : C=Seguran├ºa Social  |  D=Abril  |  E=2026-05-20  |  F=pendente
+22  : B=Junho  |  C=SAF-T (comunica├º├úo de faturas)  |  D=Maio  |  E=2026-06-05  |  F=pendente
+23  : C=DMR  |  D=Maio  |  E=2026-06-11  |  F=pendente
+24  : C=Reten├º├╡es na fonta IRS/IRC  |  D=Maio  |  E=2026-06-22  |  F=pendente
+25  : C=Seguran├ºa Social  |  D=Maio  |  E=2026-06-25  |  F=pendente
+26  : B=Julho  |  C=SAF-T (comunica├º├úo de faturas)  |  D=Junho  |  E=2026-07-06  |  F=pendente
+27  : C=DMR  |  D=Junho  |  E=2026-07-10  |  F=pendente
+28  : C=Reten├º├╡es na fonta IRS/IRC  |  D=Junho  |  E=2026-07-20  |  F=pendente
+29  : C=Seguran├ºa Social  |  D=Junho  |  E=2026-07-25  |  F=pendente
+30  : B=Agosto  |  C=SAF-T (comunica├º├úo de faturas)  |  D=Julho  |  E=2026-08-31  |  F=pendente
+31  : C=DMR  |  D=Julho  |  E=2026-08-31  |  F=pendente
+32  : C=Reten├º├╡es na fonta IRS/IRC  |  D=Julho  |  E=2026-08-31  |  F=pendente
+33  : C=Seguran├ºa Social  |  D=Julho  |  E=2026-08-25  |  F=pendente
+34  : B=Setembro  |  C=SAF-T (comunica├º├úo de faturas)  |  D=Agosto  |  E=2026-09-07  |  F=pendente
+35  : C=DMR  |  D=Agosto  |  E=2026-09-10  |  F=pendente
+36  : C=IVA-declara├º├úo per├¡odica  |  D=2┬║trimestre  |  E=2026-09-21  |  F=pendente
+37  : C=IVA-Pagamento  |  D=2┬║trimestre  |  E=25/09/20206  |  F=pendente
+38  : C=Reten├º├╡es na fonta IRS/IRC  |  D=Agosto  |  E=2026-09-21  |  F=pendente
+39  : C=Seguran├ºa Social  |  D=Agosto  |  E=2026-09-25  |  F=pendente
+40  : B=Outubro  |  C=SAF-T (comunica├º├úo de faturas)  |  D=Setembro  |  E=2026-10-06  |  F=pendente
+41  : C=DMR  |  D=Setembro  |  E=2026-10-12  |  F=pendente
+42  : C=Reten├º├╡es na fonta IRS/IRC  |  D=Setembro  |  E=2026-10-20  |  F=pendente
+43  : C=Seguran├ºa Social  |  D=Setembro  |  E=2026-10-25  |  F=pendente
+44  : B=Novembro  |  C=SAF-T (comunica├º├úo de faturas)  |  D=Outubro  |  E=2026-11-05  |  F=pendente
+45  : C=DMR  |  D=Outubro  |  E=2026-11-10  |  F=pendente
+46  : C=IVA-declara├º├úo per├¡odica  |  D=3┬║Trimestre  |  E=2026-11-20  |  F=pendente
+47  : C=IVA-Pagamento  |  D=3┬║Trimestre  |  E=2026-11-25  |  F=pendente
+48  : C=Reten├º├╡es na fonta IRS/IRC  |  D=Outubro  |  E=2026-11-20  |  F=pendente
+49  : C=Seguran├ºa Social  |  D=Outubro  |  E=2026-11-25  |  F=pendente
+50  : B=Dezembro  |  C=SAF-T (comunica├º├úo de faturas)  |  D=Novembro  |  E=2026-12-07  |  F=pendente
+51  : C=DMR  |  D=Novembro  |  E=2026-12-10  |  F=pendente
+52  : C=Reten├º├╡es na fonta IRS/IRC  |  D=Novembro  |  E=2026-12-21  |  F=pendente
+53  : C=Seguran├ºa Social  |  D=Novembro  |  E=2026-12-25  |  F=pendente
+

@@ -1,0 +1,46 @@
+﻿FICHEIRO: Menu APOIO 3.docx
+1| Menu Dashboard ΓÇô enviar excel do balancete identificar aos colegas do CET as c├⌐lulas que devem ir buscar pra os Card┬┤s:
+2| CARDs:
+3| Disponibilidades
+4| Dividas a receber
+5| Dividas a pagar
+6| Exemplo:
+7| SS
+8| Podem adicionar gr├íficos
+9| Menu R├üCIOS ΓÇô enviar um excel com os dados e depois identificar aos colegas do CET as c├⌐lulas que devem ir buscar pra os Card┬┤s:
+10| Ativo corrente
+11| Ativo n├úo corrente
+12| Capital pr├│prio
+13| Passivo n├úo corrente
+14| Podem colocar uma imagem do balan├ºo funcional (opcional)
+15| Podem criar CARD fundo de maneio
+16| Menu ATIVOS ΓÇô DIVIDIR O MENU:
+17| ATIVOS - ENVIAR O EXCEL DA LISTA DE ATIVOS
+18| EX:
+19| MAPA DEPRECICA├çOES ΓÇô  ENVIAR EXCEL
+20| Menu FINANCIAMENTOS
+21| DEVEM ENVIAR UM EXCEL COM O PLANO DE AMORTIZA├ç├òES DO EMPRESTIMO
+22| CARD:
+23| CAPITAL INICIAL
+24| CAPITAL AMORTIZADO
+25| CAPITAL EM DIVIDA
+26| T├¬m de dizer quais s├úo as c├⌐lulas que os colegas devem ΓÇ£apanharΓÇ¥ para os card
+27| Podem relacionar os dados em gr├ífico ou tabela,  etc
+28| Menu AN├üLISE FINANCEIRA ΓÇô ENVIAR A DR EM EXCEL
+29| CARD:
+30| RENDIMENTOS ΓÇô IDENTIFICAR AS C├ëLULAS EXCEL
+31| GASTOSΓÇô IDENTIFICAR AS C├ëLULAS EXCEL
+32| RAIΓÇô IDENTIFICAR AS C├ëLULAS EXCEL
+33| Podem colocar uma ΓÇ£caixaΓÇ¥ para inserir a taxa de IRC, e outra ΓÇ£caixaΓÇ¥ com o valor do IRC que a empresa vai pagar
+34| PODEM CRIAR GR├üFICOS:
+35| RELACIONAR REND E GASTOS
+36| RELACIONAR GASTOS E VER O QUE PESA MAIS NA ESTRUTURA DE CUSTOS. PODEM DRIAR OP├çAO DE VER MENSAL, TRIMESTRAL OU ANUAL
+37| ETC..
+38| PODEM COLOCAR UM GR├üFICO COM OS DADOS DO EXCEL DOS RECURSOS HUMANOS: ONDE TENHO OS CUSTOS DE SAL├üRIOS DIVIDIDOS PELA TIPOLOGIA: REMUNERA├ç├âO, SS, IRS.
+39| Menu Recursos Humanos ΓÇô enviar um excel com os dados e depois identificar aos colegas do CET as c├⌐lulas que devem ir buscar pra os Card┬┤s:
+40| PODEM DIVIDIR O MENU:
+41| FUNCION├üRIOS - PODEM TER LISTA DE FUNCION├üRIOS E A REMUNERA├ç├âO MENSAL DE CADA UM.
+42| IMPOSTOS ΓÇô DIVIDIR EM DMR E DRI. (PODEM COLOCAR UM PDF/IMAGEM DAS DECLARA├ç├òES)
+43| CUSTOS FUNCION├üRIOS - PODEM FAZER GRAFICO PARA RELACIONAR O VALOR DA REMURA├çAO, COM O VALOR QUE O FUNCION├üRIO RECEBE.
+
+TOTAL PARAGRAFOS COM TEXTO = 43

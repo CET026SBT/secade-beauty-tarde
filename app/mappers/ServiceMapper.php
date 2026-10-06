@@ -14,7 +14,6 @@ class ServiceMapper extends BaseMapper {
                     ->cast("requer_espaco_fisico",     "requiresPhysicalSpace",    "bool")
                     
                     ->cast("categoria_nome",           "categoryName",             "string")
-                    ->cast("foto_destaque_url",        "photoUrl",                 "string")
                     ->toArray();
     }
 }

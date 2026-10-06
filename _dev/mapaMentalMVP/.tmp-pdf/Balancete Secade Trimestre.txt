@@ -1,0 +1,1849 @@
+NIF: 514740540
+Empresa SECADE Beauty Lda
+Conta 11 até 89
+Balancete (Período, Acumulado) - Exercício de 2026, janeiro (2026) a março (2026)
+Valores em EUR
+Grau Movimento, Saldo das somas
+Conta
+Devedor
+Credor
+Descrição
+Saldos
+Débito
+Crédito
+Acumulado
+Débito
+Período
+Crédito
+Caixa
+9.040,05
+9.040,05
+11
+9.040,05
+Caixa-Outras contas caixa
+9.040,05
+9.040,05
+11999
+9.040,05
+Depósitos à ordem
+100.605,54
+30.861,63
+100.605,54
+12
+30.861,63
+69.743,91
+Depósitos à ordem-Banco CTT
+100.257,55
+30.861,63
+100.257,55
+12001
+30.861,63
+69.395,92
+Depósitos à ordem-Outros bancos
+347,99
+347,99
+12999
+347,99
+Total da classe
+78.783,96
+30.861,63
+109.645,59
+30.861,63
+109.645,59
+Conta
+Devedor
+Credor
+Descrição
+Saldos
+Débito
+Crédito
+Acumulado
+Débito
+Período
+Crédito
+Clientes
+29.645,59
+29.645,59
+29.645,59
+21
+29.645,59
+Clientes-Conta-corrente
+29.645,59
+29.645,59
+29.645,59
+211
+29.645,59
+Clientes-Conta-corrente-Continente
+29.645,59
+29.645,59
+29.645,59
+2111
+29.645,59
+Clientes-Conta-corrente-Continente-Leonor Santos
+620,00
+620,00
+620,00
+2111001
+620,00
+Clientes-Conta-corrente-Continente-Catarina Pixoto
+1.210,10
+1.210,10
+1.210,10
+2111002
+1.210,10
+Clientes-Conta-corrente-Continente-Elvisson Daniel
+570,05
+570,05
+570,05
+2111003
+570,05
+Clientes-Conta-corrente-Continente-Leandro Silva
+495,03
+495,03
+495,03
+2111004
+495,03
+Clientes-Conta-corrente-Continente-Tomásia Contreiras
+430,06
+430,06
+430,06
+2111005
+430,06
+Clientes-Conta-corrente-Continente-Joaquina Matos
+759,90
+759,90
+759,90
+2111006
+759,90
+Clientes-Conta-corrente-Continente-Lídia Correia
+927,97
+927,97
+927,97
+2111007
+927,97
+Clientes-Conta-corrente-Continente-Emanuela Vigílio
+240,02
+240,02
+240,02
+2111008
+240,02
+Clientes-Conta-corrente-Continente-Augusta Contente
+810,05
+810,05
+810,05
+2111009
+810,05
+Clientes-Conta-corrente-Continente-Laura Vanuza
+525,03
+525,03
+525,03
+2111010
+525,03
+Clientes-Conta-corrente-Continente-Florentino Rosa
+440,00
+440,00
+440,00
+2111011
+440,00
+Clientes-Conta-corrente-Continente-Beatriz Baessa
+620,00
+620,00
+620,00
+2111012
+620,00
+Clientes-Conta-corrente-Continente-Tiago Fortunato
+480,14
+480,14
+480,14
+2111013
+480,14
+Clientes-Conta-corrente-Continente-Elias Patente
+270,15
+270,15
+270,15
+2111014
+270,15
+Clientes-Conta-corrente-Continente-Patrícia Gomes
+838,99
+838,99
+838,99
+2111015
+838,99
+Clientes-Conta-corrente-Continente-Alexandra Pinto
+670,07
+670,07
+670,07
+2111016
+670,07
+Clientes-Conta-corrente-Continente-Maria Luana
+836,01
+836,01
+836,01
+2111017
+836,01
+Clientes-Conta-corrente-Continente-Rena Nunes
+500,00
+500,00
+500,00
+2111018
+500,00
+Clientes-Conta-corrente-Continente-Vanessa Cardoso
+370,02
+370,02
+370,02
+2111019
+370,02
+Clientes-Conta-corrente-Continente-Tiago Alves
+685,07
+685,07
+685,07
+2111020
+685,07
+Clientes-Conta-corrente-Continente-Maria Pedro
+140,02
+140,02
+140,02
+2111021
+140,02
+Clientes-Conta-corrente-Continente-Luísa Evidência
+300,00
+300,00
+300,00
+2111022
+300,00
+Clientes-Conta-corrente-Continente-Bianca Brico
+275,03
+275,03
+275,03
+2111023
+275,03
+29.645,59
+Total a transportar
+29.645,59
+29.645,59
+29.645,59
+0,00
+0,00
+1
+9
+Página
+Emitido por Ensino (Powered by - TOConline - https://www.toconline.pt)
+/
+NIF: 514740540
+Empresa SECADE Beauty Lda
+Conta 11 até 89
+Balancete (Período, Acumulado) - Exercício de 2026, janeiro (2026) a março (2026)
+Valores em EUR
+Grau Movimento, Saldo das somas
+Conta
+Devedor
+Credor
+Descrição
+Saldos
+Débito
+Crédito
+Acumulado
+Débito
+Período
+Crédito
+29.645,59
+29.645,59
+29.645,59
+29.645,59
+Transporte classe
+Clientes-Conta-corrente-Continente-Amanda Alves
+463,96
+463,96
+463,96
+2111024
+463,96
+Clientes-Conta-corrente-Continente-Patrícia Freitas
+560,02
+560,02
+560,02
+2111025
+560,02
+Clientes-Conta-corrente-Continente-Beatriz Oliveira
+350,00
+350,00
+350,00
+2111026
+350,00
+Clientes-Conta-corrente-Continente-Lúcia Camarada
+280,05
+280,05
+280,05
+2111027
+280,05
+Clientes-Conta-corrente-Continente-Vivalda Libolo
+200,00
+200,00
+200,00
+2111028
+200,00
+Clientes-Conta-corrente-Continente-Ricardo Sebastião
+120,00
+120,00
+120,00
+2111029
+120,00
+Clientes-Conta-corrente-Continente-Beatriz Gonçalves
+201,97
+201,97
+201,97
+2111030
+201,97
+Clientes-Conta-corrente-Continente-Sónia Silva
+337,91
+337,91
+337,91
+2111031
+337,91
+Clientes-Conta-corrente-Continente-Marta Gonçalves
+656,67
+656,67
+656,67
+2111032
+656,67
+Clientes-Conta-corrente-Continente-Joana Silva
+227,24
+227,24
+227,24
+2111033
+227,24
+Clientes-Conta-corrente-Continente-Sílvia Almeida
+547,96
+547,96
+547,96
+2111034
+547,96
+Clientes-Conta-corrente-Continente-Rita Costa
+686,63
+686,63
+686,63
+2111035
+686,63
+Clientes-Conta-corrente-Continente-Teresa Correia
+356,95
+356,95
+356,95
+2111036
+356,95
+Clientes-Conta-corrente-Continente-Teresa Cardoso
+914,32
+914,32
+914,32
+2111037
+914,32
+Clientes-Conta-corrente-Continente-Claúdia Marques
+848,85
+848,85
+848,85
+2111038
+848,85
+Clientes-Conta-corrente-Continente-Sílvia Gonçalves
+743,88
+743,88
+743,88
+2111039
+743,88
+Clientes-Conta-corrente-Continente-Carla Mourato
+509,87
+509,87
+509,87
+2111040
+509,87
+Clientes-Conta-corrente-Continente-Patrícia Costa
+395,85
+395,85
+395,85
+2111041
+395,85
+Clientes-Conta-corrente-Continente-Joana Pereira
+955,88
+955,88
+955,88
+2111042
+955,88
+Clientes-Conta-corrente-Continente-Filipa Costa
+308,67
+308,67
+308,67
+2111043
+308,67
+Clientes-Conta-corrente-Continente-Joana Pinto
+580,12
+580,12
+580,12
+2111044
+580,12
+Clientes-Conta-corrente-Continente-Daniela Cardoso
+155,08
+155,08
+155,08
+2111045
+155,08
+Clientes-Conta-corrente-Continente-Catarina Correia
+255,04
+255,04
+255,04
+2111046
+255,04
+Clientes-Conta-corrente-Continente-Catarina Lopes
+154,92
+154,92
+154,92
+2111047
+154,92
+Clientes-Conta-corrente-Continente-Sónia Fernandes
+399,84
+399,84
+399,84
+2111048
+399,84
+Clientes-Conta-corrente-Continente-Margarida Santos
+309,88
+309,88
+309,88
+2111049
+309,88
+Clientes-Conta-corrente-Continente-Rita Pereira
+481,96
+481,96
+481,96
+2111050
+481,96
+Clientes-Conta-corrente-Continente-Inês Mendes
+337,91
+337,91
+337,91
+2111051
+337,91
+Clientes-Conta-corrente-Continente-Vera Costa
+242,21
+242,21
+242,21
+2111052
+242,21
+Clientes-Conta-corrente-Continente-Filipa Santos
+655,68
+655,68
+655,68
+2111053
+655,68
+Clientes-Conta-corrente-Continente-Marta Rodrigues
+497,28
+497,28
+497,28
+2111054
+497,28
+Clientes-Conta-corrente-Continente-Marta Almeida
+422,21
+422,21
+422,21
+2111055
+422,21
+Clientes-Conta-corrente-Continente-Sílvia Ferreira
+213,48
+213,48
+213,48
+2111056
+213,48
+29.645,59
+Total a transportar
+29.645,59
+29.645,59
+29.645,59
+0,00
+0,00
+2
+9
+Página
+Emitido por Ensino (Powered by - TOConline - https://www.toconline.pt)
+/
+NIF: 514740540
+Empresa SECADE Beauty Lda
+Conta 11 até 89
+Balancete (Período, Acumulado) - Exercício de 2026, janeiro (2026) a março (2026)
+Valores em EUR
+Grau Movimento, Saldo das somas
+Conta
+Devedor
+Credor
+Descrição
+Saldos
+Débito
+Crédito
+Acumulado
+Débito
+Período
+Crédito
+29.645,59
+29.645,59
+29.645,59
+29.645,59
+Transporte classe
+Clientes-Conta-corrente-Continente-Rita De Jesus
+425,90
+425,90
+425,90
+2111057
+425,90
+Clientes-Conta-corrente-Continente-Maria Ferreira
+365,95
+365,95
+365,95
+2111058
+365,95
+Clientes-Conta-corrente-Continente-Margarida Gonçalves
+279,95
+279,95
+279,95
+2111059
+279,95
+Clientes-Conta-corrente-Continente-Daniela Ribeiro
+230,07
+230,07
+230,07
+2111060
+230,07
+Clientes-Conta-corrente-Continente-Daniela Oliveira
+155,08
+155,08
+155,08
+2111061
+155,08
+Clientes-Conta-corrente-Continente-Ana Lopes
+305,04
+305,04
+305,04
+2111062
+305,04
+Clientes-Conta-corrente-Continente-Teresa Lopes
+122,21
+122,21
+122,21
+2111063
+122,21
+Clientes-Conta-corrente-Continente-Inês Lopes
+203,44
+203,44
+203,44
+2111064
+203,44
+Clientes-Conta-corrente-Continente-Daniela De Jesus
+171,95
+171,95
+171,95
+2111065
+171,95
+Fornecedores
+5.525,96
+7.488,00
+5.525,96
+22
+7.488,00
+1.962,04
+Fornecedores-Conta-corrente
+5.525,96
+7.488,00
+5.525,96
+221
+7.488,00
+1.962,04
+Fornecedores-Conta-corrente-Continente
+5.525,96
+7.488,00
+5.525,96
+2211
+7.488,00
+1.962,04
+Fornecedores-Conta-corrente-Continente-ALLPRA UNIPESSOAL LDA
+59,49
+2211007
+59,49
+59,49
+Fornecedores-Conta-corrente-Continente-MODELO CONTINENTE
+HIPERMERCADOS S A
+35,06
+51,30
+35,06
+2211008
+51,30
+16,24
+Fornecedores-Conta-corrente-Continente-Seguros Logo, S.A
+536,88
+2211009
+536,88
+536,88
+Fornecedores-Conta-corrente-Continente-PRIMOR INT SL -
+UNIPERSONAL - SUCURSAL EM PORTUGAL
+782,16
+782,16
+782,16
+2211015
+782,16
+Fornecedores-Conta-corrente-Continente-Município de Évora
+129,00
+2211031
+129,00
+129,00
+Fornecedores-Conta-corrente-Continente-Endesa
+384,03
+2211032
+384,03
+384,03
+Fornecedores-Conta-corrente-Continente-MEO
+260,76
+260,76
+260,76
+2211033
+260,76
+Fornecedores-Conta-corrente-Continente-Galp
+977,86
+1.457,56
+977,86
+2211034
+1.457,56
+479,70
+Fornecedores-Conta-corrente-Continente-REPSOL PORTUGUESA, LDA
+190,65
+547,35
+190,65
+2211035
+547,35
+356,70
+Fornecedores-Conta-corrente-Continente-Manuel Jacinto (Renda)
+640,00
+640,00
+640,00
+2211036
+640,00
+Fornecedores-Conta-corrente-Continente-BANCO CTT, S.A.
+30,15
+30,15
+30,15
+2211037
+30,15
+Fornecedores-Conta-corrente-Continente-Consumíveis
+492,00
+492,00
+492,00
+2211038
+492,00
+Fornecedores-Conta-corrente-Continente-João Miguel Ferreira
+660,00
+660,00
+660,00
+2211040
+660,00
+Fornecedores-Conta-corrente-Continente-Manuel Jacinto
+960,00
+960,00
+960,00
+2211041
+960,00
+Fornecedores-Conta-corrente-Continente-Stela Cristina
+458,20
+458,20
+458,20
+2211042
+458,20
+Fornecedores-Conta-corrente-Continente-MOLONI, UNIPESSOAL, LDA
+39,12
+39,12
+39,12
+2211043
+39,12
+Pessoal
+18.817,29
+18.817,29
+18.817,29
+23
+18.817,29
+Pessoal-Remunerações a pagar
+18.817,29
+18.817,29
+18.817,29
+231
+18.817,29
+Pessoal-Remunerações a pagar-Pessoal
+18.817,29
+18.817,29
+18.817,29
+2312
+18.817,29
+Estado e outros entes públicos
+33.332,68
+30.379,87
+33.332,68
+24
+30.379,87
+2.952,81
+Retenção de impostos sobre rendimentos
+793,00
+1.189,00
+793,00
+242
+1.189,00
+396,00
+87.321,52
+Total a transportar
+86.330,75
+87.321,52
+86.330,75
+990,77
+3
+9
+Página
+Emitido por Ensino (Powered by - TOConline - https://www.toconline.pt)
+/
+NIF: 514740540
+Empresa SECADE Beauty Lda
+Conta 11 até 89
+Balancete (Período, Acumulado) - Exercício de 2026, janeiro (2026) a março (2026)
+Valores em EUR
+Grau Movimento, Saldo das somas
+Conta
+Devedor
+Credor
+Descrição
+Saldos
+Débito
+Crédito
+Acumulado
+Débito
+Período
+Crédito
+1.962,04
+2.952,81
+87.321,52
+86.330,75
+87.321,52
+86.330,75
+Transporte classe
+Retenção de impostos sobre rendimentos-Trabalho dependente
+793,00
+1.189,00
+793,00
+2421
+1.189,00
+396,00
+Retenção de impostos sobre rendimentos-Trabalho
+dependente-Retenção IRS
+793,00
+1.189,00
+793,00
+24211
+1.189,00
+396,00
+Retenção de impostos sobre rendimentos-Trabalho
+dependente-Retenção IRS-Continente
+793,00
+1.189,00
+793,00
+242111
+1.189,00
+396,00
+IVA - Imposto sobre o valor acrescentado
+27.933,96
+22.282,29
+27.933,96
+243
+22.282,29
+5.651,67
+IVA - Dedutível
+11.195,21
+11.195,21
+11.195,21
+2432
+11.195,21
+IVA - Dedutível-Investimentos
+10.494,77
+10.494,77
+10.494,77
+24322
+10.494,77
+IVA - Dedutível-Investimentos-Normal
+10.494,77
+10.494,77
+10.494,77
+243223
+10.494,77
+IVA - Dedutível-Investimentos-Normal-Operações gerais
+10.494,77
+10.494,77
+10.494,77
+2432231
+10.494,77
+IVA - Dedutível-Investimentos-Normal-Operações gerais-Continente
+10.494,77
+10.494,77
+10.494,77
+24322311
+10.494,77
+IVA - Dedutível-Outros bens e serviços
+700,44
+700,44
+700,44
+24323
+700,44
+IVA - Dedutível-Outros bens e serviços-Reduzida
+10,64
+10,64
+10,64
+243231
+10,64
+IVA - Dedutível-Outros bens e serviços-Reduzida-Operações gerais
+10,64
+10,64
+10,64
+2432311
+10,64
+IVA - Dedutível-Outros bens e serviços-Reduzida-Operações
+gerais-Continente
+10,64
+10,64
+10,64
+24323111
+10,64
+IVA - Dedutível-Outros bens e serviços-Normal
+689,80
+689,80
+689,80
+243233
+689,80
+IVA - Dedutível-Outros bens e serviços-Normal-Operações gerais
+689,80
+689,80
+689,80
+2432331
+689,80
+IVA - Dedutível-Outros bens e serviços-Normal-Operações
+gerais-Continente
+689,80
+689,80
+689,80
+24323311
+689,80
+IVA - Liquidado
+5.543,54
+5.543,54
+5.543,54
+2433
+5.543,54
+IVA - Liquidado-Outros bens e serviços
+5.543,54
+5.543,54
+5.543,54
+24333
+5.543,54
+IVA - Liquidado-Outros bens e serviços-Normal
+5.543,54
+5.543,54
+5.543,54
+243333
+5.543,54
+IVA - Liquidado-Outros bens e serviços-Normal-Operações gerais
+5.543,54
+5.543,54
+5.543,54
+2433331
+5.543,54
+IVA - Liquidado-Outros bens e serviços-Normal-Operações
+gerais-Continente
+5.543,54
+5.543,54
+5.543,54
+24333311
+5.543,54
+IVA - Apuramento
+11.195,21
+5.543,54
+11.195,21
+2435
+5.543,54
+5.651,67
+Contribuições para a segurança social
+4.605,72
+6.908,58
+4.605,72
+245
+6.908,58
+2.302,86
+Contribuições para a segurança social-Segurança social
+4.605,72
+6.908,58
+4.605,72
+2451
+6.908,58
+2.302,86
+Contribuições para a segurança social-Segurança social-Pessoal
+4.605,72
+6.908,58
+4.605,72
+24512
+6.908,58
+2.302,86
+Financiamentos obtidos
+645,34
+50.000,00
+645,34
+25
+50.000,00
+49.354,66
+Instituições de crédito e sociedades financeiras
+645,34
+50.000,00
+645,34
+251
+50.000,00
+49.354,66
+Empréstimos bancários
+645,34
+50.000,00
+645,34
+2511
+50.000,00
+49.354,66
+Empréstimos bancários-Corrente
+645,34
+50.000,00
+645,34
+25111
+50.000,00
+49.354,66
+Empréstimos bancários-Corrente-Outros
+645,34
+50.000,00
+645,34
+251119
+50.000,00
+49.354,66
+Accionistas / sócios
+30.000,00
+30.000,00
+30.000,00
+26
+30.000,00
+117.966,86
+Total a transportar
+166.330,75
+117.966,86
+166.330,75
+48.363,89
+4
+9
+Página
+Emitido por Ensino (Powered by - TOConline - https://www.toconline.pt)
+/
+NIF: 514740540
+Empresa SECADE Beauty Lda
+Conta 11 até 89
+Balancete (Período, Acumulado) - Exercício de 2026, janeiro (2026) a março (2026)
+Valores em EUR
+Grau Movimento, Saldo das somas
+Conta
+Devedor
+Credor
+Descrição
+Saldos
+Débito
+Crédito
+Acumulado
+Débito
+Período
+Crédito
+51.316,70
+2.952,81
+117.966,86
+166.330,75
+117.966,86
+166.330,75
+Transporte classe
+Quotas não liberadas
+30.000,00
+30.000,00
+30.000,00
+262
+30.000,00
+Outras contas a receber e a pagar
+56.124,21
+27
+56.124,21
+56.124,21
+Fornecedores de investimentos
+56.124,21
+271
+56.124,21
+56.124,21
+Fornecedores de investimentos
+56.124,21
+2711
+56.124,21
+56.124,21
+Fornecedores de investimentos-Corrente
+56.124,21
+27111
+56.124,21
+56.124,21
+Fornecedores de investimentos-Corrente-Continente
+56.124,21
+271111
+56.124,21
+56.124,21
+Fornecedores de investimentos-Corrente-Continente-Stand Virtual
+55.000,00
+271111001
+55.000,00
+55.000,00
+Fornecedores de investimentos-Corrente-Continente-WORTEN -
+EQUIPAMENTOS PARA O LAR S A
+1.124,21
+271111002
+1.124,21
+1.124,21
+Total da classe
+104.488,10
+222.454,96
+117.966,86
+222.454,96
+117.966,86
+Conta
+Devedor
+Credor
+Descrição
+Saldos
+Débito
+Crédito
+Acumulado
+Débito
+Período
+Crédito
+Activos fixos tangíveis
+45.629,44
+2.870,88
+45.629,44
+43
+2.870,88
+42.758,56
+Equipamentos de transporte
+44.715,45
+44.715,45
+434
+44.715,45
+Equipamentos de transporte-Continente
+44.715,45
+44.715,45
+4341
+44.715,45
+Equipamentos de transporte-Continente-Operações gerais
+44.715,45
+44.715,45
+43411
+44.715,45
+Equipamentos de transporte-Continente-Operações gerais-IVA
+dedutível
+44.715,45
+44.715,45
+434111
+44.715,45
+Equipamentos de transporte-Continente-Operações gerais-IVA
+dedutível-Normal
+44.715,45
+44.715,45
+4341113
+44.715,45
+Equipamento administrativo
+913,99
+913,99
+435
+913,99
+Equipamento administrativo-Continente
+913,99
+913,99
+4351
+913,99
+Equipamento administrativo-Continente-Operações gerais
+913,99
+913,99
+43511
+913,99
+Equipamento administrativo-Continente-Operações gerais-IVA
+dedutível
+913,99
+913,99
+435111
+913,99
+Equipamento administrativo-Continente-Operações gerais-IVA
+dedutível-Normal
+913,99
+913,99
+4351113
+913,99
+Depreciações acumuladas
+2.870,88
+438
+2.870,88
+2.870,88
+Depreciações acumuladas-Equipamentos de transporte
+2.794,71
+4384
+2.794,71
+2.794,71
+Depreciações acumuladas-Equipamento administrativo
+76,17
+4385
+76,17
+76,17
+Total da classe
+42.758,56
+2.870,88
+45.629,44
+2.870,88
+45.629,44
+Conta
+Devedor
+Credor
+Descrição
+Saldos
+Débito
+Crédito
+Acumulado
+Débito
+Período
+Crédito
+Capital
+30.000,00
+51
+30.000,00
+30.000,00
+Capital social
+30.000,00
+511
+30.000,00
+30.000,00
+Total da classe
+30.000,00
+30.000,00
+30.000,00
+5
+9
+Página
+Emitido por Ensino (Powered by - TOConline - https://www.toconline.pt)
+/
+NIF: 514740540
+Empresa SECADE Beauty Lda
+Conta 11 até 89
+Balancete (Período, Acumulado) - Exercício de 2026, janeiro (2026) a março (2026)
+Valores em EUR
+Grau Movimento, Saldo das somas
+Conta
+Devedor
+Credor
+Descrição
+Saldos
+Débito
+Crédito
+Acumulado
+Débito
+Período
+Crédito
+Fornecimentos e serviços externos
+6.527,30
+6.527,30
+62
+6.527,30
+Serviços especializados
+930,58
+930,58
+622
+930,58
+Serviços especializados-Trabalhos especializados
+40,41
+40,41
+6221
+40,41
+Serviços especializados-Trabalhos especializados-Continente
+40,41
+40,41
+62211
+40,41
+Serviços especializados-Trabalhos
+especializados-Continente-Operações gerais
+40,41
+40,41
+622111
+40,41
+Serviços especializados-Trabalhos
+especializados-Continente-Operações gerais-IVA dedutível
+40,41
+40,41
+6221111
+40,41
+Serviços especializados-Trabalhos
+especializados-Continente-Operações gerais-IVA dedutível-Normal
+40,41
+40,41
+62211113
+40,41
+Serviços especializados-Publicidade e propaganda
+150,00
+150,00
+6222
+150,00
+Serviços especializados-Publicidade e propaganda-Continente
+150,00
+150,00
+62221
+150,00
+Serviços especializados-Publicidade e
+propaganda-Continente-Operações gerais
+150,00
+150,00
+622211
+150,00
+Serviços especializados-Publicidade e
+propaganda-Continente-Operações gerais-IVA dedutível
+150,00
+150,00
+6222111
+150,00
+Serviços especializados-Publicidade e
+propaganda-Continente-Operações gerais-IVA dedutível-Normal
+150,00
+150,00
+62221113
+150,00
+Serviços especializados-Honorários
+660,00
+660,00
+6224
+660,00
+Serviços especializados-Honorários-Continente
+660,00
+660,00
+62241
+660,00
+Serviços especializados-Honorários-Continente-Operações gerais
+310,00
+310,00
+622411
+310,00
+Serviços especializados-Honorários-Continente-Operações gerais-IVA
+não dedutível
+310,00
+310,00
+6224113
+310,00
+Serviços especializados-Honorários-Continente-Operações gerais-IVA
+não dedutível-Normal
+310,00
+310,00
+62241133
+310,00
+Serviços especializados-Honorários-Continente-Operações isentas
+350,00
+350,00
+622412
+350,00
+Serviços especializados-Conservação e reparação
+48,37
+48,37
+6226
+48,37
+Serviços especializados-Conservação e reparação-Continente
+48,37
+48,37
+62261
+48,37
+Serviços especializados-Conservação e
+reparação-Continente-Operações gerais
+48,37
+48,37
+622611
+48,37
+Serviços especializados-Conservação e
+reparação-Continente-Operações gerais-IVA dedutível
+48,37
+48,37
+6226111
+48,37
+Serviços especializados-Conservação e
+reparação-Continente-Operações gerais-IVA dedutível-Normal
+48,37
+48,37
+62261113
+48,37
+Serviços especializados-Outros serviços especializados
+31,80
+31,80
+6228
+31,80
+Serviços especializados-Outros serviços especializados-Continente
+31,80
+31,80
+62281
+31,80
+Serviços especializados-Outros serviços
+especializados-Continente-Operações gerais
+31,80
+31,80
+622811
+31,80
+Serviços especializados-Outros serviços
+especializados-Continente-Operações gerais-IVA dedutível
+31,80
+31,80
+6228111
+31,80
+Serviços especializados-Outros serviços
+especializados-Continente-Operações gerais-IVA dedutível-Normal
+31,80
+31,80
+62281113
+31,80
+6.527,30
+Total a transportar
+6.527,30
+6.527,30
+6
+9
+Página
+Emitido por Ensino (Powered by - TOConline - https://www.toconline.pt)
+/
+NIF: 514740540
+Empresa SECADE Beauty Lda
+Conta 11 até 89
+Balancete (Período, Acumulado) - Exercício de 2026, janeiro (2026) a março (2026)
+Valores em EUR
+Grau Movimento, Saldo das somas
+Conta
+Devedor
+Credor
+Descrição
+Saldos
+Débito
+Crédito
+Acumulado
+Débito
+Período
+Crédito
+6.527,30
+6.527,30
+6.527,30
+Transporte classe
+Materiais
+1.020,00
+1.020,00
+623
+1.020,00
+Materiais-Ferramentas e utensílios de desgaste rápido
+1.020,00
+1.020,00
+6231
+1.020,00
+Materiais-Ferramentas e utensílios de desgaste rápido-Continente
+1.020,00
+1.020,00
+62311
+1.020,00
+Materiais-Ferramentas e utensílios de desgaste
+rápido-Continente-Operações gerais
+1.020,00
+1.020,00
+623111
+1.020,00
+Materiais-Ferramentas e utensílios de desgaste
+rápido-Continente-Operações gerais-IVA dedutível
+1.020,00
+1.020,00
+6231111
+1.020,00
+Materiais-Ferramentas e utensílios de desgaste
+rápido-Continente-Operações gerais-IVA dedutível-Normal
+1.020,00
+1.020,00
+62311113
+1.020,00
+Energia e fluidos
+2.255,85
+2.255,85
+624
+2.255,85
+Energia e fluidos-Eletricidade
+312,21
+312,21
+6241
+312,21
+Energia e fluidos-Eletricidade-Continente
+312,21
+312,21
+62411
+312,21
+Energia e fluidos-Eletricidade-Continente-Operações gerais
+312,21
+312,21
+624111
+312,21
+Energia e fluidos-Eletricidade-Continente-Operações gerais-IVA
+dedutível
+312,21
+312,21
+6241111
+312,21
+Energia e fluidos-Eletricidade-Continente-Operações gerais-IVA
+dedutível-Normal
+312,21
+312,21
+62411113
+312,21
+Energia e fluidos-Combustíveis
+1.471,28
+1.471,28
+6242
+1.471,28
+Energia e fluidos-Combustíveis-Continente
+1.471,28
+1.471,28
+62421
+1.471,28
+Energia e fluidos-Combustíveis-Continente-Operações gerais
+1.471,28
+1.471,28
+624211
+1.471,28
+Energia e fluidos-Combustíveis-Continente-Operações gerais-IVA
+dedutível
+1.471,28
+1.471,28
+6242111
+1.471,28
+Energia e fluidos-Combustíveis-Continente-Operações gerais-IVA
+dedutível-Normal
+1.471,28
+1.471,28
+62421113
+1.471,28
+Energia e fluidos-Água
+177,36
+177,36
+6243
+177,36
+Energia e fluidos-Água-Continente
+177,36
+177,36
+62431
+177,36
+Energia e fluidos-Água-Continente-Operações gerais
+177,36
+177,36
+624311
+177,36
+Energia e fluidos-Água-Continente-Operações gerais-IVA dedutível
+177,36
+177,36
+6243111
+177,36
+Energia e fluidos-Água-Continente-Operações gerais-IVA
+dedutível-Reduzida
+177,36
+177,36
+62431111
+177,36
+Energia e fluidos-Outros energia e fluidos
+295,00
+295,00
+6248
+295,00
+Energia e fluidos-Outros energia e fluidos-Continente
+295,00
+295,00
+62481
+295,00
+Energia e fluidos-Outros energia e fluidos-Continente-Operações
+gerais
+295,00
+295,00
+624811
+295,00
+Energia e fluidos-Outros energia e fluidos-Continente-Operações
+gerais-IVA dedutível
+295,00
+295,00
+6248111
+295,00
+Energia e fluidos-Outros energia e fluidos-Continente-Operações
+gerais-IVA dedutível-Normal
+295,00
+295,00
+62481113
+295,00
+Serviços diversos
+2.320,87
+2.320,87
+626
+2.320,87
+Serviços diversos-Rendas e alugueres
+1.600,00
+1.600,00
+6261
+1.600,00
+6.527,30
+Total a transportar
+6.527,30
+6.527,30
+7
+9
+Página
+Emitido por Ensino (Powered by - TOConline - https://www.toconline.pt)
+/
+NIF: 514740540
+Empresa SECADE Beauty Lda
+Conta 11 até 89
+Balancete (Período, Acumulado) - Exercício de 2026, janeiro (2026) a março (2026)
+Valores em EUR
+Grau Movimento, Saldo das somas
+Conta
+Devedor
+Credor
+Descrição
+Saldos
+Débito
+Crédito
+Acumulado
+Débito
+Período
+Crédito
+6.527,30
+6.527,30
+6.527,30
+Transporte classe
+Serviços diversos-Rendas e alugueres-Continente
+1.600,00
+1.600,00
+62611
+1.600,00
+Serviços diversos-Rendas e alugueres-Continente-Operações gerais
+960,00
+960,00
+626111
+960,00
+Serviços diversos-Rendas e alugueres-Continente-Operações
+gerais-IVA não dedutível
+960,00
+960,00
+6261113
+960,00
+Serviços diversos-Rendas e alugueres-Continente-Operações
+gerais-IVA não dedutível-Normal
+960,00
+960,00
+62611133
+960,00
+Serviços diversos-Rendas e alugueres-Continente-Operações isentas
+640,00
+640,00
+626112
+640,00
+Serviços diversos-Comunicação
+212,00
+212,00
+6262
+212,00
+Serviços diversos-Comunicação-Continente
+212,00
+212,00
+62621
+212,00
+Serviços diversos-Comunicação-Continente-Operações gerais
+212,00
+212,00
+626211
+212,00
+Serviços diversos-Comunicação-Continente-Operações gerais-IVA
+dedutível
+212,00
+212,00
+6262111
+212,00
+Serviços diversos-Comunicação-Continente-Operações gerais-IVA
+dedutível-Normal
+212,00
+212,00
+62621113
+212,00
+Serviços diversos-Seguros
+362,17
+362,17
+6263
+362,17
+Serviços diversos-Seguros-Continente
+362,17
+362,17
+62631
+362,17
+Serviços diversos-Seguros-Continente-Operações gerais
+362,17
+362,17
+626311
+362,17
+Serviços diversos-Seguros-Continente-Operações gerais-IVA não
+dedutível
+362,17
+362,17
+6263113
+362,17
+Serviços diversos-Seguros-Continente-Operações gerais-IVA não
+dedutível-Normal
+362,17
+362,17
+62631133
+362,17
+Serviços diversos-Limpeza, higiene e conforto
+41,70
+41,70
+6267
+41,70
+Serviços diversos-Limpeza, higiene e conforto-Continente
+41,70
+41,70
+62671
+41,70
+Serviços diversos-Limpeza, higiene e conforto-Continente-Operações
+gerais
+41,70
+41,70
+626711
+41,70
+Serviços diversos-Limpeza, higiene e conforto-Continente-Operações
+gerais-IVA dedutível
+41,70
+41,70
+6267111
+41,70
+Serviços diversos-Limpeza, higiene e conforto-Continente-Operações
+gerais-IVA dedutível-Normal
+41,70
+41,70
+62671113
+41,70
+Serviços diversos-Outros serviços
+105,00
+105,00
+6268
+105,00
+Serviços diversos-Outros serviços-Continente
+105,00
+105,00
+62681
+105,00
+Serviços diversos-Outros serviços-Continente-Operações gerais
+105,00
+105,00
+626811
+105,00
+Serviços diversos-Outros serviços-Continente-Operações gerais-IVA
+dedutível
+105,00
+105,00
+6268111
+105,00
+Serviços diversos-Outros serviços-Continente-Operações gerais-IVA
+dedutível-Normal
+105,00
+105,00
+62681113
+105,00
+Gastos com o pessoal
+27.303,36
+69,23
+27.303,36
+63
+69,23
+27.234,13
+Gastos com o pessoal-Pessoal
+22.262,40
+69,23
+22.262,40
+632
+69,23
+22.193,17
+Gastos com o pessoal-Pessoal-Vencimentos mensais
+19.950,00
+69,23
+19.950,00
+6321
+69,23
+19.880,77
+Gastos com o pessoal-Pessoal-Subsídio de alimentação
+2.312,40
+2.312,40
+6324
+2.312,40
+33.830,66
+Total a transportar
+69,23
+33.830,66
+69,23
+33.761,43
+8
+9
+Página
+Emitido por Ensino (Powered by - TOConline - https://www.toconline.pt)
+/
+NIF: 514740540
+Empresa SECADE Beauty Lda
+Conta 11 até 89
+Balancete (Período, Acumulado) - Exercício de 2026, janeiro (2026) a março (2026)
+Valores em EUR
+Grau Movimento, Saldo das somas
+Conta
+Devedor
+Credor
+Descrição
+Saldos
+Débito
+Crédito
+Acumulado
+Débito
+Período
+Crédito
+33.761,43
+33.830,66
+69,23
+33.830,66
+69,23
+Transporte classe
+Encargos sobre remunerações
+4.721,70
+4.721,70
+635
+4.721,70
+Encargos sobre remunerações-Pessoal
+4.721,70
+4.721,70
+6352
+4.721,70
+Seguros de acidentes no trabalho e doenças profissionais
+45,56
+45,56
+636
+45,56
+Outros gastos com o pessoal
+273,70
+273,70
+638
+273,70
+Gastos de depreciação e de amortização
+2.870,88
+2.870,88
+64
+2.870,88
+Activos fixos tangíveis
+2.870,88
+2.870,88
+642
+2.870,88
+Activos fixos tangíveis-Equipamentos de transporte
+2.794,71
+2.794,71
+6424
+2.794,71
+Activos fixos tangíveis-Equipamento administrativo
+76,17
+76,17
+6425
+76,17
+Gastos de financiamento
+415,32
+415,32
+69
+415,32
+Juros suportados
+415,32
+415,32
+691
+415,32
+Juros de financiamento obtidos
+415,32
+415,32
+6911
+415,32
+Total da classe
+37.047,63
+69,23
+37.116,86
+69,23
+37.116,86
+Conta
+Devedor
+Credor
+Descrição
+Saldos
+Débito
+Crédito
+Acumulado
+Débito
+Período
+Crédito
+Prestações de serviços
+24.102,05
+72
+24.102,05
+24.102,05
+Prestações de serviços-Serviço A
+23.931,05
+721
+23.931,05
+23.931,05
+Prestações de serviços-Serviço A-Continente
+23.931,05
+7211
+23.931,05
+23.931,05
+Prestações de serviços-Serviço A-Continente-IVA liquidado
+23.931,05
+72111
+23.931,05
+23.931,05
+Prestações de serviços-Serviço A-Continente-IVA liquidado-Normal
+23.931,05
+721113
+23.931,05
+23.931,05
+Prestações de serviços-Serviço B
+171,00
+722
+171,00
+171,00
+Prestações de serviços-Serviço B-Continente
+171,00
+7221
+171,00
+171,00
+Prestações de serviços-Serviço B-Continente-IVA liquidado
+171,00
+72211
+171,00
+171,00
+Prestações de serviços-Serviço B-Continente-IVA liquidado-Normal
+171,00
+722113
+171,00
+171,00
+Total da classe
+24.102,05
+24.102,05
+24.102,05
+Total
+0,00
+310.358,75
+310.358,75
+310.358,75
+310.358,75
+9
+9
+Página
+Emitido por Ensino (Powered by - TOConline - https://www.toconline.pt)
+/

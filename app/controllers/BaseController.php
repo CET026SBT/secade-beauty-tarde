@@ -23,13 +23,4 @@ abstract class BaseController {
         return is_array($inputData) ? $inputData : [];
     }
 
-    /**
-     * Ficheiro enviado num pedido multipart (transporte do pedido, como o
-     * `getRequestData()`). Devolve `[]` quando o campo não vem — quem consome valida.
-     */
-    protected function getUploadedFile(string $field): array {
-        $file = $_FILES[$field] ?? null;
-        return is_array($file) ? $file : [];
-    }
-
     }

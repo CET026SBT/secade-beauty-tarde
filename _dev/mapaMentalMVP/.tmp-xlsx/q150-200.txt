@@ -1,0 +1,49 @@
+﻿19. Vimos na folha que a taxa de IRS é diferente de trabalhador para trabalhador
+    (8%, 3,6% e 8,56%) e que não há uma percentagem única da empresa, certo? As
+    taxas que lá estão mantêm-se de mês para mês ou mudam? Vêm das declarações
+    de DMR/DRI que já nos mostraram?
+
+20. As declarações de impostos devem ficar anexadas ao registo no calendário?
+
+21. Ao desativar um funcionário, o que acontece aos serviços que já lhe estão
+    atribuídos e às marcações futuras?
+
+--- DOS FICHEIROS NOVOS (pontos em que os documentos não dizem o mesmo) ---
+
+29. Nos Rácios, as células que nos indicaram para os cinco rácios (liquidez,
+    fundo de maneio, autonomia financeira, endividamento e solvabilidade) não
+    apontam para onde os valores estão. Os rácios estão num segundo quadro, mais
+    abaixo na mesma folha. Confirmam que é desse quadro que devemos ler?
+
+30. O card "Passivo não corrente" ficou sem células indicadas, e nos dados é
+    sempre zero. Indicam as células, ou dispensamos o card por agora?
+
+31. Nas "Dívidas a pagar" está a ser somado o IVA, que nesse mês está A FAVOR da
+    empresa (saldo devedor), a três valores que a empresa deve. Querem a posição
+    líquida (como está na folha) ou o total que a empresa deve?
+
+32. No financiamento há dois valores diferentes para a dívida: 24 016,80 € no
+    plano de amortização e 49 354,66 € na conta do balancete (que também entra
+    nas dívidas a pagar). Qual deve aparecer no card?
+
+33. O subsídio de alimentação não é igual todos os meses: vi 129,15 €, 123,00 € e
+    135,30 € no mesmo trimestre, porque os dias úteis variam. Introduzem o valor
+    de cada mês, ou querem que calculemos os dias?
+
+34. Na declaração DRI aparecem 29 dias por trabalhador, mas no subsídio de
+    alimentação os dias usados são cerca de 21. São critérios diferentes ou há
+    uma gralha numa das folhas?
+
+35. O documento novo deixou de pedir os gráficos e a opção mensal / trimestral /
+    anual que constavam do primeiro. Mantemos só o gráfico de "Custos de
+    funcionários" (remuneração vs. valor que o funcionário recebe)?
+--- IMPORTAÇÃO DE FICHEIROS ---
+
+36. Os valores dos vossos ficheiros passam a ser importados para a base de dados, e a
+    importação vai poder ser feita por vocês no backoffice (carregar o ficheiro e
+    gravar). Uma importação nova substitui a anterior por completo, para não haver
+    valores repetidos. A dúvida é de PRIORIDADE: em cada indicador, o valor deve vir
+    do FICHEIRO importado (o balancete) ou do que o sistema já calcula sozinho
+    (marcações, rotas, comissões)? E quando os dois lados têm valores para o mesmo
+    número, qual manda? (Exemplo: os "Gastos" do balancete e os custos de rota que a
+    plataforma já conhece — somam-se, ou conta só um deles?)

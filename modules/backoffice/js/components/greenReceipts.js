@@ -1,28 +1,24 @@
 const boGreenReceipts = (() => {
-    const state = { configs: [], active: null, defaults: { reciboVerde: 70, efetivo: 0 } };
-
-    function contractLabel(tipo) {
-        return tipo === "recibo_verde" ? "Recibos verdes" : "Efetivo (contratado)";
-    }
+    const state = { configs: [], active: null, defaults: { employeePercentage: 70, platformPercentage: 30 } };
 
     function renderActive() {
         const active = state.active || {};
-        const configs = active.configs || [];
-        const recibo = configs.find(c => c.contractType === "recibo_verde");
-        const efetivo = configs.find(c => c.contractType === "efetivo_contratado");
-
-        const reciboPct = recibo?.commissionPercentage ?? state.defaults.reciboVerde;
-        const efetivoPct = efetivo?.commissionPercentage ?? state.defaults.efetivo;
+        const percentage = active.employeePercentage ?? state.defaults.employeePercentage;
+        const platform = active.platformPercentage ?? state.defaults.platformPercentage;
 
         $("#activeConfigBox").html(`
             <div class="row g-3">
                 <div class="col-6">
-                    <span class="text-muted small d-block">Recibos verdes</span>
-                    <span class="fs-3 fw-bold text-success">${reciboPct}%</span>
+                    <span class="text-muted small d-block">Funcionário</span>
+                    <span class="fs-3 fw-bold text-success">${percentage}%</span>
                 </div>
                 <div class="col-6">
-                    <span class="text-muted small d-block">Efetivo (contratado)</span>
-                    <span class="fs-3 fw-bold">${efetivoPct}%</span>
+                    <span class="text-muted small d-block">Plataforma</span>
+                    <span class="fs-3 fw-bold">${platform}%</span>
+                </div>
+                <div class="col-12">
+                    <span class="text-muted small d-block">Vigente desde</span>
+                    <span class="fw-bold">${active.effectiveFrom ? generalUtils.formatDateTime(active.effectiveFrom) : "por omissão (sem configuração registada)"}</span>
                 </div>
                 <div class="col-12">
                     <span class="badge ${active.isDefault ? "bg-warning text-dark" : "bg-success"}">
@@ -46,8 +42,8 @@ const boGreenReceipts = (() => {
 
         const rows = state.configs.map(config => `<tr>
             <td class="small">${generalUtils.formatDateTime(config.effectiveFrom)}</td>
-            <td class="small">${contractLabel(config.contractType)}</td>
-            <td class="text-end">${config.commissionPercentage}%</td>
+            <td class="text-end">${config.employeePercentage}%</td>
+            <td class="text-end">${config.platformPercentage}%</td>
             <td class="text-center">
                 <span class="badge bg-light text-dark">#${config.id}</span>
             </td>
@@ -58,8 +54,8 @@ const boGreenReceipts = (() => {
                 <thead>
                     <tr>
                         <th>Vigência</th>
-                        <th>Tipo de contrato</th>
-                        <th class="text-end">% Funcionário</th>
+                        <th class="text-end">Funcionário</th>
+                        <th class="text-end">Plataforma</th>
                         <th class="text-center">ID</th>
                     </tr>
                 </thead>
@@ -69,16 +65,17 @@ const boGreenReceipts = (() => {
     }
 
     function updatePreview() {
-        const percentage = Number($("#grPercentage").val() || 0);
-        const clamped = Math.max(0, Math.min(100, percentage));
-        const platform = Math.round((100 - clamped) * 100) / 100;
+        const employee = Number($("#grEmployee").val() || 0);
+        const platform = Number($("#grPlatform").val() || 0);
+        const sum = Math.round((employee + platform) * 100) / 100;
+        const valid = sum === 100;
 
         $("#grPreview")
-            .toggleClass("text-danger", percentage !== clamped)
-            .toggleClass("text-success", percentage === clamped)
-            .text(percentage === clamped
-                ? `Funcionário ${clamped}% · Empresa ${platform}% (num serviço de 100 €).`
-                : "A percentagem tem de estar entre 0 e 100.");
+            .toggleClass("text-danger", !valid)
+            .toggleClass("text-success", valid)
+            .text(valid
+                ? `Soma atual: ${sum}% — válida.`
+                : `Soma atual: ${sum}% — tem de ser exatamente 100%.`);
     }
 
     async function load() {
@@ -109,8 +106,8 @@ const boGreenReceipts = (() => {
 
     async function save() {
         const payload = {
-            contractType: $("#grContractType").val(),
-            commissionPercentage: $("#grPercentage").val(),
+            employeePercentage: $("#grEmployee").val(),
+            platformPercentage: $("#grPlatform").val(),
             effectiveFrom: $("#grEffectiveFrom").val()
         };
 
@@ -138,7 +135,7 @@ const boGreenReceipts = (() => {
     }
 
     function bindEvents() {
-        $("#grPercentage").on("input change", updatePreview);
+        $("#grEmployee, #grPlatform").on("input change", updatePreview);
         $("#saveGreenReceiptConfigBtn").on("click", save);
     }
 

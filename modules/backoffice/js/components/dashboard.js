@@ -104,7 +104,7 @@ const boDashboard = (() => {
         renderChart(canvasId, emptyId, {
             type: "doughnut",
             data: {
-                labels: (chart?.labels || []).map((label) => generalUtils.humanize(label)),
+                labels: chart?.labels || [],
                 datasets: [{ data: chart?.data || [], backgroundColor: COLORS.palette }]
             },
             options: { legend: { position: "right" } }
@@ -134,7 +134,7 @@ const boDashboard = (() => {
         renderDoughnut("chartServicesByAcceptance", "#chartServicesByAcceptanceEmpty", dashboard?.charts?.servicesByAcceptance);
 
         renderBar("chartFiscalByType", "#chartFiscalByTypeEmpty", dashboard?.charts?.fiscalByType, function (label) {
-            return generalUtils.humanize(label);
+            return String(label).replace(/_/g, " ");
         });
 
         renderAccounting(dashboard?.accounting);
@@ -151,6 +151,7 @@ const boDashboard = (() => {
             state.data = response;
             render(response);
         } catch (error) {
+            debugger;
             $("#dashboardError").removeClass("d-none")
                 .text(error?.responseJSON?.message || "Não foi possível carregar o painel.");
         } finally {

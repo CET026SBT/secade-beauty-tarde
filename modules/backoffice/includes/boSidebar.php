@@ -33,13 +33,11 @@ $boSidebarGroups = Session::isEmployee()
         ]],
         ["label" => "Financeiro", "links" => [
             ["page" => "fiscal",       "url" => "/gestao/fiscal",         "icon" => "bi-receipt-cutoff", "label" => "Calendário Fiscal"],
-            ["page" => "greenReceipts","url" => "/gestao/recibos-verdes", "icon" => "bi-cash-stack",    "label" => "Percentagens"],
-            ["page" => "catalog",      "url" => "/gestao/catalogo",       "icon" => "bi-images",        "label" => "Catálogo"],
+            ["page" => "greenReceipts","url" => "/gestao/recibos-verdes", "icon" => "bi-cash-coin",      "label" => "Recibos Verdes"],
             ["page" => "commissions",  "url" => "/gestao/comissoes",      "icon" => "bi-cash-stack",     "label" => "Comissões"]
         ]],
         ["label" => "Gestão", "links" => [
-            ["page" => "suppliers",    "url" => "/gestao/fornecedores",   "icon" => "bi-truck",          "label" => "Fornecedores"],
-            ["page" => "employees",    "url" => "/gestao/rh",             "icon" => "bi-people",         "label" => "Recursos Humanos"]
+            ["page" => "suppliers",    "url" => "/gestao/fornecedores",   "icon" => "bi-truck",          "label" => "Fornecedores"]
         ]]
       ];
 ?>

@@ -1,0 +1,821 @@
+   1| DASHBOARD
+   2| PRIMEIRA VISÃO
+   3| S
+   4| DADOS:
+   5| 1.Faturação Mês Março: 7215.20 €
+   6| Em baixo com a comparação do- mês de fevereiro em percentagem: + 18,70% face a fevereiro
+   7| 2.Lucro Líquido Mês Março: 91.72 € // Editar valor
+   8| 3.Serviços realizados Mês Março: 2058 Serviços
+   9| Em baixo com a comparação do mês de fevereiro em percentagem: + 20,77% face ao mês de fevereiro
+  10| 4.Clientes Ativos Março: 36
+  11| 5. Faturação VS Gastos, dados relativos ao trimestre
+  12| Janeiro
+  13| Rendimento- 2669.80
+  14| Gasto- 11480.11 Fevereiro Rendimento- 6078.30Gastos – 6670.26
+  15| Março Rendimento- 7215.20Gastos – 7123.48
+  16| // editar valores, precisa de ser por mês
+  17| 6. Distribuição de Serviços - ou seja um gráfico circular com o número de serviços que tivemos no trimestre
+  18| // grafico circular com o mesmo espaco do outro (gastos por categoria por mes)
+  19| Serviço
+  20| Quantidade
+  21| Percentagem
+  22| Lavagem
+  23| 980
+  24| 20,36%
+  25| Secagem
+  26| 1.110
+  27| 23,06%
+  28| Engomadoria
+  29| 907
+  30| 18,84%
+  31| Entrega em casa
+  32| 767
+  33| 15,93%
+  34| Recolha em casa
+  35| 543
+  36| 11,28%
+  37| Outros (Packs)
+  38| 507
+  39| 10,53%
+  40| 7. Agendamentos de Hoje
+  41| 08:00 - Lurdes Pinguincha – Lavagem - Concluído
+  42| 09:00 - Gustavo Almeida – Engomadoria - Em andamento
+  43| 09:30 – Lar o Pequenino – Pack Mensal Médio - Agendado
+  44| 10:00 – Filipa Galinha – Pack Lavagem + Secagem + Ferro - Agendado
+  45| 10:15 – Lara Silva – Lavagem + Secagem - Agendado
+  46| 11:30 – Diogo Silva – Engomadoria - Agendado
+  47| 9.Projeções de Faturação (com uma projeção de aumento de vendas em 15%)
+  48| Valor de Rendimentos (até março) →
+  49| Janeiro: 2669.80 + 2669.80 * 0.15
+  50| Fevereiro: 6.078.30 + 6.078.30 * 0.15
+  51| Março: 7.215.20 + 7.215.20 * 0.15
+  52| Total – 15963.30 + 15963.30 * 0.15
+  53| Valor projetado em 15% (para o próximo Trimestre)
+  54| 15.963,30 € × 15% = 2.394,50 €
+  55| Valor projetado para o próximo trimestre:
+  56| 15.963,30 € + 2.394,50 € = 18.357,80 €
+  57| 10.Resumo Financeiro (Trimestre)// tirar
+  58| Faturação: 15 963,30€
+  59| Gastos: - 11 141,66€
+  60| Lucro Líquido: 4.821,64 € (Faturação - Gastos?
+  61| Margem de Lucro: 30,20% (Lucro Líquido/ Faturação)
+  62| 11.Análise Financeira // Alargar para ocupar espaço analise de gestao
+  63| Liquidez Geral: 0.29
+  64| Autonomia Financeira: 0.39
+  65| Solvabilidade: 0.28
+  66| // Tirar análise de Gestão
+  67| 14.Recursos Humanos no mês de Março
+  68| Colaboradores: 5
+  69| Férias Pendentes: 6
+  70| // Tirar Absentismo
+  71| 15. Entidades (Clientes à data de Março)
+  72| Nº Clientes: 38
+  73| Nº Fornecedores: 8
+  74| // Tirar Parceiros
+  75| AGENDAMENTOS
+  76| DADOS:
+  77| Tarefa: Implementar Calendário de Agendamentos
+  78| Topo do Calendário:
+  79| Botão + Novo Agendamento (para abrir o formulário de marcação para se for preciso executar marcação anual por exemplo marcação por telemóvel.
+  80| Navegação de mês/ano e botões para alternar entre vista de Calendário e Lista.
+  81| Grelha do Calendário:
+  82| Vista mensal (Segunda a Domingo).
+  83| Cada dia deve mostrar os blocos dos agendamentos com hora, nome do serviço e cor do estado
+  84| Caso for agendado, bloquear o dia e/ou hora
+  85| Clicar num dia ou agendamento deve abrir os detalhes da marcação.
+  86| Filtros e Legenda (Painel Direito):
+  87| Minicalendário para mudar de data rapidamente.
+  88| Filtros por serviço/colaborador e legenda das cores das marcações.
+  89| Totais (Rodapé):
+  90| Contadores automáticos: Total de agendamentos, concluídos, em atendimento, cancelados e Valor total (€).
+  91| Modificações:
+  92| Envés de ter uma legenda com os serviços, quero uma zona onde ira aparecer algo chamado “ajustar peso/preço” em que o colaborador poderá realizar o acerto do dinheiro para os clientes.
+  93| Informações a reter: o procedimento será efetuado de seguinte maneira: vemos que temos um quadrado dia 19 por exemplo e tem lá a cor amarela de agendado, um colaborador clica e consegue visualizar os serviços pedidos e os kgs inseridos, após isto aceita o serviço e então passa para a comer azul em preparação, o colaborador pesa de facto a roupa e coloca o peso real no seu devido sítio a questão do acerto de preço será executada se assim for preciso, depois de pronto o colaborador muda para serviço concluído , cor azul e o cliente recebe um e-mail como o seu pedido esta concluído.
+  94| SERVIÇOS
+  95| DADOS:
+  96| Gestão de Serviços
+  97| Lista de serviços
+  98| Deve existir uma tabela com as seguintes informações:
+  99| ID do serviço
+ 100| Nome do cliente
+ 101| Tipo de serviço
+ 102| Cidade
+ 103| Data do pedido
+ 104| Data prevista
+ 105| Estado do serviço
+ 106| Colaborador responsável
+ 107| Valor do serviço
+ 108| Estados do serviço // editar na pagina como está aqui e na base de dados
+ 109| Cada serviço deve ter um estado visível:
+ 110| Pendente
+ 111| Aceite
+ 112| Em execução
+ 113| Concluído
+ 114| Cancelado
+ 115| Cada estado deve ter uma cor diferente.
+ 116| Sistema de aceitação
+ 117| Cada colaborador terá a sua própria conta e o seu dashboard.
+ 118| Quando um colaborador carregar no botão "Aceitar serviço", o sistema deve automaticamente:
+ 119| associar o serviço ao colaborador;
+ 120| guardar o nome do colaborador;
+ 121| guardar a data e a hora da aceitação;
+ 122| alterar o estado para "Aceite";
+ 123| mostrar o serviço no dashboard desse colaborador.
+ 124| Depois de aceite, o serviço deixa de aparecer para os restantes colaboradores.
+ 125| Dashboard do colaborador
+ 126| Cada colaborador deve conseguir ver:
+ 127| Serviços pendentes
+ 128| Serviços em execução
+ 129| Serviços concluídos
+ 130| Histórico de serviços
+ 131| Número total de serviços realizados.
+ 132| Página individual do serviço
+ 133| Ao abrir um serviço, devem aparecer:
+ 134| Nome do cliente;
+ 135| Telefone;
+ 136| Morada;
+ 137| Cidade;
+ 138| Descrição do serviço;
+ 139| Valor;
+ 140| Estado atual;
+ 141| Colaborador responsável;
+ 142| Data do pedido;
+ 143| Data prevista;
+ 144| Histórico de alterações.
+ 145| Histórico do serviço
+ 146| Todas as ações devem ficar registadas:
+ 147| Pedido criado; amarelo
+ 148| Pedido aceite; azul
+ 149| Serviço iniciado; laranja
+ 150| Serviço concluído; verde
+ 151| Serviço cancelado. vermelho
+ 152| Exemplo:
+ 153| 31/07/2026 09:15 → Pedido criado;
+ 154| 31/07/2026 09:30 → Aceite por João Silva;
+ 155| 31/07/2026 10:00 → Serviço iniciado;
+ 156| 31/07/2026 13:45 → Serviço concluído.
+ 157| Alertas automáticos
+ 158| O sistema deve enviar alertas quando:
+ 159| um serviço estiver atrasado;
+ 160| ninguém aceitar o serviço;
+ 161| faltarem menos de 24 horas para o prazo;
+ 162| o serviço for concluído.
+ 163| Estatísticas
+ 164| Mostrar automaticamente:
+ 165| Serviço mais utilizado;
+ 166| Cidade com mais pedidos;
+ 167| Horário mais utilizado;
+ 168| Número de serviços concluídos;
+ 169| Número de serviços pendentes;
+ 170| Tempo médio de execução.
+ 171| GASTOS E RENDIMENTOS
+ 172| Gráfico de barras para gastos fixo e outro gráfico igual, mas com gastos variáveis (dos três meses)
+ 173| Gráfico mensal circular de janeiro, fevereiro, março com os gastos e rendimentos (3 círculos, 3 meses individuais)
+ 174| DADOS:
+ 175| 1º GRÁFICO
+ 176| Janeiro
+ 177| Comunicação
+ 178| € 40,00
+ 179| Custo Fixo
+ 180| Salários
+ 181| € 2 843,85
+ 182| Custo Fixo
+ 183| Água
+ 184| € 36,59
+ 185| Custo Fixo
+ 186| Encargos sobre remunerações
+ 187| € 936,98
+ 188| Custo Fixo
+ 189| Eletricidade
+ 190| € 162,60
+ 191| Custo Fixo
+ 192| Custo com Parcerias
+ 193| € 228,00
+ 194| Custo Fixo
+ 195| Renda
+ 196| € 307,00
+ 197| Custo Fixo
+ 198| Seguro
+ 199| € 1 740,00
+ 200| Custo Variável
+ 201| Fardas
+ 202| € 159,00
+ 203| Custo Variável
+ 204| Marketing
+ 205| € 800,00
+ 206| Custo Variável
+ 207| Gasóleo
+ 208| € 300,00
+ 209| Custo Fixo
+ 210| Desenvolvimento do Site
+ 211| € 1 500,00
+ 212| Custo Variável
+ 213| Leasing
+ 214| € 1 505,00
+ 215| Custo Fixo
+ 216| Fevereiro
+ 217| Comunicação
+ 218| € 40,00
+ 219| Custo Fixo
+ 220| Salários
+ 221| € 2 756,41
+ 222| Custo Fixo
+ 223| Água
+ 224| € 87,72
+ 225| Custo Fixo
+ 226| Encargos sobre Remunerações
+ 227| € 959,10
+ 228| Custo Fixo
+ 229| Gasóleo
+ 230| € 460,00
+ 231| Custo Fixo
+ 232| Eletricidade
+ 233| € 389,95
+ 234| Custo Fixo
+ 235| Renda
+ 236| € 307,00
+ 237| Custo Fixo
+ 238| Leasing
+ 239| € 1 505,00
+ 240| Custo Fixo
+ 241| Custo com Parcerias
+ 242| € 400,00
+ 243| Custo Fixo
+ 244| Março
+ 245| Salários
+ 246| € 2 730,48
+ 247| Custo Fixo
+ 248| Água
+ 249| € 119,20
+ 250| Custo Fixo
+ 251| gasoleo
+ 252| € 540,00
+ 253| Custo Fixo
+ 254| Eletricidade
+ 255| € 530,00
+ 256| Custo Fixo
+ 257| Renda
+ 258| € 307,00
+ 259| Custo Fixo
+ 260| Leasing
+ 261| € 1 505,00
+ 262| Custo Fixo
+ 263| Comunicação
+ 264| € 40,00
+ 265| Custo Fixo
+ 266| Custo com Parcerias
+ 267| € 650,00
+ 268| Custo Fixo
+ 269| Soma dos custos fixos janeiro – 6.360.02€
+ 270| Soma dos custos fixos fevereiro - 6.905.18€
+ 271| Soma dos custos fixos março- 6.421.68€
+ 272| Total dos 3 meses –19.686.88€
+ 273| Soma dos custos variáveis janeiro – 4.199€
+ 274| Soma dos custos variáveis fevereiro - 0€
+ 275| Soma dos custos variáveis março- 0€
+ 276| Total dos 3 meses – 4.199€
+ 277| 2º GRÁFICO
+ 278| Janeiro:
+ 279| Rendimentos: 2.669.80 € (41,25%)
+ 280| Gastos: 3.802.95 € (58,75%)
+ 281| Fevereiro:Rendimentos: 3.802.95 € (50,73%)Gastos: Fevereiro: 3.693.39 € (49,27%)
+ 282| Março:
+ 283| Rendimentos: 7.215.20 € (66,43%)
+ 284| Gastos: 3.645.32 € (33,57%)
+ 285| PROJEÇÕES
+ 286| Simulador de Rendimentos e Gastos
+ 287| // Começa sem valores (inputs limpos)
+ 288| // Os botoes + e – devem mudar o valor da variação para positivo e negativo
+ 289| // Os valores numéricos devem ser escritos como ex. 10.000,95
+ 290| // Resultado da simulação fica com cores (verde se for a recuperar e vermelho se for a pagar)
+ 291| // no sobre nós “experiencia de cada um” (em vez de das pessoas)
+ 292| // Servicos mudar tudo, botao singular com select para servicos.
+ 293| // Tirar Extras e meter uma secção para o cliente acrescentar notas
+ 294| // Fazer com que precisas de uma conta para fazer um pedido !!!
+ 295| // OU SEJA, o botao para fazer um pedido só aparece depois de ter feito login
+ 296| //
+ 297| Simulador de IVA
+ 298| Simulador de IRC
+ 299| DADOS:
+ 300| Simulador de previsão de rendimentos e gastos
+ 301| Temos uma parte de rendimentos, onde nos podemos colocar um valor e ao lado temos outro sítio onde podemos colocar uma percentagem e depois temos um botão verde (+) que significa que aquela percentagem era para aumentar aquele valor inicial e depois o botão vermelho (-) que seria se a percentagem diminuísse o valor.
+ 302| E da mesma forma queria para os gastos, portanto 2 simuladores um ao lado do outro ou em cima um do outro.
+ 303| Em baixo temos o valor total previsto de rendimentos, que tem de se alterar de acordo com os valores que faço na simulação e da mesma forma com o total de gastos previsto, e o saldo previsto é o total de rendimentos previstos – o total de gastos previstos.
+ 304| Simulador de IVA
+ 305| A fórmula para sabermos o valor do IVA é:
+ 306| IVA Liquidado - IVA Dedutível
+ 307| Depois os valores colocamos nós, só precisamos das métricas.
+ 308| Simulador de IRC
+ 309| *No ponto Nº1 (Rendimentos), nós queremos aquela divisão em:
+ 310| // Quando começas a escrever em vez de estar o 0 como default devia estar vazia
+ 311| // Taxas de IRC em vez de ser um select mete um input livre (como as taxas estao sempre a mudar)
+ 312| // Derrama estadual não muda o testo depois do select
+ 313| // Se o Total de Pagamentos estiver acima do Total de impostos o IMPOSTO A RECEBER deve estar a verde, caso contrario deve estar a vermelho
+ 314| Vendas e prestação de serviçosSubsídios à exploraçãoOutros rendimentos
+ 315| Isto para que possamos colocar o valor das nossas vendas.
+ 316| No total de rendimentos a fórmula é a soma dos 3 anteriores.
+ 317| *No ponto Nº2 (Gastos), nós queremos a divisão desta forma:Compras
+ 318| Fornecimentos e Serviços Externos
+ 319| Gastos com pessoal
+ 320| Depreciações e amortizações
+ 321| Juros e gastos similares
+ 322| Outros gastos
+ 323| No total de gastos a fórmula é a soma dos 6 anteriores.
+ 324| *No Nº3 (Resultado Contabilístico) a fórmula é os rendimentos – gastos.
+ 325| Depois tem de preencher automaticamente os cartões do topo.
+ 326| *No Nº4 (Ajustamentos Fiscais), temos dois pontos:
+ 327| Acréscimos Fiscais:
+ 328| * Despesas não dedutíveis
+ 329| * Outros acréscimos
+ 330| Total de Acréscimos Fiscais = Soma dos 2 pontos anteriores
+ 331| Deduções Fiscais:
+ 332| * Benefícios Fiscais
+ 333| * Prejuízos Fiscais
+ 334| * Outras deduções
+ 335| Total de deduções Fiscais = Soma dos 3 pontos anteriores
+ 336| Em baixo tem a informação relativamente ao lucro tributável, que neste caso é:
+ 337| Resultados contabilísticos + Acréscimos - Deduções
+ 338| Nota: Tem de preencher automaticamente o cartão no topo a dizer Lucro Tributável
+ 339| *No ponto Nº5 (Taxas e Derramas), tem de ter os tópicos:
+ 340| Taxa de IRC (20%)
+ 341| Taxa da derrama
+ 342| Derrama Estadual
+ 343| Tributações Autônomas
+ 344| Nota: Todas as coisas que estão escritas por baixo, podem colocar como notas em cada um dos tópicos.
+ 345| *No ponto Nº6 (Pagamentos por conta), temos os tópicos:
+ 346| Pagamentos por conta
+ 347| Retenções na fonte
+ 348| Total de pagamentos = Soma dos 2 pontos anteriores.
+ 349| Este cartão
+ 350| A fórmula é o Resultado Contabilístico + Acréscimos Fiscais - Deduções Fiscais
+ 351| *No ponto de resumo de cálculo é que fiquem aqueles tópicos todosLucro Tributável
+ 352| IRC (20%)
+ 353| Derrama Municipal
+ 354| Derrama Estadual
+ 355| Tributações autónomas
+ 356| Total do imposto = soma de todos os pontos anteriores
+ 357| *No ponto de pagamentos e retenções:
+ 358| Pagamentos por conta
+ 359| Retenções na fonte
+ 360| Total de pagamentos= soma dos 2 pontos anteriores
+ 361| Quando que o imposto total for superior aos pagamentos e retenções terá de aparecer IMPOSTO A PAGAR, sempre que o imposto total for inferior às retenções e pagamentos terá de aparecer IMPOSTO A RECEBER.
+ 362| ANÁLISE FINANCEIRA
+ 363| Liquidez Geral (gráfico de barras)
+ 364| Ativo corrente: 3.299,38 €
+ 365| Passivo Corrente: 11.199,00 €
+ 366| Total: 0.29
+ 367| Autonomia Financeira (gráfico de barras)
+ 368| Capital Próprio: 3.119,48 €Ativo Total: 8.079,52 €
+ 369| Total: 0.39
+ 370| Solvabilidade (gráfico de barras)
+ 371| Capital Próprio: 3.119,48 €
+ 372| Passivo Total: 11.199,00 €
+ 373| Total: 0.28
+ 374| Nota para NÓS: Só temos este rácio porque em 3 meses não faz sentido devido a sazonalidade e a curto prazo os valores destes rácios são horríveis.
+ 375| DADOS:
+ 376| Queremos um gráfico com cada um dos pontos por exemplo:Na liquidez geral, queremos um gráfico com o ativo corrente e outro gráfico com o passivo corrente
+ 377| E que quando colocamos o rato por cima do gráfico de barras que aparecesse a fórmula que foi utilizada para calcular e o valor total que deu.
+ 378| No de Liquidez Geral a cor do gráfico tem de ser laranja e quando tem de ter escrito “Situação de liquidez reduzida.”
+ 379| No de autonomia financeira a cor do gráfico tem de ter cor amarela e ter escrito “Estado razoável.”
+ 380| Na solvabilidade, a cor do gráfico tem se ser vermelho e ter escrito “Estado baixa”
+ 381| ANÁLISE DE GESTÃO
+ 382| Gráfico de barras mensal relativo a evolução de clientes
+ 383| DADOS:
+ 384| Janeiro – 23 Clientes
+ 385| Fevereiro- 46 Clientes
+ 386| Março - 35 Clientes
+ 387| Gráficos de barras com os serviços mais vendidos (diferenciar serviços a vulso com os packs)
+ 388| DADOS:
+ 389| Serviço
+ 390| Janeiro
+ 391| Fevereiro
+ 392| Março
+ 393| Lavagem
+ 394| 160
+ 395| 300
+ 396| 520
+ 397| Secagem
+ 398| 120
+ 399| 450
+ 400| 540
+ 401| Passar a ferro
+ 402| 170
+ 403| 327
+ 404| 410
+ 405| Recolha em Casa
+ 406| 143
+ 407| 170
+ 408| 230
+ 409| Entrega em Casa
+ 410| 167
+ 411| 290
+ 412| 310
+ 413| Pack Lavagem+Secagem+Ferro
+ 414| 76
+ 415| 86
+ 416| 50
+ 417| Pack Lavagem+Secagem
+ 418| 150
+ 419| 28
+ 420| 60
+ 421| Pack Mensal Pequeno (10 Kg/mês)
+ 422| 5
+ 423| 7
+ 424| 10
+ 425| Pack Mensal Médio (10-20 Kg/mês)
+ 426| 4
+ 427| 6
+ 428| 9
+ 429| Pack Mensal Grande (+ 20 Kg/mês)
+ 430| 2
+ 431| 4
+ 432| 10
+ 433| Gráfico de qual horário mais usufruído
+ 434| DADOS:
+ 435| Horário
+ 436| Janeiro
+ 437| Fevereiro
+ 438| Março
+ 439| 8h
+ 440| 3
+ 441| 7
+ 442| 5
+ 443| 9h
+ 444| 4
+ 445| 8
+ 446| 3
+ 447| 10h
+ 448| 3
+ 449| 8
+ 450| 6
+ 451| 11h
+ 452| 2
+ 453| 7
+ 454| 6
+ 455| 12h
+ 456| 1
+ 457| 8
+ 458| 3
+ 459| 14h
+ 460| 3
+ 461| 2
+ 462| 4
+ 463| 15h
+ 464| 3
+ 465| 4
+ 466| 2
+ 467| 16h
+ 468| 3
+ 469| 1
+ 470| 2
+ 471| 17h
+ 472| 1
+ 473| 2
+ 474| 2
+ 475| Gráfico de qual a cidade mais adesão aos serviços
+ 476| DADOS:
+ 477| Locais
+ 478| Janeiro
+ 479| Fevereiro
+ 480| Março
+ 481| Montemor-o-Novo
+ 482| 16
+ 483| 23
+ 484| 22
+ 485| São Cristóvão
+ 486| 0
+ 487| 2
+ 488| 0
+ 489| Arraiolos
+ 490| 2
+ 491| 2
+ 492| 7
+ 493| Escoural
+ 494| 3
+ 495| 7
+ 496| 2
+ 497| Silveiras
+ 498| 1
+ 499| 7
+ 500| 2
+ 501| Lavre
+ 502| 1
+ 503| 6
+ 504| 2
+ 505| Calendário Fiscal
+ 506| Funcionalidades disponíveis
+ 507| Seleção do ano e do mês pretendido.
+ 508| Visualização das obrigações fiscais em formato de calendário.
+ 509| Identificação visual das datas com obrigações fiscais.
+ 510| Lista detalhada das obrigações do mês selecionado.
+ 511| Estado de cada obrigação (Pendente, Pago ou Em Processamento).
+ 512| Upload de comprovativos de pagamento enviados pela contabilista certificada ou carregados pela empresa.
+ 513| Consulta e download dos comprovativos de pagamento em qualquer momento.
+ 514| Exportação do calendário fiscal para consulta offline.
+ 515| Histórico de pagamentos e documentos associados a cada obrigação.
+ 516| Pesquisa e filtros por tipo de imposto ou estado da obrigação.
+ 517| Alertas para prazos de pagamento e entrega de declarações.
+ 518| O calendário poderá incluir, entre outras, as principais obrigações fiscais de uma empresa em Portugal, tais como:
+ 519| IVA (Imposto sobre o Valor Acrescentado)
+ 520| IRC (Imposto sobre o Rendimento das Pessoas Coletivas)
+ 521| Pagamentos por Conta de IRC
+ 522| Pagamento Especial por Conta (quando aplicável)
+ 523| Retenções na Fonte (IRS e IRC)
+ 524| Segurança Social
+ 525| IUC (Imposto Único de Circulação), quando existam veículos registados em nome da empresa
+ 526| IMI (caso a empresa seja proprietária de imóveis)
+ 527| Declaração Modelo 22
+ 528| IES – Informação Empresarial Simplificada
+ 529| Declaração Periódica de IVA
+ 530| Declaração Mensal de Remunerações
+ 531| (Enviámos dois pdf´s com as informações reais em Portugal para colocarem nos nossos calendários)
+ 532| Controlo de Dívidas
+ 533| DADOS:
+ 534| Igual ao que se apresenta na imagem, 8000€ de dívida e já pagamos 166,66€ 2 meses (fevereiro e março).
+ 535| (Não é preciso fazerem aquele gráfico de linha azul com a evolução, apenas o resto)
+ 536| ENTIDADES
+ 537| DADOS:
+ 538| Lista de Clientes
+ 539| Barra com opção: contactar /onde ira aparecer e-mail ou número) e um espaço onde poderemos deixar comentários ou observações, os recibos do cliente (como os clientes tem do outro lado) opção de eliminar ou editar e criar novos.
+ 540| LEMBRANDO QUE É A CLIENTE LURDES PINGUINCHA QUE IREMOS FAZER A DEMONSTRAÇÃO TANTO DA PARTE DOS CLIENTES COMO DO NOSSO DASHBOARD.
+ 541| Clientes:
+ 542| Ana Pinto
+ 543| Telefone: +351 210 601 001
+ 544| Email: ana.pinto@email.pt
+ 545| Maria Joana
+ 546| Telefone: +351 210 601 002
+ 547| Email: maria.joana@email.pt
+ 548| Roberto Ferreira
+ 549| Telefone: +351 210 601 003
+ 550| Email: roberto.ferreira@email.pt
+ 551| Joana Ferreira
+ 552| Telefone: +351 210 601 004
+ 553| Email: joana.ferreira@email.pt
+ 554| Lar Quinta da Ponte
+ 555| Telefone: +351 210 601 005
+ 556| Email: geral@larquintadaponte.pt
+ 557| Restaurante “A Ribeira”
+ 558| Telefone: +351 210 601 006
+ 559| Email: reservas@aribeira.pt
+ 560| Lucinda Gonçalves
+ 561| Telefone: +351 210 601 008
+ 562| Email: lucinda.goncalves@email.pt
+ 563| Restaurante Almansor
+ 564| Telefone: +351 210 601 009
+ 565| Email: contacto@restaurantealmansor.pt
+ 566| Secade Beauty, Lda.
+ 567| Telefone: +351 210 601 049
+ 568| Email: geral@secadebeauty.pt
+ 569| Hélia Tavares
+ 570| Telefone: +351 210 601 010
+ 571| Email: helia.tavares@email.pt
+ 572| Cátia Ferreira
+ 573| Telefone: +351 210 601 011
+ 574| Email: catia.ferreira@email.pt
+ 575| Lurdes Pinguincha
+ 576| Telefone: +351 210 601 012
+ 577| Email: lurdes.pinguincha@email.pt
+ 578| Gustavo Almeida
+ 579| Telefone: +351 210 601 014
+ 580| Email: gustavo.almeida@email.pt
+ 581| Afonso Henriques
+ 582| Telefone: +351 210 601 015
+ 583| Email: afonso.henriques@email.pt
+ 584| Gonçalo Medronheira
+ 585| Telefone: +351 210 601 016
+ 586| Email: goncalo.medronheira@email.pt
+ 587| Tiago Carriço
+ 588| Telefone: +351 210 601 017
+ 589| Email: tiago.carrico@email.pt
+ 590| Filipe Correia
+ 591| Telefone: +351 210 601 018
+ 592| Email: filipe.correia@email.pt
+ 593| Lara Silva
+ 594| Telefone: +351 210 601 019
+ 595| Email: lara.silva@email.pt
+ 596| Leonor Lopes
+ 597| Telefone: +351 210 601 020
+ 598| Email: leonor.lopes@email.pt
+ 599| Júlio Fonseca
+ 600| Telefone: +351 210 601 021
+ 601| Email: julio.fonseca@email.pt
+ 602| Heloísa Gonçalves
+ 603| Telefone: +351 210 601 022
+ 604| Email: heloisa.goncalves@email.pt
+ 605| Joana Matos
+ 606| Telefone: +351 210 601 023
+ 607| Email: joana.matos@email.pt
+ 608| Ana Murteira
+ 609| Telefone: +351 210 601 024
+ 610| Email: ana.murteira@email.pt
+ 611| Lar O Pequenino
+ 612| Telefone: +351 210 601 026
+ 613| Email: geral@laropequenino.pt
+ 614| Filipa Galinha
+ 615| Telefone: +351 210 601 028
+ 616| Email: filipa.galinha@email.pt
+ 617| João Mendes
+ 618| Telefone: +351 210 601 029
+ 619| Email: joao.mendes@email.pt
+ 620| Luís Trincheira
+ 621| Telefone: +351 210 601 030
+ 622| Email: luis.trincheira@email.pt
+ 623| Joana Guerreiro
+ 624| Telefone: +351 210 601 031
+ 625| Email: joana.guerreiro@email.pt
+ 626| Gonçalo Silva
+ 627| Telefone: +351 210 601 032
+ 628| Email: goncalo.silva@email.pt
+ 629| Vitória Figueiredo
+ 630| Telefone: +351 210 601 033
+ 631| Email: vitoria.figueiredo@email.pt
+ 632| Luís Fernandes
+ 633| Telefone: +351 210 601 034
+ 634| Email: luis.fernandes@email.pt
+ 635| Afonso Gonçalves
+ 636| Telefone: +351 210 601 035
+ 637| Email: afonso.goncalves@email.pt
+ 638| Luís Amaro
+ 639| Telefone: +351 210 601 036
+ 640| Email: luis.amaro@email.pt
+ 641| Francisco Nogueira
+ 642| Telefone: +351 210 601 037
+ 643| Email: francisco.nogueira@email.pt
+ 644| João Francisco
+ 645| Telefone: +351 210 601 038
+ 646| Email: joao.francisco@email.pt
+ 647| Lista de Fornecedores
+ 648| Barra com opção: contactar /onde ira aparecer e-mail ou número) e um espaço onde poderemos deixar comentários ou observações e as faturas dos nossos pedidos e se tem pagamento pendente ao fornecedor.
+ 649| DEMONSTRAÇÃO COM O FORNECEDOR EDP
+ 650| Fornecedores:
+ 651| Click MarketingTelefone: +351 210 501 001Email: contacto@clickmarketing.pt
+ 652| Curso ProgramaçãoTelefone: +351 210 501 002Email: geral@cursoprogramacao.pt
+ 653| Dstore Retail, S.A.Telefone: +351 210 501 003Email: apoio@dstoreretail.pt
+ 654| EDP COMERCIAL - COMERCIALIZAÇÃO DE ENERGIA, S.A.Telefone: +351 210 501 004Email: clientes@edpcomercial.pt
+ 655| Galp Comercialização Portugal, S.A.Telefone: +351 210 501 005Email: apoio@galpcomercial.pt
+ 656| GENERALI SEGUROS, S.A.Telefone: +351 210 501 006Email: sinistros@generaliseguros.pt
+ 657| IRNTelefone: +351 210 501 007Email: atendimento@irn.pt
+ 658| LOCARENT COMPANHIA PORTUGUESA ALUGUER VIATURAS, S.A.Telefone: +351 210 501 008Email: contratos@locarent.pt
+ 659| MAKRO-CASH & CARRY PORTUGAL, S.A.Telefone: +351 210 501 009Email: clientes@makroportugal.pt
+ 660| Mistolin Profissional, S.A.Telefone: +351 210 501 010Email: comercial@mistolinprofissional.pt
+ 661| Mónica LopesTelefone: +351 210 501 011Email: monica.lopes@email.pt
+ 662| Município de Montemor-o-NovoTelefone: +351 210 501 012Email: atendimento@municipiomontemor.pt
+ 663| NOS Comunicações, S.A.Telefone: +351 210 501 013Email: apoio@noscomunicacoes.pt
+ 664| Prosegur – Companhia de Segurança, Lda.Telefone: +351 210 501 014Email: clientes@prosegurseguranca.pt
+ 665| WortenTelefone: +351 210 501 015Email: apoio@wortenloja.pt
+ 666| RECURSOS HUMANOS
+ 667| DADOS:
+ 668| Nome
+ 669| Contribuinte
+ 670| Função
+ 671| Tipo de Contrato
+ 672| Isadora Vênus Albuquerque
+ 673| 298 541 736
+ 674| Operadora de Lavandaria
+ 675| Contrato Sem Termo
+ 676| Camila Aurora Machado
+ 677| 267 904 318
+ 678| Operadora de Lavandaria
+ 679| Contrato Sem Termo
+ 680| Tiago Miguel Sousa Carvalho
+ 681| 254 719 683
+ 682| Operador logístico
+ 683| Contrato Sem Termo
+ 684| Joana Filipa Cacilhas de Matos
+ 685| 264 918 537
+ 686| Contabilista Certificada
+ 687| Cargo Estatutário
+ 688| Ana Carolina Lopes Murteira
+ 689| 289 743 105
+ 690| Diretora de Recursos Humanos
+ 691| Cargo Estatutário
+ 692| Ordenado Base (22 dias)
+ 693| Valor Hora €
+ 694| Subsídio de Alimentação
+ 695| Subsídio de Férias
+ 696| Subsídio de Natal
+ 697| Valores Horas Extras (+25% €)
+ 698| 920 €
+ 699| 5,31 €
+ 700| 5 €
+ 701| 920 €
+ 702| 920 €
+ 703| 6,64 €
+ 704| Pretende-se criar uma área de Recursos Humanos com as seguintes funcionalidades:
+ 705| Tabela com todos os colaboradores da empresa.
+ 706| Possibilidade de selecionar o mês e o ano para consultar a informação correspondente.
+ 707| Em cada colaborador deverá ser possível visualizar:
+ 708| Faltas registadas;
+ 709| Data de cada falta;
+ 710| Número de horas;
+ 711| Indicação se a falta é justificada ou não justificada.
+ 712| Gestão de Recibos de Vencimento (Área RH):
+ 713| A Diretora de Recursos Humanos deverá ter uma área onde possa:
+ 714| Emitir ou fazer upload dos recibos de vencimento em PDF;
+ 715| Consultar o histórico de recibos por colaborador e por mês;
+ 716| Disponibilizar a opção “Descarregar Recibo de Vencimento”;
+ 717| Manter todos os recibos organizados como arquivo digital.
+ 718| Área do Colaborador - No perfil de cada colaborador deverá existir uma secção Recibos de Vencimento, onde o colaborador poderá:
+ 719| Consultar o histórico dos seus recibos;
+ 720| Descarregar os respetivos recibos de vencimento.
+ 721| Importante: Nesta área do colaborador não devem aparecer os comprovativos de pagamento, apenas os recibos de vencimento. Os comprovativos ficam disponíveis exclusivamente na área de Recursos Humanos.
+ 722| (Os contratos de trabalho dos 5 colaboradores foram enviados individualmente
+ 723| DEFINIÇÕES: VISTO PELO DASHBOARDE E PELOS CLIENTES!
+ 724| DADOS:
+ 725| Perfil da empresa
+ 726| Idioma
+ 727| Moeda (€)
+ 728| Tema (claro/escuro)
+ 729| Logótipo e identidade visual
+ 730| Notificações
+ 731| Segurança e palavra-passe
+ 732| Utilizadores e permissões
+ 733| API e integrações
+ 734| Exportação de dados
+ 735| Suporte
+ 736| 1. Perfil da empresa
+ 737| Objetivo: guardar as informações básicas da empresa.
+ 738| Campos:
+ 739| Nome da empresa
+ 740| NIF
+ 741| E-mail principal
+ 742| Telefone
+ 743| Morada
+ 744| Código postal
+ 745| Cidade
+ 746| País
+ 747| Website
+ 748| Descrição da empresa
+ 749| Botões:
+ 750| Guardar alterações
+ 751| Cancelar
+ 752| 2. Idioma
+ 753| Objetivo: definir o idioma da plataforma.
+ 754| Opções:
+ 755| Português
+ 756| Inglês
+ 757| Espanhol
+ 758| Francês
+ 759| Funcionalidades:
+ 760| Alterar todos os textos da aplicação
+ 761| 3. Tema (claro/escuro)
+ 762| Objetivo: personalizar a aparência da plataforma.
+ 763| Opções:
+ 764| Claro
+ 765| Escuro
+ 766| Configurações:
+ 767| Tipo de letra
+ 768| 4. Notificações
+ 769| Objetivo: controlar os avisos da plataforma.
+ 770| Opções:
+ 771| Notificações por e-mail
+ 772| Notificações dentro da aplicação
+ 773| Alertas importantes
+ 774| Avisos de manutenção
+ 775| 5.Segurança e palavra-passe
+ 776| Objetivo: proteger a conta.
+ 777| Campos:
+ 778| Palavra-passe atual
+ 779| Nova palavra-passe
+ 780| Confirmar palavra-passe
+ 781| Funcionalidades:
+ 782| Autenticação de dois fatores (2FA)
+ 783| Sessões ativas
+ 784| Histórico de acessos
+ 785| 6. Utilizadores e permissões
+ 786| Objetivo: gerir quem pode aceder à plataforma.
+ 787| Funções:
+ 788| Administrador
+ 789| Gestor
+ 790| Utilizador normal
+ 791| Apenas leitura
+ 792| Permissões:
+ 793| Ver dashboard
+ 794| Criar simulações
+ 795| Editar dados
+ 796| Exportar relatórios
+ 797| Gerir utilizadores
+ 798| Botões:
+ 799| Adicionar utilizador
+ 800| Editar
+ 801| Remover
+ 802| 8.Exportação de dados
+ 803| Objetivo: descarregar informações.
+ 804| Formatos:
+ 805| PDF
+ 806| Excel
+ 807| Filtros:
+ 808| Data inicial
+ 809| Data final
+ 810| Tipo de relatório
+ 811| Botões:
+ 812| Exportar
+ 813| 9. Suporte
+ 814| Objetivo: ajudar os utilizadores.
+ 815| Secções:
+ 816| Centro de ajuda
+ 817| Chat
+ 818| Contacto por e-mail
+ 819| Campos do ticket:
+ 820| Assunto
+ 821| Descrição

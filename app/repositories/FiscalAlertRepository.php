@@ -10,11 +10,11 @@ class FiscalAlertRepository extends BaseRepository {
 
     protected ?string $mapper = FiscalAlertMapper::class;
 
-    public function createIfAbsent(int $obligationId, string $alertType, string $alertDate): int {
+    public function createIfAbsent(int $obligationId, string $alertType, string $alertDate): void {
         $sql = "INSERT IGNORE INTO alerta_fiscal (obrigacao_fiscal_id, tipo_alerta, data_alerta)
                 VALUES (:obrigacao_id, :tipo_alerta, :data_alerta)";
 
-        return $this->execute($sql, [
+        $this->execute($sql, [
             "obrigacao_id" => $obligationId,
             "tipo_alerta"  => $alertType,
             "data_alerta"  => $alertDate

@@ -24,9 +24,6 @@ class Session {
         $_SESSION["user_name"]    = $user["name"]        ?? $user["nome"]        ?? null;
         $_SESSION["user_email"]   = $user["email"]       ?? null;
         $_SESSION["user_profile"] = $user["profileType"] ?? $user["tipo_perfil"] ?? null;
-
-        // Só os funcionários têm tipo de contrato (§4.1/G-02); nos restantes perfis fica nulo.
-        $_SESSION["user_contract_type"] = $user["contractType"] ?? null;
     }
 
     public static function isLoggedIn() {
@@ -70,16 +67,6 @@ class Session {
 
     public static function isGuest(): bool {
         return self::getUserProfile() === "guest";
-    }
-
-    /**
-     * Tipo de contrato do funcionário em sessão (G-02): `recibo_verde` ou
-     * `efetivo_contratado`. Nulo nos outros perfis. Lido da sessão (é a própria
-     * conta que o guarda no login), sem acessos à BD.
-     */
-    public static function employeeContractType(): ?string {
-        self::init();
-        return $_SESSION["user_contract_type"] ?? null;
     }
 
     public static function requireLogin(?string $redirectUrl=null) {

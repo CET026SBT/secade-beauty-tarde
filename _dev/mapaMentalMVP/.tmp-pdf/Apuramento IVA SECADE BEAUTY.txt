@@ -1,0 +1,1118 @@
+NIF: 514740540
+Empresa SECADE Beauty Lda
+Valores em EUR
+Mapa de conferência de IVA - 1º Trimestre
+Doc
+Diário
+Base
+IVA (débito)
+Movimentos não incluídos automaticamente na declaração de IVA
+N. diário
+Descrição
+IVA (crédito)
+16.738,75
+APR
+2
+DIV 2026/12
+Apuramento do IVA do mês de Janeiro até ao mês de
+Março
+16.738,75
+16.738,75
+Totais
+16.738,75
+Doc
+Diário
+Base
+IVA (favor SP)
+110004 - Compras Continente Op. gerais OBS RED
+N. diário
+Descrição
+Tx. IVA: 6 % | Q. IVA: Q6C24
+IVA (favor estado)
+55,66
+3,34
+CMP
+01/1
+FC 2026/1
+Fatura de compra Água
+60,85
+3,65
+CMP
+02/1
+FC 2026/18
+Fatura de compra - Água
+60,85
+3,65
+CMP
+03/1
+FC 2026/31
+Fatura de compra Água
+177,36
+10,64
+Totais
+Doc
+Diário
+Base
+IVA (favor SP)
+110006 - Compras Continente Op. gerais OBS NOR
+N. diário
+Descrição
+Tx. IVA: 23 % | Q. IVA: Q6C24
+IVA (favor estado)
+104,07
+23,94
+CMP
+01/2
+FC 2026/2
+Fatura de compra Eletricidade
+434,85
+44,85
+CMP
+01/3
+FC 2026/3
+Fatura de compra Gasóleo
+150,00
+34,50
+CMP
+01/4
+FC 2026/4
+Fatura de compra Gás
+48,37
+11,12
+CMP
+01/5
+FC 2026/5
+Fatura de compra Extintor
+13,20
+3,04
+CMP
+01/6
+FC 2026/6
+Fatura de compra de material de limpeza
+105,00
+24,15
+CMP
+01/13
+FC 2026/14
+Fatura de compra - Medicina no Trabalho
+8,16
+1,88
+CMP
+01/15
+DIV 2026/2
+Diversos Serviços Bancários
+300,00
+69,00
+CMP
+01/16
+FC 2026/16
+Fatura de compra Produtos Profissionais
+150,00
+34,50
+CMP
+01/17
+FC 2026/17
+Fatura de compra Publicidade e Propaganda
+15,90
+3,66
+CMP
+01/18
+FC 2026/29
+Fatura de compra Moloni
+104,07
+23,94
+CMP
+02/2
+FC 2026/19
+Fatura de compra - Eletricidade
+106,00
+24,38
+CMP
+02/3
+FC 2026/20
+Fatura de compra - MEO
+440,43
+45,43
+CMP
+02/4
+FC 2026/21
+Fatura de compra - Gasoléo
+140,00
+32,20
+CMP
+02/5
+FC 2026/22
+Fatura de compra - Gás
+14,00
+3,22
+CMP
+02/8
+FC 2026/25
+Fatura de compra Material limpeza
+8,17
+1,88
+CMP
+02/10
+FC 2026/27
+Fatura de compra Seviços bancários
+320,00
+73,60
+CMP
+02/11
+FC 2026/28
+Fatura de compra Consumíveis
+15,90
+3,66
+CMP
+02/12
+FC 2026/30
+Fatura de compra Moloni
+104,07
+23,94
+CMP
+03/2
+FC 2026/32
+Fatura de compra Eletricidade
+106,00
+24,38
+CMP
+03/3
+FC 2026/33
+Fatura de compra MEO
+446,00
+46,00
+CMP
+03/4
+FC 2026/34
+Fatura de compra Gasóleo
+155,00
+35,65
+CMP
+03/5
+FC 2026/35
+Fatura de compra Gás
+8,18
+1,88
+CMP
+03/8
+FC 2026/38
+Fatura de compra Serviços bancários
+14,50
+3,34
+CMP
+03/9
+FC 2026/39
+Fatura de compra Material limpeza
+400,00
+92,00
+CMP
+03/10
+FC 2026/40
+Fatura de compra Consumíveis
+15,90
+3,66
+CMP
+03/11
+FC 2026/41
+Fatura de compra Moloni
+3.727,77
+689,80
+Totais
+Doc
+Diário
+Base
+IVA (favor SP)
+110009 - Compras Continente Op. gerais Invest NOR
+N. diário
+Descrição
+Tx. IVA: 23 % | Q. IVA: Q6C20
+IVA (favor estado)
+913,99
+210,22
+CMP
+01/20
+FC 2026/44
+Fatura de compra - Computador
+44.715,45
+10.284,55
+CMP
+01/21
+FC 2026/45
+Fatura de compra-Carrinha
+45.629,44
+10.494,77
+Totais
+Doc
+Diário
+Base
+IVA (favor SP)
+112012 - Compras/regularizacoes Continente FSE- Viat turismo Iva Não Dedutível …
+N. diário
+Descrição
+Tx. IVA: 23 %
+IVA (favor estado)
+92,59
+CMP
+01/7
+FC 2026/7
+Fatura de compra Seguros
+50,93
+CMP
+01/8
+FC 2026/8
+Fatura de compra Seguro mult
+23,15
+CMP
+01/9
+FC 2026/10
+Fatura de compra Seguros Resp.Cívil exploração
+101,85
+CMP
+01/10
+FC 2026/11
+Fatura de compra - Carrinha
+25,93
+CMP
+01/12
+FC 2026/13
+Fatura de compra - Seguros material portátil
+1
+4
+Página
+Emitido por Ensino (Powered by - TOConline - https://www.toconline.pt)
+/
+NIF: 514740540
+Empresa SECADE Beauty Lda
+Valores em EUR
+Mapa de conferência de IVA - 1º Trimestre
+Doc
+Diário
+Base
+IVA (favor SP)
+112012 - Compras/regularizacoes Continente FSE- Viat turismo Iva Não Dedutível …
+N. diário
+Descrição
+Tx. IVA: 23 %
+IVA (favor estado)
+520,33
+CMP
+01/14
+FC 2026/15
+Fatura de compra Renda e Caução
+260,16
+CMP
+02/6
+FC 2026/23
+Fatura de compra - Rendas
+252,03
+CMP
+02/7
+FC 2026/24
+Fatura de compra - Contabilista
+1.326,97
+Totais
+Doc
+Diário
+Base
+IVA (favor SP)
+113004 - Compras/regularizacoes Continente Op. Isentas OBS
+N. diário
+Descrição
+Tx. IVA: 0 %
+IVA (favor estado)
+320,00
+CMP
+02/9
+FC 2026/26
+Fatura de compra Renda
+320,00
+CMP
+03/6
+FC 2026/36
+Fatura de compra Renda
+350,00
+CMP
+03/7
+FC 2026/37
+Fatura de compra Contabilista
+990,00
+Totais
+Doc
+Diário
+Base
+IVA (favor SP)
+120006 - Vendas Continente Op. Gerais OBS NOR
+N. diário
+Descrição
+Tx. IVA: 23 % | Q. Base: Q6C3 | Q. IVA: ;Q6C4
+IVA (favor estado)
+390,24
+VND
+01/1
+FT 2026/1
+Fatura FT 2026/1
+89,76
+294,48
+VND
+01/2
+FT 2026/2
+Fatura FT 2026/6
+67,73
+184,75
+VND
+01/3
+FT 2026/3
+Fatura FT 2026/5
+42,49
+219,54
+VND
+01/4
+FT 2026/4
+Fatura FT 2026/8
+50,49
+313,06
+VND
+01/5
+FT 2026/5
+Fatura FT 2026/7
+72,00
+184,75
+VND
+01/6
+FT 2026/6
+Fatura FT 2026/11
+42,49
+294,48
+VND
+01/7
+FT 2026/7
+Fatura FT 2026/10
+67,73
+182,95
+VND
+01/8
+FT 2026/8
+Fatura FT 2026/9
+42,08
+116,64
+VND
+01/9
+FT 2026/9
+Fatura FT 2026/14
+26,83
+332,85
+VND
+01/10
+FT 2026/10
+Fatura FT 2026/13
+76,56
+146,34
+VND
+01/11
+FT 2026/11
+Fatura FT 2026/12
+33,66
+455,20
+VND
+01/12
+FT 2026/12
+Fatura FT 2026/15
+104,70
+162,60
+VND
+01/13
+FT 2026/13
+Fatura FT 2026/16
+37,40
+113,84
+VND
+01/14
+FT 2026/14
+Fatura FT 2026/17
+26,18
+97,56
+VND
+01/15
+FT 2026/15
+Fatura FT 2026/19
+22,44
+61,00
+VND
+01/16
+FT 2026/16
+Fatura FT 2026/18
+14,03
+243,90
+VND
+01/17
+FT 2026/17
+Fatura FT 2026/22
+56,10
+295,08
+VND
+01/18
+FT 2026/18
+Fatura FT 2026/21
+67,87
+295,08
+VND
+01/19
+FT 2026/19
+Fatura FT 2026/20
+67,87
+182,88
+VND
+01/20
+FT 2026/20
+Fatura FT 2026/24
+42,06
+277,18
+VND
+01/21
+FT 2026/21
+Fatura FT 2026/23
+63,75
+48,78
+VND
+01/22
+FT 2026/22
+Fatura FT 2026/25
+11,22
+122,00
+VND
+01/23
+FT 2026/23
+Fatura FT 2026/26
+28,06
+48,84
+VND
+01/24
+FT 2026/24
+Fatura FT 2026/28
+11,23
+390,24
+VND
+01/25
+FT 2026/25
+Fatura FT 2026/27
+89,76
+178,88
+VND
+01/26
+FT 2026/26
+Fatura FT 2026/31
+41,14
+247,40
+VND
+01/27
+FT 2026/27
+Fatura FT 2026/30
+56,90
+206,75
+VND
+01/28
+FT 2026/28
+Fatura FT 2026/29
+47,55
+406,50
+VND
+01/29
+FT 2026/29
+Fatura FT 2026/32
+93,50
+243,90
+VND
+01/30
+FT 2026/30
+Fatura FT 2026/33
+56,10
+219,51
+VND
+01/31
+FT 2026/31
+Fatura FT 2026/34
+50,49
+223,64
+VND
+01/32
+FT 2026/32
+Fatura FT 2026/37
+51,44
+126,08
+VND
+01/33
+FT 2026/33
+Fatura FT 2026/36
+29,00
+207,35
+VND
+01/34
+FT 2026/34
+Fatura FT 2026/35
+47,69
+125,95
+VND
+01/35
+FT 2026/35
+Fatura FT 2026/40
+28,97
+150,34
+VND
+01/36
+FT 2026/36
+Fatura FT 2026/39
+34,58
+125,98
+VND
+01/37
+FT 2026/37
+Fatura FT 2026/38
+28,98
+274,72
+VND
+01/38
+FT 2026/38
+Fatura FT 2026/2
+63,19
+164,20
+VND
+01/39
+FT 2026/39
+Fatura FT 2026/3
+37,77
+162,60
+VND
+01/40
+FT 2026/40
+Fatura FT 2026/4
+37,40
+274,72
+VND
+02/1
+FT 2026/41
+Fatura FT 2026/41
+63,19
+2
+4
+Página
+Emitido por Ensino (Powered by - TOConline - https://www.toconline.pt)
+/
+NIF: 514740540
+Empresa SECADE Beauty Lda
+Valores em EUR
+Mapa de conferência de IVA - 1º Trimestre
+Doc
+Diário
+Base
+IVA (favor SP)
+120006 - Vendas Continente Op. Gerais OBS NOR
+N. diário
+Descrição
+Tx. IVA: 23 % | Q. Base: Q6C3 | Q. IVA: ;Q6C4
+IVA (favor estado)
+391,84
+VND
+02/2
+FT 2026/42
+Fatura FT 2026/42
+90,12
+273,18
+VND
+02/3
+FT 2026/43
+Fatura FT 2026/43
+62,83
+294,52
+VND
+02/4
+FT 2026/44
+Fatura FT 2026/44
+67,74
+196,92
+VND
+02/5
+FT 2026/45
+Fatura FT 2026/45
+45,29
+81,32
+VND
+02/6
+FT 2026/46
+Fatura FT 2026/46
+18,70
+162,60
+VND
+02/7
+FT 2026/47
+Fatura FT 2026/47
+37,40
+61,00
+VND
+02/8
+FT 2026/48
+Fatura FT 2026/48
+14,03
+343,26
+VND
+02/9
+FT 2026/49
+Fatura FT 2026/49
+78,95
+404,29
+VND
+02/10
+FT 2026/50
+Fatura FT 2026/50
+92,99
+146,36
+VND
+02/11
+FT 2026/51
+Fatura FT 2026/51
+33,66
+96,74
+VND
+02/12
+FT 2026/52
+Fatura FT 2026/52
+22,25
+238,55
+VND
+02/13
+FT 2026/53
+Fatura FT 2026/53
+54,87
+173,56
+VND
+02/14
+FT 2026/54
+Fatura FT 2026/54
+39,92
+197,52
+VND
+02/15
+FT 2026/55
+Fatura FT 2026/55
+45,43
+295,08
+VND
+02/16
+FT 2026/56
+Fatura FT 2026/56
+67,87
+113,82
+VND
+02/17
+FT 2026/57
+Fatura FT 2026/57
+26,18
+231,65
+VND
+02/18
+FT 2026/58
+Fatura FT 2026/58
+53,28
+227,60
+VND
+02/19
+FT 2026/59
+Fatura FT 2026/59
+52,35
+227,64
+VND
+02/20
+FT 2026/60
+Fatura FT 2026/60
+52,36
+81,30
+VND
+02/21
+FT 2026/61
+Fatura FT 2026/61
+18,70
+117,95
+VND
+02/22
+FT 2026/62
+Fatura FT 2026/62
+27,13
+166,10
+VND
+02/23
+FT 2026/63
+Fatura FT 2026/63
+38,20
+292,72
+VND
+02/24
+FT 2026/64
+Fatura FT 2026/64
+67,33
+172,56
+VND
+02/25
+FT 2026/65
+Fatura FT 2026/65
+39,69
+365,85
+VND
+02/26
+FT 2026/66
+Fatura FT 2026/66
+84,15
+66,84
+VND
+02/27
+FT 2026/67
+Fatura FT 2026/67
+15,37
+124,80
+VND
+02/28
+FT 2026/68
+Fatura FT 2026/68
+28,70
+162,60
+VND
+02/29
+FT 2026/69
+Fatura FT 2026/69
+37,40
+203,30
+VND
+02/30
+FT 2026/70
+Fatura FT 2026/70
+46,76
+148,74
+VND
+02/31
+FT 2026/71
+Fatura FT 2026/71
+34,21
+63,40
+VND
+02/32
+FT 2026/72
+Fatura FT 2026/72
+14,58
+227,68
+VND
+02/33
+FT 2026/73
+Fatura FT 2026/73
+52,37
+44,65
+VND
+02/34
+FT 2026/74
+Fatura FT 2026/74
+10,27
+97,56
+VND
+02/35
+FT 2026/75
+Fatura FT 2026/75
+22,44
+44,20
+VND
+02/36
+FT 2026/76
+Fatura FT 2026/76
+10,17
+219,51
+VND
+02/37
+FT 2026/77
+Fatura FT 2026/77
+50,49
+85,40
+VND
+02/38
+FT 2026/78
+Fatura FT 2026/78
+19,64
+65,04
+VND
+02/39
+FT 2026/79
+Fatura FT 2026/79
+14,96
+122,00
+VND
+02/40
+FT 2026/80
+Fatura FT 2026/80
+28,06
+247,40
+VND
+03/1
+FT 2026/81
+Fatura FT 2026/81
+56,90
+195,12
+VND
+03/2
+FT 2026/82
+Fatura FT 2026/82
+44,88
+195,12
+VND
+03/3
+FT 2026/83
+Fatura FT 2026/83
+44,88
+219,54
+VND
+03/4
+FT 2026/84
+Fatura FT 2026/84
+50,49
+113,84
+VND
+03/5
+FT 2026/85
+Fatura FT 2026/85
+26,18
+243,90
+VND
+03/6
+FT 2026/86
+Fatura FT 2026/86
+56,10
+126,08
+VND
+03/7
+FT 2026/87
+Fatura FT 2026/87
+29,00
+187,05
+VND
+03/8
+FT 2026/88
+Fatura FT 2026/88
+43,02
+223,60
+VND
+03/9
+FT 2026/89
+Fatura FT 2026/89
+51,43
+162,60
+VND
+03/10
+FT 2026/90
+Fatura FT 2026/90
+37,40
+248,00
+VND
+03/11
+FT 2026/91
+Fatura FT 2026/91
+57,04
+248,00
+VND
+03/12
+FT 2026/92
+Fatura FT 2026/92
+57,04
+146,36
+VND
+03/13
+FT 2026/93
+Fatura FT 2026/93
+33,66
+268,29
+VND
+03/14
+FT 2026/94
+Fatura FT 2026/94
+61,71
+125,95
+VND
+03/15
+FT 2026/95
+Fatura FT 2026/95
+28,97
+174,73
+VND
+03/16
+FT 2026/96
+Fatura FT 2026/96
+40,19
+364,16
+VND
+03/17
+FT 2026/97
+Fatura FT 2026/97
+83,76
+3
+4
+Página
+Emitido por Ensino (Powered by - TOConline - https://www.toconline.pt)
+/
+NIF: 514740540
+Empresa SECADE Beauty Lda
+Valores em EUR
+Mapa de conferência de IVA - 1º Trimestre
+Doc
+Diário
+Base
+IVA (favor SP)
+120006 - Vendas Continente Op. Gerais OBS NOR
+N. diário
+Descrição
+Tx. IVA: 23 % | Q. Base: Q6C3 | Q. IVA: ;Q6C4
+IVA (favor estado)
+100,00
+VND
+03/18
+FT 2026/98
+Fatura FT 2026/98
+23,00
+51,18
+VND
+03/19
+FT 2026/99
+Fatura FT 2026/99
+11,77
+146,36
+VND
+03/20
+FT 2026/100
+Fatura FT 2026/100
+33,66
+439,02
+VND
+03/21
+FT 2026/101
+Fatura FT 2026/101
+100,97
+377,20
+VND
+03/22
+FT 2026/102
+Fatura FT 2026/102
+86,76
+341,46
+VND
+03/23
+FT 2026/103
+Fatura FT 2026/103
+78,54
+196,92
+VND
+03/24
+FT 2026/104
+Fatura FT 2026/104
+45,29
+184,75
+VND
+03/25
+FT 2026/105
+Fatura FT 2026/105
+42,49
+455,30
+VND
+03/26
+FT 2026/106
+Fatura FT 2026/106
+104,72
+66,84
+VND
+03/27
+FT 2026/107
+Fatura FT 2026/107
+15,37
+99,36
+VND
+03/28
+FT 2026/108
+Fatura FT 2026/108
+22,85
+284,55
+VND
+03/29
+FT 2026/109
+Fatura FT 2026/109
+65,45
+285,70
+VND
+03/30
+FT 2026/110
+Fatura FT 2026/110
+65,71
+173,56
+VND
+03/31
+FT 2026/111
+Fatura FT 2026/111
+39,92
+227,68
+VND
+03/32
+FT 2026/112
+Fatura FT 2026/112
+52,37
+162,60
+VND
+03/33
+FT 2026/113
+Fatura FT 2026/113
+37,40
+76,00
+VND
+03/34
+FT 2026/114
+Fatura FT 2026/114
+17,48
+165,40
+VND
+03/35
+FT 2026/115
+Fatura FT 2026/115
+38,04
+109,80
+VND
+03/36
+FT 2026/116
+Fatura FT 2026/116
+25,25
+116,24
+VND
+03/37
+FT 2026/117
+Fatura FT 2026/117
+26,74
+246,30
+VND
+03/38
+FT 2026/118
+Fatura FT 2026/118
+56,65
+246,30
+VND
+03/39
+FT 2026/119
+Fatura FT 2026/119
+56,65
+97,56
+VND
+03/40
+FT 2026/120
+Fatura FT 2026/120
+22,44
+139,80
+VND
+03/41
+FT 2026/121
+Fatura FT 2026/121
+32,15
+24.102,05
+Totais
+5.543,54
+4
+4
+Página
+Emitido por Ensino (Powered by - TOConline - https://www.toconline.pt)
+/

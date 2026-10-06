@@ -1,0 +1,38 @@
+﻿FICHEIRO: Menu Dashboard.docx
+1| Menu Dashboard
+2| CARDs:
+3| Disponibilidades :  E3 + E2
+4| Dividas a receber : E8
+5| Dividas a pagar :  F7 + F9 + E11 + F10
+6| Menu R├üCIOS
+7| Ativo corrente :  B4 + C4 + D4
+8| Ativo n├úo corrente : B3 + C3 + D3
+9| Capital pr├│prio : B5 + C5 + D5
+10| Passivo n├úo corrente :
+11| Passivo corrente: B7 + C7 + D7
+12| Liquidez Geral: Mar├ºo C3, Fevereiro D3, Janeiro E3
+13| Fundo de Maneio: Mar├ºo C4, Fevereiro D4, Janeiro E4
+14| Autonomia Financeira: Mar├ºo C5, Fevereiro D5, Janeiro E5
+15| Endividamento: Mar├ºo C6, Fevereiro D6, Janeiro E6
+16| Solvabilidade: Mar├ºo C7, Fevereiro D7, Janeiro E7
+17| Menu ATIVOS
+18| ATIVOS -  O EXCEL DA LISTA DE ATIVOS
+19| MAPA DEPRECICA├çOES ΓÇô  ENVIAR EXCEL
+20| Menu FINANCIAMENTOS
+21| DEVEM ENVIAR UM EXCEL COM O PLANO DE AMORTIZA├ç├òES DO EMPRESTIMO
+22| CARD:
+23| CAPITAL INICIAL : B2
+24| CAPITAL AMORTIZADO : B3
+25| CAPITAL EM DIVIDA : B4
+26| Menu AN├üLISE FINANCEIRA
+27| CARD:
+28| RENDIMENTOS ΓÇô B2
+29| GASTOSΓÇô  B3
+30| RAIΓÇô  B4
+31| Podem colocar uma ΓÇ£caixaΓÇ¥ para inserir a taxa de IRC, e outra ΓÇ£caixaΓÇ¥ com o valor do IRC que a empresa vai pagar
+32| Menu Recursos Humanos
+33| FUNCION├üRIOS - (Nome)A4, A5, A6, A7, A8, A9... (Vencimento) B4, B5, B6, B7. B8, B9
+34| IMPOSTOS ΓÇô
+35| CUSTOS FUNCION├üRIOS - PODEM FAZER GRAFICO PARA RELACIONAR O VALOR DA REMURA├çAO, COM O VALOR QUE O FUNCION├üRIO RECEBE.
+
+TOTAL PARAGRAFOS COM TEXTO = 35

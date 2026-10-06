@@ -30,11 +30,6 @@ class BookingPersonRepository extends BaseRepository {
         return (int)$this->lastInsertId();
     }
 
-    /** Remove os acompanhantes de um agendamento (edição — F9b). */
-    public function deleteByBooking(int $bookingId): int {
-        return $this->execute("DELETE FROM agendamento_pessoa WHERE agendamento_id = :id", ["id" => $bookingId]);
-    }
-
     /**
      * NOTA (auditoria): sem uso no projecto — nem PHP nem JS o invocam.
      * Mantém-se por ser o único ponto de leitura por (id, agendamento) da tabela;

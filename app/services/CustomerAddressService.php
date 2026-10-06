@@ -27,16 +27,6 @@ class CustomerAddressService extends BaseService {
         });
     }
 
-    /** Confirma que a morada indicada pertence mesmo ao cliente (posse). */
-    public function assertIsCustomerAddress(int $customerId, int $addressId): void {
-        // O repositório filtra sempre pelo cliente: se não vier nada, não é dele.
-        $address = $this->addressRepository->find($customerId, $addressId);
-
-        if (!$address) {
-            throw new Exception("Morada não encontrada para este cliente.", 404);
-        }
-    }
-
     public function createAddress(int $customerId, array $data): array {
         $this->validateInput($data);
 

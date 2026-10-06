@@ -10,9 +10,9 @@
  */
 const bookingStatusUtils = (() => {
     const BOOKING_LABELS = {
-        pendente_alocacao:   { admin: "Aguarda aceitação (funcionários)",    customer: "Aguarda aceitação" },
+        pendente_aceitacao_funcionarios:   { admin: "Aguarda aceitação (funcionários)",    customer: "Aguarda aceitação" },
         pendente_validacao_logistica_loja: { admin: "Pendente validação logística (loja)", customer: "Pendente validação (loja)" },
-        totalmente_alocado:    { admin: "Totalmente aceite por funcionários",  customer: "Totalmente aceite" },
+        totalmente_aceite_funcionarios:    { admin: "Totalmente aceite por funcionários",  customer: "Totalmente aceite" },
         confirmado:                        { admin: "Confirmado",                          customer: "Confirmado" },
         recusado:                          { admin: "Recusado",                            customer: "Recusado" },
         cancelado:                         { admin: "Cancelado",                           customer: "Cancelado" },
@@ -21,9 +21,9 @@ const bookingStatusUtils = (() => {
     };
 
     const BOOKING_CLASSES = {
-        pendente_alocacao:   "bg-secondary",
+        pendente_aceitacao_funcionarios:   "bg-secondary",
         pendente_validacao_logistica_loja: "bg-warning text-dark",
-        totalmente_alocado:    "bg-info text-dark",
+        totalmente_aceite_funcionarios:    "bg-info text-dark",
         confirmado:                        "bg-success",
         recusado:                          "bg-danger",
         cancelado:                         "bg-dark",

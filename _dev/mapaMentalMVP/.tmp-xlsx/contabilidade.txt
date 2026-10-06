@@ -1,0 +1,108 @@
+﻿FICHEIRO: Contabilidade Secade Beauty.xlsx
+FOLHAS (9): Menu Dashboard | Menu R├ícios | Lista de Invent├írios | Mapa Deprecia├º├╡es | Menu Financiamento | An├ílise financeira | Menu Recursos Humanos | Custos Funcion├írios | DMR - DRI
+
+====================================================================================================
+FOLHA: Menu Dashboard   (xl/worksheets/sheet1.xml)
+====================================================================================================
+1   : A=Conta  |  B=Descri├º├úo  |  C=D├⌐bito  |  D=Cr├⌐dito  |  E=Saldo Devedor  |  F=Saldo Credor
+2   : A=11  |  B=Caixa  |  C=9040,05  |  E=9040,05
+3   : A=12  |  B=Banco CTT  |  C=100605,54  |  D=64959,17  |  E=35646,37
+4   : A=6  |  B=Gastos  |  C=45866,86  |  D=69,23  |  E=45807,31
+5   : A=7  |  B=Rendimentos  |  D=24102,05  |  F=24102,05
+6   : A=RAI  |  F=-21705,26
+7   : A=22  |  B=Fornecedores  |  C=14275,96  |  D=16238  |  F=1962,04
+8   : A=21  |  B=Clientes  |  C=0  |  D=0
+9   : A=25  |  B=Financiamento  |  C=645,34  |  D=50000  |  F=49354,66
+10  : A=2451  |  B=Seguran├ºa Social  |  C=4605,72  |  D=6908,58  |  F=2302,86
+11  : A=24  |  B=IVA  |  C=11195,21  |  D=5543,54  |  E=5651,67
+
+====================================================================================================
+FOLHA: Menu R├ícios   (xl/worksheets/sheet2.xml)
+====================================================================================================
+1   : B=Balan├ºo
+2   : A=Descri├º├úo  |  B=Janeiro  |  C=Fevereiro  |  D=Mar├ºo
+3   : A=Ativo n├úo Corrente  |  B=44672,48  |  C=43715,52  |  D=42758,56
+4   : A=Ativo Corrente  |  B=90883,8  |  C=60832,33  |  D=50338,09
+5   : A=Capital Pr├│prio  |  B=23350,18  |  C=15334,05  |  D=8294,74
+6   : A=Passivo n├úo Corrente  |  B=0  |  C=0  |  D=0
+7   : A=Passivo Corrente  |  B=112206,1  |  C=89213,8  |  D=84801,91
+9   : A=R├ícios
+10  : A=Descri├º├úo  |  B=Mar├ºo  |  C=Feveireiro  |  D=Janeiro
+11  : A=Liquidez Geral   |  B=0,593596  |  C=0,681871  |  D=0,809972
+12  : A=Fundo de Maneio  |  B=-34463,82  |  C=-28381,47  |  D=-21322,3
+13  : A=Autonomia Financeira  |  B=0,089098  |  C=0,14667  |  D=0,172255
+14  : A=Endividamento  |  B=0,910902  |  C=0,85333  |  D=0,827745
+15  : A=Solvabilidade  |  B=0,097813  |  C=0,17188  |  D=0,208101
+
+====================================================================================================
+FOLHA: Lista de Invent├írios   (xl/worksheets/sheet3.xml)
+====================================================================================================
+1   : A=Lista de invent├írios
+3   : A=C├│digo do ativo  |  B=Descri├º├úo  |  C=Tipo de ativo  |  D=Localiza├º├úo  |  E=Data de Aquisi├º├úo  |  F=Valor de Aquis├º├úo  |  G=Vida ├║til  |  H=Data de ├¡nicio de deprecia├º├úo
+4   : A=2026.00002  |  B=Port├ítil Apple  |  C=Equipamento administrativo  |  D=Sede  |  E=2026-01-01  |  F=913,99  |  G=3  |  H=2026-01-02
+5   : A=2026,00004  |  B=Carrinha  |  C=Equipamento de transporte  |  D=sede  |  E=2026-01-01  |  F=44715,45  |  G=4  |  H=2026-01-01
+
+====================================================================================================
+FOLHA: Mapa Deprecia├º├╡es   (xl/worksheets/sheet4.xml)
+====================================================================================================
+2   : A=Investimemto  |  B=Tipo de ativo  |  C=C├│digo do ativo  |  D=Descri├º├úo  |  E=Data da aquisi├º├úo  |  F=Inicio de utiliza├º├úo  |  G=Valor de aquisi├º├úo  |  H=Valor depreci├ível inicial  |  I=Deprecia├º├úo acumulada  |  J=Valor contabil├¡stico
+3   : A=43  |  B=Ativos fixos tang├¡veis
+4   : A=434  |  B=Equipamentos de transporte  |  C=2026-00004  |  D= Carrinha  |  E=2026-01-01  |  F=2026-01-01  |  G=44715,45  |  H=44715,45  |  I=2794,71  |  J=41920,74
+5   : B=Sub-Total 434  |  G=44715,45  |  H=44715,45  |  I=2794,71  |  J=41920,74
+6   : B=Equipamento administrativo  |  C=2026-00002  |  D=Port├ítil Apple  |  E=2026-01-01  |  F=2026-01-01  |  G=913,99  |  H=913,99  |  I=76,17  |  J=837,82
+7   : A=435  |  B=Sub-Total 435  |  G=913,99  |  H=913,99  |  I=76,17  |  J=837,82
+8   : B=Sub-Total 43  |  G=45629,44  |  H=45629,44  |  I=2870,88  |  J=42758,56
+9   : B=Total  |  G=45629,44  |  H=45629,44  |  I=2870,88  |  J=42758,56
+
+====================================================================================================
+FOLHA: Menu Financiamento   (xl/worksheets/sheet5.xml)
+====================================================================================================
+1   : A=Menu Financiamento
+2   : A=Capital Inicial  |  B=50000
+3   : A=Capital Amortizado  |  B=25983,2
+4   : A=Capital em d├¡vida  |  B=24016,8
+
+====================================================================================================
+FOLHA: An├ílise financeira   (xl/worksheets/sheet6.xml)
+====================================================================================================
+1   : A=An├ílise Financeira
+2   : A=Rendimentos  |  B=24102,05
+3   : A=Gastos  |  B=45807,31
+4   : A=RAI  |  B=-21705,26
+6   : A=IRC  |  B=F├│rmula
+7   : B=RAI * 20%
+
+====================================================================================================
+FOLHA: Menu Recursos Humanos   (xl/worksheets/sheet7.xml)
+====================================================================================================
+1   : A=Recursos Humanos
+3   : A=Nome  |  B=Vencimento Base
+4   : A=Cassiana Tavares  |  B=1200
+5   : A=Delfina Benjamim  |  B=1200
+6   : A=Iracelma Joaquim  |  B=1000
+7   : A=Lu├¡s Chivela  |  B=1000
+8   : A=Sebenildes Cabamba  |  B=1250
+9   : A=Teresa Elisabeth  |  B=1000
+
+====================================================================================================
+FOLHA: Custos Funcion├írios   (xl/worksheets/sheet8.xml)
+====================================================================================================
+1   : A=Custos com os Funcion├írios
+2   : A=remunera├º├úo  |  B=SA   |  C=n meses  |  D=REMUNERA├ç├âO  |  E=REMUNERA├ç├âO  |  F=IRS  |  G=SS 11  |  H=SS 23,75  |  I=PAGAR AO PESSOAL
+3   : A=1200  |  B=387,45  |  C=3  |  D=3600  |  E=3987,45  |  F=288  |  G=396  |  H=855
+4   : A=1200  |  B=387,45  |  C=3  |  D=3600  |  E=3987,45  |  F=288  |  G=396  |  H=855
+5   : A=1000  |  B=387,45  |  C=3  |  D=3000  |  E=3387,45  |  F=108  |  G=330  |  H=712,5
+6   : A=1000  |  B=387,45  |  C=3  |  D=3000  |  E=3387,45  |  F=108  |  G=330  |  H=712,5
+7   : A=1000  |  B=387,45  |  C=3  |  D=3000  |  E=3387,45  |  F=108  |  G=330  |  H=712,5
+8   : A=1250  |  B=375,15  |  C=3  |  D=3750  |  E=4125,15  |  F=321  |  G=412,5  |  H=890,625
+9   : C=TOTAL  |  D=19950  |  E=22262,4  |  F=1221  |  G=2194,5  |  H=4738,125  |  I=18846,9
+12  : E=REMUNERA├ç├âO  |  F=22262,4
+13  : E=IRS  |  F=1221
+14  : E=SS  |  F=6932,625
+
+====================================================================================================
+FOLHA: DMR - DRI   (xl/worksheets/sheet9.xml)
+====================================================================================================
+1   : A=DMR
+6   : N=DRI
+

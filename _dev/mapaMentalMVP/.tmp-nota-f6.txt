@@ -1,0 +1,3 @@
+> **Já feito dentro da Fase 6:** a **carga dos dados reais** entregues pelo cliente
+> (`database_migration_v4.sql` — durações, 43 fornecedores, 65 clientes) — **RF-86** ✅ · §24.11.
+> É a base de dados do módulo de **fornecedores**, que é a prioridade 1 do trabalho futuro (§25.1).

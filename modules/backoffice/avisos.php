@@ -11,8 +11,6 @@ register_script("components/alerts", "backoffice");
 $boPageTitle = "Avisos";
 $boCurrentPage = "alerts";
 
-$isManager = Session::isManager();
-
 include_once ROOT_PATH . "/modules/backoffice/includes/boHeader.php";
 include_once ROOT_PATH . "/modules/backoffice/includes/boNavbar.php";
 ?>
@@ -27,11 +25,9 @@ include_once ROOT_PATH . "/modules/backoffice/includes/boNavbar.php";
         </div>
         <div class="d-flex gap-2">
             <span class="badge bg-secondary align-self-center" id="alertsCountBadge">0</span>
-            <?php if ($isManager): ?>
-                <button type="button" class="btn btn-outline-primary" id="markAlertsReadBtn">
-                    <i class="bi bi-check2-all me-1"></i> Marcar fiscais como lidos
-                </button>
-            <?php endif; ?>
+            <button type="button" class="btn btn-outline-primary" id="markAlertsReadBtn">
+                <i class="bi bi-check2-all me-1"></i> Marcar fiscais como lidos
+            </button>
         </div>
     </div>
 

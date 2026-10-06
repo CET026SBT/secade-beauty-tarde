@@ -1,0 +1,973 @@
+SECADE BEAUTY — BACKOFFICE
+Estrutura proposta, o que já recebemos e dúvidas a esclarecer
++ REFERÊNCIAS RÁPIDAS DE VERIFICAÇÃO
+(5.ª versão — 25/09/2026 · companheiro de mensagem_teams.txt)
+
+====================================================================
+O QUE É ESTE FICHEIRO
+====================================================================
+
+É a MESMA mensagem de mensagem_teams.txt — mesmo texto, mesma versão,
+mesma ordem — com uma linha de referência por baixo de cada afirmação e
+de cada dúvida, para o humano poder conferir tudo sem depender da minha
+palavra. Nada aqui substitui a mensagem original nem a especificação:
+serve só para verificar.
+
+====================================================================
+COMO LER AS REFERÊNCIAS
+====================================================================
+
+Prefixos:
+
+  [AF] AFIRMAÇÃO — onde se prova (ficheiro:linha, linhas a 25/09/2026).
+  [DU] DÚVIDA — ID da dúvida (Q-nn) ou do conflito (C-nn) + onde está
+       registada. Estado indicado: ABERTA · PARCIAL · FECHADA.
+  [SF] SEM FONTE no repositório — não há nada a verificar aqui: é
+       pergunta nascida de conversa e só o cliente responde
+       (.clinerules §0 regra 3 · ANALISE §2.3 · AUDIT F-01 L41-44).
+  [CD] PROVA NO CÓDIGO do produto — caminho real do ficheiro.
+  [ND] NÃO DECIDIDO — é proposta nossa, ainda não aceite pelo gestor.
+
+Ficheiros citados (abreviaturas):
+
+  ANALISE = _dev/mapaMentalMVP/analise_backoffice_gestor.md   (1411 linhas)
+  AUDIT   = _dev/mapaMentalMVP/auditoria_plataforma.md        (242 linhas)
+  ROUTER  = especificacao_mvp.md   (dá o mapa § -> ficheiro de spec)
+  SPEC    = _dev/docs/spec/<dominio>.md (core · requirements · operations ·
+            booking · finance · data-api · delivery · backlog · annex)
+  INDEX   = index.php                rota de página -> ficheiro   L13-36
+  API     = app/config/api.php       37 endpoints (contagem conferida)
+  MENU    = _dev/mapaMentalMVP/Menu Dashboard.docx              (cliente)
+  XLSX    = _dev/mapaMentalMVP/Contabilidade Secade Beauty.xlsx  (cliente)
+
+AVISO sobre os números de linha: são de 25/09/2026. Se um ficheiro for
+editado, os números deslocam-se — nesse caso procure pelo ID (Q-nn, C-nn,
+F.n, D-nn ou §NN), que é estável.
+
+⚠️ ATUALIZAÇÃO DE 25/09/2026 — o ANALISE foi alterado DEPOIS de este documento
+ser escrito: acrescentou-se a nota de §F.7, a pergunta Q-66 em §2.10 e a nova
+§5 (no fim do ficheiro). Efeito nos números de linha citados aqui:
+   - linhas até 764 ............. inalteradas
+   - linhas de 765 a 1096 ....... +10
+   - linhas a partir de 1097 .... +15
+As referências abaixo mantêm a numeração ANTERIOR a essa alteração. Para os
+assuntos novos (Q-66 e §5) as referências estão no fim deste documento.
+
+====================================================================
+COMO CONFERIR (comandos do próprio projeto)
+====================================================================
+
+  # ver 15 linhas a partir da linha 1080 do ANALISE
+  php _dev/tools/file-edit.php show _dev/mapaMentalMVP/analise_backoffice_gestor.md 1080 15
+
+  # procurar a dúvida Q-61 em todo o ANALISE
+  php _dev/tools/file-edit.php grep "Q-61" _dev/mapaMentalMVP/analise_backoffice_gestor.md
+
+  # confirmar as rotas de página que já existem
+  php _dev/tools/file-edit.php show index.php 13 24
+
+  # confirmar o varrimento de inexistência na BD (ativos, empréstimos, ...)
+  php _dev/tools/file-edit.php show _dev/mapaMentalMVP/analise_backoffice_gestor.md 1355 17
+
+  # confirmar o estado em que cada módulo está (coluna "Estado")
+  php _dev/tools/file-edit.php show _dev/mapaMentalMVP/analise_backoffice_gestor.md 66 40
+
+  # conferir que este ficheiro não tem BOM nem mojibake
+  php _dev/tools/encoding-check.php _dev/mapaMentalMVP/mensagem_teams_referencias.txt
+
+====================================================================
+AVISO PRÉVIO — LEIA ISTO ANTES DA ESTRUTURA
+====================================================================
+
+A frase do cabeçalho da mensagem ("O que o GESTOR/FUNCIONÁRIO podem
+ver/aceder") mistura TRÊS coisas diferentes. A distinção é importante,
+para não se ler como "já feito":
+
+  (1) já existe e funciona ....... Agendamentos, Rotas, Fiscal,
+      Recibos verdes, Serviços (supervisão) — 5 itens.
+  (2) proposta de estrutura ...... Contabilidade, Equipa/RH, Promoções,
+      Painel/Resumo, área do Funcionário, site público — ⬜/🟡, nada
+      implementado e nada aprovado.
+  (3) dúvida/pedido do cliente ... as 35 perguntas do ponto 3.
+
+[AF] Coluna "Estado" módulo a módulo: ANALISE §1.2 L66-115.
+[AF] Legenda dos símbolos (✅ existe · 🟡 parcial · ⬜ não existe):
+     ANALISE L45.
+[DU] Nada do grupo (2) entra em código antes de decisão do gestor:
+     ANALISE L40-43 (§29.3 do ROUTER) e ANALISE §1.10 L369-384 (IDs ainda
+     por atribuir). Estado real da plataforma: AUDIT §2.1 L99-109.
+
+====================================================================
+1) ESTRUTURA DO BACKOFFICE
+====================================================================
+
+O que o GESTOR/FUNCIONARIO podem ver/aceder:
+
+
+GESTOR
+
+- Resumo (painel de entrada)
+    - Gastos vs. Rendimentos do mês
+    - Dívidas a fornecedores
+    - Avisos e lembretes (sino)
+  [AF] Requisito já registado, mas parcial — RF-63 "Dashboard/resumo e
+       estrutura de menus convencionada por módulo", estado 🟡:
+       SPEC requirements.md L83. Nice-to-have: SPEC backlog.md §25.4 L171-176.
+  [AF] Proposta de encaixe (página /gestao como painel):
+       ANALISE §1.3 L116-137.
+  [DU] C-01 ABERTA — /gestao hoje é a LISTA de agendamentos, não um
+       painel. ANALISE L1126-1129 · [CD] INDEX L30-31.
+  [DU] "Dívidas a fornecedores" depende do módulo Fornecedores (⬜) — o
+       card deve sair vazio e explicativo, nunca com valor inventado:
+       ANALISE L136-137.
+  [DU] Sininho: contador por utilizador ou global? Q-23 · C-03 —
+       ANALISE L911, L1136-1139.
+
+- Agendamentos                    (JÁ EXISTE)
+  [CD] INDEX L30-31 -> modules/backoffice/appointments.php
+  [CD] Endpoints admin-appointment-*: API (app/config/api.php)
+  [AF] ANALISE §1.2 L70-71 (a lista existe; o painel é que é novo).
+
+- Rotas                           (JÁ EXISTE)
+  [CD] INDEX L32 -> modules/backoffice/routes.php
+  [AF] Custos de rota já calculados (receita − combustível):
+       ANALISE §1.4 L178-179.
+
+- Fiscal                          (JÁ EXISTE: IVA, IRC, Segurança Social, Seguros)
+  [CD] INDEX L34 -> modules/backoffice/fiscal.php
+  [CD] API L39-43: admin-fiscal-calendar-list · admin-fiscal-alert-list ·
+       admin-fiscal-obligation-create · admin-fiscal-obligation-paid ·
+       admin-fiscal-alert-read
+  [AF] SPEC finance.md §13 L33-47 (obrigações, alertas 30/15/7/3/1/atraso,
+       valor estimado introduzido à mão, sem CRON, sem anexos).
+  [AF] RF-60 ✅: SPEC requirements.md L80.
+
+- Recibos verdes                  (JÁ EXISTE: percentagens + simulador)
+  [CD] INDEX L35 -> modules/backoffice/greenReceipts.php
+  [CD] API L44-46: admin-green-receipt-config · -config-save · -simulate
+  [AF] SPEC finance.md §11 L8-31 (70/30 por omissão, vigência por data,
+       valores gravados no agendamento_servico, "é um simulador").
+
+- Contabilidade (NOVO) — 6 secções, seguindo o "Menu Dashboard" que nos enviaram:
+    - Resumo ............ Disponibilidades · Dívidas a receber · Dívidas a pagar
+    - Rácios ............ Ativo corrente / não corrente · Capital próprio ·
+                          Passivo não corrente
+    - Ativos ............ Lista de ativos · Mapa de depreciações
+    - Financiamentos .... Capital inicial · amortizado · em dívida
+    - Análise financeira  Rendimentos · Gastos · Resultado antes do imposto
+    - Recursos Humanos .. Funcionários · Impostos · Custos de funcionários
+    - Balancete e tesouraria (saldo, entradas/saídas, posição de IVA)
+  [AF] A estrutura de 6 secções vem do ficheiro do cliente (MENU), folha a
+       folha: ANALISE §1.12 F.0 L488-504 (as 9 folhas do XLSX) e §F.2
+       L535-552 (menus e cards pedidos).
+  [AF] O que o sistema consegue alimentar hoje (tabela real):
+       ANALISE §1.4 B.1 L170-184.
+  [DU] C-04 ABERTA (bloqueia tudo o resto) — SPEC transacao_financeira é
+       livro de RECEBIMENTOS (agendamento_id e funcionario_id NOT NULL) →
+       não dá para registar despesas. ANALISE §1.4 B.2 L186-197 ·
+       L1140-1145.
+  [DU] C-29 ABERTA — ler por mapa de células (recomendado) ou importar
+       para tabelas novas? ANALISE §F.1 L506-524 · L1278-1280.
+  [ND] O nome "6 secções" é nosso: o MENU separa Dashboard · Rácios ·
+       Ativos · Financiamentos · Análise financeira · RH — e a tesouraria
+       é a 7.ª linha que nós acrescentamos. Confirmar com o cliente:
+       ANALISE §F.6 L724-727.
+
+- Equipa / Recursos Humanos (NOVO)
+    - Listagem, adicionar, editar, desativar
+    - Filtro por vínculo: efetivos vs. recibos verdes
+  [AF] Os dados já existem (tipo_contrato, salario_base, ativo +
+       EmployeeService/EmployeeRepository); falta a PÁGINA:
+       ANALISE §1.5 L233-250 · [CD] app/services/EmployeeService.php,
+       app/repositories/EmployeeRepository.php.
+  [DU] Q-11 ABERTA — que subsídios entram? Q-12 ABERTA — reutilizar
+       auth-register ou endpoint novo? Q-13 ABERTA — o que acontece a
+       serviços e rotas ao desativar? ANALISE L887-892.
+  [DU] C-07 ABERTA — fronteira com §22.2 (perfil de leitura):
+       ANALISE L1153-1156, L1255.
+  [AF] "Desativar" só pode ser soft-delete: há ON DELETE RESTRICT em
+       transacao_financeira, gorjeta e fecho_caixa_diario — ANALISE L245-246.
+
+- Promoções (NOVO)
+    - Campanhas com data de início e fim
+    - Tags sazonais (Natal, Verão, Black Friday, ...)
+    - Serviços abrangidos (loja física e carrinha)
+  [AF] Verificação de inexistência: não há tabela, página, endpoint,
+       Service, Repository nem JS de promoções — ANALISE §1.6 L258-259
+       (24 tabelas em DataBase.sql; rotas em INDEX L30-35; 37 endpoints
+       em API — contagem conferida por nós).
+  [ND] 4 tabelas propostas (promocao · promocao_contexto · promocao_servico
+       · promocao_canal) — ANALISE §1.6 L261-268. Alteração de BD, logo
+       exige justificação registada (.clinerules §1).
+  [DU] Q-15 · Q-16 · Q-19 · Q-20 ABERTAS: ANALISE L899-905.
+
+- Fornecedores (EM ANDAMENTO — prioridade 1 do trabalho futuro)
+  [AF] É literalmente a prioridade máxima do trabalho futuro:
+       SPEC backlog.md §25.1 L141-148, e a rota prevista
+       /gestao/fornecedores → gestor em §25.5 L177-185.
+  [AF] Hoje ⬜: nenhuma tabela de fornecedores; as 4 ocorrências de
+       "fornecedor" no código são comentários do serviço de geocoding —
+       ANALISE §4.4 L1365-1366.
+  [DU] C-04 ABERTA (mesmo conflito da contabilidade) — sem modelo de
+       despesas não há dívida a fornecedor: ANALISE L1140-1145.
+
+- Serviços (JÁ EXISTE, em modo supervisão)
+  [CD] INDEX L33 -> modules/backoffice/services.php
+  [AF] As PÁGINAS do backoffice não estão segregadas por perfil (o gestor
+       abre /gestao/servicos em supervisão), mas as APIs estão: aceitar
+       como gestor devolve 403 — ANALISE §1.7 L287-289.
+  [CD] API L34-37: admin-service-pending-list · accepted-list · accept ·
+       unaccept
+
+
+FUNCIONÁRIO
+
+⚠️ [AF] Este bloco é o mais frágil da mensagem: dos 5 itens, 1 existe e 4
+   são proposta. Estado medido em ANALISE §1.7 L287-289 e L310-317, e na
+   coluna "Estado" de §1.2 L102-105.
+
+- A minha agenda (marcações que lhe estão atribuídas)
+  [AF] ⬜ NÃO EXISTE. Hoje só existe a lista de aceitação. Os dados já
+       existem em agendamento_servico.funcionario_id — ANALISE L314-315.
+  [DU] Q-42 ABERTA — a que terá acesso o Funcionário: ANALISE L988-989.
+  [DU] C-22 ABERTA — matriz de perfis por página + endpoint: ANALISE L1271
+       e §1.7 L301-308 (tabela página × perfil).
+
+- Aceitação de serviços          (JÁ EXISTE: aceitar, desfazer, trocar)
+  [CD] INDEX L33 -> modules/backoffice/services.php
+  [CD] API L34-37: admin-service-pending-list · -accepted-list · -accept ·
+       -unaccept
+  [AF] As APIs recusam o gestor com 403 (§22.2) — ANALISE L288-289, L988.
+  [DU] [SF] "Trocar" é pergunta nossa, não requisito registado: não
+       encontrámos "troca" na especificação. Confirmar com o cliente se é
+       trocar de funcionário, de data ou de serviço.
+
+- As minhas comissões (para profissionais a recibos verdes)
+  [AF] 🟡 dados já gravados (agendamento_servico.
+       valor_recibo_verde_funcionario, snapshot na aceitação — SPEC
+       finance.md §11 L14-25); a página é que ⬜ — ANALISE L316-317,
+       §1.2 L103.
+  [DU] C-10 ABERTA — perigo de dupla contagem se somarmos isto às
+       despesas; a fonte tem de ser única — ANALISE L1258, §2.8.1 L994-1007.
+
+- Promoções (apenas leitura)
+  [AF] ⬜ depende do módulo Promoções, que não existe — ANALISE §1.6
+       L258-259, §1.7 L313.
+
+- Avisos / lembretes no sino
+  [AF] ⬜ para o funcionário não existe nada; a proposta é alimentar o
+       mesmo componente só com alertas OPERACIONAIS (nova marcação,
+       alteração/recusa de rota) — ANALISE L165-166, L312.
+  [DU] C-21 ABERTA — separar sino interno do aviso ao cliente:
+       ANALISE L1205-1207, L1270.
+
+
+SITE PÚBLICO
+
+- Secção resumida sobre os serviços prestados, no Início e no Sobre
+  [AF] ⬜ não existe nenhuma secção que descreva os serviços; o padrão a
+       replicar existe (components/about.php é partilhado com as duas
+       páginas) — ANALISE §1.11 E.1 L387-400.
+  [ND] Proposta: novo componente partilhado servicesSummary.php, sem BD
+       nova — ANALISE L397-400.
+  [DU] Q-44 ABERTA — estático ou editável? C-24 ABERTA — ANALISE L1037-1038,
+       L1216.
+
+- Valores mostrados ao cliente com IVA incluído (ex: Valor Total já com IVA incluido, nos Agendamentos)
+  [AF] ⬜ NÃO EXISTE E NÃO É DERIVÁVEL DA BD: a única ocorrência de "IVA" no
+       schema é obrigacao_fiscal.tipo='iva' (obrigação a pagar, não taxa de
+       venda) — ANALISE §1.11 E.2 L406-409.
+  [AF] A taxa deduz-se da aritmética, não de um campo: 35 de 35 preços
+       × 1,23 dão valores redondos → preco_base é LÍQUIDO e a taxa
+       implícita é 23 % — ANALISE L411-426 (§4.3 não inclui esta).
+  [DU] Q-46 ABERTA — 23 % uniforme ou varia por serviço? ANALISE L1042-1043.
+  [DU] Q-47 ABERTA — os preços de montra substituem os da BD? ANALISE
+       L1044-1045.
+  [DU] C-17 ABERTA — onde vive a taxa e o que se grava na marcação:
+       ANALISE L1266, L1189-1191.
+
+- Imagem em cada card de serviço (Agendamentos e Detalhes de Serviço (slider de imagens do serviço) (POR IMPLEMENTAR))
+  [AF] A coluna já existe mas está dormente: servico_foto (url_foto,
+       destaque) — ANALISE §1.2 L113-114, C-23 L1212-1215.
+  [AF] Medição das imagens de categoria: 7 ficheiros no inventário vs 3
+       cards renderizados (3 categorias na BD) — AUDIT F-07 L37, L51-53.
+  [DU] Q-45 ABERTA — quem fornece as imagens, que formato e dimensão:
+       ANALISE L1039-1041.
+
+====================================================================
+2) O QUE JÁ RECEBEMOS
+====================================================================
+
+Recebemos dois ficheiros NOVOS ("Menu Dashboard.docx" e
+"Contabilidade Secade Beauty.xlsx"), que substituem os dois primeiros
+("Menu APOIO 3.docx" e "CUSTOS RH 2.xlsx"). A estrutura da Contabilidade acima
+sai dos ficheiros novos.
+  [AF] Os dois ficheiros estão no disco e datam de 25/09/2026 15:41:
+       _dev/mapaMentalMVP/Menu Dashboard.docx · Contabilidade Secade
+       Beauty.xlsx.
+  [AF] São a fonte de verdade desta iteração; os anteriores só se invocam
+       onde contradizem — ANALISE L22-29.
+  [DU] ⚠️ Estão dentro de _dev/mapaMentalMVP/, que está no .gitignore: nas
+       branches de produto ficam invisíveis para o Git. Se devem ser
+       versionados, é decisão do gestor (onde os colocar): ANALISE §4.5
+       L1386-1390.
+
+APROVEITÁMOS
+- Os ficheiros já trazem dados reais da empresa (janeiro a março de 2026), o que
+  nos permite CONFERIR os números em vez de os supor.
+  [AF] Mudança de natureza, lado a lado com a iteração anterior: ANALISE
+       §4.5 L1373-1384 (empresa, NIF, 6 trabalhadores com nome, 2 ativos
+       reais, período jan-mar 2026).
+  [AF] A conferência é numérica (31 identidades, 30 OK + 1 falha que era o
+       resultado pretendido): ANALISE §4.3 L1328-1353.
+  [AF] O script correu em %TEMP% e não ficou no projeto — ANALISE L1292-1294.
+
+- Sabemos agora a que célula corresponde cada card que pediram.
+  [AF] 42 referências confrontadas uma a uma contra o XLSX: 36 com valor ·
+       1 existente mas vazia · 5 inexistentes · 1 card sem célula indicada
+       — ANALISE §4.2 L1314-1326.
+  [AF] Mapa card a card: ANALISE §F.2 L540-552.
+
+- A folha dos custos de pessoal traz a fórmula completa: remuneração, subsídio
+  de alimentação, IRS e Segurança Social.
+  [AF] Estrutura da fórmula coluna a coluna: ANALISE §F.4 L592-643.
+  [AF] Nota de implementação (fórmula corrigida): ANALISE §2.10.1 L1098-1117.
+  [AF] Provas numéricas (SA, remuneração, IRS, SS 34,75 %, líquido):
+       ANALISE §4.3 L1340-1346.
+
+- A lista de ativos e o mapa de depreciações dão as duas vistas dos ativos.
+  [AF] Duas folhas distintas do XLSX: Lista de Inventários e Mapa
+       Depreciações — ANALISE §F.0 L498-499.
+  [AF] Valores e a fórmula da depreciação (mensal arredondado primeiro):
+       ANALISE §F.5 L644-673 e §4.3 L1334-1339.
+
+- As declarações de DMR e DRI vêm ilustradas e identificam a empresa.
+  [AF] Folha DMR - DRI com entidade, NIF 514740540, NISS, taxa 34,75 %,
+       6 trabalhadores e os totais da DMR: ANALISE §F.8 L765-781.
+  [AF] Campos que existem na captura mas NÃO no .xlsx (as capturas são
+       fonte inegável nessa parte): ANALISE L769-770.
+
+- Confirmámos que as vendas e os custos de rota já vêm da própria plataforma.
+  [AF] Rendimentos (agendamento.valor_total + local_prestacao) e custos de
+       rota (rota_ambulante.custo_estimado_combustivel) já existem na BD:
+       ANALISE §1.4 B.1 L174-179.
+  [AF] "A receita e o custo de rota são 100 % internos": ANALISE §2.7
+       L928-931 · Q-33 L940-941.
+
+AINDA NÃO EXISTE (na base de dados nem no sistema)
+- Ativos e depreciações
+- Empréstimos / financiamentos
+- Rácios
+- Fornecedores e despesas externas (rendas, luz, água, seguros, manutenção)
+- Retenção de IRS na fonte, por trabalhador
+  [AF] Varrimento por palavra-chave sobre o schema e o código — ativo_fixo ·
+       deprecia · amortiza · emprestimo · financiamento · balancete · dmr ·
+       dri → 0 ocorrências; "fornecedor" só em comentários de geocoding:
+       ANALISE §4.4 L1355-1371.
+  [AF] Consequência estrutural: analise §1.4 B.2 L186-197 (o
+       transacao_financeira só regista recebimentos).
+  [AF] Tabelas que existem (24): ANALISE L1358-1362.
+  [DU] C-25 ABERTA (disponibilidades: caixa/banco) · C-26 (empréstimo +
+       plano) · C-27 (dívidas por natureza) · C-28 (IRS por trabalhador) —
+       ANALISE L1274-1277.
+  [DU] "Retenção de IRS na fonte, por trabalhador": a taxa aparece por
+       trabalhador (8 %, 3,6 %, 8,56 %) mas NÃO está modelada em nenhuma
+       tabela — ANALISE §2.10.1 L1104, §4.3 L1344.
+
+====================================================================
+3) DÚVIDAS A ESCLARECER
+====================================================================
+
+Cada pergunta da mensagem leva o ID da dúvida no registo técnico, o
+estado e onde se confere. Estados: ABERTA (nada respondido) · PARCIAL
+(parte provada por verificação, falta a decisão) · FECHADA (respondida
+pelos ficheiros novos — sai da lista).
+
+--- VALORES E IVA ---
+
+1. Confirmam que os preços passam a ser mostrados ao cliente com IVA incluído?
+   E a taxa de IVA é a mesma para todos os serviços?
+   [AF] O que já está provado (logo não é dúvida): para consumidor final os
+        preços ao público têm de incluir IVA — ANALISE §E.2 L425-426.
+   [DU] Q-01 PARCIAL (onde gravar a taxa) → C-17: ANALISE L1266, L855-856.
+   [AF] A taxa deduzida é 23 % em 35 de 35 serviços (× 1,23 dá redondos):
+        ANALISE L411-424.
+   [DU] Q-46 ABERTA (uniforme ou varia por serviço?) — ANALISE L1042-1043.
+   [DU] Q-47 ABERTA (os preços de montra substituem os da BD?) — ANALISE
+        L1044-1045.
+   [AF] Base de cálculo dos recibos verdes (§11) é o preco_praticado:
+        SPEC finance.md L14.
+
+2. O sinal de reserva e as comissões dos profissionais são calculados sobre o
+   valor com IVA ou sem IVA? (Parece-nos que tinham mencionado remover o sinal —
+   confirmam?)
+   [DU] Q-18 ABERTA — sinal e valor_total sobre o valor com desconto?
+        ANALISE L903.
+   [AF] Hoje o sinal é 10 % por constante de código (DEPOSIT_PERCENTAGE =
+        10) e o pagamento é simulado: SPEC finance.md §14.1 L52-55.
+   [SF] "Remover o sinal" NÃO É REQUISITO REGISTADO: o que está escrito é
+        torná-lo CONFIGURÁVEL e cobrar os 90 % no fim — SPEC finance.md
+        §14.2 P-1/P-2 L60-61 · backlog §24.5 L87-107. A mensagem diz o
+        contrário do que está na especificação: precisa de confirmação
+        explícita do cliente.
+   [DU] C-08 ABERTA — base dos 70/30 com ou sem desconto: ANALISE
+        L1157-1158, L1256.
+   [DU] C-15 ABERTA — a tesouraria depende de pagamentos hoje teóricos:
+        ANALISE L1181-1182.
+
+3. No painel, querem ver os dois valores de IVA — o que é pago ao Estado e o
+   apurado a partir das vendas e das despesas — ou só um deles? E no IRC, a
+   folha nova já indica a fórmula (resultado antes do imposto x 20%) e pede uma
+   caixa para a taxa e outra para o valor a pagar: confirmam que a taxa é
+   editável por vocês no painel, e que o valor a pagar é decidido por vocês e
+   não calculado sozinho?
+   [AF] Os dois conceitos de IVA estão separados por escrito: obrigação
+        fiscal (valor manual) vs IVA apurado (calculado) — ANALISE §2.7.2
+        L964-975.
+   [DU] Q-36 ABERTA — confirmar que o IVA apurado não substitui a obrigação
+        manual: ANALISE L946-947.
+   [DU] Q-08/Q-10 — PARCIAL: o cliente quer mexer na taxa, logo
+        configurável (não constante de código) — ANALISE §F.6 L715-719,
+        L877-878. O simulador NÃO escreve sozinho em obrigacao_fiscal:
+        ANALISE L720-721.
+   [AF] A fórmula RAI × 20 % está escrita na folha do cliente: ANALISE
+        §F.0 L501, §F.6 L715-717.
+   [AF] §13: o valor_estimado é introduzido à mão — SPEC finance.md L37.
+
+--- DE ONDE VÊM OS NÚMEROS ---
+
+4. Cada indicador do painel vem das marcações feitas na plataforma ou do
+   balancete que nos enviam? Se vier dos dois lados, corremos o risco de contar
+   a mesma coisa duas vezes — precisamos de saber qual é a fonte de cada número.
+   [DU] Q-31 ABERTA — KPIs dos ficheiros ou dos serviços internos? ANALISE
+        L935-936.
+   [DU] C-20 ABERTA — "dono de cada número": receita sempre interna, sem
+        duplicação — ANALISE L1269, princípio em §2.7 L928-931.
+   [AF] O risco está nomeado: importar para tabelas cria "duas fontes do
+        mesmo número" — ANALISE L517-518, §F.1 L513-520.
+
+5. Existem vendas fora da plataforma (atendimento sem marcação)?
+   [SF] NÃO ESTÁ REGISTADA EM LADO NENHUM — sem pergunta equivalente na
+        especificação nem no ANALISE (procurámos "sem marcação" e "fora da
+        plataforma": 0 ocorrências). É pergunta nova desta mensagem e só o
+        cliente pode respondê-la.
+   [DU] A mais próxima é Q-33 (o lucro vem da plataforma ou de ficheiros
+        externos?) — ANALISE L940-941, proposta "interno, sem exceção".
+   [DU] Q-35 ABERTA (que despesas entram e se incluem CSV/XLS) — ANALISE
+        L943-945.
+   [AF] Se a resposta for "sim", muda o critério de receita e agrava o
+        risco de duplicação: Q-32 — ANALISE L937-939.
+
+6. Qual é a fórmula da margem de lucro e que custos entram nela?
+   [DU] Q-34 ABERTA — hoje não existe cálculo nenhum: ANALISE L942.
+   [AF] A nossa proposta está escrita e é auditável: receita bruta − custos
+        variáveis; margem = margem bruta / receita × 100 — ANALISE §2.7.1
+        L949-962.
+   [ND] Nota nossa por decidir: se a receita incluir IVA, a margem fica
+        distorcida (o IVA não é receita da empresa) — ANALISE L961-962.
+
+7. A plataforma só conhece o combustível das rotas, as comissões e os salários
+   base. As restantes despesas (rendas, luz, água, consumíveis, seguros,
+   manutenção, contabilidade) como nos chegam?
+   [AF] É literal: internamente só existem combustível das rotas, comissões
+        e salários base; rendas, consumíveis, eletricidade, seguros e
+        manutenção não existem em tabela nenhuma — ANALISE L943-945 e §1.4
+        B.2 L186-197.
+   [DU] Q-35 ABERTA — entrada manual, formulário ou CSV? ANALISE L943-944.
+   [DU] C-04 ABERTA — sem modelo de despesas não há como as registar:
+        ANALISE L1140-1145.
+   [DU] Q-07 ABERTA — as dívidas de fornecedores entram também no calendário
+        fiscal? ANALISE L867-868.
+
+8. O saldo de caixa e o saldo de banco são duas contas distintas? E são valores
+   que introduzem e vão atualizando, ou vêm de um ficheiro do banco?
+   [AF] No balancete do cliente caixa e banco estão SEPARADOS: 9 040,05 € +
+        35 646,37 € = 44 686,42 € — ANALISE §F.3 L572, L579-580.
+   [DU] Q-04 PARCIAL: a separação está provada; falta decidir entre tabela
+        conta_bancaria e dois parâmetros (caixa · banco) — C-25: ANALISE
+        L861-862, L1274.
+   [DU] Q-03 ABERTA — sinal_pago está sempre 0; o "saldo em tempo real" é
+        por definição simulado: ANALISE L859-860.
+   [DU] Q-05 ABERTA — o fecho de caixa diário alimenta a tesouraria? ANALISE
+        L863-864.
+
+9. Os ficheiros de contabilidade já nos chegaram (obrigado!) e as células que
+   indicaram batem certo. A dúvida que fica é se, nas próximas emissões, os
+   valores continuam nas mesmas posições ou mudam de sítio de mês para mês.
+   [AF] As células batem certo: 36 de 42 com valor · 1 existente mas vazia ·
+        5 inexistentes · 1 card sem célula — ANALISE §4.2 L1314-1326.
+   [DU] Q-49 ABERTA — é exatamente esta pergunta: ANALISE L1056-1058.
+   [DU] D-01 ABERTA — das 5 inexistentes, as dos Rácios falham porque a
+        coluna E não existe nessa folha: ANALISE L805-806, §4.2 L1323.
+
+10. As "dívidas a pagar" aparecem com naturezas diferentes (fornecedores,
+    financiamento, IVA e Segurança Social). Confirmam estas naturezas?
+    [AF] Composição lida célula a célula: F7 (1 962,04) + F9 (49 354,66) +
+         E11 (5 651,67) + F10 (2 302,86) = 59 271,23 € — ANALISE §F.3 L574,
+         L583-587 · §4.3 L1350.
+    [DU] Q-51 ABERTA — confirmar as naturezas: ANALISE L1061.
+    [DU] C-27 ABERTA — tipos de obrigação vs leitura por célula: ANALISE
+         L1276, L1281.
+    [DU] ⚠️ Ver também a pergunta 31 (o IVA está do lado errado da soma).
+
+11. Os rácios (ativo corrente e não corrente, capital próprio, passivo não
+    corrente) devem ser lidos do balancete ou calculados por nós?
+    [AF] Nenhuma tabela do projeto alimenta os rácios — são o melhor
+         candidato a "mapa de células" e o pior a "recalcular
+         internamente": ANALISE §F.6 L724-727.
+    [DU] C-29 ABERTA (mapa de células, recomendado) + variante dos rácios:
+         ANALISE L1278, L1280.
+    [AF] Os 5 rácios estão num 2.º quadro da folha (linhas 11-15), não onde
+         o docx aponta: ANALISE §F.1 L531-533, L805-806.
+
+--- ATIVOS, DEPRECIAÇÕES E FINANCIAMENTOS ---
+
+12. Nesses mapas há colunas para revalorizações e imparidades (aumentos de valor
+    e perdas de valor dos ativos). Ficam de fora nesta fase? Nos dados enviados
+    estão vazias.
+    [AF] Confirmado vazio: as capturas mostram "Valor revalorizado", "Data
+         última revalorização" e "Imparidade" sem valores, e o cliente não
+         as pediu nos Cards → fora do âmbito, mas registado — ANALISE §F.5
+         ponto 4 L683-685.
+    [DU] Q-52 ABERTA — o ficheiro retém essas colunas; a mensagem pergunta
+         se ficam de fora nesta fase: ANALISE L1065.
+
+13. A "localização" dos ativos (sede, loja, carrinha) é relevante para o mapa de
+    depreciações? E o valor de aquisição é com ou sem IVA?
+    [AF] O documento do cliente traz a localização dos 2 ativos
+         (Sede/sede) — ANALISE §F.5 L649-652.
+    [AF] Valor de aquisição: 913,99 € e 44 715,45 € NÃO são líquidos
+         "redondos" de 23 % (913,99 / 1,23 = 743,08 €) — coerente com o
+         regime real em que a empresa deduz o IVA dos ativos: é uma segunda
+         lógica de IVA — ANALISE §F.5 ponto 5 L686-688.
+    [DU] Q-53 ABERTA — confirmar que é valor contabilístico (IVA dedutível)
+         e que não se reconcilia com a lógica dos serviços: ANALISE
+         L1065-1066.
+
+14. A depreciação que querem no card é a do período (do ano) ou a acumulada
+    desde a compra? Nos dados enviados coincidem, porque os ativos são do
+    início do ano, mas nos anos seguintes deixam de coincidir.
+    [AF] A regra foi derivada e provada: mensal = round(valor / (vida × 12),
+         2); acumulada = mensal × meses. Provas: 76,17 € e 2 794,71 € —
+         ANALISE §F.5 L663-673 · §4.3 L1334-1339.
+    [AF] A regra da iteração anterior FALHA o Portátil (76,14 vs 76,17 €) e
+         arredondar só no fim falha a Carrinha (2 794,72 €) — ANALISE L668-670
+         · §4.3 L1339.
+    [DU] Q-54 ABERTA — o Card mostra o período ou a acumulada? ANALISE
+         L1067-1068 · F.9 · D-07 L814.
+
+15. Contam com vendas ou abates de ativos? Se sim, precisamos do valor de venda
+    e da data de saída.
+    [AF] Hoje há 2 ativos, ambos adquiridos em 2026-01-01 e sem abates:
+         ANALISE §F.5 L649-652 · L1069.
+    [DU] Q-55 ABERTA — se houver vendas, é preciso documento + data de saída
+         e cálculo da mais-valia (âmbito novo, se sim): ANALISE L1069-1070.
+
+16. O financiamento é um só (por exemplo, a carrinha) ou há vários? A taxa e o
+    prazo mantêm-se fixos durante o contrato?
+    [AF] Hoje só há um empréstimo com plano: inicial 50 000,00 € ·
+         amortizado 25 983,20 € · em dívida 24 016,80 € (inicial − amortizado
+         = 24 016,80 ✔) — ANALISE §F.6 L699-701 · §4.3 L1351.
+    [DU] Q-56 ABERTA — é um só ou vários? Taxa e prazo fixos? ANALISE
+         L1071-1072.
+    [DU] C-26 ABERTA — entidade emprestimo + plano de amortizações e como
+         entra na demonstração de resultados: ANALISE L712-714, L1275.
+    [DU] ⚠️ Ver também a pergunta 32 (há dois valores diferentes para a
+         dívida).
+
+--- PESSOAL ---
+
+17. As comissões dos profissionais a recibo verde contam como custo do mês em
+    que o serviço é aceite, ou do mês em que é efetivamente pago?
+    [AF] Os valores ficam gravados por aceitação (snapshot em
+         agendamento_servico.valor_recibo_verde_funcionario) e alterar
+         percentagens só afeta aceitações futuras — SPEC finance.md §11
+         L21-25.
+    [AF] O mecanismo proposto usa estado_aceitacao='aceite' e aceito_em
+         dentro do período — ANALISE §2.8.1 L994-1007.
+    [DU] Q-40 ABERTA em parte: o mecanismo está proposto, mas a regra de
+         período (aceitação vs pagamento) precisa de confirmação; a base é
+         o que está gravado, sem novo lançamento — ANALISE L981-983.
+    [DU] C-10 ABERTA — fonte única do custo de pessoal (evitar dupla
+         contagem): ANALISE L1258.
+
+18. Nos contratos efetivos, o valor mensal é só o salário base ou inclui
+    subsídios? E o 13.º e o 14.º mês entram no cálculo?
+    [DU] Q-09/Q-11 — PARCIAL: a natureza do subsídio está resolvida (é o de
+         ALIMENTAÇÃO), mas o 13.º/14.º mês continua NÃO modelado e em
+         aberto — ANALISE L836-838, L887-888.
+    [AF] Hoje só existe funcionario.salario_base; subsídios e 13.º/14.º não
+         estão modelados — ANALISE §1.4 B.1 L182.
+    [DU] Se os subsídios entrarem, define colunas novas e se o passivo é
+         mensal ou provisionado — ANALISE L887-888.
+
+19. Vimos na folha que a taxa de IRS é diferente de trabalhador para trabalhador
+    (8%, 3,6% e 8,56%) e que não há uma percentagem única da empresa, certo? As
+    taxas que lá estão mantêm-se de mês para mês ou mudam? Vêm das declarações
+    de DMR/DRI que já nos mostraram?
+    [AF] Confirmado por prova numérica: IRS retido = 2×8 % + 3×3,6 % + 1×8,56 %
+         = 1 221,00 € — ANALISE §4.3 L1344, §2.10.1 L1104.
+    [AF] A taxa de 34,75 % (11 % + 23,75 %) está impressa na própria
+         declaração DRI — ANALISE §F.8 L777, L787-788.
+    [DU] C-28 ABERTA — IRS retido com taxa POR trabalhador, nunca derivada
+         da empresa: ANALISE L1277.
+    [DU] [SF] "As taxas mantêm-se de mês para mês ou mudam?" — NÃO HÁ RESPOSTA
+         no repositório: os ficheiros só têm jan-mar 2026. Pergunta ao
+         cliente.
+
+20. As declarações de impostos devem ficar anexadas ao registo no calendário?
+    [AF] Hoje o calendário NÃO guarda anexos — SPEC finance.md §13 L45
+         ("sem anexos").
+    [DU] Q-62 ABERTA — é exatamente esta pergunta: ANALISE L1089-1090.
+
+21. Ao desativar um funcionário, o que acontece aos serviços que já lhe estão
+    atribuídos e às marcações futuras?
+    [DU] Q-13 ABERTA — a política tem de ser definida antes de implementar:
+         ANALISE L891-892.
+    [AF] utilizador não tem ativo; só funcionario.ativo — ANALISE L891.
+    [AF] Hard delete é impossível: ON DELETE RESTRICT em transacao_financeira,
+         gorjeta e fecho_caixa_diario — ANALISE §1.5 L245-246.
+    [DU] C-22 ABERTA — mapa de perfis por página/endpoint, para o
+         funcionário desativado perder acesso: ANALISE L1271.
+
+--- DOS FICHEIROS NOVOS (pontos em que os documentos não dizem o mesmo) ---
+
+29. Nos Rácios, as células que nos indicaram para os cinco rácios (liquidez,
+    fundo de maneio, autonomia financeira, endividamento e solvabilidade) não
+    apontam para onde os valores estão. Os rácios estão num segundo quadro, mais
+    abaixo na mesma folha. Confirmam que é desse quadro que devemos ler?
+    [DU] Q-58 ABERTA — é exatamente esta pergunta: ANALISE L1080-1082.
+    [AF] Prova: o docx aponta C3/D3/E3..., mas nessas linhas as colunas C-D-E
+         são os valores do Balanço e a coluna E nem existe na folha; os
+         rácios vivem no 2.º quadro (linhas 11-15, colunas B/C/D) —
+         ANALISE §F.1 L531-533 · §4.2 L1323 · F.9 · D-01 L805-806.
+    [DU] A via recomendada (mapa de células) está em C-29: ANALISE L1278,
+         L1280.
+
+30. O card "Passivo não corrente" ficou sem células indicadas, e nos dados é
+    sempre zero. Indicam as células, ou dispensamos o card por agora?
+    [DU] Q-59 ABERTA — é exatamente esta pergunta: ANALISE L1083-1084.
+    [AF] Prova: o docx não indica célula nenhuma (linha vazia) e na folha o
+         valor é 0 nas três colunas — ANALISE §F.1 L528-530 · §4.2 L1324 ·
+         F.9 · D-10 L819.
+
+31. Nas "Dívidas a pagar" está a ser somado o IVA, que nesse mês está A FAVOR da
+    empresa (saldo devedor), a três valores que a empresa deve. Querem a posição
+    líquida (como está na folha) ou o total que a empresa deve?
+    [DU] Q-60 ABERTA — é exatamente esta pergunta: ANALISE L1085-1086.
+    [AF] Prova: E11 = 5 651,67 € vem da coluna SALDO DEVEDOR (IVA a favor) e
+         é somado a três saldos credores; numa leitura económica isso abate
+         à dívida — ANALISE §F.3 ponto 3 L583-587 · L807.
+    [DU] Liga a C-27 (dívidas por natureza): ANALISE L1276, L1281.
+
+32. No financiamento há dois valores diferentes para a dívida: 24 016,80 € no
+    plano de amortização e 49 354,66 € na conta do balancete (que também entra
+    nas dívidas a pagar). Qual deve aparecer no card?
+    [DU] Q-61 ABERTA — é exatamente esta pergunta: ANALISE L1087-1088.
+    [AF] Prova dos dois valores: Menu Financiamento (B4) = 24 016,80 € vs
+         Menu Dashboard, conta 25 (F9) = 49 354,66 € — ANALISE §F.6 ponto 1
+         L705-711 · §4.3 L1350-1351.
+    [DU] C-26 ABERTA — se o Card do Financiamento e a parcela das Dívidas a
+         pagar mostram o mesmo número ou não: ANALISE L1282, L1275.
+
+33. O subsídio de alimentação não é igual todos os meses: vi 129,15 €, 123,00 € e
+    135,30 € no mesmo trimestre, porque os dias úteis variam. Introduzem o valor
+    de cada mês, ou querem que calculemos os dias?
+    [DU] Q-63 ABERTA — é exatamente esta pergunta: ANALISE L1091-1092.
+    [AF] Prova: 20+21+22 dias × 6,15 € = 387,45 € e 19+21+21 × 6,15 = 375,15 €
+         — ANALISE §4.3 L1340-1341 · fórmula em §2.10.1 L1103 · §F.4 L601.
+    [DU] C-28 tem dois casos (IRS e SA): ANALISE L1283, L1404.
+
+34. Na declaração DRI aparecem 29 dias por trabalhador, mas no subsídio de
+    alimentação os dias usados são cerca de 21. São critérios diferentes ou há
+    uma gralha numa das folhas?
+    [DU] Q-64 ABERTA — é exatamente esta pergunta: ANALISE L1093-1094.
+    [AF] Prova: a DRI imprime Nº de Dias = 29,0, enquanto o SA usa 19/20/21/22
+         dias — ANALISE §F.8 ponto 3 L789-791 · F.9 · D-05 L811.
+
+35. O documento novo deixou de pedir os gráficos e a opção mensal / trimestral /
+    anual que constavam do primeiro. Mantemos só o gráfico de "Custos de
+    funcionários" (remuneração vs. valor que o funcionário recebe)?
+    [DU] Q-65 ABERTA — é exatamente esta pergunta: ANALISE L1095-1096.
+    [AF] Prova do que caiu e do que ficou: o documento novo deixou cair
+         gráficos, o seletor mensal/trimestral/anual, o gráfico de SS, a
+         imagem do balanço funcional e o de rendimentos vs gastos; mantém
+         só "relacionar o valor da remuneração com o valor que o funcionário
+         recebe" — ANALISE §F.2 L554-562 · F.9 · D-06 L812-813.
+    [DU] Não é contradição, é estreitamento de âmbito → tratar como
+         OPCIONAL: ANALISE L557-558.
+    [DU] Se os gráficos voltarem, continua a não ser possível instalar
+         bibliotecas (gráficos com CSS/SVG próprios): Q-28 — ANALISE
+         L919-920, P7 L61.
+
+--- IMPORTAÇÃO DE FICHEIROS ---
+
+36. Os valores dos vossos ficheiros passam a ser importados para a base de dados, e a
+    importação vai poder ser feita por vocês no backoffice (carregar o ficheiro e
+    gravar). Uma importação nova substitui a anterior por completo, para não haver
+    valores repetidos. A dúvida é de PRIORIDADE: em cada indicador, o valor deve vir
+    do FICHEIRO importado (o balancete) ou do que o sistema já calcula sozinho
+    (marcações, rotas, comissões)? E quando os dois lados têm valores para o mesmo
+    número, qual manda? (Exemplo: os "Gastos" do balancete e os custos de rota que a
+    plataforma já conhece — somam-se, ou conta só um deles?)
+    [DU] Q-66 ABERTA (nova) — é exatamente esta pergunta: ANALISE §2.10 (linha nova,
+         no fim da tabela das "perguntas novas") e ANALISE §5 (nova, no fim do
+         ficheiro).
+    [AF] O que JÁ está decidido — não é pergunta: a importação PERSISTE em BD e uma
+         nova importação SUBSTITUI a anterior, em transação. Fonte: SPEC core.md
+         §3.12 (D-12) · SPEC requirements.md (RF-75 · RF-76 · RN-30) ·
+         SPEC data-api.md §17.9 (justificação das tabelas novas).
+    [AF] Exceções de stack aprovadas (25/09/2026): SPEC core.md §1.2 · E-1…E-4 —
+         bibliotecas do material de formação (PhpSpreadsheet · TCPDF · PHPMailer),
+         extensão PHP `zip`, Chart.js e tabelas novas; espelho operacional em
+         `.clinerules` §1.1.
+    [CD] Rota técnica já provada: upload → PhpSpreadsheet → INSERT em transação →
+         os widgets leem da BD (padrão do material em 0605-MATERIA/csv_pdf_email).
+    [AF] Medido em 25/09/2026: a biblioteca lê o balancete em 135 ms, as 9 folhas, com
+         os MESMOS valores do leitor próprio — os números do cliente ficam
+         confirmados por dois métodos independentes.
+--- AVISOS ---
+
+22. O sino do backoffice e os avisos ao cliente devem ser o mesmo mecanismo ou
+    dois separados? A nossa proposta é separar, porque o sino mostra dados de
+    gestão (fisco, fornecedores) que não devem ir para o cliente. E onde deve o
+    cliente ver o lembrete: em "Os meus agendamentos", na página inicial, ou nos
+    dois?
+    [AF] A proposta de separar (canal/âmbito) está registada em C-21 —
+         ANALISE L1205-1207, L1270.
+    [DU] (a) um ou dois mecanismos e (b) ONDE o cliente vê o lembrete — o
+         "e/ou" da especificação não está decidido: §24.6 ANALISE L1027-1028
+         · SPEC backlog.md §24.6 L108-137.
+    [AF] O "se" já está fechado (o cliente RECEBE o lembrete das ≤ 24 h):
+         D-11 · SPEC finance.md §15.3 L89-93 · RF-13 (SPEC requirements.md
+         L28) · §24.6 · §28.2/13 — estado: POR IMPLEMENTAR (⬜) —
+         ANALISE §2.8.2 L1009-1022.
+    [AF] Hoje o cliente NÃO tem sistema de notificações no Main — ANALISE
+         L984-985.
+    [DU] O contador existe sobre alerta_fiscal.visualizado, que é GLOBAL:
+         Q-23 · C-03 — ANALISE L911, L1136-1139.
+
+23. Quais os avisos que querem, além dos fiscais, e com quanta antecedência?
+    [AF] O que existe hoje: tipos do enum obrigacao_fiscal.tipo ∈ {iva, irc,
+         seguranca_social, seguros} + alerta_fiscal, com prazos 30/15/7/3/1
+         e diário em atraso — SPEC finance.md §13 L36-44 · ANALISE §1.3
+         L143-151 · §4.4 L1358-1362.
+    [DU] Q-27 ABERTA — o sino agrega tudo num contador ou separa por origem
+         (fiscal · fornecedores · operacional)? ANALISE L913.
+    [DU] C-02 ABERTA — alargar o enum mistura encargos fiscais com não
+         fiscais; recomendação: entidade notificacao genérica — ANALISE
+         L1130-1135.
+    [DU] Q-26 — confirmar que continua SEM CRON (on-demand): ANALISE L912 ·
+         SPEC finance.md §13 L41.
+
+24. Sobre a "renovação de contratos" e as "revisões da carrinha": não conseguimos
+    apontar de onde saíram — não estão na especificação aprovada nem em nenhum
+    ficheiro que tenhamos recebido. Fazem parte dos avisos que querem? Se sim,
+    que tipo de contratos são, e as revisões são a manutenção periódica ou a
+    inspeção anual?
+    [SF] CONFIRMADO SEM FONTE — e é um caso já auditado: AUDIT F-01 L31 diz
+         "removido" e L41-44 explica porquê (a proveniência não existia no
+         repositório nem nos templates do cliente nem nas 24 tabelas; passou
+         a pergunta ao cliente). Também é regra: .clinerules §0 regra 3.
+    [AF] Nossa verificação independente: procurámos "renova", "revisão",
+         "revisões" e "inspeção" em _dev/mapaMentalMVP/*.md e
+         _dev/docs/spec/*.md → a única ocorrência ligada a este tema é
+         exatamente o F-01 da auditoria. Nada mais.
+    [DU] [SF] As sub-perguntas (que contratos? manutenção periódica ou
+         inspeção anual?) só o cliente responde.
+
+--- PROMOÇÕES ---
+
+25. O desconto é uma percentagem, um valor fixo, ou um dos dois? E se duas
+    promoções estiverem ativas ao mesmo tempo para o mesmo serviço, acumulam ou
+    aplica-se só a mais vantajosa?
+    [DU] Q-15 ABERTA — é exatamente esta pergunta: ANALISE L899.
+    [AF] A proposta de modelo já prevê os dois tipos (promocao.tipo_desconto =
+         percentagem/valor_fixo + valor) — ANALISE §1.6 L265.
+    [DU] Q-16 ABERTA — aplicada automaticamente (melhor desconto) ou
+         escolhida pelo cliente? Existe código de campanha? ANALISE L900-901.
+    [DU] Q-19/Q-20 ABERTAS — tags editáveis? combinação com "Apenas Loja" e
+         canal? ANALISE L904-905.
+
+26. O cliente vê o preço já com o desconto no site e nos cards dos serviços, ou
+    o desconto é aplicado no momento do atendimento?
+    [ND] Proposta técnica (a confirmar): o desconto é resolvido no SERVIDOR e
+         gravado por serviço em agendamento_servico.preco_praticado; o wizard
+         mostra o preço já calculado e o resumo identifica a campanha — ANALISE
+         §1.6 L275-277.
+    [DU] Há uma restrição já decidida a respeitar: §5.2 diz "catálogo é
+         somente leitura no Main" — ANALISE L1158.
+    [DU] Q-17/Q-18 ABERTAS — a base dos 70/30 e o sinal passam a ser sobre
+         o valor com desconto? ANALISE L902-903 · C-08 L1157-1158.
+
+--- SITE E CONTEÚDOS ---
+
+27. A secção sobre os serviços no Início e no Sobre é um texto nosso fixo ou
+    querem poder alterá-lo? A nossa proposta é texto fixo, sem complicar nesta
+    fase.
+    [DU] Q-44 ABERTA — estático ou gerido no backoffice? ANALISE L1037-1038.
+    [ND] Proposta: conteúdo estático num componente partilhado, como o
+         about.php (evita um módulo de CMS fora do âmbito) — ANALISE §E.1
+         L397-400 · C-24 L1216-1219.
+    [AF] Não existe CMS nem tabela de conteúdo: hero, about e testimonial
+         são componentes estáticos — ANALISE L1037.
+
+28. As imagens dos serviços são as que foram partilhadas? Caso contrário, quem
+    as fornece? Se não houver imagem, mostramos uma imagem genérica da categoria
+    para os cards não ficarem vazios.
+    [DU] Q-45 ABERTA — quem fornece as imagens e em que formato/dimensão?
+         ANALISE L1039-1041.
+    [AF] Hoje NÃO existe nenhuma imagem de serviço; as 3 categorias em uso são
+         .png — ANALISE L1039-1040 · C-23 L1212-1215.
+    [AF] Números medidos (inventário vs uso): 7 ficheiros de imagem de
+         categoria vs 3 cards renderizados — AUDIT F-07 L37, L51-53.
+    [ND] O fallback por categoria é proposta nossa (C-23) — ANALISE L1212-1215.
+
+====================================================================
+NOTA FINAL
+====================================================================
+As respostas às perguntas 1 a 21 e 29 a 36 (valores e IVA, origem dos números,
+ativos, depreciações e financiamentos, pessoal, painel e importação dos ficheiros) condicionam o desenho
+final do painel, da contabilidade, dos recursos humanos e das notificações. Sem
+elas, avançamos apenas com os módulos que não dependem de valores externos
+(agendamentos, rotas, serviços, promoções e site público).
+  [AF] Ordem de implementação já vinculativa (§25) e faseamento proposto:
+       ANALISE §1.9 L346-368 · P10 L64.
+  [DU] ⚠️ Ressalva nossa sobre esta frase: as promoções NÃO estão isentas —
+       dependem de C-08 (base dos 70/30, sinal, preços e os testes
+       existentes): ANALISE L1256, L1157-1158. O site público também
+       depende de Q-44 e Q-45.
+
+NOTA: os ficheiros novos respondem a várias perguntas da versão anterior —
+a empresa e os trabalhadores estão identificados, o mapa das células veio
+preenchido e a divisão DMR/DRI existe. As perguntas desses pontos saíram desta
+lista.
+  [AF] Fechadas por resposta dos ficheiros: Q-48 (L1054-1055), Q-50
+       (L1059-1060) e Q-57 (L1073-1074); resumo em ANALISE §2.0 L847.
+  [AF] Fechadas por verificação nossa: Q-01 (35/35 preços, L411-424),
+       Q-09/Q-11 (natureza do subsídio, L836-838), Q-14 (SS 34,75 %,
+       L839), Q-08/C-14 (taxa editável, L842) e Q-43/C-19 (.xlsx é
+       tratável, L843) — ANALISE §2.0 L831-847.
+
+====================================================================
+PAINEL DAS 35 PERGUNTAS — ID, ESTADO E ONDE CONFERIR
+====================================================================
+
+ESTADO: A = aberta · P = parcial (parte provada, falta decisão) ·
+        F = fechada · SF = sem fonte no repositório (só o cliente sabe).
+Todas as linhas "Onde conferir" são ficheiro ANALISE, salvo indicação.
+
+  Nº  ID(s)                  Estado  Linhas / outras fontes
+  --  ---------------------  ------  ------------------------------------
+   1  Q-01 · Q-46 · Q-47     P/A/A   L855 · L1042 · L1044 (+L411-424)
+   2  Q-18 · C-08 · C-15     A/A/A   L903 · L1157 · L1181 (+SF: §14.2)
+   3  Q-08 · Q-10 · Q-36     P/A/A   L877 · L880 · L946 (+§F.6 L715-722)
+   4  Q-31 · C-20 · C-29     A/A/A   L935 · L1269 · L1278
+   5  (sem ID)               SF      nada no repositório (ver Q-32/Q-33)
+   6  Q-34                    A       L942 (+§2.7.1 L949-962)
+   7  Q-35 · C-04 · Q-07     A/A/A   L943 · L1140 · L867
+   8  Q-04 · Q-03 · Q-05     P/A/A   L861 · L859 · L863 (+§F.3 L572)
+   9  Q-49 · D-01             A/A     L1056 · L805 (+§4.2 L1314-1326)
+  10  Q-51 · C-27             A/A     L1061 · L1276 (+§F.3 L583-587)
+  11  C-29                    A       L1278, L1280 (+§F.6 L724-727)
+  12  Q-52                    A       L1065 (+§F.5 L683-685)
+  13  Q-53                    A       L1065-1066 (+§F.5 L686-688)
+  14  Q-54 · D-07             A/A     L1067 · L814 (+§F.5 L663-673)
+  15  Q-55                    A       L1069-1070
+  16  Q-56 · C-26             A/A     L1071 · L1275 (+§F.6 L699-711)
+  17  Q-40 · C-10             A/A     L981 · L1258 (+§2.8.1 L994-1007)
+  18  Q-09 · Q-11             P/A     L836-838 · L887-888
+  19  C-28                    A       L1277 (+§4.3 L1344) + SF (mudam?)
+  20  Q-62                    A       L1089 (+SPEC finance.md §13 L45)
+  21  Q-13 · C-22             A/A     L891 · L1271 (+§1.5 L245-246)
+  22  C-21 · Q-23 · C-03     A/A/A   L1205 · L911 · L1136 (+§2.8.2)
+  23  Q-27 · C-02 · Q-26     A/A/A   L913 · L1130 · L912
+  24  (sem ID)               SF      AUDIT F-01 L31 e L41-44
+  25  Q-15 · Q-16 · Q-19/20  A/A/A   L899 · L900 · L904-905
+  26  Q-17 · Q-18 · C-08     A/A/A   L902 · L903 · L1157 (+§1.6 L275-277)
+  27  Q-44 · C-24             A/A     L1037 · L1216 (+§E.1 L397-400)
+  28  Q-45 · C-23             A/A     L1039 · L1212 (+AUDIT F-07 L37)
+  29  Q-58 · C-29             A/A     L1080 · L1278 (+§F.1 L531-533)
+  30  Q-59 · D-10             A/A     L1083 · L819 (+§F.1 L528-530)
+  31  Q-60 · C-27             A/A     L1085 · L1276 (+§F.3 L583-587)
+  32  Q-61 · C-26             A/A     L1087 · L1282 (+§F.6 L705-711)
+  33  Q-63 · C-28             A/A     L1091 · L1283 (+§4.3 L1340-1341)
+  34  Q-64 · D-05             A/A     L1093 · L811 (+§F.8 L789-791)
+  35  Q-65 · D-06 · Q-28     A/A/A   L1095 · L812 · L919 (+§F.2 L554-562)
+  36  Q-66                    A       ANALISE §2.10 (linha nova) · §5 (nova) ·
+                                      SPEC core.md §3.12 · RN-30 · RF-75 · RF-76
+
+Leitura rápida: todas as 36 continuam abertas ou parciais; nenhuma foi
+decidida por inferência. Saíram da lista, por resposta dos ficheiros novos,
+as perguntas Q-48, Q-50 e Q-57 da versão anterior. A pergunta 36 é a única
+acrescentada nesta data (25/09/2026), a par da decisão de importação
+(SPEC core.md §3.12 · D-12).
+
+====================================================================
+O QUE CONFERI AGORA (25/09/2026, nesta sessão)
+====================================================================
+  [OK] Rotas de página existentes — INDEX L13-36 lido: gestao,
+       gestao/agendamentos, gestao/rotas, gestao/servicos, gestao/fiscal,
+       gestao/recibos-verdes.
+  [OK] Endpoints — contagem de API (app/config/api.php) = 37, igual ao
+       afirmado no ANALISE §1.6 L259.
+  [OK] Ficheiros de código existem: modules/backoffice/ com 5 páginas
+       (appointments, routes, services, fiscal, greenReceipts) ·
+       app/controllers, app/services e app/repositories listados ·
+       EmployeeService e EmployeeRepository existem.
+  [OK] Ficheiros do cliente no disco: Menu Dashboard.docx (441 908 bytes,
+       25/09/2026) e Contabilidade Secade Beauty.xlsx (95 456 bytes,
+       25/09/2026) — também Menu APOIO 3.docx e CUSTOS RH 2.xlsx (23/09).
+  [OK] Estrutura e linhas do ANALISE: 1411 linhas; §F.0-F.9, §2.0-§2.10 e
+       §3/§4 nas linhas citadas neste ficheiro.
+  [OK] Pesquisa "renova/revisão/revisões/inspeção" em _dev/mapaMentalMVP/*.md
+       e _dev/docs/spec/*.md → a única ocorrência ligada ao tema é AUDIT
+       F-01 (confirma a pergunta 24 sem fonte).
+  [OK] Extensão `zip` do PHP: **ATIVA** nesta data (ativada no php.ini + Laragon
+       reiniciado) — `php -m` lista `zip`. Só existe um `php.ini`, pelo que o
+       Apache usa a mesma configuração.
+  [OK] A biblioteca do material de formação (PhpSpreadsheet) lê o balancete do
+       cliente: 9 folhas · 135 ms · valores idênticos aos do leitor próprio.
+       Prova: ANALISE §F.7 (nota) e §5.
+  [OK] Exceções à stack registadas: SPEC core.md §1.2 (E-1…E-4) e §3.12 (D-12) ·
+       RF-75/RF-76 e RN-30 em requirements.md · justificação de BD em
+       data-api.md §17.9 · espelho operacional em `.clinerules` §1.1 (v3.5).
+  [OK] Escrita segura deste ficheiro conferida com
+       php _dev/tools/encoding-check.php → "LIMPO — nenhum problema de
+       encoding encontrado" (UTF-8 sem BOM, sem mojibake, fim de linha
+       consistente; CRLF puro, ao estilo do mensagem_teams.txt original).
+
+O QUE NÃO PUDE RECONFERIR AGORA (limites honestos)
+--------------------------------------------------------------------
+  [!] As provas NUMÉRICAS dos ficheiros do cliente NÃO foram repetidas nesta
+      sessão: os scripts correram em %TEMP% e, por decisão registada, não
+      ficaram no projeto — ANALISE §4 L1292-1294. O que existe é o registo
+      dos resultados (§4.3 L1328-1353). Repetir a verificação exige
+      reconstruir o leitor de ZIP em PHP puro (§F.7 L729-743).
+  [!] O interior do .docx/.xlsx não foi relido célula a célula agora: o que
+      este ficheiro reproduz é a medição registada em §4.2/§4.3. Para
+      conferir de novo, é preciso reextrair os dois ficheiros.
+  [!] Números de linha válidos a 25/09/2026; deslocam-se se o ficheiro for
+      editado — nesse caso procure pelo ID (Q-nn, C-nn, D-nn, F.n, §NN).
+  [!] O GATE do projeto (`php _dev/tools/health-check.php` → "TUDO OK") NÃO
+      pôde ser corrido até ao fim nesta sessão: cada execução lança ~30
+      subprocessos (6 verificações × ficheiros .md) e o processo era
+      terminado antes de escrever. Não afeta este ficheiro: é um .txt dentro
+      de _dev/mapaMentalMVP/ e nenhuma ferramenta o analisa automaticamente
+      — o encoding-check declara as extensões que varre (php, sql, js, md,
+      css, html, json + documentos sem extensão registados em _common.php).
+      Nenhum .md, nenhum ficheiro de código e nenhum JS foi tocado nesta
+      alteração, logo também não é preciso o js_syntax_check.
+  [!] As afirmações marcadas [ND] são propostas nossas e NÃO estão na
+      especificação: nada foi escrito em especificacao_mvp.md — ANALISE
+      L40-43, §1.10 L369-384, §3.1 L1245-1286.
+
+====================================================================
+FIM — documentação de apoio, não normativa
+====================================================================
+Companheiro de: _dev/mapaMentalMVP/mensagem_teams.txt (5.ª versão)
+Base: _dev/mapaMentalMVP/analise_backoffice_gestor.md (4.ª iteração, 25/09/2026)
+      _dev/mapaMentalMVP/auditoria_plataforma.md
+      _dev/docs/spec/* (finance · requirements · backlog)
+Autoridade: especificacao_mvp.md (§29.2 · §29.3)
+====================================================================

@@ -37,10 +37,6 @@ const appointments = (() => {
         // não estiver num estado terminal.
         const canCancel = !["cancelado", "executado", "concluido"].includes(booking.status);
 
-        // F9b (C-06): o editor só aparece em estados não terminais — nos mesmos em
-        // que o cancelamento é permitido (uma marcação recusada/cancelada já não muda).
-        const canEdit = !["recusado", "cancelado", "executado", "concluido"].includes(booking.status);
-
         return `<div class="border rounded p-3 mb-3">
             <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
                 <div>
@@ -51,21 +47,18 @@ const appointments = (() => {
                         ${isAmbulatory ? "Carrinha" : "Loja"}
                     </span>
                 </div>
-                <span class="fw-bold ms-auto">${generalUtils.formatCurrencyWithVat(booking.totalAmount)}</span>
-                <span class="small text-muted ms-1">(IVA incl.)</span>
+                <span class="fw-bold">${generalUtils.formatCurrencyWithVat(booking.totalAmount)}</span>
+                    <span class="small text-muted ms-1">(IVA incl.)</span>
             </div>
             <p class="text-muted small mb-2">
                 <i class="bi bi-calendar-event me-1"></i>${generalUtils.formatDateTime(booking.dateTime)}
             </p>
             <ul class="list-unstyled small mb-0">${serviceList(booking)}</ul>
-            ${canCancel || canEdit ? `<div class="border-top mt-3 pt-3">
-                ${canEdit ? `<button type="button" class="btn btn-sm btn-outline-primary me-2" data-edit-booking="${booking.id}">
-                    <i class="bi bi-pencil me-1"></i> Alterar agendamento
-                </button>` : ""}
-                ${canCancel ? `<button type="button" class="btn btn-sm btn-outline-danger" data-cancel-booking="${booking.id}">
+            ${canCancel ? `<div class="border-top mt-3 pt-3">
+                <button type="button" class="btn btn-sm btn-outline-danger" data-cancel-booking="${booking.id}">
                     <i class="bi bi-x-circle me-1"></i> Cancelar agendamento
                 </button>
-                <span class="small text-muted ms-2">Sem penalização — o horário volta a ficar disponível.</span>` : ""}
+                <span class="small text-muted ms-2">Sem penalização — o horário volta a ficar disponível.</span>
             </div>` : ""}
             ${canReview ? feedbackBlock(booking) : ""}
         </div>`;
@@ -75,7 +68,7 @@ const appointments = (() => {
      * Cancelamento pelo cliente (RF-12).
      */
     async function cancelBooking(bookingId) {
-        if (!await generalUtils.confirmDialog({ icon: "warning", text: "Cancelar este agendamento? Não há qualquer penalização." })) return;
+        if (!confirm("Cancelar este agendamento? Não há qualquer penalização.")) return;
 
         const promise = API.booking.cancelBooking(Number(bookingId));
         const preloader = $("main").preloader(".jq-overlay-process", promise);
@@ -255,15 +248,6 @@ const appointments = (() => {
         // Cancelamento pelo cliente (RF-12 · §24.6)
         $(document).on("click", "[data-cancel-booking]", function () {
             cancelBooking($(this).data("cancel-booking"));
-        });
-
-        // Editor de agendamento (F9b · C-06 · §4.5)
-        $(document).on("click", "[data-edit-booking]", function () {
-            const booking = state.bookings.find(item => Number(item.id) === Number($(this).data("edit-booking")));
-
-            if (booking) {
-                bookingEditor.open(booking);
-            }
         });
     }
 
