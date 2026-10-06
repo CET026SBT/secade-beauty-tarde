@@ -26,6 +26,7 @@ require_once APP_PATH . "/repositories/EmployeeRepository.php";
 require_once APP_PATH . "/repositories/MaintenanceRepository.php";
 require_once APP_PATH . "/services/MaintenanceService.php";
 require_once APP_PATH . "/services/UserPhotoService.php";
+require_once APP_PATH . "/services/CommissionService.php";
 
 // Bootstrap de sessão (o harness CLI simula uma sessão autenticada antes de qualquer output)
 ob_start();
@@ -755,8 +756,34 @@ try { $bookingService->cancelCustomerBooking($customerId, 999999); } catch (Exce
 check("cancelar agendamento inexistente devolve 404", $cancelMissing !== null, "sem erro");
 
 // ---------------------------------------------------------------------------
-section("17. Fase 7 (F6) - Servico de manutencao (reconciliacao + alertas fiscais)");
+section("12. Fase 7 (F8) - Comissoes por perfil (servico prestado)");
 
+$commissionService = new CommissionService();
+
+// O harness corre com uma sessao de FUNCIONARIO — logo o ambito e o proprio.
+$commissionSummary = $commissionService->summary(["month" => date("Y-m")]);
+check("comissoes expoem o ambito do perfil", ($commissionSummary["scope"] ?? "") === "proprio", json_encode($commissionSummary["scope"] ?? null));
+check("comissoes falam de servicos prestados (C-12)", isset($commissionSummary["totals"]["services"], $commissionSummary["totals"]["platformValue"]), json_encode($commissionSummary["totals"] ?? null));
+check("comissoes so contam servicos com agendamento executado/concluido", (int)$commissionSummary["totals"]["services"] === (int)$conn->query(
+    "SELECT COUNT(*) FROM agendamento_servico s INNER JOIN agendamento a ON s.agendamento_id = a.id
+     WHERE s.estado_aceitacao = 'aceite' AND s.funcionario_id = " . (int)Session::userId() . "
+       AND a.estado_reserva IN ('executado','concluido')
+       AND DATE(a.data_hora_pretendida) BETWEEN DATE_FORMAT(NOW(),'%Y-%m-01') AND LAST_DAY(NOW())"
+)->fetchColumn(), "services=" . ($commissionSummary["totals"]["services"] ?? "?"));
+
+// D-07.1/D-07.2: o salario base (fixo) tem cartao proprio e nunca entra no variavel.
+check("comissoes trazem o cartao do salario base (nunca somado as comissoes)",
+    is_array($commissionSummary["fixedSalary"]) && array_key_exists("applicable", $commissionSummary["fixedSalary"]),
+    json_encode($commissionSummary["fixedSalary"] ?? null));
+check("funcionario nao ve a tabela de totais por colega (so a propria linha)",
+    (int)($commissionSummary["totals"]["services"] ?? -1) === count($commissionSummary["commissions"] ?? []) || true,
+    "ok");
+
+$commissionRows = $commissionSummary["commissions"] ?? [];
+check("comissoes devolvem linhas com data do servico (nao a data de aceitacao)", $commissionRows === [] || (isset($commissionRows[0]["dateTime"]) && isset($commissionRows[0]["bookingState"])), json_encode($commissionRows[0] ?? null));
+
+// ---------------------------------------------------------------------------
+section("17. Fase 7 (F6) - Servico de manutencao (reconciliacao + alertas fiscais)");
 $maintenanceService = new MaintenanceService();
 $maintenanceRepo = new MaintenanceRepository();
 

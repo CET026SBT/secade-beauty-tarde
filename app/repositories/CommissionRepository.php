@@ -16,6 +16,10 @@ class CommissionRepository extends BaseRepository {
 
     /**
      * Totais por funcionário num intervalo de datas.
+     *
+     * C-12 (§6.2/F8): o critério é o serviço **prestado** (o agendamento chegou a
+     * `executado`/`concluido`), não a alocação — a página é uma folha de remuneração
+     * e não deve somar promessas.
      */
     public function sumByEmployee(string $dateFrom, string $dateTo): array {
         $sql = "SELECT s.funcionario_id AS funcionario_id,
@@ -27,9 +31,11 @@ class CommissionRepository extends BaseRepository {
                        COALESCE(AVG(s.percentagem_funcionario_aplicada), 0) AS percentagem_media
                 FROM agendamento_servico s
                 INNER JOIN utilizador u ON s.funcionario_id = u.id
+                INNER JOIN agendamento a ON s.agendamento_id = a.id
                 WHERE s.estado_aceitacao = 'aceite'
                   AND s.funcionario_id IS NOT NULL
-                  AND DATE(s.aceito_em) BETWEEN :de AND :ate
+                  AND a.estado_reserva IN ('executado', 'concluido')
+                  AND DATE(a.data_hora_pretendida) BETWEEN :de AND :ate
                 GROUP BY s.funcionario_id, u.nome
                 ORDER BY valor_funcionario DESC";
 
@@ -38,6 +44,7 @@ class CommissionRepository extends BaseRepository {
 
     /**
      * Comissões ao detalhe — serve a listagem (gestor: todos; funcionário: os seus).
+     * Critério: serviço **prestado** (C-12 · F8).
      */
     public function listAccepted(?int $employeeId, string $dateFrom, string $dateTo): array {
         $sql = "SELECT s.id, s.agendamento_id, s.funcionario_id, s.preco_praticado,
@@ -45,14 +52,15 @@ class CommissionRepository extends BaseRepository {
                        ROUND(s.preco_praticado * s.percentagem_funcionario_aplicada / 100, 2) AS valor_recibo_verde_funcionario,
                        ROUND(s.preco_praticado - ROUND(s.preco_praticado * s.percentagem_funcionario_aplicada / 100, 2), 2) AS valor_recibo_verde_plataforma,
                        sv.nome AS servico_nome, u.nome AS funcionario_nome,
-                       a.data_hora_pretendida, a.local_prestacao
+                       a.data_hora_pretendida, a.local_prestacao, a.estado_reserva
                 FROM agendamento_servico s
                 INNER JOIN servico sv ON s.servico_id = sv.id
                 INNER JOIN agendamento a ON s.agendamento_id = a.id
                 INNER JOIN utilizador u ON s.funcionario_id = u.id
                 WHERE s.estado_aceitacao = 'aceite'
                   AND s.funcionario_id IS NOT NULL
-                  AND DATE(s.aceito_em) BETWEEN :de AND :ate";
+                  AND a.estado_reserva IN ('executado', 'concluido')
+                  AND DATE(a.data_hora_pretendida) BETWEEN :de AND :ate";
         $params = ["de" => $dateFrom, "ate" => $dateTo];
 
         if ($employeeId !== null && $employeeId > 0) {
@@ -60,7 +68,7 @@ class CommissionRepository extends BaseRepository {
             $params["funcionario_id"] = $employeeId;
         }
 
-        $sql .= " ORDER BY s.aceito_em DESC, s.id DESC";
+        $sql .= " ORDER BY a.data_hora_pretendida DESC, s.id DESC";
 
         return $this->fetchAllRaw($sql, $params);
     }
