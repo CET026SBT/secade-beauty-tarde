@@ -66,6 +66,16 @@ $conn->exec("DELETE FROM alerta_fiscal");
 $conn->exec("DELETE FROM obrigacao_fiscal");
 $conn->exec("DELETE FROM config_percentagem_padrao WHERE id > 2");
 
+// F4 (R-ALOC): o mesmo funcionário não pode ficar em duas cidades no mesmo dia.
+// O harness cria um 2.º funcionário (a folha real tem 6) para cobrir as 2 cidades.
+$routeHelperId = 9002;
+$conn->exec("DELETE FROM funcionario WHERE id = " . $routeHelperId);
+$conn->exec("DELETE FROM utilizador WHERE id = " . $routeHelperId);
+$conn->exec("INSERT INTO utilizador (id, nome, email, password_hash, telemovel, tipo_perfil)
+             VALUES ({$routeHelperId}, 'Funcionario Rota Teste', 'funcionario.rota.teste@secade.local', '*', '', 'funcionario')");
+$conn->exec("INSERT INTO funcionario (id, tipo_contrato, percentagem_comissao, salario_base, ativo)
+             VALUES ({$routeHelperId}, 'recibo_verde', 70.00, 0.00, 1)");
+
 // ---------------------------------------------------------------------------
 section("1. Catálogo de serviços");
 $services = $bookingService->listActiveServices();
@@ -179,9 +189,10 @@ $routeAcceptanceService = new ServiceAcceptanceService();
 $routeBookingServiceRepo = new BookingServiceRepository();
 $routeEmployeeId = 2;
 
-foreach ([$poorBooking["bookingId"], $richBooking["bookingId"]] as $routeBookingToAccept) {
+// R-ALOC (F4): cada agendamento (cidade diferente) tem o seu funcionário.
+foreach ([[$poorBooking["bookingId"], 2], [$richBooking["bookingId"], $routeHelperId]] as [$routeBookingToAccept, $routeEmployee]) {
     foreach ($routeBookingServiceRepo->findByBooking((int)$routeBookingToAccept) as $routeServiceRow) {
-        $routeAcceptanceService->acceptService($routeEmployeeId, (int)$routeServiceRow["id"], (int)$routeBookingToAccept);
+        $routeAcceptanceService->acceptService($routeEmployee, (int)$routeServiceRow["id"], (int)$routeBookingToAccept);
     }
 }
 
@@ -215,7 +226,7 @@ $manualRefuse = $rotaService->decideRoute([
     "decision" => "recusada"
 ]);
 check("decisao manual RECUSA mesmo acima da referencia", ($manualRefuse["status"] ?? "") === "recusada" && ($manualRefuse["meetsReference"] ?? false) === true, json_encode($manualRefuse));
-check("agendamento da cidade rica = cancelado", ($bookingRepository->find((int)$richBooking["bookingId"])["status"] ?? "") === "cancelado");
+check("agendamento da cidade rica = recusado (a staff recusa, 6.1)", ($bookingRepository->find((int)$richBooking["bookingId"])["status"] ?? "") === "recusado");
 
 $rotaRepository = new RotaRepository();
 $routeRow = $rotaRepository->findByDateAndCity($routeDate, (int)$cityRich["id"]);
@@ -243,8 +254,8 @@ check("listagem enriquecida com nome do cliente", ($adminList["bookings"][0]["cu
 $filtered = $bookingService->listBookings(["page" => 1, "perPage" => 10, "local" => "carrinha_ambulante"]);
 check("filtro por local (carrinha)", $filtered["total"] >= 2, (string)$filtered["total"]);
 
-$statusFiltered = $bookingService->listBookings(["page" => 1, "perPage" => 10, "status" => "cancelado"]);
-check("filtro por estado (cancelado)", $statusFiltered["total"] >= 1, (string)$statusFiltered["total"]);
+$statusFiltered = $bookingService->listBookings(["page" => 1, "perPage" => 10, "status" => "recusado"]);
+check("filtro por estado (recusado)", $statusFiltered["total"] >= 1, (string)$statusFiltered["total"]);
 
 $toCancel = $bookingService->createStoreBooking($customerId, ["serviceIds" => [33], "date" => $date, "time" => "16:00"]);
 $cancelResult = $bookingService->cancelBooking((int)$toCancel["bookingId"]);

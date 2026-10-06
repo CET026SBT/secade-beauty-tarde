@@ -129,11 +129,38 @@ class RotaService extends BaseService {
                 $revenue += $prices[$bookingId] ?? 0.0;
             }
 
+            // R-24H (§4.4 · RF-58/RN-24): nenhum agendamento a menos de 24 h entra
+            // numa rota — a decisão é bloqueada e cabe à reconciliação (F10/F6)
+            // retirá-lo/recusá-lo.
+            $tooSoon = $this->bookingRepository->findIdsWithin24Hours($bookingIds);
+
+            if (!empty($tooSoon)) {
+                throw new Exception(
+                    "Existem " . count($tooSoon) . " agendamento(s) a menos de 24 horas da execução. "
+                    . "Não podem ser incluídos numa rota (RF-58/RN-24).",
+                    409
+                );
+            }
+
+            // R-CONF (§4.4): a confirmação valida «mesma cidade + janela sobreposta».
+            if ($decision === "aprovada") {
+                $conflicts = $this->bookingRepository->findCityWindowConflicts($cityId, $date, $bookingIds);
+
+                if ($conflicts > 0) {
+                    throw new Exception(
+                        "Existe uma rota já confirmada nesta cidade com janela temporal sobreposta. "
+                        . "A carrinha não pode estar em dois locais à mesma hora.",
+                        409
+                    );
+                }
+            }
+
             $fuelCost      = $this->rotaRepository->getFuelCost($cityId, self::BASE_PARTIDA_ID);
             $profitability = round($revenue - $fuelCost, 2);
             $approved      = $decision === "aprovada";
 
-            $bookingState = $approved ? "confirmado" : "cancelado";
+            // 6.1/C-01: a staff **recusa** (não cancela) — `cancelado` fica para o cliente.
+            $bookingState = $approved ? "confirmado" : "recusado";
             $this->bookingRepository->updateEstadoMany($bookingIds, $bookingState);
 
             $decisionNotes = $notes !== null && $notes !== ""

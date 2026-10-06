@@ -5,6 +5,7 @@ require_once __DIR__ . "/GreenReceiptService.php";
 require_once APP_PATH . "/repositories/BookingServiceRepository.php";
 require_once APP_PATH . "/repositories/BookingRepository.php";
 require_once APP_PATH . "/repositories/CategoryRepository.php";
+require_once APP_PATH . "/repositories/EmployeeRepository.php";
 require_once APP_PATH . "/utils/Session.php";
 
 /**
@@ -25,6 +26,7 @@ class ServiceAcceptanceService extends BaseService {
     private BookingRepository $bookingRepository;
     private CategoryRepository $categoryRepository;
     private GreenReceiptService $greenReceiptService;
+    private EmployeeRepository $employeeRepository;
 
     public function __construct() {
         parent::__construct();
@@ -32,6 +34,7 @@ class ServiceAcceptanceService extends BaseService {
         $this->bookingRepository = new BookingRepository();
         $this->categoryRepository = new CategoryRepository();
         $this->greenReceiptService = new GreenReceiptService();
+        $this->employeeRepository = new EmployeeRepository();
     }
 
     // ------------------------------------------------------------------
@@ -44,17 +47,26 @@ class ServiceAcceptanceService extends BaseService {
     public function listPendingServices(array $filters = []): array {
         $services = $this->bookingServiceRepository->findPending($filters);
 
+        // F4/R-ALOC: marcar por serviço quais os funcionários ocupados noutra cidade
+        // no mesmo dia (o front-end desativa essas opções no seletor de alocação).
+        foreach ($services as &$service) {
+            $service["busyEmployeeIds"] = $this->bookingRepository->findEmployeesBusyElsewhereOnDate((int)$service["bookingId"]);
+        }
+        unset($service);
+
         return [
             "services"   => $services,
             "categories" => $this->categoryRepository->find(),
-            "config"     => $this->greenReceiptService->findDefaultConfigs()
+            "config"     => $this->greenReceiptService->findDefaultConfigs(),
+            // F4: o gestor precisa da lista de funcionários para o seletor de alocação.
+            "employees"  => $this->employeeRepository->listActive()
         ];
     }
 
     /**
-     * Serviços já aceites pelo funcionário autenticado.
+     * Serviços já alocados/aceites — todos (gestor) ou só os do funcionário.
      */
-    public function listAcceptedServices(int $employeeId, array $filters = []): array {
+    public function listAcceptedServices(?int $employeeId, array $filters = []): array {
         $services = $this->bookingServiceRepository->findAcceptedByEmployee($employeeId, $filters);
 
         $totalEmployee = 0.0;
@@ -90,6 +102,7 @@ class ServiceAcceptanceService extends BaseService {
             $booking = $this->requireBooking((int)$service["bookingId"]);
 
             $this->assertAcceptableBooking($booking);
+            $this->assertEmployeeAvailable($employeeId, (int)$booking["id"]);
 
             $percentage = $this->greenReceiptService->resolveEmployeePercentage($employeeId);
             $isSwap = !empty($service["employeeId"]) && (int)$service["employeeId"] !== $employeeId;
@@ -112,21 +125,24 @@ class ServiceAcceptanceService extends BaseService {
     }
 
     /**
-     * Desfaz a aceitação de um serviço (bloqueado se o agendamento estiver consolidado).
+     * Desfaz a alocação/aceitação de um serviço.
+     *
+     * F4: o **gestor** pode desfazer qualquer alocação (`$canManage`); o funcionário
+     * só desfaz as suas. Bloqueado quando o agendamento está consolidado.
      */
-    public function unacceptService(int $employeeId, int $bookingServiceId, ?int $bookingId = null): array {
-        return $this->executeTransactional(function() use ($employeeId, $bookingServiceId, $bookingId) {
+    public function unacceptService(int $employeeId, int $bookingServiceId, ?int $bookingId = null, bool $canManage = false): array {
+        return $this->executeTransactional(function() use ($employeeId, $bookingServiceId, $bookingId, $canManage) {
             $service = $this->resolveService($bookingServiceId, $bookingId);
             $booking = $this->requireBooking((int)$service["bookingId"]);
 
             if ($booking["status"] === self::CONSOLIDATED_STATE) {
                 throw new Exception(
-                    "O agendamento já está totalmente aceite por funcionários e não permite desfazer nem trocar.",
+                    "O agendamento já está totalmente alocado e não permite desfazer nem trocar.",
                     409
                 );
             }
 
-            if ((int)($service["employeeId"] ?? 0) !== $employeeId) {
+            if (!$canManage && (int)($service["employeeId"] ?? 0) !== $employeeId) {
                 throw new Exception("Só pode desfazer serviços que aceitou.", 403);
             }
 
@@ -177,42 +193,35 @@ class ServiceAcceptanceService extends BaseService {
     }
 
     /**
-     * Se já não existirem serviços pendentes, consolida o agendamento
-     * (bloqueando a janela temporal para concorrência).
+     * R-ALOC (§4.4 · C-02): o funcionário não pode ficar em **duas cidades no mesmo
+     * dia**. A janela temporal deixa de ser validada aqui — o recurso finito é a
+     * **rota confirmada** (R-CONF, em `RotaService`).
+     */
+    private function assertEmployeeAvailable(int $employeeId, int $bookingId): void {
+        $conflicts = $this->bookingRepository->countEmployeeInOtherCitySameDay($employeeId, $bookingId);
+
+        if ($conflicts > 0) {
+            throw new Exception(
+                "Este funcionário já tem serviços aceites noutra cidade no mesmo dia. Escolha outro funcionário.",
+                409
+            );
+        }
+    }
+
+    /**
+     * Se já não existirem serviços pendentes, consolida o agendamento.
+     *
+     * F4/C-02 (§4.4): o agendamento consolidado **já não bloqueia** a janela
+     * temporal — o recurso finito é a **rota confirmada**, e é aí (R-CONF em
+     * `RotaService::decideRoute`) que a sobreposição é validada.
      */
     private function consolidateIfComplete(int $bookingId): bool {
         if ($this->bookingServiceRepository->countPendingByBooking($bookingId) > 0) {
             return false;
         }
 
-        $this->assertNoWindowConflict($bookingId);
         $this->bookingRepository->updateEstado($bookingId, self::CONSOLIDATED_STATE);
 
         return true;
-    }
-
-    /**
-     * Bloqueio da janela temporal: ao consolidar, não pode existir outro
-     * agendamento de ambulatório consolidado/confirmado a sobrepor-se.
-     */
-    private function assertNoWindowConflict(int $bookingId): void {
-        $booking = $this->bookingRepository->find($bookingId);
-        if (!$booking) return;
-
-        $duration = $this->bookingServiceRepository->totalDurationByBooking($bookingId);
-
-        $conflicts = $this->bookingRepository->countByDateWindow(
-            $booking["dateTime"],
-            max($duration, 1),
-            "carrinha_ambulante",
-            [$bookingId]
-        );
-
-        if ($conflicts > 0) {
-            throw new Exception(
-                "Existe outro agendamento consolidado na mesma janela temporal. Consolidação bloqueada.",
-                409
-            );
-        }
     }
 }
