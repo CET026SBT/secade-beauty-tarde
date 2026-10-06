@@ -34,6 +34,9 @@ error_log
 /uploads/*
 !/uploads/.htaccess
 !/uploads/.gitkeep
+!/uploads/users/
+/uploads/users/*
+!/uploads/users/.gitkeep
 !/uploads/services/
 /uploads/services/*
 !/uploads/services/.gitkeep

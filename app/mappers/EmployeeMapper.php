@@ -16,6 +16,7 @@ class EmployeeMapper extends BaseMapper {
                     ->cast("email",          "email",       "string")
                     ->cast("telemovel",      "phone",       "string")
                     ->cast("nif",            "nif",         "string")
+                    ->cast("foto",           "photo",       "string")
                     ->toArray();
     }
 }
