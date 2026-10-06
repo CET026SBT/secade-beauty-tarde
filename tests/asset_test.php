@@ -46,6 +46,7 @@ $assets = [
     "modules/main/js/components/services.js",
     "modules/main/js/components/bookingWizard.js",
     "modules/main/js/components/customerArea.js",
+    "modules/main/js/components/bookingEditor.js",
     "modules/main/js/components/appointments.js",
     "modules/main/js/components/testimonial.js",
     "modules/main/js/components/customerRegister.js",

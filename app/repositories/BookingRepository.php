@@ -61,6 +61,26 @@ class BookingRepository extends BaseRepository {
         return $this->execute($sql, ["estado" => $estado, "id" => $id]) >= 0;
     }
 
+    /** Reprograma o agendamento (data/hora, morada e valor) — edição F9b. */
+    public function updateSchedule(int $id, string $dateTime, float $totalAmount, ?int $addressId, string $estado): bool {
+        return $this->execute(
+            "UPDATE agendamento
+             SET data_hora_pretendida = :data_hora,
+                 valor_total = :valor_total,
+                 cliente_morada_id = :morada_id,
+                 estado_reserva = :estado
+             WHERE id = :id",
+            [
+                "data_hora"   => $dateTime,
+                "valor_total" => $totalAmount,
+                "morada_id"   => $addressId,
+                "estado"      => $estado,
+                "id"          => $id
+            ]
+        ) >= 0;
+    }
+
+    /** Contagem de conflitos na janela, ignorando o próprio agendamento. */
     public function countByDateWindow(string $dateTimeStart, int $durationMinutes, string $local, array $excludeIds = []): int {
         $sql = "SELECT COUNT(*) FROM agendamento
                 WHERE local_prestacao = :local
