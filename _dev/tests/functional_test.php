@@ -852,6 +852,30 @@ foreach ($managerAlertsF6["groups"] ?? [] as $g) { if (($g["key"] ?? "") === "po
 check("R1b: o gestor recebe o grupo 'por_fechar'", $closingF6 !== null, json_encode(array_column($managerAlertsF6["groups"] ?? [], "key")));
 check("R1b: o agendamento por fechar está identificado", $closingF6 !== null && in_array($scR1b["bookingId"], array_map(fn($i) => (int)$i["highlight"], $closingF6["items"] ?? []), true), json_encode($closingF6["items"] ?? []));
 
+// F5/RN-33: o funcionário EFETIVO só é avisado de serviços já em ROTA CONFIRMADA
+// (coerente com a agenda). Uma alocação por confirmar não gera aviso.
+$conn->exec("DELETE FROM funcionario WHERE id = 9002");
+$conn->exec("DELETE FROM utilizador WHERE id = 9002");
+$conn->exec("INSERT INTO utilizador (id, nome, email, password_hash, telemovel, tipo_perfil) VALUES (9002, 'Efetivo Alerta', 'efetivo.f6@secade.pt', 'x', '910000002', 'funcionario')");
+$conn->exec("INSERT INTO funcionario (id, tipo_contrato, salario_base, percentagem_comissao, cc, ativo) VALUES (9002, 'efetivo_contratado', 800.00, 10.00, '999999902Z9', 1)");
+
+$scAlloc   = $mkPastBooking($cities[5]["name"], date("Y-m-d H:i:s", strtotime("+1 day")), "totalmente_alocado");
+$scConfir  = $mkPastBooking($cities[6]["name"], date("Y-m-d H:i:s", strtotime("+2 day")), "confirmado");
+$conn->exec("UPDATE agendamento_servico SET funcionario_id = 9002, estado_aceitacao = 'aceite', percentagem_funcionario_aplicada = 10.00 WHERE agendamento_id IN (" . (int)$scAlloc["bookingId"] . "," . (int)$scConfir["bookingId"] . ")");
+
+Session::createLoginSession(["id" => 9002, "name" => "Efetivo Alerta", "email" => "efetivo.f6@secade.pt", "profileType" => "funcionario"]);
+$effAlerts = (new AlertService())->list();
+$allocGroup = null;
+foreach ($effAlerts["groups"] ?? [] as $g) { if (($g["key"] ?? "") === "alocacoes") $allocGroup = $g; }
+$allocDetails = implode(" | ", array_map(fn($i) => (string)($i["detail"] ?? ""), $allocGroup["items"] ?? []));
+check("F5/RN-33: efetivo e avisado do servico em rota confirmada", str_contains($allocDetails, "Agendamento #" . $scConfir["bookingId"] . " ·"), $allocDetails);
+check("F5/RN-33: efetivo NAO e avisado do servico por confirmar", !str_contains($allocDetails, "Agendamento #" . $scAlloc["bookingId"] . " ·"), $allocDetails);
+
+$conn->exec("DELETE FROM agendamento WHERE id IN (" . (int)$scAlloc["bookingId"] . "," . (int)$scConfir["bookingId"] . ")");
+$conn->exec("DELETE FROM cliente_morada WHERE id IN (" . (int)$scAlloc["addressId"] . "," . (int)$scConfir["addressId"] . ")");
+$conn->exec("DELETE FROM funcionario WHERE id = 9002");
+$conn->exec("DELETE FROM utilizador WHERE id = 9002");
+
 // Modo seco (§8.2 D11) e manutenção (§9.3).
 $preview = $reconciliation->preview();
 check("preview devolve contadores (sem escrever)", isset($preview["bookingsToRefuse"], $preview["bookingsToComplete"]), json_encode($preview));
