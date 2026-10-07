@@ -24,6 +24,34 @@ class Session {
         $_SESSION["user_name"]    = $user["name"]        ?? $user["nome"]        ?? null;
         $_SESSION["user_email"]   = $user["email"]       ?? null;
         $_SESSION["user_profile"] = $user["profileType"] ?? $user["tipo_perfil"] ?? null;
+
+        // F4: o tipo de contrato do funcionário decide o que o backoffice mostra
+        // (efetivo -> Agenda; RV -> aceitação). Resolvido no login, onde a ligação
+        // à BD já existe — evita aceder ao `$conn` em cada página.
+        $_SESSION["user_contract_type"] = self::resolveContractType($user);
+    }
+
+    private static function resolveContractType(array $user): ?string {
+        $profile = $user["profileType"] ?? $user["tipo_perfil"] ?? null;
+        $userId  = (int)($user["id"] ?? 0);
+
+        if ($profile !== "funcionario" || $userId <= 0) {
+            return null;
+        }
+
+        global $conn;
+        if (!$conn) {
+            return null;
+        }
+
+        try {
+            $stmt = $conn->prepare("SELECT tipo_contrato FROM funcionario WHERE id = :id LIMIT 1");
+            $stmt->execute(["id" => $userId]);
+            $type = $stmt->fetchColumn();
+            return $type !== false ? (string)$type : null;
+        } catch (Exception $e) {
+            return null;
+        }
     }
 
     public static function isLoggedIn() {
@@ -80,20 +108,7 @@ class Session {
         }
 
         self::init();
-
-        if (array_key_exists("user_contract_type", $_SESSION)) {
-            return $_SESSION["user_contract_type"];
-        }
-
-        require_once APP_PATH . "/config/connection.php";
-        global $conn;
-
-        $stmt = $conn->prepare("SELECT tipo_contrato FROM funcionario WHERE id = :id LIMIT 1");
-        $stmt->execute(["id" => self::userId()]);
-        $type = $stmt->fetchColumn();
-
-        $_SESSION["user_contract_type"] = $type !== false ? (string)$type : null;
-        return $_SESSION["user_contract_type"];
+        return $_SESSION["user_contract_type"] ?? null;
     }
 
     public static function requireLogin(?string $redirectUrl=null) {

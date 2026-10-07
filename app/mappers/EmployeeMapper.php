@@ -8,6 +8,7 @@ class EmployeeMapper extends BaseMapper {
         return $this->cast("id",             "id",          "int")
                     ->cast("tipo_contrato",  "contractType","string")
                     ->cast("salario_base",   "salary",      "float")
+                    ->cast("percentagem_comissao", "commissionPercentage", "float")
                     ->cast("cc",             "cc",          "string")
                     ->cast("ativo",          "isActive",    "bool")
 
