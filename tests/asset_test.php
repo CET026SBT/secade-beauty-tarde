@@ -71,6 +71,11 @@ $assets = [
     "modules/backoffice/js/components/commissions.js",
     "modules/common/lib/chartjs/Chart.bundle.min.js",
     "modules/common/lib/sweetalert/sweetalert.js",
+    "modules/backoffice/js/components/catalog.js",
+    "modules/common/img/service-images/skeletons/servico-cabeleireiro.svg",
+    "modules/common/img/service-images/skeletons/servico-barbearia.svg",
+    "modules/common/img/service-images/skeletons/servico-estetica.svg",
+    "modules/common/img/service-images/skeletons/servico-generico.svg",
     "modules/common/css/ext-bootstrap.css",
     "modules/common/css/style.css"
 ];
@@ -84,6 +89,7 @@ foreach ($assets as $asset) {
 echo "\n=== Injeção de scripts por página (register_script) ===\n";
 $pages = [
     ["/servicos/cabeleireiro", null,  ["components/services.js"]],
+    ["/gestao/catalogo",       $gestorJar, ["components/catalog.js"]],
     ["/agendar",              $jar,  ["components/bookingWizard.js", "validators/booking.validator.js"]],
     ["/perfil",               $jar,  ["components/profile.js"]],
     ["/agendamentos",         $jar,  ["components/appointments.js"]],

@@ -34,6 +34,7 @@ $routes = [
     "gestao/agendamentos"   => ROOT_PATH . "/modules/backoffice/appointments.php",
     "gestao/rotas"          => ROOT_PATH . "/modules/backoffice/routes.php",
     "gestao/servicos"       => ROOT_PATH . "/modules/backoffice/services.php",
+    "gestao/catalogo"       => ROOT_PATH . "/modules/backoffice/catalog.php",
     "gestao/fiscal"         => ROOT_PATH . "/modules/backoffice/fiscal.php",
     "gestao/recibos-verdes" => ROOT_PATH . "/modules/backoffice/greenReceipts.php",
     "gestao/avisos"         => ROOT_PATH . "/modules/backoffice/avisos.php",
