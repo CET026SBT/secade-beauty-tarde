@@ -150,6 +150,7 @@ check("backoffice tem o sino com contador de avisos", str_contains($painelPage["
 $agendaPage = http("{$base}/gestao/agenda", $employeeJar);
 check("agenda do funcionário traz a grelha do calendário", str_contains($agendaPage["body"], "agendaCalendar"));
 check("sidebar do funcionário não mostra o painel do gestor", !str_contains($agendaPage["body"], "/gestao/painel"));
+check("sidebar do funcionário RV mantém o link Serviços", str_contains($agendaPage["body"], ">Serviços<"));
 
 $suppliersPage = http("{$base}/gestao/fornecedores", $gestorJar);
 check("página de fornecedores traz tabela e formulário", str_contains($suppliersPage["body"], "suppliersTableBody") && str_contains($suppliersPage["body"], "supplierForm"));
