@@ -58,6 +58,7 @@ const API = ((baseApi) => ({
             pending: (params = {}) => baseApi.get(`?action=admin-service-pending-list&${$.param(params)}`, 0),
             accepted: (params = {}) => baseApi.get(`?action=admin-service-accepted-list&${$.param(params)}`, 0),
             accept: (bookingServiceId, bookingId = null) => baseApi.post('?action=admin-service-accept', { bookingServiceId, bookingId }),
+            assign: (bookingServiceId, bookingId = null, employeeId = null) => baseApi.post('?action=admin-service-assign', { bookingServiceId, bookingId, employeeId }),
             unaccept: (bookingServiceId, bookingId = null) => baseApi.post('?action=admin-service-unaccept', { bookingServiceId, bookingId })
         },
         fiscal: {

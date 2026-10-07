@@ -54,6 +54,57 @@ class RotaService extends BaseService {
     }
 
     /**
+     * F4 · R-24H — a confirmação da rota só pode ser feita com **>= 24 h** de
+     * antecedência (RF-58 / RN-24), para o cliente ter tempo de ser avisado.
+     */
+    private function assertRouteConfirmableInTime(string $date): void {
+        $startOfDay = strtotime($date . " 00:00:00");
+
+        if ($startOfDay - time() < 86400) {
+            throw new Exception(
+                "Só é possível confirmar a rota com pelo menos 24 horas de antecedência.",
+                409
+            );
+        }
+    }
+
+    /**
+     * F4 · #1 (R-CONF) — na mesma cidade e no mesmo dia, as janelas dos
+     * agendamentos a confirmar não se podem sobrepor (a carrinha/equipa está
+     * num só sítio). O choque deixa de ser detetado na consolidação.
+     */
+    private function assertNoCityWindowOverlap(array $bookingIds, string $date, int $cityId): void {
+        if (count($bookingIds) < 2) return;
+
+        $rows = $this->bookingRepository->findAmbulatoryBookingsByCityAndDate(
+            $date,
+            $cityId,
+            ["totalmente_alocado", "confirmado"]
+        );
+
+        $windows = [];
+        foreach ($rows as $row) {
+            $id = (int)$row["id"];
+            if (!in_array($id, $bookingIds, true)) continue;
+
+            $start = strtotime((string)$row["data_hora_pretendida"]);
+            $duration = max($this->bookingServiceRepository->totalDurationByBooking($id), 1);
+            $windows[] = ["start" => $start, "end" => $start + $duration * 60];
+        }
+
+        for ($i = 0; $i < count($windows); $i++) {
+            for ($j = $i + 1; $j < count($windows); $j++) {
+                if ($windows[$i]["start"] < $windows[$j]["end"] && $windows[$j]["start"] < $windows[$i]["end"]) {
+                    throw new Exception(
+                        "Existem agendamentos com horários sobrepostos nesta cidade. Ajuste-os antes de confirmar a rota.",
+                        409
+                    );
+                }
+            }
+        }
+    }
+
+    /**
      * DECISÃO MANUAL DO GESTOR (Fase 4 — especificacao_mvp.md §3.1).
      *
      * Aprova ou recusa livremente uma rota (dia + cidade), sem limiar de bloqueio.
@@ -132,6 +183,12 @@ class RotaService extends BaseService {
             $fuelCost      = $this->rotaRepository->getFuelCost($cityId, self::BASE_PARTIDA_ID);
             $profitability = round($revenue - $fuelCost, 2);
             $approved      = $decision === "aprovada";
+
+            // F4 · R-24H + R-CONF: só a CONFIRMAÇÃO (rota aprovada) obedece às regras.
+            if ($approved) {
+                $this->assertRouteConfirmableInTime($date);
+                $this->assertNoCityWindowOverlap($bookingIds, $date, $cityId);
+            }
 
             $bookingState = $approved ? "confirmado" : "cancelado";
             $this->bookingRepository->updateEstadoMany($bookingIds, $bookingState);

@@ -30,6 +30,8 @@ class BookingServiceMapper extends BaseMapper {
                     ->cast("estado_reserva",                    "bookingStatus",        "string")
                     ->cast("cliente_id",                        "customerId",           "int")
                     ->cast("cliente_nome",                      "customerName",         "string")
+                    ->cast("cidade_id",                         "cityId",               "int")
+                    ->cast("cidade_nome",                       "cityName",             "string")
                     ->toArray();
     }
 }

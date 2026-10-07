@@ -123,12 +123,14 @@ class BookingServiceRepository extends BaseRepository {
                        sv.nome AS servico_nome, sv.categoria_id, cat.nome AS categoria_nome,
                        p.nome_pessoa,
                        a.data_hora_pretendida, a.local_prestacao, a.estado_reserva,
-                       a.cliente_id
+                       a.cliente_id, cm.cidade_id AS cidade_id, cid.nome AS cidade_nome
                 FROM agendamento_servico s
                 INNER JOIN servico sv ON s.servico_id = sv.id
                 INNER JOIN categoria_servico cat ON sv.categoria_id = cat.id
                 INNER JOIN agendamento a ON s.agendamento_id = a.id
                 LEFT JOIN agendamento_pessoa p ON s.agendamento_pessoa_id = p.id
+                LEFT JOIN cliente_morada cm ON a.cliente_morada_id = cm.id
+                LEFT JOIN cidade cid ON cm.cidade_id = cid.id
                 WHERE s.estado_aceitacao = 'pendente'
                   AND a.local_prestacao = 'carrinha_ambulante'
                   -- RN-32 (§24.7): a partir do momento em que o agendamento entra numa
@@ -142,6 +144,16 @@ class BookingServiceRepository extends BaseRepository {
         if (!empty($filters["categoriaId"])) {
             $sql .= " AND sv.categoria_id = :categoria_id";
             $params["categoria_id"] = (int)$filters["categoriaId"];
+        }
+
+        if (!empty($filters["cidadeId"])) {
+            $sql .= " AND cm.cidade_id = :cidade_id";
+            $params["cidade_id"] = (int)$filters["cidadeId"];
+        }
+
+        if (!empty($filters["bookingId"])) {
+            $sql .= " AND s.agendamento_id = :agendamento_id";
+            $params["agendamento_id"] = (int)$filters["bookingId"];
         }
 
         if (!empty($filters["data"])) {
@@ -169,27 +181,37 @@ class BookingServiceRepository extends BaseRepository {
     // ------------------------------------------------------------------
 
     /**
-     * Serviços aceites pelo funcionário (opção "Totalmente Aceite" no backoffice).
+     * Serviços alocados/aceites (F4). Sem `$employeeId` devolve TODOS (visão do
+     * gestor); com `$employeeId` restringe a esse funcionário (visão do RV).
      */
-    public function findAcceptedByEmployee(int $employeeId, array $filters = []): array {
+    public function findAllocated(?int $employeeId, array $filters = []): array {
         $sql = "SELECT s.id, s.agendamento_id, s.agendamento_pessoa_id, s.servico_id,
                        s.funcionario_id, s.preco_praticado, s.duracao_minutos, s.estado_aceitacao,
                        s.aceito_em, s.percentagem_funcionario_aplicada,
                        ROUND(s.preco_praticado * s.percentagem_funcionario_aplicada / 100, 2) AS valor_funcionario,
                        (s.preco_praticado - ROUND(s.preco_praticado * s.percentagem_funcionario_aplicada / 100, 2)) AS valor_empresa,
                        sv.nome AS servico_nome, sv.categoria_id, cat.nome AS categoria_nome,
-                       p.nome_pessoa,
+                       p.nome_pessoa, fu.nome AS funcionario_nome,
                        a.data_hora_pretendida, a.local_prestacao, a.estado_reserva,
-                       a.cliente_id, u.nome AS cliente_nome
+                       a.cliente_id, u.nome AS cliente_nome,
+                       cm.cidade_id AS cidade_id, cid.nome AS cidade_nome
                 FROM agendamento_servico s
                 INNER JOIN servico sv ON s.servico_id = sv.id
                 INNER JOIN categoria_servico cat ON sv.categoria_id = cat.id
                 INNER JOIN agendamento a ON s.agendamento_id = a.id
                 INNER JOIN cliente c ON a.cliente_id = c.id
                 INNER JOIN utilizador u ON c.id = u.id
+                INNER JOIN utilizador fu ON s.funcionario_id = fu.id
                 LEFT JOIN agendamento_pessoa p ON s.agendamento_pessoa_id = p.id
-                WHERE s.funcionario_id = :funcionario_id";
-        $params = ["funcionario_id" => $employeeId];
+                LEFT JOIN cliente_morada cm ON a.cliente_morada_id = cm.id
+                LEFT JOIN cidade cid ON cm.cidade_id = cid.id
+                WHERE s.funcionario_id IS NOT NULL";
+        $params = [];
+
+        if ($employeeId !== null && $employeeId > 0) {
+            $sql .= " AND s.funcionario_id = :funcionario_id";
+            $params["funcionario_id"] = $employeeId;
+        }
 
         if (!empty($filters["data"])) {
             $sql .= " AND DATE(a.data_hora_pretendida) = :data";
@@ -201,10 +223,48 @@ class BookingServiceRepository extends BaseRepository {
             $params["categoria_id"] = (int)$filters["categoriaId"];
         }
 
+        if (!empty($filters["cidadeId"])) {
+            $sql .= " AND cm.cidade_id = :cidade_id";
+            $params["cidade_id"] = (int)$filters["cidadeId"];
+        }
+
+        if (!empty($filters["funcionarioId"])) {
+            $sql .= " AND s.funcionario_id = :funcionario_id_filter";
+            $params["funcionario_id_filter"] = (int)$filters["funcionarioId"];
+        }
+
+        if (!empty($filters["bookingId"])) {
+            $sql .= " AND s.agendamento_id = :agendamento_id";
+            $params["agendamento_id"] = (int)$filters["bookingId"];
+        }
+
         $sql .= " ORDER BY a.data_hora_pretendida ASC, s.id ASC";
 
         // Mapeado (camelCase) para ser consistente com findPending() e com o resto da API.
         return $this->fetchAll($sql, $params);
+    }
+
+    /** Compatibilidade: serviços aceites por um funcionário específico (visão do RV). */
+    public function findAcceptedByEmployee(int $employeeId, array $filters = []): array {
+        return $this->findAllocated($employeeId, $filters);
+    }
+
+    /**
+     * Cidades em que o funcionário tem serviços alocados num dado dia (F4 · #2).
+     * Serve a regra "não pode estar em duas cidades no mesmo dia".
+     */
+    public function findEmployeeCityIdsOnDate(int $employeeId, string $date): array {
+        $sql = "SELECT DISTINCT cm.cidade_id
+                FROM agendamento_servico s
+                INNER JOIN agendamento a ON s.agendamento_id = a.id
+                INNER JOIN cliente_morada cm ON a.cliente_morada_id = cm.id
+                WHERE s.funcionario_id = :funcionario_id
+                  AND s.estado_aceitacao = 'aceite'
+                  AND DATE(a.data_hora_pretendida) = :data
+                  AND cm.cidade_id IS NOT NULL";
+
+        $rows = $this->fetchAllRaw($sql, ["funcionario_id" => $employeeId, "data" => $date]);
+        return array_values(array_map(fn($r) => (int)$r["cidade_id"], $rows));
     }
 
     /**

@@ -728,6 +728,55 @@ try { $bookingService->cancelCustomerBooking($customerId, 999999); } catch (Exce
 check("cancelar agendamento inexistente devolve 404", $cancelMissing !== null, "sem erro");
 
 // ---------------------------------------------------------------------------
+section("F4 — Alocação pelo gestor (#servCarrinha) e regra #2");
+
+$managerAllocService = new ServiceAcceptanceService();
+
+// Funcionário EFETIVO temporário (o seed só tem um RV); removido no fim.
+$conn->exec("DELETE FROM funcionario WHERE id = 9001");
+$conn->exec("DELETE FROM utilizador WHERE id = 9001");
+$conn->exec("INSERT INTO utilizador (id, nome, email, password_hash, telemovel, tipo_perfil) VALUES (9001, 'Efetivo Teste', 'efetivo.f4@secade.pt', 'x', '910000000', 'funcionario')");
+$conn->exec("INSERT INTO funcionario (id, tipo_contrato, salario_base, percentagem_comissao, cc, ativo) VALUES (9001, 'efetivo_contratado', 800.00, 10.00, '999999991Z8', 1)");
+
+$allocDate = nextWorkingDate(30);
+
+$addrA = $addressService->createAddress($customerId, ["cityName" => $cities[0]["name"], "street" => "Rua F4 A", "doorNumber" => "1", "zipCode" => "7000-400"]);
+$otpAllocA = $bookingService->requestOtp($customerId);
+$bookA = $bookingService->createAmbulatoryBooking($customerId, [
+    "addressId" => $addrA["addressId"], "otpCode" => $otpAllocA["otpCode"],
+    "date" => $allocDate, "time" => "09:00", "people" => [["name" => "Pessoa A", "serviceIds" => [29]]]
+]);
+$svcA = $bookingServiceRepo->findByBooking((int)$bookA["bookingId"])[0];
+
+$assignA = $managerAllocService->assignService(1, (int)$svcA["id"], (int)$bookA["bookingId"], 9001);
+check("gestor aloca serviço a funcionário efetivo", ($assignA["assigned"] ?? false) === true, json_encode($assignA));
+check("percentagem aplicada é a do funcionário (10%)", ($assignA["greenReceipt"]["employeePercentage"] ?? null) === 10.0, json_encode($assignA["greenReceipt"] ?? null));
+
+$addrB = $addressService->createAddress($customerId, ["cityName" => $cities[1]["name"], "street" => "Rua F4 B", "doorNumber" => "2", "zipCode" => "7000-500"]);
+$otpAllocB = $bookingService->requestOtp($customerId);
+$bookB = $bookingService->createAmbulatoryBooking($customerId, [
+    "addressId" => $addrB["addressId"], "otpCode" => $otpAllocB["otpCode"],
+    "date" => $allocDate, "time" => "11:00", "people" => [["name" => "Pessoa B", "serviceIds" => [29]]]
+]);
+$svcB = $bookingServiceRepo->findByBooking((int)$bookB["bookingId"])[0];
+
+$assignConflict = null;
+try { $managerAllocService->assignService(1, (int)$svcB["id"], (int)$bookB["bookingId"], 9001); } catch (Exception $e) { $assignConflict = $e->getMessage(); }
+check("regra #2: efetivo noutra cidade no mesmo dia é recusado", $assignConflict !== null, "sem erro");
+
+$assignRv = null;
+try { $managerAllocService->assignService(1, (int)$svcB["id"], (int)$bookB["bookingId"], 2); } catch (Exception $e) { $assignRv = $e->getMessage(); }
+check("não se aloca a funcionário RV (409/422)", $assignRv !== null, "sem erro");
+
+$managerPending = (new ServiceAcceptanceService())->listPendingServices(["data" => $allocDate], true, null);
+check("visão do gestor traz employeeOptions", isset($managerPending["employeeOptions"]), json_encode(array_keys($managerPending)));
+
+$conn->exec("DELETE FROM agendamento WHERE id IN (" . (int)$bookA["bookingId"] . "," . (int)$bookB["bookingId"] . ")");
+$conn->exec("DELETE FROM cliente_morada WHERE id IN (" . (int)$addrA["addressId"] . "," . (int)$addrB["addressId"] . ")");
+$conn->exec("DELETE FROM funcionario WHERE id = 9001");
+$conn->exec("DELETE FROM utilizador WHERE id = 9001");
+
+// ---------------------------------------------------------------------------
 section("RESULTADO FINAL");
 echo ($failed === 0 ? "TODOS OS TESTES PASSARAM" : "EXISTEM FALHAS") . " => {$passed} pass, {$failed} fail\n";
 exit($failed === 0 ? 0 : 1);

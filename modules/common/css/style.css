@@ -445,7 +445,7 @@ form .row > *:has([aria-invalid="true"])*/ {
 
 /* Service */
 .service-card-image {
-    height: 180px;
+    height: 260px;
 }
 
 @media (max-width: 768px) {
@@ -874,6 +874,16 @@ form .row > *:has([aria-invalid="true"])*/ {
 .bo-body {
     background-color: #f5f7fa;
     min-height: 100vh;
+}
+
+/* Filtros que ficam “colados” no topo ao rolar a listagem (F4). */
+.bo-filters.sticky-filters {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background-color: #fff;
+    padding-top: .5rem;
+    padding-bottom: .5rem;
 }
 
 .bo-navbar .nav-link {

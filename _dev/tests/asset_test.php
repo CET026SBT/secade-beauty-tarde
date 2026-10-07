@@ -129,6 +129,16 @@ check("página fiscal tem formulário de obrigação", str_contains($fiscalPage[
 $servicesPage = http("{$base}/gestao/servicos", $gestorJar);
 check("página de serviços do funcionário carrega", str_contains($servicesPage["body"], "pendingList") && str_contains($servicesPage["body"], "acceptedList"));
 
+// F4 — #servCarrinha: gestor aloca, layout e filtros
+check("parágrafo do gestor fala em alocar", str_contains($servicesPage["body"], "Por alocar"));
+check("layout das listagens é col-lg-12 col-xl-6 (F4)", str_contains($servicesPage["body"], "col-lg-12 col-xl-6"));
+check("filtros com botão de mais filtros (F4)", str_contains($servicesPage["body"], "Mais filtros"));
+
+$boServicesJs = http("{$base}/modules/backoffice/js/components/services.js")["body"];
+check("services.js tem a alocação pelo gestor", str_contains($boServicesJs, "data-assign-select"));
+check("services.js sem mencionar 'Simulador'", !str_contains($boServicesJs, "Simulador"));
+check("services.js usa 'Empresa' (não 'Plataforma')", str_contains($boServicesJs, "Empresa") && !str_contains($boServicesJs, "Plataforma"));
+
 echo "\n=== Elementos-chave da entrada do backoffice (Fase 6.0 · 6.5) ===\n";
 
 $painelPage = http("{$base}/gestao/painel", $gestorJar);
