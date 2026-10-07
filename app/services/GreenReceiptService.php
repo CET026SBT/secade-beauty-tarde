@@ -5,14 +5,19 @@ require_once APP_PATH . "/repositories/GreenReceiptConfigRepository.php";
 require_once APP_PATH . "/utils/Session.php";
 
 /**
- * Simulador de Recibos Verdes (simplificação académica: não há emissão real
- * na Segurança Social). Percentagens configuráveis pelo gestor, com vigência
- * por data — na aceitação aplica-se a configuração em vigor.
+ * Percentagens padrão por tipo de contrato (`config_percentagem_padrao`).
+ *
+ * Guarda os defaults que o gestor define no backoffice: `efetivo_contratado` e
+ * `recibo_verde`. São apenas **valores iniciais** — cada funcionário tem a sua
+ * própria `funcionario.percentagem_comissao`, editável no formulário de RH.
  */
 class GreenReceiptService extends BaseService {
 
-    private const DEFAULT_EMPLOYEE_PERCENTAGE = 70.0;
-    private const DEFAULT_PLATFORM_PERCENTAGE = 30.0;
+    public const TIPO_EFETIVO       = "efetivo_contratado";
+    public const TIPO_RECIBO_VERDE  = "recibo_verde";
+
+    private const DEFAULT_EFETIVO      = 0.0;
+    private const DEFAULT_RECIBO_VERDE = 70.0;
 
     private GreenReceiptConfigRepository $configRepository;
 
@@ -22,33 +27,37 @@ class GreenReceiptService extends BaseService {
     }
 
     /**
-     * Configuração em vigor (ou o default 70/30 se não existir nenhuma).
+     * Defaults em vigor, por tipo de contrato. O que não tiver linha configurada
+     * usa o valor de fábrica (efetivo 0% · recibo verde 70%).
      */
-    public function findActiveConfig(): array {
-        $config = $this->configRepository->findActive();
+    public function findDefaults(): array {
+        $defaults = [
+            self::TIPO_EFETIVO      => self::DEFAULT_EFETIVO,
+            self::TIPO_RECIBO_VERDE => self::DEFAULT_RECIBO_VERDE
+        ];
 
-        if (!$config) {
-            return [
-                "id"                 => null,
-                "employeePercentage" => self::DEFAULT_EMPLOYEE_PERCENTAGE,
-                "platformPercentage" => self::DEFAULT_PLATFORM_PERCENTAGE,
-                "effectiveFrom"      => null,
-                "isDefault"          => true
-            ];
+        foreach ($this->configRepository->findDefaults() as $row) {
+            $defaults[$row["contractType"]] = (float)$row["defaultPercentage"];
         }
 
-        return $config + ["isDefault" => false];
+        return $defaults;
+    }
+
+    public function defaultFor(string $contractType): float {
+        return (float)($this->findDefaults()[$contractType] ?? 0.0);
     }
 
     /**
-     * Percentagem aplicável ao funcionário no momento da aceitação.
+     * Percentagem a aplicar quando um serviço é alocado a um funcionário a recibo
+     * verde sem percentagem própria definida. (O formulário de RH pré-preenche
+     * `funcionario.percentagem_comissao` com este valor.)
      */
     public function resolveEmployeePercentage(): float {
-        return (float)($this->findActiveConfig()["employeePercentage"] ?? self::DEFAULT_EMPLOYEE_PERCENTAGE);
+        return $this->defaultFor(self::TIPO_RECIBO_VERDE);
     }
 
     /**
-     * Cálculo do recibo verde simulado para um valor de serviço.
+     * Cálculo da repartição de um valor de serviço pela percentagem do funcionário.
      */
     public function simulate(float $amount, ?float $employeePercentage = null): array {
         $percentage = $employeePercentage ?? $this->resolveEmployeePercentage();
@@ -66,13 +75,48 @@ class GreenReceiptService extends BaseService {
         ];
     }
 
-    public function findConfigHistory(): array {
+    /**
+     * Configuração da perspetiva dos recibos verdes (o default em vigor).
+     * Compatível com a página atual; reformulado na Fase 8.
+     */
+    public function findActiveConfig(): array {
+        $recibosVerdes = null;
+        foreach ($this->configRepository->findDefaults() as $row) {
+            if ($row["contractType"] === self::TIPO_RECIBO_VERDE) { $recibosVerdes = $row; break; }
+        }
+
+        $employeePercentage = $recibosVerdes ? (float)$recibosVerdes["defaultPercentage"] : self::DEFAULT_RECIBO_VERDE;
+
         return [
-            "configs"  => $this->configRepository->findHistory(),
+            "id"                 => $recibosVerdes["id"] ?? null,
+            "employeePercentage" => $employeePercentage,
+            "platformPercentage" => round(100 - $employeePercentage, 2),
+            "effectiveFrom"      => $recibosVerdes["effectiveFrom"] ?? null,
+            "isDefault"          => $recibosVerdes === null
+        ];
+    }
+
+    public function findConfigHistory(): array {
+        $configs = [];
+
+        foreach ($this->configRepository->findHistory() as $row) {
+            if ($row["contractType"] !== self::TIPO_RECIBO_VERDE) { continue; }
+
+            $percentage = (float)$row["defaultPercentage"];
+            $configs[] = [
+                "id"                 => (int)$row["id"],
+                "employeePercentage" => $percentage,
+                "platformPercentage" => round(100 - $percentage, 2),
+                "effectiveFrom"      => (string)$row["effectiveFrom"]
+            ];
+        }
+
+        return [
+            "configs"  => $configs,
             "active"   => $this->findActiveConfig(),
             "defaults" => [
-                "employeePercentage" => self::DEFAULT_EMPLOYEE_PERCENTAGE,
-                "platformPercentage" => self::DEFAULT_PLATFORM_PERCENTAGE
+                "employeePercentage" => self::DEFAULT_RECIBO_VERDE,
+                "platformPercentage" => round(100 - self::DEFAULT_RECIBO_VERDE, 2)
             ]
         ];
     }
@@ -83,35 +127,29 @@ class GreenReceiptService extends BaseService {
         return $this->executeTransactional(function() use ($data, $managerId) {
             $this->validate($data, function($v) {
                 $v  ->required("employeePercentage", "A percentagem do funcionário é obrigatória.")
-                    ->required("platformPercentage", "A percentagem da plataforma é obrigatória.")
                     ->required("effectiveFrom", "A data de vigência é obrigatória.");
             });
 
             $employeePercentage = (float)$data["employeePercentage"];
-            $platformPercentage = (float)$data["platformPercentage"];
 
-            if ($employeePercentage < 0 || $employeePercentage > 100 || $platformPercentage < 0 || $platformPercentage > 100) {
-                throw new Exception("As percentagens têm de estar entre 0 e 100.", 422);
-            }
-
-            if (round($employeePercentage + $platformPercentage, 2) !== 100.0) {
-                throw new Exception("A soma das percentagens tem de ser exatamente 100.", 422);
+            if ($employeePercentage < 0 || $employeePercentage > 100) {
+                throw new Exception("A percentagem tem de estar entre 0 e 100.", 422);
             }
 
             if (!preg_match("/^\d{4}-\d{2}-\d{2}$/", (string)$data["effectiveFrom"])) {
                 throw new Exception("Data de vigência inválida. Formato esperado: AAAA-MM-DD.", 422);
             }
 
-            $configId = $this->configRepository->create(
+            $configId = $this->configRepository->setDefault(
+                self::TIPO_RECIBO_VERDE,
                 $employeePercentage,
-                $platformPercentage,
-                $data["effectiveFrom"],
+                (string)$data["effectiveFrom"],
                 $managerId
             );
 
             return [
-                "configId" => $configId,
-                "message"  => "Configuração do simulador de recibos verdes registada com sucesso.",
+                "configId"   => $configId,
+                "message"    => "Configuração de percentagens registada com sucesso.",
                 "simulation" => $this->simulate(100.0, $employeePercentage)
             ];
         });

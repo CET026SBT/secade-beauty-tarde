@@ -80,7 +80,7 @@ try {
     $pdo->exec("DELETE FROM rota_ambulante");
     $pdo->exec("DELETE FROM alerta_fiscal");
     $pdo->exec("DELETE FROM obrigacao_fiscal");
-    $pdo->exec("DELETE FROM config_recibo_verde WHERE id > 1");
+    $pdo->exec("DELETE FROM config_percentagem_padrao WHERE id > 2");
 } catch (Exception $e) {
     echo "AVISO: limpeza de dados falhou ({$e->getMessage()}). O resultado pode ser afetado.\n";
 }
@@ -363,9 +363,9 @@ check("admin-green-receipt-config 200", $grConfig["status"] === 200, (string)$gr
 check("config ativa 70/30 disponivel", ($grConfig["json"]["active"]["employeePercentage"] ?? null) == 70, json_encode($grConfig["json"]["active"] ?? null));
 
 $grBadSave = request("{$base}/api?action=admin-green-receipt-config-save", "POST", [
-    "employeePercentage" => 90, "platformPercentage" => 30, "effectiveFrom" => date("Y-m-d")
+    "employeePercentage" => 150, "effectiveFrom" => date("Y-m-d")
 ], $managerJar);
-check("config com soma != 100 devolve 422", $grBadSave["status"] === 422, (string)$grBadSave["status"]);
+check("config com percentagem fora de 0-100 devolve 422", $grBadSave["status"] === 422, (string)$grBadSave["status"]);
 
 $grSimulate = request("{$base}/api?action=admin-green-receipt-simulate&amount=200", "GET", null, $managerJar);
 check("simulador 200 EUR -> 140/60", ($grSimulate["json"]["simulation"]["employeeValue"] ?? 0) == 140.0, json_encode($grSimulate["json"]["simulation"] ?? null));

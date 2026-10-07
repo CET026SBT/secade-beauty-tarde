@@ -13,13 +13,13 @@ require_once APP_PATH . "/utils/Session.php";
  * Regras de negócio (especificacao_mvp.md §10):
  *   - Aceitação serviço a serviço (categorias são apenas filtros visuais).
  *   - Desfazer/trocar permitido ENQUANTO o agendamento não estiver consolidado.
- *   - O último serviço aceite consolida o agendamento ('totalmente_aceite_funcionarios')
+ *   - O último serviço aceite consolida o agendamento ('totalmente_alocado')
  *     e bloqueia a janela temporal para novos agendamentos concorrentes.
  *   - Na aceitação corre o simulador de recibos verdes (percentagens em vigor).
  */
 class ServiceAcceptanceService extends BaseService {
 
-    private const CONSOLIDATED_STATE = "totalmente_aceite_funcionarios";
+    private const CONSOLIDATED_STATE = "totalmente_alocado";
 
     private BookingServiceRepository $bookingServiceRepository;
     private BookingRepository $bookingRepository;

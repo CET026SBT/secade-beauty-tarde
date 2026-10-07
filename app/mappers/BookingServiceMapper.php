@@ -15,8 +15,8 @@ class BookingServiceMapper extends BaseMapper {
                     ->cast("estado_aceitacao",                  "acceptanceStatus",     "string")
                     ->cast("aceito_em",                         "acceptedAt",           "string")
                     ->cast("percentagem_funcionario_aplicada",  "employeePercentage",   "float")
-                    ->cast("valor_recibo_verde_funcionario",    "greenReceiptEmployee", "float")
-                    ->cast("valor_recibo_verde_plataforma",     "greenReceiptPlatform", "float")
+                    ->cast("valor_funcionario",                 "greenReceiptEmployee", "float")
+                    ->cast("valor_empresa",                     "greenReceiptPlatform", "float")
 
                     ->cast("servico_nome",                      "serviceName",          "string")
                     ->cast("duracao_estimada_minutos",          "estimatedDuration",    "int")
