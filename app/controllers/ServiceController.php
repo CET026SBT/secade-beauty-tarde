@@ -4,10 +4,10 @@ require_once __DIR__ . "/BaseController.php";
 require_once APP_PATH . "/services/ServiceAcceptanceService.php";
 
 /**
- * Fase 3 — Backoffice do FUNCIONÁRIO: listagem, aceitação individual,
- * desfazer e troca de serviços de ambulatório.
+ * F4 — Backoffice de serviços de ambulatório (#servCarrinha).
  *
- * Todas as operações são scope-aware: o funcionário só opera em nome próprio.
+ * O **GESTOR** aloca (escolhe o funcionário efetivo); o **FUNCIONÁRIO (RV)** aceita
+ * por si. Ambos os perfis acedem à listagem, com comportamento por perfil (C-08).
  */
 class ServiceController extends BaseController {
     private ServiceAcceptanceService $acceptanceService;
@@ -17,15 +17,23 @@ class ServiceController extends BaseController {
     }
 
     public function pendingList(): array {
-        Session::requireProfileApi(["funcionario"]);
-        return $this->acceptanceService->listPendingServices($_GET);
+        Session::requireProfileApi(["funcionario", "gestor"]);
+
+        $employeeId = Session::isEmployee() ? Session::userId() : null;
+
+        return $this->acceptanceService->listPendingServices($_GET, Session::isManager(), $employeeId);
     }
 
     public function acceptedList(): array {
-        Session::requireProfileApi(["funcionario"]);
-        return $this->acceptanceService->listAcceptedServices(Session::userId(), $_GET);
+        Session::requireProfileApi(["funcionario", "gestor"]);
+
+        // O funcionário só vê o que é seu; o gestor vê tudo.
+        $employeeId = Session::isEmployee() ? Session::userId() : null;
+
+        return $this->acceptanceService->listAcceptedServices($employeeId, $_GET);
     }
 
+    /** ACEITAÇÃO pelo funcionário (RV). */
     public function accept(): array {
         Session::requireProfileApi(["funcionario"]);
         [$serviceId, $bookingId] = $this->extractTarget();
@@ -33,11 +41,23 @@ class ServiceController extends BaseController {
         return $this->acceptanceService->acceptService(Session::userId(), $serviceId, $bookingId);
     }
 
-    public function unaccept(): array {
-        Session::requireProfileApi(["funcionario"]);
+    /** ALOCAÇÃO pelo gestor: escolhe o funcionário efetivo (C-08). */
+    public function assign(): array {
+        Session::requireProfileApi(["gestor"]);
         [$serviceId, $bookingId] = $this->extractTarget();
 
-        return $this->acceptanceService->unacceptService(Session::userId(), $serviceId, $bookingId);
+        $employeeId = (int)($this->getRequestData()["employeeId"] ?? 0);
+
+        return $this->acceptanceService->assignService(Session::userId(), $serviceId, $bookingId, $employeeId);
+    }
+
+    public function unaccept(): array {
+        Session::requireProfileApi(["funcionario", "gestor"]);
+        [$serviceId, $bookingId] = $this->extractTarget();
+
+        $employeeId = Session::isEmployee() ? Session::userId() : null;
+
+        return $this->acceptanceService->unacceptService($employeeId, $serviceId, $bookingId);
     }
 
     private function extractTarget(): array {

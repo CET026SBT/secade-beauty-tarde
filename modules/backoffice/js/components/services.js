@@ -1,24 +1,92 @@
 const boServices = (() => {
+    const isManager = !!window.BO_IS_MANAGER;
+
     const state = {
         pending: [],
         accepted: [],
         categories: [],
+        cities: [],
+        employees: [],
+        employeeOptions: {},
         totals: { employee: 0, platform: 0, count: 0 },
         config: null
     };
 
     function money(value) { return generalUtils.formatCurrency(value); }
 
+    function pendingFilters() {
+        const params = {};
+        const date = $("#pendingDate").val();
+        const city = $("#pendingCity").val();
+        const category = $("#pendingCategory").val();
+        const booking = $("#pendingBooking").val();
+
+        if (date) params.data = date;
+        if (city) params.cidadeId = city;
+        if (category) params.categoriaId = category;
+        if (booking) params.bookingId = booking;
+
+        return params;
+    }
+
+    function acceptedFilters() {
+        const params = {};
+        const date = $("#acceptedDate").val();
+        const city = $("#acceptedCity").val();
+        const employee = $("#acceptedEmployee").val();
+        const booking = $("#acceptedBooking").val();
+
+        if (date) params.data = date;
+        if (city) params.cidadeId = city;
+        if (employee) params.funcionarioId = employee;
+        if (booking) params.bookingId = booking;
+
+        return params;
+    }
+
+    function cityLabel(service) {
+        return service.cityName ? generalUtils.escapeHtml(service.cityName) : "Sem cidade";
+    }
+
     function pendingCard(service) {
-        // A API devolve as chaves já mapeadas (camelCase) — ver BookingServiceMapper.
-        const person = service.personName ? ` <span class="badge bg-light text-dark">${generalUtils.escapeHtml(service.personName)}</span>` : "";
+        const conflicting = !!service.windowConflict;
+        const tag = conflicting
+            ? '<span class="badge bg-danger">Conflito de janela</span>'
+            : "";
+
+        let action;
+
+        if (isManager) {
+            const options = state.employeeOptions[service.bookingId] || [];
+            const optionHtml = options.map(o =>
+                `<option value="${o.id}" ${o.blocked ? "disabled" : ""}>${generalUtils.escapeHtml(o.name)}${o.blocked ? " (noutra cidade)" : ""}</option>`
+            ).join("");
+
+            action = `<div class="d-flex gap-2">
+                <select class="form-select form-select-sm" data-assign-select="${service.bookingId}" ${conflicting ? "disabled" : ""}>
+                    <option value="">Escolher funcionário…</option>
+                    ${optionHtml}
+                </select>
+                <button type="button" class="btn btn-sm btn-success flex-shrink-0"
+                        data-assign="${service.id}" data-booking="${service.bookingId}" ${conflicting ? "disabled" : ""}>
+                    <i class="bi bi-person-plus me-1"></i> Alocar
+                </button>
+            </div>`;
+        } else {
+            const blocked = conflicting || service.acceptBlocked;
+            action = `<button type="button" class="btn btn-sm btn-success"
+                        data-accept="${service.id}" data-booking="${service.bookingId}" ${blocked ? "disabled" : ""}>
+                    <i class="bi bi-hand-thumbs-up me-1"></i> Aceitar serviço
+                </button>`;
+        }
 
         return `<div class="border rounded p-3 mb-3">
             <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
                 <div>
-                    <span class="fw-bold">${generalUtils.escapeHtml(service.serviceName || "")}</span>${person}
+                    <span class="fw-bold">${generalUtils.escapeHtml(service.serviceName || "")}</span>${tag}
                     <div class="small text-muted">
                         <i class="bi bi-tag me-1"></i>${generalUtils.escapeHtml(service.categoryName || "")}
+                        · <i class="bi bi-geo-alt me-1"></i>${cityLabel(service)}
                         · ${generalUtils.formatDateTime(service.dateTime)}
                     </div>
                 </div>
@@ -26,43 +94,53 @@ const boServices = (() => {
             </div>
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
                 <span class="small text-muted">
-                    <i class="bi bi-person-badge me-1"></i>Agendamento #${service.bookingId}
+                    <i class="bi bi-hash me-1"></i>Agendamento ${service.bookingId}
                     · ${generalUtils.formatDuration(service.durationMinutes)}
                 </span>
-                <button type="button" class="btn btn-sm btn-success"
-                        data-accept="${service.id}" data-booking="${service.bookingId}">
-                    <i class="bi bi-hand-thumbs-up me-1"></i> Aceitar serviço
-                </button>
+                ${action}
             </div>
         </div>`;
     }
 
     function acceptedCard(service) {
-        const person = service.personName ? ` <span class="badge bg-light text-dark">${generalUtils.escapeHtml(service.personName)}</span>` : "";
+        const tag = isManager
+            ? '<span class="badge bg-info text-dark">Alocado</span>'
+            : '<span class="badge bg-success">Aceite</span>';
 
-        return `<div class="border rounded p-3 mb-3">
+        const employeeLine = isManager && service.employeeName
+            ? `<div class="small text-muted mb-1"><i class="bi bi-person-badge me-1"></i>${generalUtils.escapeHtml(service.employeeName)}</div>`
+            : "";
+
+        const employeeLabel = isManager ? "A receber (funcionário)" : "A receber";
+        const canUndo = isManager || service.bookingStatus !== "totalmente_alocado";
+
+        return `<div class="border rounded p-3 mb-3" data-card-booking="${service.bookingId}">
             <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
                 <div>
-                    <span class="fw-bold">${generalUtils.escapeHtml(service.serviceName || "")}</span>${person}
-                    <div class="small text-muted">${generalUtils.formatDateTime(service.dateTime)}
-                        · ${generalUtils.escapeHtml(service.customerName || "")}</div>
+                    <span class="fw-bold">${generalUtils.escapeHtml(service.serviceName || "")}</span>
+                    <div class="small text-muted">
+                        <i class="bi bi-geo-alt me-1"></i>${cityLabel(service)}
+                        · ${generalUtils.formatDateTime(service.dateTime)}
+                        · ${generalUtils.escapeHtml(service.customerName || "")}
+                    </div>
                 </div>
-                <span class="badge bg-success">Aceite</span>
+                ${tag}
             </div>
+            ${employeeLine}
             <div class="row g-2 small mb-2">
                 <div class="col-6">
-                    <span class="text-muted d-block">A receber (${service.employeePercentage ?? "-"}%)</span>
+                    <span class="text-muted d-block">${employeeLabel} (${service.employeePercentage ?? "-"}%)</span>
                     <span class="fw-bold text-success">${money(service.greenReceiptEmployee)}</span>
                 </div>
                 <div class="col-6">
-                    <span class="text-muted d-block">Plataforma</span>
+                    <span class="text-muted d-block">Empresa</span>
                     <span class="fw-bold">${money(service.greenReceiptPlatform)}</span>
                 </div>
             </div>
-            <button type="button" class="btn btn-sm btn-outline-danger"
+            ${canUndo ? `<button type="button" class="btn btn-sm btn-outline-danger"
                     data-unaccept="${service.id}" data-booking="${service.bookingId}">
                 <i class="bi bi-arrow-counterclockwise me-1"></i> Desfazer
-            </button>
+            </button>` : ""}
         </div>`;
     }
 
@@ -70,83 +148,92 @@ const boServices = (() => {
         const $list = $("#pendingList");
         $list.empty();
 
-        $("#pendingCount").text(`${state.pending.length} serviço(s) por aceitar`);
+        $("#pendingCount").text(`${state.pending.length} por tratar`);
 
         if (state.pending.length === 0) {
-            $list.html(`<div class="text-center text-muted py-4">
-                <i class="bi bi-check2-all fs-3 d-block mb-2"></i>Não existem serviços por aceitar.
+            $list.html(`<div class="text-center text-muted py-5">
+                <i class="bi bi-inbox fs-3 d-block mb-2"></i>Nada por ${isManager ? "alocar" : "aceitar"}.
             </div>`);
             return;
         }
 
-        for (const service of state.pending) $list.append(pendingCard(service));
+        state.pending.forEach(service => $list.append(pendingCard(service)));
     }
 
     function renderAccepted() {
         const $list = $("#acceptedList");
         $list.empty();
 
-        $("#acceptedTotals").text(
-            `${state.totals.count} aceite(s) · ${money(state.totals.employee)} a receber`
-        );
+        $("#acceptedTotals").text(`${state.totals.count} · ${money(state.totals.employee)}`);
 
         if (state.accepted.length === 0) {
-            $list.html(`<div class="text-center text-muted py-4">
-                <i class="bi bi-inbox fs-3 d-block mb-2"></i>Ainda não aceitou serviços.
+            $list.html(`<div class="text-center text-muted py-5">
+                <i class="bi bi-check2-circle fs-3 d-block mb-2"></i>Sem serviços ${isManager ? "alocados" : "aceites"}.
             </div>`);
             return;
         }
 
-        for (const service of state.accepted) $list.append(acceptedCard(service));
+        state.accepted.forEach(service => $list.append(acceptedCard(service)));
     }
 
-    function renderGreenReceiptInfo() {
+    function fillSelectors() {
+        const cityOptions = state.cities.map(c => `<option value="${c.id}">${generalUtils.escapeHtml(c.name)}</option>`).join("");
+        $("#pendingCity, #acceptedCity").each(function () {
+            const current = $(this).val();
+            $(this).html(`<option value="">Todas</option>${cityOptions}`).val(current ?? "");
+        });
+
+        const categoryOptions = state.categories.map(c => `<option value="${c.id}">${generalUtils.escapeHtml(c.name)}</option>`).join("");
+        $("#pendingCategory").html(`<option value="">Todas</option>${categoryOptions}`);
+
+        const employeeOptions = state.employees.map(e => `<option value="${e.id}">${generalUtils.escapeHtml(e.name)}</option>`).join("");
+        $("#acceptedEmployee").html(`<option value="">Todos</option>${employeeOptions}`);
+    }
+
+    function renderConfig() {
         const config = state.config || {};
-        const percentage = config.employeePercentage ?? 70;
-        const platform = config.platformPercentage ?? 30;
+        const employee = config.employeePercentage ?? "-";
+        const company = config.platformPercentage ?? "-";
 
-        $("#greenReceiptInfo").text(`Simulador de recibos verdes: ${percentage}% / ${platform}%`);
+        $("#greenReceiptInfo").text(`Repartição padrão: ${employee}% funcionário · ${company}% empresa`);
     }
 
-    function fillCategories() {
-        const $select = $("#pendingCategory");
-        const options = ['<option value="">Todas</option>'];
+    function showError(message) {
+        $("#servicesSuccess").addClass("d-none");
+        $("#servicesError").removeClass("d-none").text(message);
+    }
 
-        for (const category of state.categories) {
-            options.push(`<option value="${category.id}">${generalUtils.escapeHtml(category.name)}</option>`);
-        }
-
-        $select.html(options.join(""));
+    function showSuccess(message) {
+        $("#servicesError").addClass("d-none");
+        $("#servicesSuccess").removeClass("d-none").text(message);
+        setTimeout(() => $("#servicesSuccess").addClass("d-none"), 7000);
     }
 
     async function loadPending() {
-        const promise = API.admin.services.pending({
-            data: $("#pendingDate").val(),
-            categoriaId: $("#pendingCategory").val()
-        });
-
+        const promise = API.admin.services.pending(pendingFilters());
         const preloader = $("#pendingList").preloader(".jq-overlay-process", promise);
 
         try {
             const response = await promise;
 
             state.pending = response?.services || [];
-            state.categories = response?.categories || [];
+            state.categories = response?.categories || state.categories;
+            state.cities = response?.cities || state.cities;
+            state.employeeOptions = response?.employeeOptions || {};
             state.config = response?.config || state.config;
 
-            if ($("#pendingCategory option").length <= 1) fillCategories();
-
+            fillSelectors();
+            renderConfig();
             renderPending();
-            renderGreenReceiptInfo();
         } catch (error) {
-            showError(error?.responseJSON?.message || "Não foi possível carregar os serviços por aceitar.");
+            showError(error?.responseJSON?.message || "Não foi possível carregar os serviços por tratar.");
         } finally {
             await preloader;
         }
     }
 
     async function loadAccepted() {
-        const promise = API.admin.services.accepted({ data: $("#pendingDate").val() });
+        const promise = API.admin.services.accepted(acceptedFilters());
         const preloader = $("#acceptedList").preloader(".jq-overlay-process", promise);
 
         try {
@@ -154,22 +241,16 @@ const boServices = (() => {
 
             state.accepted = response?.services || [];
             state.totals = response?.totals || state.totals;
+            state.employees = response?.employees || state.employees;
+            state.cities = response?.cities || state.cities;
 
+            fillSelectors();
             renderAccepted();
         } catch (error) {
-            showError(error?.responseJSON?.message || "Não foi possível carregar os serviços aceites.");
+            showError(error?.responseJSON?.message || "Não foi possível carregar os serviços alocados.");
         } finally {
             await preloader;
         }
-    }
-
-    function showError(message) {
-        $("#servicesError").removeClass("d-none").text(message);
-    }
-
-    function showSuccess(message) {
-        $("#servicesSuccess").removeClass("d-none").text(message);
-        setTimeout(() => $("#servicesSuccess").addClass("d-none"), 6000);
     }
 
     async function acceptService(bookingServiceId, bookingId) {
@@ -180,19 +261,17 @@ const boServices = (() => {
 
         try {
             const response = await promise;
-
             const simulation = response?.greenReceipt;
-            let message = response?.message || "Serviço aceite.";
 
+            let message = response?.message || "Serviço aceite.";
             if (simulation) {
-                message += ` Recibo verde simulado: ${money(simulation.employeeValue)} para si e ${money(simulation.platformValue)} para a plataforma.`;
+                message += ` Repartição: ${money(simulation.employeeValue)} para si e ${money(simulation.platformValue)} para a empresa.`;
             }
             if (response?.consolidated) {
-                message += " Agendamento TOTALMENTE ACEITE (janela temporal bloqueada).";
+                message += " Agendamento totalmente alocado.";
             }
 
             showSuccess(message);
-
             await Promise.all([loadPending(), loadAccepted()]);
         } catch (error) {
             showError(error?.responseJSON?.message || "Não foi possível aceitar o serviço.");
@@ -201,8 +280,30 @@ const boServices = (() => {
         }
     }
 
+    async function assignService(bookingServiceId, bookingId, employeeId) {
+        if (!employeeId) {
+            showError("Escolha o funcionário a alocar.");
+            return;
+        }
+
+        $("#servicesError, #servicesSuccess").addClass("d-none");
+
+        const promise = API.admin.services.assign(Number(bookingServiceId), Number(bookingId), Number(employeeId));
+        const preloader = $("#pendingList").preloader(".jq-overlay-process", promise);
+
+        try {
+            const response = await promise;
+            showSuccess(response?.message || "Serviço alocado.");
+            await Promise.all([loadPending(), loadAccepted()]);
+        } catch (error) {
+            showError(error?.responseJSON?.message || "Não foi possível alocar o serviço.");
+        } finally {
+            await preloader;
+        }
+    }
+
     async function unacceptService(bookingServiceId, bookingId) {
-        if (!(await generalUtils.confirmDialog({ title: "Desfazer a aceitação deste serviço?", icon: "warning" }))) return;
+        if (!(await generalUtils.confirmDialog({ title: "Desfazer esta alocação?", icon: "warning" }))) return;
 
         $("#servicesError, #servicesSuccess").addClass("d-none");
 
@@ -211,11 +312,10 @@ const boServices = (() => {
 
         try {
             const response = await promise;
-            showSuccess(response?.message || "Aceitação desfeita.");
-
+            showSuccess(response?.message || "Alocação desfeita.");
             await Promise.all([loadPending(), loadAccepted()]);
         } catch (error) {
-            showError(error?.responseJSON?.message || "Não foi possível desfazer a aceitação.");
+            showError(error?.responseJSON?.message || "Não foi possível desfazer a alocação.");
         } finally {
             await preloader;
         }
@@ -226,21 +326,26 @@ const boServices = (() => {
             acceptService($(this).data("accept"), $(this).data("booking"));
         });
 
+        $(document).on("click", "[data-assign]", function () {
+            const bookingId = $(this).data("booking");
+            const employeeId = $(`[data-assign-select="${bookingId}"]`).val();
+            assignService($(this).data("assign"), bookingId, employeeId);
+        });
+
         $(document).on("click", "[data-unaccept]", function () {
             unacceptService($(this).data("unaccept"), $(this).data("booking"));
         });
 
-        $("#pendingDate, #pendingCategory").on("change", function () {
-            loadPending();
-            loadAccepted();
-        });
+        $("#pendingDate, #pendingCity, #pendingCategory, #pendingBooking").on("change", loadPending);
+        $("#acceptedDate, #acceptedCity, #acceptedEmployee, #acceptedBooking").on("change", loadAccepted);
     }
 
     $(() => {
+        if (!$("#pendingList").length) return;
         bindEvents();
         loadPending();
         loadAccepted();
     });
 
-    return { state, loadPending, loadAccepted, acceptService, unacceptService };
+    return { state, loadPending, loadAccepted, acceptService, assignService, unacceptService, isManager };
 })();

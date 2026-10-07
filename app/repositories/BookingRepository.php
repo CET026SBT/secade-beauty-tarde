@@ -88,6 +88,51 @@ class BookingRepository extends BaseRepository {
         return (int)$stmt->fetchColumn();
     }
 
+    /**
+     * F4 · #1 (R-CONF): existe outro agendamento de ambulatório JÁ CONFIRMADO, na
+     * MESMA cidade, cuja janela temporal se sobrepõe? É o conflito real da
+     * confirmação de rota — a carrinha e a equipa estão num só sítio.
+     */
+    public function countConfirmedWindowConflict(string $dateTimeStart, int $durationMinutes, int $cityId, array $excludeIds = []): int {
+        $sql = "SELECT COUNT(*) FROM agendamento a
+                INNER JOIN cliente_morada cm ON a.cliente_morada_id = cm.id
+                WHERE a.local_prestacao = 'carrinha_ambulante'
+                  AND a.estado_reserva = 'confirmado'
+                  AND cm.cidade_id = :cidade_id
+                  AND a.data_hora_pretendida < :fim
+                  AND DATE_ADD(a.data_hora_pretendida, INTERVAL :duracao MINUTE) > :inicio";
+        $params = [
+            "cidade_id" => $cityId,
+            "inicio"    => $dateTimeStart,
+            "fim"       => date("Y-m-d H:i:s", strtotime($dateTimeStart) + $durationMinutes * 60),
+            "duracao"   => $durationMinutes
+        ];
+
+        if (!empty($excludeIds)) {
+            $placeholders = [];
+            foreach (array_values($excludeIds) as $i => $excludedId) {
+                $placeholders[] = ":excl{$i}";
+                $params["excl{$i}"] = $excludedId;
+            }
+            $sql .= " AND a.id NOT IN (" . implode(",", $placeholders) . ")";
+        }
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return (int)$stmt->fetchColumn();
+    }
+
+    /** Cidade (id) da morada de um agendamento de ambulatório, ou `null`. */
+    public function findCityId(int $bookingId): ?int {
+        $sql = "SELECT cm.cidade_id
+                FROM agendamento a
+                LEFT JOIN cliente_morada cm ON a.cliente_morada_id = cm.id
+                WHERE a.id = :id LIMIT 1";
+
+        $row = $this->fetchRaw($sql, ["id" => $bookingId]);
+        return $row && $row["cidade_id"] !== null ? (int)$row["cidade_id"] : null;
+    }
+
     // ------------------------------------------------------------------
     // Backoffice (admin)
     // ------------------------------------------------------------------

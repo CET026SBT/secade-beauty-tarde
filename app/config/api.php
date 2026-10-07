@@ -52,6 +52,7 @@ $routes = [
         "admin-service-pending-list" => ["controller" => "ServiceController", "method" => "pendingList", "http" => "GET"],
         "admin-service-accepted-list"=> ["controller" => "ServiceController", "method" => "acceptedList", "http" => "GET"],
         "admin-service-accept"       => ["controller" => "ServiceController", "method" => "accept", "http" => "POST"],
+        "admin-service-assign"       => ["controller" => "ServiceController", "method" => "assign", "http" => "POST"],
         "admin-service-unaccept"     => ["controller" => "ServiceController", "method" => "unaccept", "http" => "POST"],
 
         "admin-fiscal-calendar-list" => ["controller" => "FiscalController", "method" => "calendar", "http" => "GET"],

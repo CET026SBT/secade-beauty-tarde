@@ -8,7 +8,7 @@ class EmployeeRepository extends BaseRepository {
     protected ?string $mapper = EmployeeMapper::class;
 
     public function find(?int $id = null): mixed {
-        $sql = "SELECT f.id, f.tipo_contrato, f.salario_base, f.cc, f.ativo,
+        $sql = "SELECT f.id, f.tipo_contrato, f.salario_base, f.percentagem_comissao, f.cc, f.ativo,
                        u.nome, u.email, u.telemovel, u.nif
                 FROM funcionario f
                 INNER JOIN utilizador u ON f.id = u.id
@@ -23,6 +23,22 @@ class EmployeeRepository extends BaseRepository {
 
         $sql .= " ORDER BY f.id DESC";
         return $this->fetchAll($sql, $params);
+    }
+
+    /**
+     * Funcionários EFETIVOS ativos — são estes que o gestor pode alocar a um
+     * serviço de ambulatório (F4 · C-08): o RV aceita por si, o efetivo é alocado.
+     */
+    public function findActiveEffective(): array {
+        $sql = "SELECT f.id, f.tipo_contrato, f.salario_base, f.percentagem_comissao, f.ativo,
+                       u.nome, u.email, u.telemovel, u.nif
+                FROM funcionario f
+                INNER JOIN utilizador u ON f.id = u.id
+                WHERE f.tipo_contrato = 'efetivo_contratado' AND f.ativo = 1
+                ORDER BY u.nome ASC";
+
+        $rows = $this->fetchAll($sql);
+        return is_array($rows) ? $rows : [];
     }
 
     /** Funcionários ativos — base dos indicadores públicos da equipa (§24.7). */

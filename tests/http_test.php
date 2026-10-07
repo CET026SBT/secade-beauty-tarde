@@ -350,7 +350,17 @@ $accepted = request("{$base}/api?action=admin-service-accepted-list", "GET", nul
 check("admin-service-accepted-list 200", $accepted["status"] === 200, (string)$accepted["status"]);
 
 $managerPending = request("{$base}/api?action=admin-service-pending-list", "GET", null, $managerJar);
-check("gestor NAO acede a lista de aceitacao (403)", $managerPending["status"] === 403, (string)$managerPending["status"]);
+check("gestor ACEDE a lista de alocacao (200, F4/C-08)", $managerPending["status"] === 200, (string)$managerPending["status"]);
+check("gestor recebe as opcoes de funcionarios efetivos", isset($managerPending["json"]["employeeOptions"]), json_encode(array_keys($managerPending["json"] ?? [])));
+
+$employeePending2 = request("{$base}/api?action=admin-service-pending-list", "GET", null, $employeeJar);
+check("pendentes do funcionario NAO trazem employeeOptions", !isset($employeePending2["json"]["employeeOptions"]), json_encode(array_keys($employeePending2["json"] ?? [])));
+
+$rvAssign = request("{$base}/api?action=admin-service-assign", "POST", ["bookingServiceId" => 1, "employeeId" => 2], $employeeJar);
+check("funcionario NAO pode alocar (403)", $rvAssign["status"] === 403, (string)$rvAssign["status"]);
+
+$clientAssign = request("{$base}/api?action=admin-service-assign", "POST", ["bookingServiceId" => 1, "employeeId" => 2], $clientJar);
+check("cliente NAO pode alocar (403)", $clientAssign["status"] === 403, (string)$clientAssign["status"]);
 
 $clientAccept = request("{$base}/api?action=admin-service-accept", "POST", ["bookingServiceId" => 1], $clientJar);
 check("cliente NAO pode aceitar servicos (403)", $clientAccept["status"] === 403, (string)$clientAccept["status"]);
