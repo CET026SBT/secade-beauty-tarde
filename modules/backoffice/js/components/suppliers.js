@@ -163,7 +163,7 @@ const boSuppliers = (() => {
         const supplier = state.suppliers.find((item) => Number(item.id) === Number(supplierId));
         const label = active ? "reativar" : "desativar";
 
-        if (!confirm(`Confirma ${label} ${supplier?.name || "o fornecedor"}?`)) return;
+        if (!(await generalUtils.confirmDialog({ title: `Confirma ${label} ${supplier?.name || "o fornecedor"}?`, icon: "warning" }))) return;
 
         $("#suppliersError, #suppliersResult").addClass("d-none");
 

@@ -1,14 +1,14 @@
 const menuUser = (() => {
-    function logout(e) {
+    async function logout(e) {
         e.preventDefault();
-        if (!confirm('Tem a certeza que deseja terminar sessão?')) return;
+        if (!(await generalUtils.confirmDialog({ title: 'Terminar sessão?', text: 'Tem a certeza que deseja terminar sessão?', icon: 'question' }))) return;
         
         const request = API.auth.logout()
             .done(response => {
                 location.href = `${BASE_URL ?? ''}/`;
             })
             .fail(xhr => {
-                alert('Erro ao terminar sessão. Tente novamente.');
+                generalUtils.errorDialog('Erro ao terminar sessão. Tente novamente.');
             });
     }
 

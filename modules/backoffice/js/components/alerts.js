@@ -55,7 +55,7 @@ const boAlerts = (() => {
     }
 
     async function markRead() {
-        if (!confirm("Marcar todos os alertas fiscais como lidos?")) return;
+        if (!(await generalUtils.confirmDialog({ title: "Marcar todos os alertas fiscais como lidos?", icon: "question" }))) return;
 
         $("#alertsError, #alertsResult").addClass("d-none");
 
