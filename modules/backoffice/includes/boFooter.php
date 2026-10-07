@@ -10,6 +10,8 @@
     <!-- Third-party Libraries Javascript -->
     <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/lib/jquery/jquery.3.6.1.min.js"></script>
     <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/lib/bootstrap/bootstrap.5.0.0.min.js"></script>
+    <!-- Swal (dialogos): substitui alert/confirm/prompt nativos (Q-05) -->
+    <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/lib/sweetalert/sweetalert.js"></script>
 
     <!-- Gráficos do backoffice (E-3: Chart.js v2.9.4 servido localmente, nunca por CDN).
          Carregado SÓ na área de gestão — o site público não precisa dele. -->

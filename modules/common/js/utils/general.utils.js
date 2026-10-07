@@ -95,6 +95,68 @@ const generalUtils = (() => {
             return date.toLocaleString('pt-PT', {
                 day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
             });
+        },
+        /**
+         * Converte um valor tecnico (snake_case, enum cru ou camelCase) em texto
+         * legivel. Ex.: "pendente_alocacao" -> "Pendente alocacao"; "sinalPago"
+         * -> "Sinal pago". Nao inventa texto: so espaca e capitaliza.
+         */
+        humanize(value) {
+            if (value === null || value === undefined) return '';
+
+            const spaced = String(value)
+                .replace(/[_-]+/g, ' ')
+                .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+                .replace(/\s+/g, ' ')
+                .trim();
+
+            return spaced ? spaced.charAt(0).toUpperCase() + spaced.slice(1) : '';
+        },
+        /**
+         * Desloca a janela ate ao elemento e realca-o temporariamente (fade-out).
+         * Ponto de entrada partilhado dos avisos/lembretes que apontam para um card
+         * (ex.: agendamento/rota) — convencao #rotaDinamica.
+         */
+        highlightAndScroll(selectorOrElement, options = {}) {
+            const el = getElement(selectorOrElement);
+            if (!el) return;
+
+            const { offset = 0, duration = 2000, className = 'is-highlighted' } = options;
+
+            generalUtils.scrollToElement(el, offset);
+
+            el.classList.remove(className);
+            void el.offsetWidth;
+            el.classList.add(className);
+
+            window.setTimeout(() => el.classList.remove(className), duration);
+        },
+        /** Referencia a lib do Swal (local: modules/common/lib/sweetalert). */
+        dialog() {
+            return (typeof window !== 'undefined' && (window.Swal || window.Sweetalert2)) || null;
+        },
+        /** Confirmacao (Swal). Devolve `true` se o utilizador confirmar. */
+        async confirmDialog({ title, text = '', icon = 'question', confirmButtonText = 'Confirmar', cancelButtonText = 'Cancelar' } = {}) {
+            const swal = generalUtils.dialog();
+            if (!swal) return window.confirm(text || title || '');
+
+            const result = await swal.fire({
+                title, text, icon,
+                showCancelButton: true,
+                confirmButtonText, cancelButtonText,
+                reverseButtons: true
+            });
+            return Boolean(result.isConfirmed);
+        },
+        /** Alerta (Swal). */
+        alertDialog({ title, text = '', icon = 'info' } = {}) {
+            const swal = generalUtils.dialog();
+            if (!swal) { window.alert(text || title || ''); return; }
+            swal.fire({ title, text, icon });
+        },
+        /** Alerta de erro — sugar sobre `alertDialog`. */
+        errorDialog(message) {
+            return generalUtils.alertDialog({ title: 'Ocorreu um erro', text: message, icon: 'error' });
         }
     };
 })();

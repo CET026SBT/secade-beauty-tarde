@@ -150,7 +150,7 @@ const boAppointments = (() => {
     }
 
     async function executeAppointment(bookingId) {
-        if (!confirm("Registar a execução deste agendamento? O cliente poderá depois avaliar o serviço.")) return;
+        if (!(await generalUtils.confirmDialog({ title: "Registar a execução deste agendamento?", text: "O cliente poderá depois avaliar o serviço.", icon: "question" }))) return;
 
         const promise = API.admin.executeAppointment(Number(bookingId));
         const preloader = $("#appointmentDetailsBody").preloader(".jq-overlay-process", promise);
@@ -161,7 +161,7 @@ const boAppointments = (() => {
             bootstrap.Modal.getInstance($("#appointmentDetailsModal")[0])?.hide();
             await load();
         } catch (error) {
-            alert(error?.responseJSON?.message || "Não foi possível registar a execução.");
+            generalUtils.errorDialog(error?.responseJSON?.message || "Não foi possível registar a execução.");
         } finally {
             await preloader;
         }
@@ -245,7 +245,7 @@ const boAppointments = (() => {
         const booking = bookingById(id);
         if (!booking) return;
 
-        if (!confirm(`Cancelar o agendamento #${booking.id} de ${booking.customerName}?`)) return;
+        if (!(await generalUtils.confirmDialog({ title: `Cancelar o agendamento #${booking.id}?`, text: `Cliente: ${booking.customerName}`, icon: "warning" }))) return;
 
         const promise = API.admin.cancelAppointment(Number(id));
         const preloader = $("#appointmentsTableContainer").preloader(".jq-overlay-process", promise);
@@ -255,7 +255,7 @@ const boAppointments = (() => {
             bootstrap.Modal.getInstance($("#appointmentDetailsModal")[0])?.hide();
             await load();
         } catch (error) {
-            alert(error?.responseJSON?.message || "Não foi possível cancelar o agendamento.");
+            generalUtils.errorDialog(error?.responseJSON?.message || "Não foi possível cancelar o agendamento.");
         } finally {
             await preloader;
         }

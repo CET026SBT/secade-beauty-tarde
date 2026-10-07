@@ -99,7 +99,7 @@ const boRoutes = (() => {
             ? `${bookingIds.length} agendamento(s) incluído(s)`
             : "todos os agendamentos qualificados";
 
-        if (!confirm(`${label} a rota de ${routeDate} (${scope})?`)) return;
+        if (!(await generalUtils.confirmDialog({ title: `${label} a rota?`, text: `Data: ${routeDate} — ${scope}`, icon: "warning" }))) return;
 
         $("#routesError, #routesResult").addClass("d-none");
 

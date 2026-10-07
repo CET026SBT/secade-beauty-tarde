@@ -70,6 +70,7 @@ $assets = [
     "modules/backoffice/js/components/suppliers.js",
     "modules/backoffice/js/components/commissions.js",
     "modules/common/lib/chartjs/Chart.bundle.min.js",
+    "modules/common/lib/sweetalert/sweetalert.js",
     "modules/common/css/ext-bootstrap.css",
     "modules/common/css/style.css"
 ];
@@ -181,6 +182,24 @@ check("addressAutocomplete tem posicionamento por JS (fallback)", str_contains($
 
 $styleCss = http("{$base}/modules/common/css/style.css")["body"];
 check("style.css esconde o dropdown sem a classe 'show'", str_contains($styleCss, ".autocomplete-dropdown:not(.show)"));
+
+echo "\n=== F2 — utilitários partilhados e diálogos (humanize / Swal) ===\n";
+
+$generalUtilsJs = http("{$base}/modules/common/js/utils/general.utils.js")["body"];
+check("general.utils.js expõe humanize()", str_contains($generalUtilsJs, "humanize(value)"));
+check("general.utils.js expõe highlightAndScroll()", str_contains($generalUtilsJs, "highlightAndScroll("));
+check("general.utils.js expõe os diálogos do Swal", str_contains($generalUtilsJs, "confirmDialog(") && str_contains($generalUtilsJs, "alertDialog(") && str_contains($generalUtilsJs, "errorDialog("));
+
+$loginBody = http("{$base}/login")["body"];
+check("página de login injeta a lib do Swal (Q-05)", str_contains($loginBody, "lib/sweetalert/sweetalert.js"));
+check("style.css define a classe de realce .is-highlighted", str_contains($styleCss, ".is-highlighted"));
+
+$boAppointmentsJs = http("{$base}/modules/backoffice/js/components/appointments.js")["body"];
+check("bo appointments usa o Swal (confirmDialog)", str_contains($boAppointmentsJs, "generalUtils.confirmDialog"));
+check("bo appointments sem confirm() nativo", !preg_match('/\bconfirm\(/', $boAppointmentsJs));
+
+$mainAppointmentsJs = http("{$base}/modules/main/js/components/appointments.js")["body"];
+check("main appointments usa o Swal (confirmDialog)", str_contains($mainAppointmentsJs, "generalUtils.confirmDialog"));
 
 echo "\n" . ($failed === 0 ? "VERIFICAÇÃO FINAL OK" : "VERIFICAÇÃO FINAL COM FALHAS") . " => {$passed} pass, {$failed} fail\n";
 exit($failed === 0 ? 0 : 1);
