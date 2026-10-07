@@ -14,7 +14,7 @@ include_once ROOT_PATH . "/modules/main/includes/navbar.php";
 ?>
 
 <main>
-    <div class="container-fluid bg-light page-header py-5 mb-5">
+    <div class="container-fluid bg-light page-header py-5">
         <div class="container text-center py-4">
             <h1 class="display-4 animated slideInDown mb-3">Meus Agendamentos</h1>
             <nav aria-label="breadcrumb">
