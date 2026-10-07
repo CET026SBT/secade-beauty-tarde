@@ -94,7 +94,7 @@ const services = (() => {
                         <li><i class="bi bi-tag me-1"></i>${generalUtils.formatCurrencyWithVat(service.basePrice)} <small>(IVA incl.)</small></li>
                     </ul>
                     <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-sm btn-outline-primary flex-fill" data-details="${service.id}">Detalhes</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary extended-border flex-fill" data-details="${service.id}">Detalhes</button>
                         <a class="btn btn-sm btn-primary extended-border flex-fill" href="${BASE_URL ?? ''}/agendar?services=${service.id}">Agendar</a>
                     </div>
                 </div>

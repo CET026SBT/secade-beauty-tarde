@@ -33,7 +33,7 @@ $boSidebarGroups = Session::isEmployee()
         ]],
         ["label" => "Financeiro", "links" => [
             ["page" => "fiscal",       "url" => "/gestao/fiscal",         "icon" => "bi-receipt-cutoff", "label" => "Calendário Fiscal"],
-            ["page" => "greenReceipts","url" => "/gestao/recibos-verdes", "icon" => "bi-cash-coin",      "label" => "Recibos Verdes"],
+            ["page" => "greenReceipts","url" => "/gestao/recibos-verdes", "icon" => "bi-cash-stack",     "label" => "Recibos Verdes"],
             ["page" => "commissions",  "url" => "/gestao/comissoes",      "icon" => "bi-cash-stack",     "label" => "Comissões"]
         ]],
         ["label" => "Gestão", "links" => [
