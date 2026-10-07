@@ -10,11 +10,16 @@ class FiscalAlertRepository extends BaseRepository {
 
     protected ?string $mapper = FiscalAlertMapper::class;
 
-    public function createIfAbsent(int $obligationId, string $alertType, string $alertDate): void {
+    /**
+     * Cria o alerta se ainda não existir. Devolve 1 quando criou (o `INSERT
+     * IGNORE` respeita a chave única) e 0 quando já existia — é assim que o
+     * `MaintenanceService` conta o que gerou.
+     */
+    public function createIfAbsent(int $obligationId, string $alertType, string $alertDate): int {
         $sql = "INSERT IGNORE INTO alerta_fiscal (obrigacao_fiscal_id, tipo_alerta, data_alerta)
                 VALUES (:obrigacao_id, :tipo_alerta, :data_alerta)";
 
-        $this->execute($sql, [
+        return $this->execute($sql, [
             "obrigacao_id" => $obligationId,
             "tipo_alerta"  => $alertType,
             "data_alerta"  => $alertDate

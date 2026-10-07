@@ -5,6 +5,7 @@ require_once APP_PATH . "/repositories/UserRepository.php";
 require_once APP_PATH . "/services/CustomerService.php";
 require_once APP_PATH . "/services/EmployeeService.php";
 require_once APP_PATH . "/services/ManagerService.php";
+require_once APP_PATH . "/services/MaintenanceService.php";
 
 class AuthService extends BaseService {
     private UserRepository $userRepository;
@@ -53,6 +54,15 @@ class AuthService extends BaseService {
         $this->validateLoginInput($data, $user);
 
         Session::createLoginSession($user);
+
+        // F6 (§9.3): a manutenção automática (reconciliação de estados + alertas
+        // fiscais) deixa de depender de o gestor abrir o calendário — corre no
+        // login, com guard de tempo. Falha de manutenção nunca impede o login.
+        try {
+            (new MaintenanceService())->runIfDue();
+        } catch (Exception $e) {
+            // silencioso de propósito: a manutenção é acessória ao login
+        }
 
         return [
             "message" => "Login efetuado com sucesso!",

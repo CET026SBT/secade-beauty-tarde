@@ -33,6 +33,10 @@ $routes = [
         "admin-routes-list"        => ["controller" => "RotaController", "method" => "routesList", "http" => "GET"],
         "admin-route-decide"       => ["controller" => "RotaController", "method" => "decideRoute", "http" => "POST"],
 
+        // F6 — manutenção automática sob pedido do gestor (reconciliação + alertas fiscais)
+        "admin-reconcile"          => ["controller" => "AdminController", "method" => "reconcile", "http" => "POST"],
+        "admin-reconcile-preview"  => ["controller" => "AdminController", "method" => "reconcilePreview", "http" => "GET"],
+
         // Fase 6.0 / 6.5 — entrada do backoffice (painel, avisos do sino e agenda)
         "admin-dashboard-summary"    => ["controller" => "DashboardController", "method" => "summary", "http" => "GET"],
         "admin-alert-summary"        => ["controller" => "AlertController", "method" => "summary", "http" => "GET"],
