@@ -185,17 +185,23 @@ class ServiceAcceptanceService extends BaseService {
     }
 
     /**
-     * Desfaz a aceitação/alocação de um serviço (bloqueado se o agendamento estiver
-     * consolidado). `$employeeId` nulo = o GESTOR pode desfazer qualquer alocação.
+     * Desfaz a aceitação/alocação de um serviço. `$employeeId` nulo = o GESTOR pode
+     * desfazer qualquer alocação.
+     *
+     * F4: o único bloqueio é a **rota já CONFIRMADA** (ou o agendamento fechado) —
+     * o antigo bloqueio por «totalmente alocado» deixou de fazer sentido (a janela
+     * temporal só se reserva na confirmação da rota). Ao desfazer, o serviço volta
+     * a `pendente` e o agendamento **reverte para `pendente_alocacao`**, para voltar
+     * a aparecer na lista Por alocar/aceitar.
      */
     public function unacceptService(?int $employeeId, int $bookingServiceId, ?int $bookingId = null): array {
         return $this->executeTransactional(function() use ($employeeId, $bookingServiceId, $bookingId) {
             $service = $this->resolveService($bookingServiceId, $bookingId);
             $booking = $this->requireBooking((int)$service["bookingId"]);
 
-            if ($booking["status"] === self::CONSOLIDATED_STATE) {
+            if (in_array($booking["status"], ["confirmado", "executado", "concluido", "cancelado", "recusado"], true)) {
                 throw new Exception(
-                    "O agendamento já está totalmente alocado e não permite desfazer nem trocar.",
+                    "Este agendamento já está numa rota confirmada (ou fechado) e não permite desfazer nem trocar.",
                     409
                 );
             }
@@ -206,10 +212,15 @@ class ServiceAcceptanceService extends BaseService {
 
             $this->bookingServiceRepository->unaccept($bookingServiceId);
 
+            // Reverte o agendamento para «por alocar» — volta à lista e sai das rotas por decidir.
+            if ($booking["status"] === self::CONSOLIDATED_STATE) {
+                $this->bookingRepository->updateEstado((int)$booking["id"], "pendente_alocacao");
+            }
+
             return [
                 "bookingServiceId" => $bookingServiceId,
                 "bookingId"        => (int)$booking["id"],
-                "message"          => "Aceitação desfeita. O serviço voltou a ficar pendente."
+                "message"          => "Alocação desfeita. O serviço voltou a ficar por alocar."
             ];
         });
     }
