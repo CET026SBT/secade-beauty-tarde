@@ -80,7 +80,7 @@ const boServices = (() => {
                 </button>`;
         }
 
-        return `<div class="border rounded p-3 mb-3">
+        return `<div class="border rounded p-3 mb-3" data-card-booking="${service.bookingId}">
             <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
                 <div>
                     <span class="fw-bold">${generalUtils.escapeHtml(service.serviceName || "")}</span>${tag}
@@ -212,6 +212,15 @@ const boServices = (() => {
         setTimeout(() => $("#servicesSuccess").addClass("d-none"), 7000);
     }
 
+    /** #rotaDinamica: vindo de um aviso (`?highlight=<bookingId>`), faz scroll + realce. */
+    function applyHighlight() {
+        const highlight = window.APP_PARAMS?.highlight;
+        if (!highlight) return;
+
+        const el = document.querySelector(`#pendingList [data-card-booking="${highlight}"]`);
+        if (el) generalUtils.highlightAndScroll(el, { offset: 120 });
+    }
+
     async function loadPending() {
         const promise = API.admin.services.pending(pendingFilters());
         const preloader = $("#pendingList").preloader(".jq-overlay-process", promise);
@@ -228,6 +237,7 @@ const boServices = (() => {
             fillSelectors();
             renderConfig();
             renderPending();
+            applyHighlight();
         } catch (error) {
             showError(error?.responseJSON?.message || "Não foi possível carregar os serviços por tratar.");
         } finally {
