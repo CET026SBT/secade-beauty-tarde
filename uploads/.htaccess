@@ -1,0 +1,6 @@
+# Dados de utilizador: NUNCA executar nada aqui dentro.
+php_flag engine off
+RemoveHandler .php .phtml .php3 .php4 .php5 .php7 .phar .cgi .pl
+<FilesMatch "\.(php|phtml|phar|cgi|pl|py|rb|sh|html?|svg|js)$">
+    Require all denied
+</FilesMatch>

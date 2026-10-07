@@ -403,9 +403,23 @@ class BookingService extends BaseService {
 
     public function listActiveServices(?int $categoryId = null): array {
         $services = $this->serviceRepository->findActive($categoryId);
+        $services = is_array($services) ? $services : [];
 
-        return [
-            "services" => is_array($services) ? $services : []
-        ];
+        // F3.1 — a fotografia de destaque e a galeria acompanham o catálogo público.
+        require_once APP_PATH . "/repositories/ServicePhotoRepository.php";
+        $grouped = (new ServicePhotoRepository())->findGroupedByServices(array_map(fn($s) => (int)$s["id"], $services));
+
+        foreach ($services as &$service) {
+            $photos = $grouped[(int)$service["id"]] ?? [];
+            $service["photoUrl"] = null;
+            $service["photos"]   = array_map(fn($p) => $p["url"], $photos);
+
+            foreach ($photos as $photo) {
+                if ($photo["featured"]) { $service["photoUrl"] = $photo["url"]; break; }
+            }
+        }
+        unset($service);
+
+        return ["services" => $services];
     }
 }

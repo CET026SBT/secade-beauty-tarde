@@ -57,6 +57,29 @@ function request(string $url, string $method = "GET", $body = null, ?string $jar
     ];
 }
 
+function requestUpload(string $url, ?string $jar, array $fields, string $fileField, string $filePath, string $mime): array {
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HEADER, false);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 20);
+    if ($jar !== null) {
+        curl_setopt($ch, CURLOPT_COOKIEJAR, $jar);
+        curl_setopt($ch, CURLOPT_COOKIEFILE, $jar);
+    }
+
+    $post = $fields;
+    $post[$fileField] = new CURLFile($filePath, $mime, basename($filePath));
+
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+
+    $body = curl_exec($ch);
+    $status = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    return ["status" => $status, "body" => (string)$body, "json" => json_decode((string)$body, true)];
+}
+
 function nextWorkingDate(int $offsetDays = 1): string {
     $ts = strtotime("+{$offsetDays} day");
     while ((int)date("N", $ts) < 2 || (int)date("N", $ts) > 6) { $ts = strtotime("+1 day", $ts); }
@@ -717,6 +740,60 @@ check("moradas E2E removidas (cascade)", $e2eLeftoverAddress === 0, (string)$e2e
 
 foreach (["e2e_cliente", "e2e_funcionario", "e2e_gestor"] as $jarToRemove) {
     @unlink(jarPath($jarToRemove));
+}
+
+// ---------------------------------------------------------------------------
+section("8. Fotos do catálogo (F3.1)");
+
+$catalogPage = request("{$base}/gestao/catalogo", "GET", null, $managerJar);
+check("GET /gestao/catalogo responde 200 (gestor)", $catalogPage["status"] === 200, (string)$catalogPage["status"]);
+check("página do catálogo carrega JS", str_contains($catalogPage["body"], "components/catalog.js"));
+
+$catalogEmployee = request("{$base}/gestao/catalogo", "GET", null, $employeeJar);
+check("funcionário NAO acede ao catálogo de fotos", $catalogEmployee["status"] === 302 || $catalogEmployee["status"] === 403, (string)$catalogEmployee["status"]);
+
+$catalogList = request("{$base}/api?action=admin-catalog-list", "GET", null, $managerJar);
+check("admin-catalog-list 200", $catalogList["status"] === 200, (string)$catalogList["status"]);
+$firstService = $catalogList["json"]["services"][0] ?? null;
+check("catálogo lista serviços", is_array($firstService) && isset($firstService["id"]), json_encode($firstService));
+
+$catalogForbidden = request("{$base}/api?action=admin-catalog-list", "GET", null, $clientJar);
+check("cliente NAO acede ao catálogo de fotos (403)", $catalogForbidden["status"] === 403, (string)$catalogForbidden["status"]);
+
+if ($firstService) {
+    $serviceId = (int)$firstService["id"];
+
+    $tmpPng = sys_get_temp_dir() . "/sb_f31_upload.png";
+    $img = imagecreatetruecolor(4, 4);
+    imagepng($img, $tmpPng);
+    imagedestroy($img);
+
+    $upload = requestUpload("{$base}/api?action=admin-catalog-photo-upload", $managerJar, ["serviceId" => $serviceId], "photo", $tmpPng, "image/png");
+    $photoId = (int)($upload["json"]["photoId"] ?? 0);
+    check("upload de fotografia devolve photoId", $photoId > 0, (string)$upload["status"] . " " . json_encode($upload["json"]));
+
+    $publicCatalog = request("{$base}/api?action=booking-services");
+    $svc = null;
+    foreach (($publicCatalog["json"]["services"] ?? []) as $s) { if ((int)$s["id"] === $serviceId) { $svc = $s; break; } }
+    check("catálogo público devolve photoUrl da foto principal", is_array($svc) && !empty($svc["photoUrl"]), json_encode($svc));
+
+    $photos = request("{$base}/api?action=admin-catalog-service-photos&serviceId={$serviceId}", "GET", null, $managerJar);
+    check("fotografia aparece na listagem do serviço", count($photos["json"]["photos"] ?? []) >= 1, json_encode($photos["json"]));
+    check("primeira foto é principal (destaque)", ($photos["json"]["photos"][0]["featured"] ?? false) === true, json_encode($photos["json"]["photos"][0] ?? null));
+
+    $featured = request("{$base}/api?action=admin-catalog-photo-featured", "POST", ["serviceId" => $serviceId, "photoId" => $photoId], $managerJar);
+    check("definir fotografia principal 200", $featured["status"] === 200, (string)$featured["status"]);
+
+    $badTxt = sys_get_temp_dir() . "/sb_f31_bad.txt";
+    file_put_contents($badTxt, "nao e imagem");
+    $rejected = requestUpload("{$base}/api?action=admin-catalog-photo-upload", $managerJar, ["serviceId" => $serviceId], "photo", $badTxt, "text/plain");
+    check("upload de ficheiro não-imagem rejeitado (422)", $rejected["status"] === 422, (string)$rejected["status"]);
+
+    $deleted = request("{$base}/api?action=admin-catalog-photo-delete", "POST", ["serviceId" => $serviceId, "photoId" => $photoId], $managerJar);
+    check("remover fotografia 200", $deleted["status"] === 200, (string)$deleted["status"]);
+
+    $after = request("{$base}/api?action=admin-catalog-service-photos&serviceId={$serviceId}", "GET", null, $managerJar);
+    check("fotografia removida da listagem", count($after["json"]["photos"] ?? []) === 0, json_encode($after["json"]));
 }
 
 // ---------------------------------------------------------------------------
