@@ -46,4 +46,40 @@ class UserRepository extends BaseRepository {
 
         return (int)$this->lastInsertId();
     }
+
+    /**
+     * Atualiza os dados de perfil do utilizador (RH · F7). O `foto` só é tocado
+     * quando vem explicitamente (o upload tem o seu próprio caminho).
+     */
+    public function updateProfile(int $id, array $data): bool {
+        $sql = "UPDATE utilizador
+                SET nome = :nome, email = :email, telemovel = :telemovel, nif = :nif
+                WHERE id = :id";
+
+        return $this->execute($sql, [
+            "nome"      => $data["name"],
+            "email"     => $data["email"],
+            "telemovel" => $data["phone"],
+            "nif"       => $data["nif"] ?? null,
+            "id"        => $id
+        ]) >= 0;
+    }
+
+    /** Guarda o caminho relativo da fotografia de perfil (`uploads/users/<id>.<ext>`). */
+    public function setPhoto(int $id, ?string $photo): bool {
+        return $this->execute("UPDATE utilizador SET foto = :foto WHERE id = :id", [
+            "foto" => $photo,
+            "id"   => $id
+        ]) >= 0;
+    }
+
+    /** Existe outro utilizador com este e-mail? (para a unicidade na edição). */
+    public function emailTakenByOther(string $email, int $excludeId): bool {
+        $row = $this->fetchRaw(
+            "SELECT id FROM utilizador WHERE email = :email AND id <> :id LIMIT 1",
+            ["email" => $email, "id" => $excludeId]
+        );
+
+        return !empty($row);
+    }
 }

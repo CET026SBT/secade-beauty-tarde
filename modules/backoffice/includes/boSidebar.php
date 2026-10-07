@@ -50,7 +50,8 @@ $boSidebarGroups = $boIsEmployee
         ]],
         ["label" => "Gestão", "links" => [
             ["page" => "catalog",      "url" => "/gestao/catalogo",       "icon" => "bi-images",         "label" => "Catálogo"],
-            ["page" => "suppliers",    "url" => "/gestao/fornecedores",   "icon" => "bi-truck",          "label" => "Fornecedores"]
+            ["page" => "suppliers",    "url" => "/gestao/fornecedores",   "icon" => "bi-truck",          "label" => "Fornecedores"],
+            ["page" => "rh",           "url" => "/gestao/rh",             "icon" => "bi-people",         "label" => "Recursos Humanos"]
         ]]
       ];
 ?>

@@ -617,6 +617,19 @@ check("manutencao negada ao funcionario (403)", $reconcileEmployee["status"] ===
 $reconcileClient = request("{$base}/api?action=admin-reconcile-preview", "GET", null, $clientJar);
 check("manutencao negada ao cliente (403)", $reconcileClient["status"] === 403, (string)$reconcileClient["status"]);
 
+// F7 — Recursos Humanos (§7 · §25)
+$employeeList = request("{$base}/api?action=admin-employee-list", "GET", null, $e2eManagerJar);
+check("RH: gestor lista funcionarios (200)", $employeeList["status"] === 200 && isset($employeeList["json"]["employees"], $employeeList["json"]["summary"]), json_encode(array_keys($employeeList["json"] ?? [])));
+
+$employeeListEmp = request("{$base}/api?action=admin-employee-list", "GET", null, $e2eEmployeeJar);
+check("RH: funcionario nao acede (403)", $employeeListEmp["status"] === 403, (string)$employeeListEmp["status"]);
+
+$employeeListClient = request("{$base}/api?action=admin-employee-list", "GET", null, $clientJar);
+check("RH: cliente nao acede (403)", $employeeListClient["status"] === 403, (string)$employeeListClient["status"]);
+
+$rhPage = request("{$base}/gestao/rh", "GET", null, $e2eManagerJar);
+check("RH: GET /gestao/rh responde 200 e carrega rh.js", $rhPage["status"] === 200 && str_contains($rhPage["body"] ?? "", "components/rh.js"), (string)$rhPage["status"]);
+
 $agendaRes = request("{$base}/api?action=admin-employee-agenda-list", "GET", null, $e2eEmployeeJar);
 check("funcionario acede a agenda (200)", $agendaRes["status"] === 200, (string)$agendaRes["status"]);
 check("agenda mostra so rotas confirmadas", ($agendaRes["json"]["filter"] ?? "") === "rotas_confirmadas", json_encode($agendaRes["json"]["filter"] ?? null));

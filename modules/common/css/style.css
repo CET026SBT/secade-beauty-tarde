@@ -22,7 +22,9 @@ body {
 
 /* Altura mínima das páginas: o conteúdo cresce e empurra o rodapé para o fundo. */
 main {
-    flex: 1 0 auto;
+    flex-grow: 1;
+    display: flex;
+    flex-flow: column;
 }
 
 /* > Arrange room for footer menu in smaller screens */
@@ -1108,4 +1110,41 @@ form .row > *:has([aria-invalid="true"])*/ {
     font-size: .7rem;
     font-weight: 700;
     color: var(--bs-primary-dark);
+}
+/* ------------------------------------------------------------------
+   Recursos Humanos (F7) — avatares e pré-visualização com crop
+------------------------------------------------------------------ */
+.bo-avatar-wrap {
+    width: 120px;
+    height: 120px;
+    margin-left: auto;
+    margin-right: auto;
+    border: 2px solid rgba(201, 170, 85, .5);
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #fff;
+}
+
+.bo-avatar-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.bo-rh-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.bo-rh-avatar--placeholder {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(201, 170, 85, .18);
+    color: var(--bs-primary-dark);
+    font-weight: 700;
 }
