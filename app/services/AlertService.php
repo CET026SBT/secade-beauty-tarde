@@ -74,7 +74,7 @@ class AlertService extends BaseService {
      * Grupos por perfil:
      *   - GESTOR: fiscais (com atrasos realçados), serviços por alocar, rotas por decidir.
      *   - FUNCIONÁRIO RV: serviços por aceitar.
-     *   - FUNCIONÁRIO EFETIVO: alocações planeadas (vindas do gestor).
+     *   - FUNCIONÁRIO EFETIVO: serviços já em rota confirmada (coerente com a agenda).
      *   - Rotas por decidir NUNCA aparece ao funcionário.
      */
     private function buildGroups(): array {
@@ -175,16 +175,20 @@ class AlertService extends BaseService {
     }
 
     /**
-     * Alocações planeadas do funcionário EFETIVO (feitas pelo gestor), com serviço,
-     * pessoa, cidade, data e o **extra que recebe** pelo serviço (F5 · C-10).
+     * Alocações do funcionário EFETIVO, **só as que já estão em rota confirmada**
+     * (verbo do gestor) — coerente com a agenda (`/gestao/agenda` mostra apenas
+     * agendamentos `confirmado`, RN-33). Antes de a rota ser aprovada, o efetivo
+     * não é avisado: a alocação ainda pode mudar e o sítio para a acompanhar é a
+     * lista de Serviços. Cada item traz serviço, pessoa, cidade, data e o **extra
+     * que recebe** (F5 · C-10).
      */
     private function allocationsGroup(int $employeeId): array {
         $services = $this->bookingServiceRepository->findAllocated($employeeId, []);
         $items    = [];
 
         foreach ($services as $service) {
-            $status = (string)($service["bookingStatus"] ?? "");
-            if (in_array($status, ["executado", "concluido", "cancelado", "recusado"], true)) continue;
+            // Só rota confirmada (RN-33): o efetivo é avisado do que já é compromisso.
+            if ((string)($service["bookingStatus"] ?? "") !== "confirmado") continue;
 
             $bookingId = (int)($service["bookingId"] ?? 0);
             $person    = trim((string)($service["personName"] ?? ""));
@@ -209,7 +213,7 @@ class AlertService extends BaseService {
             ];
         }
 
-        return $this->group("alocacoes", "Alocações planeadas", $items);
+        return $this->group("alocacoes", "Serviços em rota confirmada", $items);
     }
 
     /**
