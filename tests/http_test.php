@@ -583,11 +583,17 @@ check("sino devolve o contador ao gestor (200)", $alertSummary["status"] === 200
 $alertList = request("{$base}/api?action=admin-alert-list", "GET", null, $e2eManagerJar);
 check("pagina de avisos devolve grupos", count($alertList["json"]["groups"] ?? []) >= 2, json_encode(array_keys($alertList["json"] ?? [])));
 check("avisos do gestor incluem a origem fiscal", in_array("fiscal", array_column($alertList["json"]["groups"] ?? [], "key"), true), json_encode(array_column($alertList["json"]["groups"] ?? [], "key")));
-check("avisos do gestor incluem os servicos por aceitar", in_array("servicos_pendentes", array_column($alertList["json"]["groups"] ?? [], "key"), true), json_encode(array_column($alertList["json"]["groups"] ?? [], "key")));
+check("avisos do gestor incluem os servicos por alocar", in_array("servicos_pendentes", array_column($alertList["json"]["groups"] ?? [], "key"), true), json_encode(array_column($alertList["json"]["groups"] ?? [], "key")));
+check("F5: gestor tem o grupo de rotas por decidir", in_array("rotas", array_column($alertList["json"]["groups"] ?? [], "key"), true), json_encode(array_column($alertList["json"]["groups"] ?? [], "key")));
+check("F5: #limiteCards exposto (10)", (int)($alertList["json"]["cardLimit"] ?? 0) === 10, json_encode($alertList["json"]["cardLimit"] ?? null));
+$fiscalGroup5 = null;
+foreach (($alertList["json"]["groups"] ?? []) as $g) { if (($g["key"] ?? "") === "fiscal") { $fiscalGroup5 = $g; break; } }
+check("F5: itens fiscais expõem o campo highlighted", is_array($fiscalGroup5) && (($fiscalGroup5["items"][0]["highlighted"] ?? null) !== null), json_encode($fiscalGroup5["items"][0] ?? null));
 
 $alertListEmployee = request("{$base}/api?action=admin-alert-list", "GET", null, $e2eEmployeeJar);
 check("funcionario tem avisos proprios (200)", $alertListEmployee["status"] === 200, (string)$alertListEmployee["status"]);
 check("avisos do funcionario nao mostram o grupo fiscal", !in_array("fiscal", array_column($alertListEmployee["json"]["groups"] ?? [], "key"), true), json_encode(array_column($alertListEmployee["json"]["groups"] ?? [], "key")));
+check("F5: avisos do funcionario NAO mostram rotas", !in_array("rotas", array_column($alertListEmployee["json"]["groups"] ?? [], "key"), true), json_encode(array_column($alertListEmployee["json"]["groups"] ?? [], "key")));
 
 $alertListClient = request("{$base}/api?action=admin-alert-list", "GET", null, $clientJar);
 check("avisos negados ao cliente (403)", $alertListClient["status"] === 403, (string)$alertListClient["status"]);
