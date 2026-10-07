@@ -8,7 +8,7 @@ $navigationLinks = [
 $navigationLinks = array_merge($navigationLinks, $isAuthPage ? [] : [
     ["page" => "sobre",        "url" => "/sobre",    "icon" => "bi-info-circle",    "label" => "Acerca"],
     ["page" => "servicos",     "url" => "/servicos", "icon" => "bi-scissors",       "label" => "Serviços"],
-    ["page" => "appointments", "url" => "/agendar",  "icon" => "bi-calendar-check", "label" => "Agendar",   "profile" => ["cliente"]],
+    ["page" => "agendar",     "url" => "/agendar",  "icon" => "bi-calendar-check", "label" => "Agendar",   "profile" => ["cliente"]],
     ["page" => "contacto",     "url" => "/contacto", "icon" => "bi-envelope",       "label" => "Contactos", "profile" => ["cliente", "guest"]]
 ]);
 ?>

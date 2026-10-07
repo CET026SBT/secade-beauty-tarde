@@ -104,13 +104,14 @@ section("2. Rotas do site (main)");
 $home = request("{$base}/");
 check("home responde 200", $home["status"] === 200, (string)$home["status"]);
 
-$catalog = request("{$base}/servicos/cabelereiro");
-check("catálogo /servicos/cabelereiro responde 200", $catalog["status"] === 200, (string)$catalog["status"]);
+$catalog = request("{$base}/servicos/cabeleireiro");
+check("catálogo /servicos/cabeleireiro responde 200", $catalog["status"] === 200, (string)$catalog["status"]);
 check("catálogo contém contentor de serviços", str_contains($catalog["body"], "services-container"));
 check("catálogo contém modal de detalhes", str_contains($catalog["body"], "serviceDetailsModal"));
 
 $categories = request("{$base}/servicos");
 check("/servicos responde 200", $categories["status"] === 200, (string)$categories["status"]);
+check("/servicos serve o catálogo (reorganização do catálogo)", str_contains($categories["body"], "services-container"));
 
 $wizard = request("{$base}/agendar", "GET", null, $clientJar);
 check("wizard /agendar responde 200 (cliente autenticado)", $wizard["status"] === 200, (string)$wizard["status"]);

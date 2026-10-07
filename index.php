@@ -15,7 +15,7 @@ $routes = [
     "home"                  => ROOT_PATH . "/modules/main/home.php",
     "sobre"                 => ROOT_PATH . "/modules/main/about.php",
     "contacto"              => ROOT_PATH . "/modules/main/contact.php",
-    "servicos"              => ROOT_PATH . "/modules/main/serviceCategories.php",
+    "servicos"              => ROOT_PATH . "/modules/main/services.php",
     "servicos/:category"    => ROOT_PATH . "/modules/main/services.php",
 
     "login"                 => ROOT_PATH . "/modules/main/login.php",

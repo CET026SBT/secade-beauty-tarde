@@ -52,5 +52,22 @@
             </div>
         </div>
     </div>
+
+    <!-- Skeleton para os cartões de testemunho (testimonial.js) -->
+    <div preloader-skeleton preloader-fade class="jq-skeleton-testimonial-card col-lg-4">
+        <div class="testimonial-item bg-light rounded p-4 placeholder-glow">
+            <div class="d-flex align-items-center mb-3">
+                <div class="placeholder rounded-circle bg-primary bg-opacity-25 wh-60 me-3"></div>
+                <div class="flex-grow-1">
+                    <span class="placeholder placeholder-sm col-6 bg-secondary bg-opacity-25 d-block mb-2"></span>
+                    <span class="placeholder placeholder-sm col-4 bg-secondary bg-opacity-10 d-block"></span>
+                </div>
+            </div>
+            <p class="mb-0">
+                <span class="placeholder placeholder-sm col-12 bg-secondary bg-opacity-10 d-block mb-2"></span>
+                <span class="placeholder placeholder-sm col-9 bg-secondary bg-opacity-10 d-block"></span>
+            </p>
+        </div>
+    </div>
         
 </div>

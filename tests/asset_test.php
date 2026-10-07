@@ -83,7 +83,7 @@ foreach ($assets as $asset) {
 
 echo "\n=== Injeção de scripts por página (register_script) ===\n";
 $pages = [
-    ["/servicos/cabelereiro", null,  ["components/services.js"]],
+    ["/servicos/cabeleireiro", null,  ["components/services.js"]],
     ["/agendar",              $jar,  ["components/bookingWizard.js", "validators/booking.validator.js"]],
     ["/perfil",               $jar,  ["components/profile.js"]],
     ["/agendamentos",         $jar,  ["components/appointments.js"]],
