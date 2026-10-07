@@ -39,7 +39,7 @@ class FiscalService extends BaseService {
      */
     public function findCalendar(array $filters = []): array {
         $today = date("Y-m-d");
-        $this->generateAlerts($today);
+        $this->generateFiscalAlerts($today);
 
         $obligations = $this->obligationRepository->find(null, $filters);
 
@@ -64,7 +64,7 @@ class FiscalService extends BaseService {
 
     public function findAlerts(): array {
         $today = date("Y-m-d");
-        $this->generateAlerts($today);
+        $this->generateFiscalAlerts($today);
 
         $alerts = $this->alertRepository->findUnread();
 
@@ -121,7 +121,7 @@ class FiscalService extends BaseService {
                 "notes"          => $data["notes"] ?? null
             ]);
 
-            $this->generateAlerts(date("Y-m-d"));
+            $this->generateFiscalAlerts();
 
             return [
                 "obligationId" => $obligationId,
@@ -188,8 +188,14 @@ class FiscalService extends BaseService {
     /**
      * Cria os alertas em falta para as obrigações pendentes. Idempotente
      * graças à chave única (obrigacao, tipo_alerta, data_alerta).
+     *
+     * Público para o `MaintenanceService` (§9.3) poder correr a geração no login
+     * — deixa de depender de o gestor abrir o calendário. Devolve o número de
+     * alertas criados.
      */
-    private function generateAlerts(string $today): void {
+    public function generateFiscalAlerts(?string $today = null): int {
+        $today = $today ?? date("Y-m-d");
+        $created = 0;
         $obligations = $this->obligationRepository->find(null, ["status" => "pendente"]);
 
         foreach ($obligations as $obligation) {
@@ -197,16 +203,18 @@ class FiscalService extends BaseService {
 
             if ($daysLeft < 0) {
                 // Alerta diário enquanto se mantiver em atraso
-                $this->alertRepository->createIfAbsent((int)$obligation["id"], "em_atraso", $today);
+                $created += $this->alertRepository->createIfAbsent((int)$obligation["id"], "em_atraso", $today);
                 continue;
             }
 
             foreach (self::ALERT_OFFSETS as $type => $offset) {
                 if ($daysLeft === $offset) {
-                    $this->alertRepository->createIfAbsent((int)$obligation["id"], $type, $today);
+                    $created += $this->alertRepository->createIfAbsent((int)$obligation["id"], $type, $today);
                 }
             }
         }
+
+        return $created;
     }
 
     private function buildSummary(array $rows, string $today): array {

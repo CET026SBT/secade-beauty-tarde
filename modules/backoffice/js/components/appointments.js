@@ -29,7 +29,7 @@ const boAppointments = (() => {
     };
 
     function row(booking) {
-        const canCancel = !["cancelado", "executado", "concluido"].includes(booking.status);
+        const canCancel = !["cancelado", "recusado", "executado", "concluido"].includes(booking.status);
 
         return `<tr>
             <td class="fw-bold">#${booking.id}</td>
@@ -133,7 +133,7 @@ const boAppointments = (() => {
             $("#appointmentDetailsBody").html(renderDetails(booking, response));
 
             $("#modalCancelAppointmentBtn")
-                .prop("disabled", ["cancelado", "executado", "concluido"].includes(booking.status));
+                .prop("disabled", ["cancelado", "recusado", "executado", "concluido"].includes(booking.status));
         } catch (error) {
             $("#appointmentDetailsBody").html(`<div class="alert alert-danger mb-0">
                 ${generalUtils.escapeHtml(error?.responseJSON?.message || "Não foi possível carregar o detalhe.")}

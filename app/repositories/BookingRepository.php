@@ -372,4 +372,27 @@ class BookingRepository extends BaseRepository {
 
         return $this->fetchAllRaw($sql, $params);
     }
+
+    /**
+     * Agendamentos **confirmados** cuja hora já passou e que continuam por fechar
+     * (§8.2 · R1b): o sistema NÃO muda o estado sozinho — devolve-os para o aviso
+     * ao funcionário/gestor. `$employeeId` restringe aos serviços do funcionário.
+     */
+    public function findConfirmedPast(?int $employeeId = null): array {
+        $sql = "SELECT DISTINCT a.id, a.data_hora_pretendida, a.local_prestacao
+                FROM agendamento a
+                INNER JOIN agendamento_servico s ON s.agendamento_id = a.id
+                WHERE a.estado_reserva = 'confirmado'
+                  AND a.data_hora_pretendida < NOW()";
+        $params = [];
+
+        if ($employeeId !== null && $employeeId > 0) {
+            $sql .= " AND s.funcionario_id = :funcionario_id";
+            $params["funcionario_id"] = $employeeId;
+        }
+
+        $sql .= " ORDER BY a.data_hora_pretendida ASC, a.id ASC";
+
+        return $this->fetchAllRaw($sql, $params);
+    }
 }

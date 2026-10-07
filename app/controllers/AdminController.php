@@ -3,6 +3,8 @@
 require_once __DIR__ . "/BaseController.php";
 require_once APP_PATH . "/services/BookingService.php";
 require_once APP_PATH . "/services/ExecutionService.php";
+require_once APP_PATH . "/services/ReconciliationService.php";
+require_once APP_PATH . "/services/MaintenanceService.php";
 
 /**
  * Backoffice (perfil gestor): gestão de agendamentos.
@@ -63,5 +65,21 @@ class AdminController extends BaseController {
         }
 
         return $this->bookingService->cancelBooking($bookingId);
+    }
+
+    /**
+     * F6 — manutenção sob pedido: reconciliação de estados (§8) + alertas fiscais
+     * (§9.3). Normalmente corre no login; este endpoint permite ao gestor
+     * forçá-la (útil nas demonstrações).
+     */
+    public function reconcile(): array {
+        Session::requireProfileApi(["gestor"]);
+        return (new MaintenanceService())->runIfDue(true);
+    }
+
+    /** F6 — modo seco (D11): mostra o que a reconciliação mudaria, sem escrever. */
+    public function reconcilePreview(): array {
+        Session::requireProfileApi(["gestor"]);
+        return (new ReconciliationService())->preview();
     }
 }

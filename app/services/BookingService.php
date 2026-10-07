@@ -6,6 +6,7 @@ require_once APP_PATH . "/repositories/BookingServiceRepository.php";
 require_once APP_PATH . "/repositories/BookingPersonRepository.php";
 require_once APP_PATH . "/repositories/ServiceRepository.php";
 require_once __DIR__ . "/OTPService.php";
+require_once __DIR__ . "/ReconciliationService.php";
 
 class BookingService extends BaseService {
     private const STORE_OPEN_HOUR  = 9;   // 09:00
@@ -299,6 +300,9 @@ class BookingService extends BaseService {
     // ------------------------------------------------------------------
 
     public function findCustomerBookings(int $customerId): array {
+        // §8: o cliente vê o histórico já reconciliado.
+        (new ReconciliationService())->reconcile();
+
         $bookings = $this->bookingRepository->findByCustomer($customerId);
 
         foreach ($bookings as &$booking) {
@@ -320,6 +324,9 @@ class BookingService extends BaseService {
     // ------------------------------------------------------------------
 
     public function listBookings(array $query): array {
+        // §8: alinhar estados com o tempo antes de os mostrar (guard: 1x/pedido).
+        (new ReconciliationService())->reconcile();
+
         $filters = [
             "local"  => $query["local"] ?? null,
             "status" => $query["status"] ?? null,
@@ -342,6 +349,10 @@ class BookingService extends BaseService {
         ];
     }
 
+    /**
+     * Recusa/desmarca um agendamento pelo **staff** (gestor) — §8.2/6.1:
+     * `recusado` é do staff/sistema; `cancelado` é só do cliente.
+     */
     public function cancelBooking(int $bookingId): array {
         $booking = $this->bookingRepository->find($bookingId);
 
@@ -349,15 +360,16 @@ class BookingService extends BaseService {
             throw new Exception("Agendamento não encontrado.", 404);
         }
 
-        if (in_array($booking["status"], ["cancelado", "executado", "concluido"], true)) {
-            throw new Exception("Este agendamento não pode ser cancelado (estado atual: {$booking['status']}).", 409);
+        if (in_array($booking["status"], ["cancelado", "recusado", "executado", "concluido"], true)) {
+            throw new Exception("Este agendamento não pode ser recusado (estado atual: {$booking['status']}).", 409);
         }
 
-        $this->bookingRepository->updateEstado($bookingId, "cancelado");
+        $this->bookingRepository->updateEstado($bookingId, "recusado");
 
         return [
             "bookingId" => $bookingId,
-            "message"   => "Agendamento cancelado com sucesso. O cliente será notificado (simulado)."
+            "status"    => "recusado",
+            "message"   => "Agendamento recusado com sucesso. O cliente será notificado (simulado)."
         ];
     }
 
@@ -384,7 +396,7 @@ class BookingService extends BaseService {
             throw new Exception("Este agendamento não lhe pertence.", 403);
         }
 
-        if (in_array($booking["status"], ["cancelado", "executado", "concluido"], true)) {
+        if (in_array($booking["status"], ["cancelado", "recusado", "executado", "concluido"], true)) {
             throw new Exception("Este agendamento já não pode ser cancelado (estado atual: {$booking['status']}).", 409);
         }
 

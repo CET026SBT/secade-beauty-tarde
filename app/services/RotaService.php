@@ -5,6 +5,7 @@ require_once APP_PATH . "/repositories/RotaRepository.php";
 require_once APP_PATH . "/repositories/BookingRepository.php";
 require_once APP_PATH . "/repositories/BookingServiceRepository.php";
 require_once APP_PATH . "/utils/Session.php";
+require_once __DIR__ . "/ReconciliationService.php";
 
 /**
  * Rotas ambulantes.
@@ -15,7 +16,7 @@ require_once APP_PATH . "/utils/Session.php";
  *
  * Ao decidir:
  *   aprovada -> rota 'aprovada' + agendamentos 'confirmado'
- *   recusada -> rota 'recusada' + agendamentos 'cancelado'
+ *   recusada -> rota 'recusada' + agendamentos 'recusado' (staff recusa — §8.2/6.1)
  */
 class RotaService extends BaseService {
 
@@ -112,7 +113,7 @@ class RotaService extends BaseService {
      *
      * Efeitos:
      *   aprovada -> rota 'aprovada' + agendamentos 'confirmado'
-     *   recusada -> rota 'recusada' + agendamentos 'cancelado'
+     *   recusada -> rota 'recusada' + agendamentos 'recusado' (staff recusa — §8.2/6.1)
      */
     public function decideRoute(array $data): array {
         $cityId   = (int)($data["cityId"] ?? 0);
@@ -164,7 +165,7 @@ class RotaService extends BaseService {
 
             // RN-34: a decisão aplica-se ao CONJUNTO INCLUÍDO. Sem lista explícita
             // aplica-se a todos os qualificados; os excluídos ficam qualificados
-            // (`totalmente_alocado`) — nunca `cancelado`.
+            // (`totalmente_alocado`) — nunca `recusado` nem `cancelado`.
             $bookingIds = $requestedIds === []
                 ? $qualifiedIds
                 : array_values(array_intersect($qualifiedIds, $requestedIds));
@@ -190,7 +191,7 @@ class RotaService extends BaseService {
                 $this->assertNoCityWindowOverlap($bookingIds, $date, $cityId);
             }
 
-            $bookingState = $approved ? "confirmado" : "cancelado";
+            $bookingState = $approved ? "confirmado" : "recusado";
             $this->bookingRepository->updateEstadoMany($bookingIds, $bookingState);
 
             $decisionNotes = $notes !== null && $notes !== ""
@@ -239,7 +240,7 @@ class RotaService extends BaseService {
                 "bookingStatus" => $bookingState,
                 "message"       => ($approved
                     ? "Rota aprovada. " . count($bookingIds) . " agendamento(s) confirmado(s); clientes notificados (simulado)."
-                    : "Rota recusada. " . count($bookingIds) . " agendamento(s) cancelado(s); clientes notificados com alternativas (simulado).")
+                    : "Rota recusada. " . count($bookingIds) . " agendamento(s) recusado(s); clientes notificados com alternativas (simulado).")
                     . (count($excludedIds) > 0
                         ? " " . count($excludedIds) . " agendamento(s) ficaram fora da rota e continuam qualificados."
                         : "")
@@ -255,6 +256,9 @@ class RotaService extends BaseService {
      * NÃO aprova nem recusa nada — a decisão é sempre do gestor.
      */
     public function findRouteSummaries(array $filters = []): array {
+        // §8: a decisão da rota usa filhos já reconciliados.
+        (new ReconciliationService())->reconcile();
+
         $date   = !empty($filters["date"]) ? $filters["date"] : null;
         $cityId = !empty($filters["cityId"]) ? (int)$filters["cityId"] : null;
 

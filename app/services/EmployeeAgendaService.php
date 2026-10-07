@@ -2,6 +2,7 @@
 
 require_once __DIR__ . "/BaseService.php";
 require_once APP_PATH . "/repositories/BookingServiceRepository.php";
+require_once __DIR__ . "/ReconciliationService.php";
 
 /**
  * Agenda do funcionário — Fase 6.5 (RF-78 · RN-33 · D-14 · §24.7).
@@ -23,6 +24,9 @@ class EmployeeAgendaService extends BaseService {
      * Agenda de um mês (`YYYY-MM`), agrupada por dia.
      */
     public function findMonth(int $employeeId, array $query): array {
+        // §8: a agenda não mostra marcações fantasma.
+        (new ReconciliationService())->reconcile();
+
         [$month, $dateFrom, $dateTo] = $this->resolveMonth($query["month"] ?? null);
 
         $services = $this->bookingServiceRepository->findByEmployeeAndRange($employeeId, $dateFrom, $dateTo);

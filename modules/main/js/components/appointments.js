@@ -34,8 +34,8 @@ const appointments = (() => {
         const canReview = ["executado", "concluido"].includes(booking.status);
 
         // RF-12 (§24.6): o cliente cancela sem penalização enquanto o agendamento
-        // não estiver num estado terminal.
-        const canCancel = !["cancelado", "executado", "concluido"].includes(booking.status);
+        // não estiver num estado terminal (recusado/cancelado/executado/concluído).
+        const canCancel = !["cancelado", "recusado", "executado", "concluido"].includes(booking.status);
 
         return `<div class="border rounded p-3 mb-3">
             <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">

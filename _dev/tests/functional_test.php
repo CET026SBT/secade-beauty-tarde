@@ -20,9 +20,14 @@ require_once APP_PATH . "/services/FiscalService.php";
 require_once APP_PATH . "/services/ExecutionService.php";
 require_once APP_PATH . "/services/FeedbackService.php";
 require_once APP_PATH . "/services/EmployeeService.php";
+require_once APP_PATH . "/services/AlertService.php";
+require_once APP_PATH . "/services/ReconciliationService.php";
+require_once APP_PATH . "/services/MaintenanceService.php";
 require_once APP_PATH . "/repositories/CityRepository.php";
 require_once APP_PATH . "/repositories/BookingServiceRepository.php";
 require_once APP_PATH . "/repositories/EmployeeRepository.php";
+require_once APP_PATH . "/repositories/ReconciliationRepository.php";
+require_once APP_PATH . "/repositories/BookingRepository.php";
 
 // Bootstrap de sessão (o harness CLI simula uma sessão autenticada antes de qualquer output)
 ob_start();
@@ -215,7 +220,7 @@ $manualRefuse = $rotaService->decideRoute([
     "decision" => "recusada"
 ]);
 check("decisao manual RECUSA mesmo acima da referencia", ($manualRefuse["status"] ?? "") === "recusada" && ($manualRefuse["meetsReference"] ?? false) === true, json_encode($manualRefuse));
-check("agendamento da cidade rica = cancelado", ($bookingRepository->find((int)$richBooking["bookingId"])["status"] ?? "") === "cancelado");
+check("agendamento da cidade rica = recusado (staff recusa)", ($bookingRepository->find((int)$richBooking["bookingId"])["status"] ?? "") === "recusado");
 
 $rotaRepository = new RotaRepository();
 $routeRow = $rotaRepository->findByDateAndCity($routeDate, (int)$cityRich["id"]);
@@ -243,12 +248,12 @@ check("listagem enriquecida com nome do cliente", ($adminList["bookings"][0]["cu
 $filtered = $bookingService->listBookings(["page" => 1, "perPage" => 10, "local" => "carrinha_ambulante"]);
 check("filtro por local (carrinha)", $filtered["total"] >= 2, (string)$filtered["total"]);
 
-$statusFiltered = $bookingService->listBookings(["page" => 1, "perPage" => 10, "status" => "cancelado"]);
-check("filtro por estado (cancelado)", $statusFiltered["total"] >= 1, (string)$statusFiltered["total"]);
+$statusFiltered = $bookingService->listBookings(["page" => 1, "perPage" => 10, "status" => "recusado"]);
+check("filtro por estado (recusado)", $statusFiltered["total"] >= 1, (string)$statusFiltered["total"]);
 
 $toCancel = $bookingService->createStoreBooking($customerId, ["serviceIds" => [33], "date" => $date, "time" => "16:00"]);
 $cancelResult = $bookingService->cancelBooking((int)$toCancel["bookingId"]);
-check("admin-appointment-cancel funciona", ($bookingRepository->find((int)$toCancel["bookingId"])["status"] ?? "") === "cancelado", json_encode($cancelResult));
+check("admin-appointment-cancel recusa (staff) e grava recusado", ($bookingRepository->find((int)$toCancel["bookingId"])["status"] ?? "") === "recusado", json_encode($cancelResult));
 
 $alreadyCancelled = null;
 try { $bookingService->cancelBooking((int)$toCancel["bookingId"]); } catch (Exception $e) { $alreadyCancelled = $e->getMessage(); }
@@ -784,6 +789,81 @@ $conn->exec("DELETE FROM agendamento WHERE id IN (" . (int)$bookA["bookingId"] .
 $conn->exec("DELETE FROM cliente_morada WHERE id IN (" . (int)$addrA["addressId"] . "," . (int)$addrB["addressId"] . ")");
 $conn->exec("DELETE FROM funcionario WHERE id = 9001");
 $conn->exec("DELETE FROM utilizador WHERE id = 9001");
+
+// ---------------------------------------------------------------------------
+section("17. F6 - Reconciliacao automatica de estados (§8) e manutencao (§9.3)");
+
+$reconciliation = new ReconciliationService();
+
+// Helper: cria um agendamento de carrinha no passado, com um serviço, para forçar
+// o tempo a passar (o wizard normal nunca aceita datas passadas).
+$mkPastBooking = function(string $cityName, string $when, string $estado, int $durationMin = 60) use ($conn, $customerId, $addressService): array {
+    $addr = $addressService->createAddress($customerId, [
+        "cityName" => $cityName, "street" => "Rua F6 " . uniqid(), "doorNumber" => "9", "zipCode" => "7000-910"
+    ]);
+    $addrId = (int)$addr["addressId"];
+
+    $st = $conn->prepare("INSERT INTO agendamento (cliente_id, cliente_morada_id, local_prestacao, data_hora_pretendida, estado_reserva, valor_total) VALUES (:c, :m, 'carrinha_ambulante', :dt, :e, 20.00)");
+    $st->execute(["c" => $customerId, "m" => $addrId, "dt" => $when, "e" => $estado]);
+    $bookingId = (int)$conn->lastInsertId();
+
+    $sv = $conn->prepare("INSERT INTO agendamento_servico (agendamento_id, servico_id, preco_praticado, duracao_minutos, estado_aceitacao) VALUES (:a, 29, 20.00, :d, 'aceite')");
+    $sv->execute(["a" => $bookingId, "d" => $durationMin]);
+
+    return ["bookingId" => $bookingId, "addressId" => $addrId];
+};
+
+$mkRoute = function(string $date, int $cityId, string $estado) use ($conn): int {
+    $st = $conn->prepare("INSERT INTO rota_ambulante (data_rota, base_partida_id, cidade_id, estado_rota) VALUES (:d, 1, :city, :e)");
+    $st->execute(["d" => $date, "city" => $cityId, "e" => $estado]);
+    return (int)$conn->lastInsertId();
+};
+
+// R1a — pendente no passado -> recusado; R2 — executado +4h -> concluido;
+// R1b — confirmado no passado -> alerta (estado NÃO muda).
+$scR1a = $mkPastBooking($cities[0]["name"], date("Y-m-d H:i:s", strtotime("-3 days")), "pendente_alocacao");
+$scR2  = $mkPastBooking($cities[1]["name"], date("Y-m-d H:i:s", strtotime("-2 days")), "executado");
+$scR1b = $mkPastBooking($cities[4]["name"], date("Y-m-d H:i:s", strtotime("-1 day")), "confirmado");
+
+// R3 — todos os filhos concluidos -> rota concluida; R4 — todos recusados -> rota recusada.
+$d3 = date("Y-m-d", strtotime("-5 days"));
+$d4 = date("Y-m-d", strtotime("-6 days"));
+$routeR3 = $mkRoute($d3, (int)$cities[2]["id"], "aprovada");
+$mkPastBooking($cities[2]["name"], $d3 . " 10:00:00", "concluido");
+$routeR4 = $mkRoute($d4, (int)$cities[3]["id"], "planeada");
+$mkPastBooking($cities[3]["name"], $d4 . " 11:00:00", "recusado");
+
+$reconciliation->reconcile(true);
+
+$bookingRepoF6 = new BookingRepository();
+check("R1a: pendente no passado e auto-recusado", ($bookingRepoF6->find($scR1a["bookingId"])["status"] ?? "") === "recusado", (string)($bookingRepoF6->find($scR1a["bookingId"])["status"] ?? ""));
+check("R2: executado +4h e concluido", ($bookingRepoF6->find($scR2["bookingId"])["status"] ?? "") === "concluido", (string)($bookingRepoF6->find($scR2["bookingId"])["status"] ?? ""));
+check("R1b: confirmado no passado NAO muda sozinho", ($bookingRepoF6->find($scR1b["bookingId"])["status"] ?? "") === "confirmado", (string)($bookingRepoF6->find($scR1b["bookingId"])["status"] ?? ""));
+
+$routeRepoF6 = new RotaRepository();
+check("R3: rota com todos os filhos concluidos fica concluida", ($routeRepoF6->find($routeR3)["status"] ?? "") === "concluida", (string)($routeRepoF6->find($routeR3)["status"] ?? ""));
+check("R4: rota com todos os filhos recusados fica recusada", ($routeRepoF6->find($routeR4)["status"] ?? "") === "recusada", (string)($routeRepoF6->find($routeR4)["status"] ?? ""));
+
+// R1b no sino: o gestor vê o grupo "por fechar" com o agendamento confirmado no passado.
+Session::createLoginSession(["id" => 1, "name" => "Gestor", "email" => "gestor@secade.pt", "profileType" => "gestor"]);
+$managerAlertsF6 = (new AlertService())->list();
+$closingF6 = null;
+foreach ($managerAlertsF6["groups"] ?? [] as $g) { if (($g["key"] ?? "") === "por_fechar") $closingF6 = $g; }
+check("R1b: o gestor recebe o grupo 'por_fechar'", $closingF6 !== null, json_encode(array_column($managerAlertsF6["groups"] ?? [], "key")));
+check("R1b: o agendamento por fechar está identificado", $closingF6 !== null && in_array($scR1b["bookingId"], array_map(fn($i) => (int)$i["highlight"], $closingF6["items"] ?? []), true), json_encode($closingF6["items"] ?? []));
+
+// Modo seco (§8.2 D11) e manutenção (§9.3).
+$preview = $reconciliation->preview();
+check("preview devolve contadores (sem escrever)", isset($preview["bookingsToRefuse"], $preview["bookingsToComplete"]), json_encode($preview));
+
+$maintenance = (new MaintenanceService())->run();
+check("manutencao devolve reconciliacao + alertas fiscais", isset($maintenance["reconciliation"], $maintenance["fiscalAlerts"]), json_encode(array_keys($maintenance)));
+check("generateFiscalAlerts passou a publico e devolve inteiro", is_int((new FiscalService())->generateFiscalAlerts()), gettype((new FiscalService())->generateFiscalAlerts()));
+
+// Limpeza dos cenários F6.
+$conn->exec("DELETE FROM agendamento WHERE id IN (" . (int)$scR1a["bookingId"] . "," . (int)$scR2["bookingId"] . "," . (int)$scR1b["bookingId"] . ")");
+$conn->exec("DELETE FROM cliente_morada WHERE id IN (" . (int)$scR1a["addressId"] . "," . (int)$scR2["addressId"] . "," . (int)$scR1b["addressId"] . ")");
+$conn->exec("DELETE FROM rota_ambulante WHERE id IN (" . (int)$routeR3 . "," . (int)$routeR4 . ")");
 
 // ---------------------------------------------------------------------------
 section("RESULTADO FINAL");

@@ -41,6 +41,9 @@ include_once ROOT_PATH . "/modules/main/includes/navbar.php";
                             <button type="button" class="btn btn-sm btn-outline-primary appt-filter active" data-status="">Todos</button>
                             <button type="button" class="btn btn-sm btn-outline-primary appt-filter" data-status="pendente_alocacao">Pendentes</button>
                             <button type="button" class="btn btn-sm btn-outline-primary appt-filter" data-status="confirmado">Confirmados</button>
+                            <button type="button" class="btn btn-sm btn-outline-primary appt-filter" data-status="executado">Executados</button>
+                            <button type="button" class="btn btn-sm btn-outline-primary appt-filter" data-status="concluido">Concluídos</button>
+                            <button type="button" class="btn btn-sm btn-outline-primary appt-filter" data-status="recusado">Recusados</button>
                             <button type="button" class="btn btn-sm btn-outline-primary appt-filter" data-status="cancelado">Cancelados</button>
                         </div>
 
