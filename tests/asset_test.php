@@ -76,6 +76,9 @@ $assets = [
     "modules/common/img/service-images/skeletons/servico-barbearia.svg",
     "modules/common/img/service-images/skeletons/servico-estetica.svg",
     "modules/common/img/service-images/skeletons/servico-generico.svg",
+    "modules/common/img/service-images/service-1.jpg",
+    "modules/common/img/service-images/service-8.jpg",
+    "modules/common/img/service-images/service-35.jpg",
     "modules/common/css/ext-bootstrap.css",
     "modules/common/css/style.css"
 ];
@@ -188,6 +191,11 @@ check("addressAutocomplete tem posicionamento por JS (fallback)", str_contains($
 
 $styleCss = http("{$base}/modules/common/css/style.css")["body"];
 check("style.css esconde o dropdown sem a classe 'show'", str_contains($styleCss, ".autocomplete-dropdown:not(.show)"));
+
+$mainServicesJs = http("{$base}/modules/main/js/components/services.js")["body"];
+check("catálogo usa as imagens dos serviços (service-{id}.jpg)", str_contains($mainServicesJs, "service-images/service-"));
+check("catálogo já NÃO usa placeholders SVG por categoria", !str_contains($mainServicesJs, "CATEGORY_PLACEHOLDERS"));
+check("style.css define a altura do hero com a navbar descontada", str_contains($styleCss, "100dvh - var(--navbar-height"));
 
 echo "\n=== F2 — utilitários partilhados e diálogos (humanize / Swal) ===\n";
 

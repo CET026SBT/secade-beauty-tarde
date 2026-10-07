@@ -381,11 +381,27 @@ form .row > *:has([aria-invalid="true"])*/ {
     /* No máximo a altura da janela, descontando a navbar fixa (§3.4.3). */
     min-height: calc(100vh - var(--navbar-height, 76px));
     min-height: calc(100dvh - var(--navbar-height, 76px));
+    /* O CONTEÚDO preenche essa altura: centra verticalmente e deixa a imagem crescer. */
+    display: flex;
+    align-items: center;
+}
+
+/* O contentor do hero ocupa a largura toda (o flex item não estica por si). */
+.hero-header > .container {
+    width: 100%;
 }
 
 @media (min-width: 992px) {
     .hero-header .container {
         max-width: 100% !important;
+    }
+
+    /* A imagem do carrossel escala à altura da janela (preenche o hero, sem distorcer). */
+    .hero-header .header-carousel img {
+        width: 100%;
+        height: 80vh;
+        max-height: calc(100dvh - var(--navbar-height, 76px) - 2rem);
+        object-fit: cover;
     }
 }
 
