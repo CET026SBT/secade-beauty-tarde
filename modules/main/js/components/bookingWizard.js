@@ -130,6 +130,8 @@ const bookingWizard = (() => {
 
         $("#peopleBlock").toggleClass("d-none", !isAmb);
         $("#bookingServicePicker").toggleClass("d-none", isAmb);
+        // O horário de atendimento da loja só é mostrado no canal loja física.
+        $("#storeHoursNotice").toggleClass("d-none", state.channel !== "loja_fisica");
         $("#servicesHint").text(isAmb
             ? "Indique cada pessoa e os serviços que vai receber. A duração e o valor são calculados por pessoa."
             : "Escolha um ou mais serviços. O total e a duração são calculados automaticamente.");

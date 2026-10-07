@@ -23,7 +23,7 @@ const serviceCategories = (() => {
                                 <img class="img-fluid" src="${iconPath}" alt="${generalUtils.escapeHtml(category.name)}">
                                 <h3 class="mb-3">${generalUtils.escapeHtml(category.name)}</h3>
                                 <p class="mb-3">${generalUtils.escapeHtml(category.description)}</p>
-                                <a class="btn btn-sm btn-primary extended-border text-uppercase" href="${BASE_URL ?? ''}/agendar">agendar <i class="bi bi-arrow-right"></i></a>
+                                <a class="btn btn-sm btn-primary extended-border text-uppercase" href="${BASE_URL ?? ''}/servicos/${slugifiedName}">Ver Serviços <i class="bi bi-arrow-right"></i></a>
                             </div>
                         </div>`);
                 });

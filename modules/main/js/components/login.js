@@ -29,6 +29,12 @@ const login = (() => {
         }
     });
 
+    // Enter dentro dos campos submete o formulário (o botão era `type="button"`
+    // e o Enter não fazia nada).
+    $('#loginForm').on('submit', function (e) {
+        e.preventDefault();
+        form.submit();
+    });
+
     return { form, homeUrlFor };
 })();
-

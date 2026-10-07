@@ -49,7 +49,7 @@ register_script("components/login", "main");
                         -->
                     </div>
 
-                    <button type="button" class="btn btn-primary extended-border w-100 py-2 m-0 fw-bold text-uppercase" onclick="login.form.submit()">Entrar</button>
+                    <button type="submit" class="btn btn-primary extended-border w-100 py-2 m-0 fw-bold text-uppercase">Entrar</button>
                 </form>
 
                 <div class="text-center mt-4">

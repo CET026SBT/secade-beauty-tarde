@@ -20,6 +20,11 @@ body {
     min-height: 100vh;
 }
 
+/* Altura mínima das páginas: o conteúdo cresce e empurra o rodapé para o fundo. */
+main {
+    flex: 1 0 auto;
+}
+
 /* > Arrange room for footer menu in smaller screens */
 @media (max-width: 991.98px) {
     body:not(.bo-body) > main {
@@ -373,6 +378,9 @@ form .row > *:has([aria-invalid="true"])*/ {
 .hero-header {
     background: url(../../common/img/hero-bg.jpg) top left no-repeat;
     background-size: cover;
+    /* No máximo a altura da janela, descontando a navbar fixa (§3.4.3). */
+    min-height: calc(100vh - var(--navbar-height, 76px));
+    min-height: calc(100dvh - var(--navbar-height, 76px));
 }
 
 @media (min-width: 992px) {
@@ -828,6 +836,10 @@ form .row > *:has([aria-invalid="true"])*/ {
 .service-option-card:has(.booking-service-checkbox:checked) {
     border-color: var(--bs-glow) !important;
     box-shadow: 0 .25rem .75rem rgba(212, 165, 116, .25);
+}
+
+.slots-grid .slot-btn {
+    min-width: 4.75rem;
 }
 
 .slot-btn.active {
