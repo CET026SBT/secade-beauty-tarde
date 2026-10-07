@@ -229,7 +229,7 @@ class BookingService extends BaseService {
                 "addressId"  => (int)$data["addressId"],
                 "local"      => "carrinha_ambulante",
                 "dateTime"   => $dateTime,
-                "estado"     => "pendente_aceitacao_funcionarios",
+                "estado"     => "pendente_alocacao",
                 "totalAmount"=> $totalAmount
             ]);
 

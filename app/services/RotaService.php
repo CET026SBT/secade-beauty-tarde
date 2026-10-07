@@ -113,7 +113,7 @@ class RotaService extends BaseService {
 
             // RN-34: a decisão aplica-se ao CONJUNTO INCLUÍDO. Sem lista explícita
             // aplica-se a todos os qualificados; os excluídos ficam qualificados
-            // (`totalmente_aceite_funcionarios`) — nunca `cancelado`.
+            // (`totalmente_alocado`) — nunca `cancelado`.
             $bookingIds = $requestedIds === []
                 ? $qualifiedIds
                 : array_values(array_intersect($qualifiedIds, $requestedIds));

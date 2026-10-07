@@ -164,7 +164,7 @@ class AlertService extends BaseService {
             ];
         }
 
-        $groups = $this->bookingRepository->findAmbulatoryGroups(null, null, ["totalmente_aceite_funcionarios"]);
+        $groups = $this->bookingRepository->findAmbulatoryGroups(null, null, ["totalmente_alocado"]);
         $items  = [];
 
         foreach ($groups as $group) {
