@@ -84,12 +84,14 @@ class AlertService extends BaseService {
             $groups[] = $this->fiscalGroup();
             $groups[] = $this->pendingServicesGroup(true);
             $groups[] = $this->routesGroup();
+            $groups[] = $this->closingGroup(0);
         } elseif (Session::isEmployee()) {
             if (Session::employeeContractType() === "efetivo_contratado") {
                 $groups[] = $this->allocationsGroup((int)Session::userId());
             } else {
                 $groups[] = $this->pendingServicesGroup(false);
             }
+            $groups[] = $this->closingGroup((int)Session::userId());
         }
 
         $count = 0;
@@ -208,6 +210,34 @@ class AlertService extends BaseService {
         }
 
         return $this->group("alocacoes", "Alocações planeadas", $items);
+    }
+
+    /**
+     * R1b (§8.2): agendamentos **confirmados** cuja hora já passou e continuam por
+     * fechar. O sistema **não** muda o estado sozinho — avisa o staff para registar
+     * a execução/conclusão. `$employeeId = 0` mostra tudo (gestor); caso contrário
+     * fica restrito aos serviços daquele funcionário.
+     */
+    private function closingGroup(int $employeeId): array {
+        $rows  = $this->bookingRepository->findConfirmedPast($employeeId > 0 ? $employeeId : null);
+        $items = [];
+
+        foreach ($rows as $row) {
+            $bookingId = (int)$row["id"];
+
+            $items[] = [
+                "title"       => "Agendamento #" . $bookingId . " por fechar",
+                "detail"      => "Passou a hora (" . (string)$row["data_hora_pretendida"]
+                                 . ") e continua confirmado — falta registar o estado final.",
+                "type"        => "por_fechar",
+                "page"        => "services",
+                "pageUrl"     => "/gestao/servicos?highlight=" . $bookingId,
+                "highlighted" => true,
+                "highlight"   => $bookingId
+            ];
+        }
+
+        return $this->group("por_fechar", "Agendamentos por fechar", $items);
     }
 
     /** Rotas por decidir — só o gestor (o funcionário nunca vê este grupo). */

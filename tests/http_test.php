@@ -604,6 +604,19 @@ check("marcar avisos fiscais como lidos (200)", $alertRead["status"] === 200 && 
 $alertReadEmployee = request("{$base}/api?action=admin-alert-read", "POST", [], $e2eEmployeeJar);
 check("funcionario nao marca os alertas fiscais (403)", $alertReadEmployee["status"] === 403, (string)$alertReadEmployee["status"]);
 
+// F6 — manutenção automática (§8 · §9.3): reconciliação de estados + alertas fiscais.
+$reconcilePreview = request("{$base}/api?action=admin-reconcile-preview", "GET", null, $e2eManagerJar);
+check("admin-reconcile-preview devolve contadores (200)", $reconcilePreview["status"] === 200 && isset($reconcilePreview["json"]["bookingsToRefuse"], $reconcilePreview["json"]["bookingsToComplete"]), json_encode($reconcilePreview["json"] ?? []));
+
+$reconcileRun = request("{$base}/api?action=admin-reconcile", "POST", [], $e2eManagerJar);
+check("admin-reconcile corre a manutencao (200)", $reconcileRun["status"] === 200 && isset($reconcileRun["json"]["reconciliation"], $reconcileRun["json"]["fiscalAlerts"]), json_encode($reconcileRun["json"] ?? []));
+
+$reconcileEmployee = request("{$base}/api?action=admin-reconcile", "POST", [], $e2eEmployeeJar);
+check("manutencao negada ao funcionario (403)", $reconcileEmployee["status"] === 403, (string)$reconcileEmployee["status"]);
+
+$reconcileClient = request("{$base}/api?action=admin-reconcile-preview", "GET", null, $clientJar);
+check("manutencao negada ao cliente (403)", $reconcileClient["status"] === 403, (string)$reconcileClient["status"]);
+
 $agendaRes = request("{$base}/api?action=admin-employee-agenda-list", "GET", null, $e2eEmployeeJar);
 check("funcionario acede a agenda (200)", $agendaRes["status"] === 200, (string)$agendaRes["status"]);
 check("agenda mostra so rotas confirmadas", ($agendaRes["json"]["filter"] ?? "") === "rotas_confirmadas", json_encode($agendaRes["json"]["filter"] ?? null));

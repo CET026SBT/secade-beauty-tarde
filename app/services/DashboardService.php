@@ -4,6 +4,7 @@ require_once __DIR__ . "/BaseService.php";
 require_once APP_PATH . "/repositories/DashboardRepository.php";
 require_once APP_PATH . "/repositories/FiscalAlertRepository.php";
 require_once APP_PATH . "/repositories/FiscalObligationRepository.php";
+require_once __DIR__ . "/ReconciliationService.php";
 
 /**
  * Painel do gestor (`/gestao/painel`) — Fase 6.0 (§24.7 · D-14 · §3.13).
@@ -34,6 +35,9 @@ class DashboardService extends BaseService {
      * Todos os indicadores e séries do painel numa só resposta.
      */
     public function summary(): array {
+        // §8: os contadores do painel ficam coerentes com as listagens.
+        (new ReconciliationService())->reconcile();
+
         $today    = date("Y-m-d");
         $forecast = date("Y-m-d", strtotime("+" . (self::FORECAST_DAYS - 1) . " days"));
 
