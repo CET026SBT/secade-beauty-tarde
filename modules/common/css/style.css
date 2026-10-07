@@ -886,6 +886,13 @@ form .row > *:has([aria-invalid="true"])*/ {
     padding-bottom: .5rem;
 }
 
+/* Avisos em atraso realçados na página de avisos (F5). */
+.bo-alert--urgent {
+    background-color: rgba(220, 53, 69, .08);
+    border-left: 3px solid #dc3545;
+    padding-left: .5rem;
+}
+
 .bo-navbar .nav-link {
     color: rgba(255, 255, 255, .75);
 }

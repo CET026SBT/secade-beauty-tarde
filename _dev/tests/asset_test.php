@@ -165,6 +165,14 @@ $commissionsPage = http("{$base}/gestao/comissoes", $employeeJar);
 check("página de comissões traz totais e listagem", str_contains($commissionsPage["body"], "commissionEmployeesBody") && str_contains($commissionsPage["body"], "commissionsTableBody"));
 check("página de comissões explica que os valores vêm da aceitação", str_contains($commissionsPage["body"], "aceitação"));
 
+echo "\n=== F5 — avisos por perfil, #limiteCards e #rotaDinamica ===\n";
+$alertsJs = http("{$base}/modules/backoffice/js/components/alerts.js")["body"];
+check("alerts.js implementa #limiteCards (mostrar mais)", str_contains($alertsJs, "Mostrar mais") && str_contains($alertsJs, "data-more-list"));
+check("alerts.js realça itens em atraso (bo-alert--urgent)", str_contains($alertsJs, "bo-alert--urgent"));
+check("alerts.js tem grupo de alocações (efetivo)", str_contains($alertsJs, "alocacoes"));
+check("style.css define .bo-alert--urgent", str_contains(http("{$base}/modules/common/css/style.css")["body"], ".bo-alert--urgent"));
+check("services.js aplica o realce de aviso (#rotaDinamica)", str_contains(http("{$base}/modules/backoffice/js/components/services.js")["body"], "applyHighlight"));
+
 echo "\n=== Contrato de nomes do formulário de registo (alinhado com os mappers) ===\n";
 
 $registerPage = http("{$base}/registo");
