@@ -39,7 +39,7 @@ include_once ROOT_PATH . "/modules/main/includes/navbar.php";
                     <div class="card-body" id="appointmentsPage" preloader-defer>
                         <div class="d-flex flex-wrap gap-2 mb-4">
                             <button type="button" class="btn btn-sm btn-outline-primary appt-filter active" data-status="">Todos</button>
-                            <button type="button" class="btn btn-sm btn-outline-primary appt-filter" data-status="pendente_aceitacao_funcionarios">Pendentes</button>
+                            <button type="button" class="btn btn-sm btn-outline-primary appt-filter" data-status="pendente_alocacao">Pendentes</button>
                             <button type="button" class="btn btn-sm btn-outline-primary appt-filter" data-status="confirmado">Confirmados</button>
                             <button type="button" class="btn btn-sm btn-outline-primary appt-filter" data-status="cancelado">Cancelados</button>
                         </div>

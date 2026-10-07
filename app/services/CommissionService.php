@@ -66,8 +66,8 @@ class CommissionService extends BaseService {
                 "local"        => (string)$row["local_prestacao"],
                 "price"        => round((float)$row["preco_praticado"], 2),
                 "percentage"   => round((float)$row["percentagem_funcionario_aplicada"], 2),
-                "employeeValue" => round((float)$row["valor_recibo_verde_funcionario"], 2),
-                "platformValue" => round((float)$row["valor_recibo_verde_plataforma"], 2)
+                "employeeValue" => round((float)$row["valor_funcionario"], 2),
+                "platformValue" => round((float)$row["valor_empresa"], 2)
             ], $rows),
             "totals"       => [
                 "services"      => $services,
