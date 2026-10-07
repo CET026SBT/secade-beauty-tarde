@@ -322,9 +322,18 @@ $accept2 = $acceptanceService->acceptService($employeeId, $secondServiceId, $acc
 check("fase 3: ultimo servico consolidou", ($accept2["consolidated"] ?? false) === true, json_encode($accept2));
 check("fase 3: estado = totalmente_alocado", ($bookingRepository->find($acceptBookingId)["status"] ?? "") === "totalmente_alocado");
 
-$blockedUnaccept = null;
-try { $acceptanceService->unacceptService($employeeId, $firstServiceId, $acceptBookingId); } catch (Exception $e) { $blockedUnaccept = $e->getMessage(); }
-check("fase 3: desfazer BLOQUEADO apos consolidacao (409)", $blockedUnaccept !== null, "sem erro");
+// F4: o agendamento «totalmente_alocado» já NÃO bloqueia o desfazer (o bloqueio
+// passou para a rota confirmada). Ao desfazer, o serviço volta a «pendente» e o
+// agendamento reverte para «pendente_alocacao» — reaparece na lista Por alocar.
+$undoAfterConsolidation = null;
+try { $undoAfterConsolidation = $acceptanceService->unacceptService($employeeId, $firstServiceId, $acceptBookingId); } catch (Exception $e) { $undoAfterConsolidation = ["error" => $e->getMessage()]; }
+check("F4: desfazer PERMITIDO apos consolidacao", !isset($undoAfterConsolidation["error"]), json_encode($undoAfterConsolidation));
+check("F4: agendamento volta a pendente_alocacao apos desfazer", ($bookingRepository->find($acceptBookingId)["status"] ?? "") === "pendente_alocacao");
+check("F4: servico desfeito reaparece na lista por alocar", count($acceptanceService->listPendingServices(["data" => $acceptDate])["services"]) >= 1);
+
+// Restaurar o estado (voltar a alocar os 2 servicos) para os testes seguintes.
+$acceptanceService->acceptService($employeeId, $firstServiceId, $acceptBookingId);
+$acceptanceService->acceptService($employeeId, $secondServiceId, $acceptBookingId);
 
 $acceptedList = $acceptanceService->listAcceptedServices($employeeId, []);
 check("fase 3: lista de aceites por funcionario", ($acceptedList["totals"]["count"] ?? 0) >= 2, json_encode($acceptedList["totals"] ?? null));

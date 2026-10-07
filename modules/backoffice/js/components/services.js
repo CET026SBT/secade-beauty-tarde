@@ -112,7 +112,10 @@ const boServices = (() => {
             : "";
 
         const employeeLabel = isManager ? "A receber (funcionário)" : "A receber";
-        const canUndo = isManager || service.bookingStatus !== "totalmente_alocado";
+        // F4: desfazer é permitido enquanto o agendamento não estiver numa rota
+        // confirmada (ou fechado) — já não basta estar «totalmente alocado».
+        const closedStates = ["confirmado", "executado", "concluido", "cancelado", "recusado"];
+        const canUndo = !closedStates.includes(service.bookingStatus);
 
         return `<div class="border rounded p-3 mb-3" data-card-booking="${service.bookingId}">
             <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
