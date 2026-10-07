@@ -75,6 +75,14 @@ $routes = [
         "admin-catalog-photo-featured" => ["controller" => "CatalogController", "method" => "setFeaturedPhoto", "http" => "POST"],
         "admin-catalog-photo-delete"   => ["controller" => "CatalogController", "method" => "deletePhoto", "http" => "POST"],
 
+        // F7 — Recursos Humanos (§7 · §25)
+        "admin-employee-list"            => ["controller" => "EmployeeController", "method" => "list", "http" => "GET"],
+        "admin-employee-store"           => ["controller" => "EmployeeController", "method" => "store", "http" => "POST"],
+        "admin-employee-update"          => ["controller" => "EmployeeController", "method" => "update", "http" => "POST"],
+        "admin-employee-deactivate-check"=> ["controller" => "EmployeeController", "method" => "deactivateImpact", "http" => "GET"],
+        "admin-employee-set-active"      => ["controller" => "EmployeeController", "method" => "setActive", "http" => "POST"],
+        "admin-employee-photo-upload"    => ["controller" => "EmployeeController", "method" => "uploadPhoto", "http" => "POST"],
+
         "feedback-list"   => ["controller" => "FeedbackController", "method" => "publicList", "http" => "GET"],
         "feedback-my"     => ["controller" => "FeedbackController", "method" => "myState", "http" => "GET"],
         "feedback-create" => ["controller" => "FeedbackController", "method" => "create", "http" => "POST"]

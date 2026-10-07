@@ -78,6 +78,14 @@ const API = ((baseApi) => ({
             uploadPhoto: (formData) => baseApi.post('?action=admin-catalog-photo-upload', formData),
             setFeatured: (serviceId, photoId) => baseApi.post('?action=admin-catalog-photo-featured', { serviceId, photoId }),
             deletePhoto: (serviceId, photoId) => baseApi.post('?action=admin-catalog-photo-delete', { serviceId, photoId })
+        },
+        employees: {
+            list: () => baseApi.get('?action=admin-employee-list', 0),
+            store: (data) => baseApi.post('?action=admin-employee-store', data),
+            update: (data) => baseApi.post('?action=admin-employee-update', data),
+            deactivateCheck: (employeeId) => baseApi.get(`?action=admin-employee-deactivate-check&employeeId=${employeeId}`, 0),
+            setActive: (employeeId, active) => baseApi.post('?action=admin-employee-set-active', { employeeId, active }),
+            uploadPhoto: (formData) => baseApi.post('?action=admin-employee-photo-upload', formData)
         }
     },
     feedback: {
