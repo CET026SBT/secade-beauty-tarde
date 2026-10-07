@@ -38,7 +38,7 @@ const services = (() => {
             $('#serviceModalTitle').text(service.name);
             const galleryHtml = (service.photos || []).length
                 ? `<div class="d-flex flex-wrap gap-2 mb-3">${(service.photos || []).map(url => `<img src="${BASE_URL ?? ''}/${url}" class="rounded object-fit-cover" style="width:96px;height:96px" alt="">`).join('')}</div>`
-                : '';
+                : `<img src="${serviceImageSrc(service)}" class="rounded object-fit-cover w-100 mb-3" style="max-height:260px" alt="${generalUtils.escapeHtml(service.name)}">`;
 
             $('#serviceModalBody').html(`
                 ${galleryHtml}
@@ -80,21 +80,14 @@ const services = (() => {
         }
     };
 
-    // F3.1 — imagem do card: foto de destaque (servico_foto) ou placeholder SVG por categoria.
-    const CATEGORY_PLACEHOLDERS = {
-        cabeleireiro: 'servico-cabeleireiro.svg',
-        barbearia:    'servico-barbearia.svg',
-        estetica:     'servico-estetica.svg'
-    };
-
+    // Imagem do card: foto carregada pelo gestor (servico_foto) ou a imagem do
+    // serviço em `modules/common/img/service-images/service-{id}.jpg` (35 serviços, 1..35).
     function serviceImageSrc(service) {
         if (service.photoUrl) {
             return `${BASE_URL ?? ''}/${service.photoUrl}`;
         }
 
-        const slug = generalUtils.slugify(service.categoryName || '');
-        const file = CATEGORY_PLACEHOLDERS[slug] || 'servico-generico.svg';
-        return `${BASE_URL ?? ''}/modules/common/img/service-images/skeletons/${file}`;
+        return `${BASE_URL ?? ''}/modules/common/img/service-images/service-${service.id}.jpg`;
     }
 
     function card(service) {
