@@ -36,7 +36,12 @@ const services = (() => {
                 : '<span class="badge bg-success">Loja e Carrinha</span>';
 
             $('#serviceModalTitle').text(service.name);
+            const galleryHtml = (service.photos || []).length
+                ? `<div class="d-flex flex-wrap gap-2 mb-3">${(service.photos || []).map(url => `<img src="${BASE_URL ?? ''}/${url}" class="rounded object-fit-cover" style="width:96px;height:96px" alt="">`).join('')}</div>`
+                : '';
+
             $('#serviceModalBody').html(`
+                ${galleryHtml}
                 <p class="text-muted mb-3">${generalUtils.escapeHtml(service.description || '')}</p>
                 <ul class="list-unstyled mb-0">
                     <li class="mb-2"><i class="bi bi-tag me-2 text-primary"></i><strong>Preço:</strong> ${generalUtils.formatCurrencyWithVat(service.basePrice)} <small class="text-muted">(IVA incl.)</small></li>
@@ -75,6 +80,23 @@ const services = (() => {
         }
     };
 
+    // F3.1 — imagem do card: foto de destaque (servico_foto) ou placeholder SVG por categoria.
+    const CATEGORY_PLACEHOLDERS = {
+        cabeleireiro: 'servico-cabeleireiro.svg',
+        barbearia:    'servico-barbearia.svg',
+        estetica:     'servico-estetica.svg'
+    };
+
+    function serviceImageSrc(service) {
+        if (service.photoUrl) {
+            return `${BASE_URL ?? ''}/${service.photoUrl}`;
+        }
+
+        const slug = generalUtils.slugify(service.categoryName || '');
+        const file = CATEGORY_PLACEHOLDERS[slug] || 'servico-generico.svg';
+        return `${BASE_URL ?? ''}/modules/common/img/service-images/skeletons/${file}`;
+    }
+
     function card(service) {
         const badge = service.requiresPhysicalSpace
             ? '<span class="badge bg-warning text-dark">Apenas Loja</span>'
@@ -82,6 +104,7 @@ const services = (() => {
 
         return $(`<div class="col-md-6 col-lg-4">
             <div class="card h-100 border-0 shadow-sm service-card">
+                <img class="card-img-top object-fit-cover service-card-image" src="${serviceImageSrc(service)}" alt="${generalUtils.escapeHtml(service.name)}">
                 <div class="card-body d-flex flex-column">
                     <div class="d-flex justify-content-between align-items-start mb-3">
                         <span class="badge bg-primary">${generalUtils.escapeHtml(service.categoryName || '')}</span>

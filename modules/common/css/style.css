@@ -428,6 +428,10 @@ form .row > *:has([aria-invalid="true"])*/ {
 
 
 /* Service */
+.service-card-image {
+    height: 180px;
+}
+
 @media (max-width: 768px) {
     .service .service-item {
         border: none !important;

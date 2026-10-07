@@ -63,6 +63,13 @@ $routes = [
         "admin-green-receipt-config-save"=> ["controller" => "FiscalController", "method" => "saveGreenReceiptConfig", "http" => "POST"],
         "admin-green-receipt-simulate"   => ["controller" => "FiscalController", "method" => "greenReceiptSimulate", "http" => "GET"],
 
+        // F3.1 — fotografias do catálogo de serviços (gestor)
+        "admin-catalog-list"           => ["controller" => "CatalogController", "method" => "list", "http" => "GET"],
+        "admin-catalog-service-photos" => ["controller" => "CatalogController", "method" => "servicePhotos", "http" => "GET"],
+        "admin-catalog-photo-upload"   => ["controller" => "CatalogController", "method" => "uploadPhoto", "http" => "POST"],
+        "admin-catalog-photo-featured" => ["controller" => "CatalogController", "method" => "setFeaturedPhoto", "http" => "POST"],
+        "admin-catalog-photo-delete"   => ["controller" => "CatalogController", "method" => "deletePhoto", "http" => "POST"],
+
         "feedback-list"   => ["controller" => "FeedbackController", "method" => "publicList", "http" => "GET"],
         "feedback-my"     => ["controller" => "FeedbackController", "method" => "myState", "http" => "GET"],
         "feedback-create" => ["controller" => "FeedbackController", "method" => "create", "http" => "POST"]

@@ -70,6 +70,13 @@ const API = ((baseApi) => ({
         greenReceipt: {
             config: () => baseApi.get('?action=admin-green-receipt-config', 0),
             saveConfig: (data) => baseApi.post('?action=admin-green-receipt-config-save', data)
+        },
+        catalog: {
+            list: () => baseApi.get('?action=admin-catalog-list', 0),
+            photos: (serviceId) => baseApi.get(`?action=admin-catalog-service-photos&serviceId=${serviceId}`, 0),
+            uploadPhoto: (formData) => baseApi.post('?action=admin-catalog-photo-upload', formData),
+            setFeatured: (serviceId, photoId) => baseApi.post('?action=admin-catalog-photo-featured', { serviceId, photoId }),
+            deletePhoto: (serviceId, photoId) => baseApi.post('?action=admin-catalog-photo-delete', { serviceId, photoId })
         }
     },
     feedback: {
