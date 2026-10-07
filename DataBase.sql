@@ -523,6 +523,7 @@ CREATE TABLE IF NOT EXISTS `funcionario` (
   `tipo_contrato` enum('efetivo_contratado','recibo_verde') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `salario_base` decimal(10,2) NOT NULL DEFAULT '0.00',
   `percentagem_comissao` decimal(5,2) NOT NULL DEFAULT '0.00',
+  `irs_taxa` decimal(5,2) DEFAULT NULL,
   `cc` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `ativo` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id`),

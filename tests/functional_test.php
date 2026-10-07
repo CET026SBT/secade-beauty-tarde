@@ -890,6 +890,65 @@ $conn->exec("DELETE FROM cliente_morada WHERE id IN (" . (int)$scR1a["addressId"
 $conn->exec("DELETE FROM rota_ambulante WHERE id IN (" . (int)$routeR3 . "," . (int)$routeR4 . ")");
 
 // ---------------------------------------------------------------------------
+section("18. F7 - Recursos Humanos (§7 · §25)");
+
+$employeeService = new EmployeeService();
+$employeeRepo    = new EmployeeRepository();
+
+// 1. Criação de um RV: a % de comissão nasce com o default do contrato (70%).
+$rhCreate = $employeeService->createEmployee([
+    "name" => "Funcionario RH", "email" => "rh.funcionario@secade.pt",
+    "phone" => "910000010", "cc" => "999999910Z7R", "password" => "Func@12345",
+    "contractType" => "recibo_verde"
+]);
+$rhId = (int)($rhCreate["employeeId"] ?? 0);
+$rhEmp = $employeeRepo->find($rhId);
+check("F7: funcionario criado via RH", $rhId > 0 && ($rhEmp["name"] ?? "") === "Funcionario RH", json_encode($rhCreate));
+check("F7: % de comissao nasce com o default do RV (70)", (float)($rhEmp["commissionPercentage"] ?? -1) === 70.0, json_encode($rhEmp["commissionPercentage"] ?? null));
+check("F7: RV nao tem salario base", (float)($rhEmp["salary"] ?? -1) === 0.0, json_encode($rhEmp["salary"] ?? null));
+
+// 2. Edição: contrato efetivo + salário + % + IRS (dados por funcionário).
+$employeeService->updateEmployee($rhId, [
+    "name" => "Funcionario RH Editado", "email" => "rh.funcionario@secade.pt",
+    "phone" => "910000010", "cc" => "999999910Z7R", "contractType" => "efetivo_contratado",
+    "salary" => "900.00", "commissionPercentage" => "12.5", "irsRate" => "8.00"
+]);
+$rhEmp = $employeeRepo->find($rhId);
+check("F7: edicao grava contrato/salario/percentagem/IRS", ($rhEmp["contractType"] ?? "") === "efetivo_contratado"
+    && (float)($rhEmp["salary"] ?? 0) === 900.0 && (float)($rhEmp["commissionPercentage"] ?? 0) === 12.5
+    && (float)($rhEmp["irsRate"] ?? 0) === 8.0, json_encode($rhEmp));
+
+// 3. Listagem + indicadores.
+$rhListing = $employeeService->listEmployees();
+check("F7: listagem traz funcionarios + indicadores", isset($rhListing["employees"], $rhListing["summary"]["effective"], $rhListing["summary"]["fixedCost"]), json_encode(array_keys($rhListing)));
+
+// 4. Desativacao (soft delete): liberta servicos nao confirmados.
+$rhBooking = $mkPastBooking($cities[7]["name"], date("Y-m-d H:i:s", strtotime("+3 days")), "totalmente_alocado");
+$conn->exec("UPDATE agendamento_servico SET funcionario_id = {$rhId}, estado_aceitacao = 'aceite', percentagem_funcionario_aplicada = 12.50 WHERE agendamento_id = " . (int)$rhBooking["bookingId"]);
+
+$rhImpact = $employeeService->deactivateImpact($rhId);
+check("F7: impacto lista servicos a libertar (nao bloqueado)", ($rhImpact["servicesCount"] ?? 0) >= 1 && ($rhImpact["blocked"] ?? true) === false, json_encode($rhImpact));
+
+$rhDeact = $employeeService->setActive($rhId, false);
+check("F7: desativacao liberta os servicos nao confirmados", ($rhDeact["releasedServices"] ?? 0) >= 1, json_encode($rhDeact));
+check("F7: agendamento volta a pendente_alocacao", ($bookingRepoF6->find((int)$rhBooking["bookingId"])["status"] ?? "") === "pendente_alocacao", (string)($bookingRepoF6->find((int)$rhBooking["bookingId"])["status"] ?? ""));
+check("F7: funcionario fica inativo (soft delete)", ($employeeRepo->find($rhId)["isActive"] ?? true) === false, json_encode($employeeRepo->find($rhId)["isActive"] ?? null));
+
+// 5. Bloqueio quando ha servicos em rota CONFIRMADA.
+$employeeService->setActive($rhId, true);
+$rhConfir = $mkPastBooking($cities[8]["name"], date("Y-m-d H:i:s", strtotime("+4 days")), "confirmado");
+$conn->exec("UPDATE agendamento_servico SET funcionario_id = {$rhId}, estado_aceitacao = 'aceite' WHERE agendamento_id = " . (int)$rhConfir["bookingId"]);
+$rhBlocked = null;
+try { $employeeService->setActive($rhId, false); } catch (Exception $e) { $rhBlocked = $e->getCode(); }
+check("F7: desativacao bloqueada com rota confirmada (409)", $rhBlocked === 409, json_encode($rhBlocked));
+
+// Limpeza F7
+$conn->exec("DELETE FROM agendamento WHERE id IN (" . (int)$rhBooking["bookingId"] . "," . (int)$rhConfir["bookingId"] . ")");
+$conn->exec("DELETE FROM cliente_morada WHERE id IN (" . (int)$rhBooking["addressId"] . "," . (int)$rhConfir["addressId"] . ")");
+$conn->exec("DELETE FROM funcionario WHERE id = " . $rhId);
+$conn->exec("DELETE FROM utilizador WHERE id = " . $rhId);
+
+// ---------------------------------------------------------------------------
 section("RESULTADO FINAL");
 echo ($failed === 0 ? "TODOS OS TESTES PASSARAM" : "EXISTEM FALHAS") . " => {$passed} pass, {$failed} fail\n";
 exit($failed === 0 ? 0 : 1);
