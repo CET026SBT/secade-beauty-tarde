@@ -69,6 +69,33 @@ class Session {
         return self::getUserProfile() === "guest";
     }
 
+    /**
+     * Tipo de contrato do funcionario em sessao (`efetivo_contratado` | `recibo_verde`),
+     * ou `null` se o utilizador nao for funcionario. Lido uma vez por sessao e memorizado,
+     * para o servidor decidir o que mostrar sem repetir a consulta a cada pedido.
+     */
+    public static function employeeContractType(): ?string {
+        if (!self::isEmployee()) {
+            return null;
+        }
+
+        self::init();
+
+        if (array_key_exists("user_contract_type", $_SESSION)) {
+            return $_SESSION["user_contract_type"];
+        }
+
+        require_once APP_PATH . "/config/connection.php";
+        global $conn;
+
+        $stmt = $conn->prepare("SELECT tipo_contrato FROM funcionario WHERE id = :id LIMIT 1");
+        $stmt->execute(["id" => self::userId()]);
+        $type = $stmt->fetchColumn();
+
+        $_SESSION["user_contract_type"] = $type !== false ? (string)$type : null;
+        return $_SESSION["user_contract_type"];
+    }
+
     public static function requireLogin(?string $redirectUrl=null) {
         $url = $redirectUrl ?? (defined("BASE_URL") ? BASE_URL . "/login" : "/login");
         if (!self::isLoggedIn()) {
