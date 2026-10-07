@@ -42,6 +42,7 @@
     <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/lib/waypoints/waypoints.min.js"></script>
     <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/lib/counterup/counterup.min.js"></script>
     <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/lib/owlcarousel/owl.carousel.min.js"></script>
+    <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/lib/cropper/cropper.min.js"></script>
 
     <!-- Our Libraries Javascript -->
     <script type="text/javascript" src="<?= BASE_URL ?>/modules/common/lib-our/jq-preloader/jq-preloader.js"></script>

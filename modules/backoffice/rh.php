@@ -14,7 +14,6 @@ $boCurrentPage = "rh";
 include_once ROOT_PATH . "/modules/backoffice/includes/boHeader.php";
 include_once ROOT_PATH . "/modules/backoffice/includes/boNavbar.php";
 ?>
-<link href="<?= BASE_URL ?>/modules/common/lib/cropper/cropper.min.css" rel="stylesheet">
 
 <main class="p-4">
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
@@ -78,8 +77,8 @@ include_once ROOT_PATH . "/modules/backoffice/includes/boNavbar.php";
                             <div class="bo-avatar-wrap mb-2">
                                 <img id="employeePhotoPreview" class="bo-avatar-preview"
                                      src="<?= BASE_URL ?>/modules/common/img/favicon.ico" alt="Fotografia">
+                                <input type="file" class="form-control form-control-sm" id="employeePhoto" accept="image/png,image/jpeg,image/webp">
                             </div>
-                            <input type="file" class="form-control form-control-sm" id="employeePhoto" accept="image/png,image/jpeg,image/webp">
                             <div class="form-text">JPG/PNG/WEBP, até 2 MB.</div>
                         </div>
                         <div class="col-md-8">
@@ -178,8 +177,5 @@ include_once ROOT_PATH . "/modules/backoffice/includes/boNavbar.php";
         </div>
     </div>
 </div>
-
-<!-- Cropper.js (Q-01) — só na página de RH; carrega antes de rh.js (rodapé). -->
-<script type="text/javascript" src="<?= BASE_URL ?>/modules/common/lib/cropper/cropper.min.js"></script>
 
 <?php include_once ROOT_PATH . "/modules/backoffice/includes/boFooter.php"; ?>

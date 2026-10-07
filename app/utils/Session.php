@@ -140,7 +140,7 @@ class Session {
 
         if (!in_array($userProfile, $profiles, true)) {
             $url = is_array($redirectUrl) ? ($redirectUrl[$userProfile] ?? null) : $redirectUrl;
-            $url = $url ?? (defined("BASE_URL") ? BASE_URL . "/" : "/");        
+            $url = $url ?? (defined("BASE_URL") ? BASE_URL . "/" : "/");
             header("Location: {$url}");
             exit;
         }

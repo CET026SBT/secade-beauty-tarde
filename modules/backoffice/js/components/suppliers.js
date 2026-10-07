@@ -127,7 +127,7 @@ const boSuppliers = (() => {
         $("#supplierForm .is-invalid").removeClass("is-invalid");
         $("#supplierForm .invalid-feedback").text("");
 
-        bootstrap.Modal.getOrCreateInstance(document.getElementById("supplierFormModal")).show();
+        generalUtils.bsModalGetOrCreateInstance(document.getElementById("supplierFormModal")).show();
     }
 
     async function saveSupplier(request) {

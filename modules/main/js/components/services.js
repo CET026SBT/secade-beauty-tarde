@@ -52,7 +52,7 @@ const services = (() => {
             `);
             $('#serviceModalBook').attr('href', `${BASE_URL ?? ''}/agendar?services=${service.id}`);
 
-            bootstrap.Modal.getOrCreateInstance($('#serviceDetailsModal')[0]).show();
+            generalUtils.bsModalGetOrCreateInstance($('#serviceDetailsModal')[0]).show();
         }
     };
 

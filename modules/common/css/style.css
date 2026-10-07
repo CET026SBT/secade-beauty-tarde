@@ -1123,6 +1123,16 @@ form .row > *:has([aria-invalid="true"])*/ {
     border-radius: 12px;
     overflow: hidden;
     background-color: #fff;
+    position: relative;
+}
+
+.bo-avatar-wrap > input[type="file"] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    opacity: 0;
 }
 
 .bo-avatar-preview {

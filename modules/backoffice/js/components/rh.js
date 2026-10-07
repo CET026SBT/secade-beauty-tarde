@@ -164,7 +164,7 @@ const boRh = (() => {
 
         $("#employeePhotoPreview").attr("src", (isEdit && photoUrl(employee)) || defaultAvatar());
 
-        bootstrap.Modal.getOrCreateInstance(document.getElementById("employeeFormModal")).show();
+        generalUtils.bsModalGetOrCreateInstance(document.getElementById("employeeFormModal")).show();
     }
 
     function onPhotoSelected(event) {
@@ -265,7 +265,7 @@ const boRh = (() => {
             }
 
             $("#employeeDeactivateBody").html(html);
-            bootstrap.Modal.getOrCreateInstance(document.getElementById("employeeDeactivateModal")).show();
+            generalUtils.bsModalGetOrCreateInstance(document.getElementById("employeeDeactivateModal")).show();
         } catch (error) {
             $("#rhError").removeClass("d-none").text(error?.responseJSON?.message || "Não foi possível avaliar a desativação.");
         } finally {

@@ -157,6 +157,13 @@ const generalUtils = (() => {
         /** Alerta de erro — sugar sobre `alertDialog`. */
         errorDialog(message) {
             return generalUtils.alertDialog({ title: 'Ocorreu um erro', text: message, icon: 'error' });
+        },
+        /**  A modal de Bootstrap 5.0 não tem `getOrCreateInstance` (só existe a partir da 5.1);
+             usar esta função evita o erro ao abrir bootstrap modals. */
+        bsModalGetOrCreateInstance(element) {
+            if (!element) return null;
+
+            return bootstrap.Modal.getInstance(element) || new bootstrap.Modal(element);
         }
     };
 })();
