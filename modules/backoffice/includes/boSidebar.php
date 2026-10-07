@@ -12,15 +12,27 @@
  * continua a ser a autoridade — aqui só não se mostram links que falhariam.
  */
 $boSidebarPage = $boCurrentPage ?? "dashboard";
-$boSidebarGroups = Session::isEmployee()
-    ? [
-        ["label" => "A minha operação", "links" => [
-            ["page" => "agenda",     "url" => "/gestao/agenda",     "icon" => "bi-calendar3",     "label" => "Agenda"],
-            ["page" => "services",   "url" => "/gestao/servicos",   "icon" => "bi-list-check",    "label" => "Serviços"],
-            ["page" => "commissions","url" => "/gestao/comissoes",  "icon" => "bi-cash-stack",    "label" => "Comissões"],
-            ["page" => "alerts",     "url" => "/gestao/avisos",     "icon" => "bi-bell",          "label" => "Avisos"]
-        ]]
-      ]
+
+// Funcionário EFETIVO não aceita serviços (é alocado pelo gestor) — não lhe mostramos
+// «Serviços» na sidebar; o RV (recibos verdes) sim.
+$boIsEmployee = Session::isEmployee();
+$boIsEffective = $boIsEmployee && Session::employeeContractType() === "efetivo_contratado";
+
+$boEmployeeLinks = [
+    ["page" => "agenda",     "url" => "/gestao/agenda",     "icon" => "bi-calendar3",     "label" => "Agenda"],
+    ["page" => "commissions","url" => "/gestao/comissoes",  "icon" => "bi-cash-stack",    "label" => "Comissões"],
+    ["page" => "alerts",     "url" => "/gestao/avisos",     "icon" => "bi-bell",          "label" => "Avisos"]
+];
+
+if (!$boIsEffective) {
+    // O RV aceita serviços — o link entra depois da Agenda.
+    array_splice($boEmployeeLinks, 1, 0, [[
+        "page" => "services", "url" => "/gestao/servicos", "icon" => "bi-list-check", "label" => "Serviços"
+    ]]);
+}
+
+$boSidebarGroups = $boIsEmployee
+    ? [["label" => "A minha operação", "links" => $boEmployeeLinks]]
     : [
         ["label" => "Visão geral", "links" => [
             ["page" => "dashboard",    "url" => "/gestao/painel",         "icon" => "bi-speedometer2",   "label" => "Painel"],
